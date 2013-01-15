@@ -10,7 +10,6 @@ export PATH=$homebrew:$PATH
 #export TERM=xterm-color
 
 # default: "\h:\W \u\$ "
-# export PS1="\W\$(__git_ps1) \$ "
 export PS1="\n\w\$(__git_ps1)\n\$ "
 
 # ------------------------------------------------------------------------------
