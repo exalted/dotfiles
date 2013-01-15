@@ -1,0 +1,17 @@
+[user]
+	name = Ali Servet Donmez
+	email = asd@pittle.org
+[credential]
+	helper = osxkeychain
+[core]
+	excludesfile = ~/.gitignore_global
+	trustctime = false
+	editor = edit --new-window --wait
+[mergetool]
+	keepBackup = true
+[svn]
+	rmdir = true
+[hub]
+	protocol = https
+[color]
+	ui = auto

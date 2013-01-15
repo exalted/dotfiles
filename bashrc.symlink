@@ -1,0 +1,48 @@
+# ------------------------------------------------------------------------------
+# Ref.: http://stackoverflow.com/a/11335979/11895
+# ------------------------------------------------------------------------------
+homebrew=/usr/local/bin:/usr/local/sbin
+export PATH=$homebrew:$PATH
+
+# ------------------------------------------------------------------------------
+# Unnecessary (?) or (as of Mountain Lion) changed to "term-256color"
+# ------------------------------------------------------------------------------
+#export TERM=xterm-color
+
+# default: "\h:\W \u\$ "
+# export PS1="\W\$(__git_ps1) \$ "
+export PS1="\n\$ \W\$(__git_ps1): "
+
+# ------------------------------------------------------------------------------
+# Ref.: http://noiseandheat.com/blog/2011/12/os-x-lion-terminal-colours/
+# ------------------------------------------------------------------------------
+#
+# Tell ls to be colourful
+export CLICOLOR=1
+#
+# Tell grep to highlight matches
+export GREP_OPTIONS='--color=auto'
+#
+source "`brew --prefix`/etc/grc.bashrc"
+
+# ------------------------------------------------------------------------------
+# Ref.: http://superuser.com/a/95655/45837
+# ------------------------------------------------------------------------------
+__expand_tilde_by_ref(){ true; }
+_expand(){ true; }
+
+# ------------------------------------------------------------------------------
+# See "brew info bash-completion"
+# ------------------------------------------------------------------------------
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+    . $(brew --prefix)/etc/bash_completion
+fi
+
+# ------------------------------------------------------------------------------
+# Ref.: https://github.com/defunkt/hub#aliasing
+# ------------------------------------------------------------------------------
+eval "$(hub alias -s)"
+
+alias cd..="cd .."
+
+export EDITOR='sublime -w'
