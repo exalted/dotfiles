@@ -11,7 +11,7 @@ export PATH=$homebrew:$PATH
 
 # default: "\h:\W \u\$ "
 # export PS1="\W\$(__git_ps1) \$ "
-export PS1="\n\$ \W\$(__git_ps1): "
+export PS1="\n\w\$(__git_ps1)\n\$ "
 
 # ------------------------------------------------------------------------------
 # Ref.: http://noiseandheat.com/blog/2011/12/os-x-lion-terminal-colours/
