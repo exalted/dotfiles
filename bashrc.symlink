@@ -52,3 +52,10 @@ eval "$(hub alias -s)"
 alias cd..="cd .."
 
 export EDITOR='sublime -w'
+
+# ------------------------------------------------------------------------------
+# Ref.: https://github.com/jkbr/httpie#redirected-output
+# ------------------------------------------------------------------------------
+function httpless {
+    http --pretty=all "$@" | less -R;
+}
