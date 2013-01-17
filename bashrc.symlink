@@ -5,6 +5,13 @@ homebrew=/usr/local/bin:/usr/local/sbin
 export PATH=$homebrew:$PATH
 
 # ------------------------------------------------------------------------------
+# Executable python scripts will be put in:
+#   /usr/local/share/python
+# so you may want to put "/usr/local/share/python" in your PATH, too.
+# ------------------------------------------------------------------------------
+export PATH=/usr/local/share/python:$PATH
+
+# ------------------------------------------------------------------------------
 # Unnecessary (?) or (as of Mountain Lion) changed to "term-256color"
 # ------------------------------------------------------------------------------
 #export TERM=xterm-color
