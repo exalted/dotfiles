@@ -1,17 +1,22 @@
 [user]
 	name = Ali Servet Donmez
 	email = asd@pittle.org
-[credential]
-	helper = osxkeychain
 [core]
 	excludesfile = ~/.gitignore_global
 	trustctime = false
-	editor = edit --new-window --wait
-[mergetool]
-	keepBackup = true
-[svn]
-	rmdir = true
+	editor = sublime --new-window --wait
+[credential]
+	helper = osxkeychain
 [hub]
 	protocol = https
+[svn]
+	rmdir = true
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[mergetool]
+	keepBackup = true
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+	trustExitCode = true
 [color]
 	ui = auto
