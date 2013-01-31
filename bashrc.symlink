@@ -59,3 +59,14 @@ export EDITOR='sublime -w'
 function httpless {
     http --pretty=all "$@" | less -R;
 }
+
+# ------------------------------------------------------------------------------
+# Ref.: https://github.com/jkbr/httpie#redirected-output
+# ------------------------------------------------------------------------------
+alias kionpw='pwgen -cnyB 10 1'
+
+# ------------------------------------------------------------------------------
+# Fake commands
+# ------------------------------------------------------------------------------
+alias spider='wget --force-directories --recursive --no-clobber --convert-links --no-parent'
+alias diskusage='du -sh'
