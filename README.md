@@ -13,7 +13,22 @@ $ ln -s /Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl /usr/
 
 ```bash
 $ ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
-$ brew install bash-completion colordiff gibo git grc hub rmtrash python
+
+$ brew install brew-gem
+
+$ brew install rmtrash
+$ brew install bash-completion
+$ brew install pwgen
+
+$ brew install colordiff
+$ brew install grc
+
+$ brew install python `# Depends on: pkg-config, readline, sqlite, gdbm`
+
+$ brew install git
+$ brew install hub
+$ brew install svn2git
+$ brew install gibo
 ```
 
 ## Git

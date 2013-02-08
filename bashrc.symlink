@@ -32,10 +32,20 @@ export GREP_OPTIONS='--color=auto'
 source "`brew --prefix`/etc/grc.bashrc"
 
 # ------------------------------------------------------------------------------
+# EDITOR
+# ------------------------------------------------------------------------------
+export EDITOR='sublime -w'
+
+# ------------------------------------------------------------------------------
 # Ref.: http://superuser.com/a/95655/45837
 # ------------------------------------------------------------------------------
 __expand_tilde_by_ref(){ true; }
 _expand(){ true; }
+
+# ------------------------------------------------------------------------------
+# Common typos
+# ------------------------------------------------------------------------------
+alias cd..="cd .."
 
 # ------------------------------------------------------------------------------
 # See "brew info bash-completion"
@@ -48,10 +58,6 @@ fi
 # Ref.: https://github.com/defunkt/hub#aliasing
 # ------------------------------------------------------------------------------
 eval "$(hub alias -s)"
-
-alias cd..="cd .."
-
-export EDITOR='sublime -w'
 
 # ------------------------------------------------------------------------------
 # Ref.: https://github.com/jkbr/httpie#redirected-output
@@ -70,3 +76,16 @@ alias kionpw='pwgen -cnyB 10 1'
 # ------------------------------------------------------------------------------
 alias spider='wget --force-directories --recursive --no-clobber --convert-links --no-parent'
 alias diskusage='du -sh'
+
+# ------------------------------------------------------------------------------
+# Replace `gem install` with `brew gem`
+# ------------------------------------------------------------------------------
+function gembrewinstall {
+	if [[ "$1" == "install" ]]; then
+		shift
+		eval "brew gem $@"
+	else
+		eval "$(which gem) $@"
+	fi
+}
+alias gem='gembrewinstall'
