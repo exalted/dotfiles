@@ -35,5 +35,5 @@ $ brew install gibo
 
 ```bash
 $ gibo -u
-$ gibo Django Objective-C Python Archives OSX PyCharm SublimeText SVN >> .gitignore_global
+$ gibo Django Objective-C Python Archives OSX PyCharm SublimeText SVN > .gitignore_global
 ```
