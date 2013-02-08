@@ -2,7 +2,7 @@
 	name = Ali Servet Donmez
 	email = asd@pittle.org
 [core]
-	excludesfile = ~/.gitignore_global
+	excludesfile = $HOME/.gitignore_global
 	trustctime = false
 	editor = sublime --new-window --wait
 [credential]
