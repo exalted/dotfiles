@@ -57,7 +57,7 @@ $ brew install python `# Depends on: pkg-config, readline, sqlite, gdbm`
 
 $ brew install git
 $ brew install hub
-$ brew install svn2git
+$ brew install svn2git `# installed via brew-gem`
 $ brew install gibo
 ```
 
