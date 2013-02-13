@@ -10,7 +10,7 @@ How to Use
 $ cd $DEVELOPMENT_DIR `# export DEVELOPMENT_DIR=$HOME/Development`
 $ git clone https://github.com/exalted/dotfiles.git
 
-$ f() { local DOTFILES=("bash_profile" "bashrc" "gitconfig" "inputrc" "sqliterc"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
+$ f() { local DOTFILES=("bash_profile" "bashrc" "gitconfig" "inputrc" "sqliterc" "hushlogin"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
 ```
 
 Fonts and Colors
