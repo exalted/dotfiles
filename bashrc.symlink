@@ -13,12 +13,36 @@ unset homebrew
 export PATH=/usr/local/share/python:$PATH
 
 # ------------------------------------------------------------------------------
-# Unnecessary (?) or (as of Mountain Lion) changed to "term-256color"
+# Homebrew recommends prepending the following path to your PATH environment
+# variable to have npm-installed binaries picked up:
+#   /usr/local/share/npm/bin
 # ------------------------------------------------------------------------------
-#export TERM=xterm-color
+export PATH=/usr/local/share/npm/bin:$PATH
+
+# ------------------------------------------------------------------------------
+# See "brew info bash-completion"
+# ------------------------------------------------------------------------------
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+    . $(brew --prefix)/etc/bash_completion
+fi
+
+# ------------------------------------------------------------------------------
+# Pimp my prompt
+# ------------------------------------------------------------------------------
+function __git_ps1_custom {
+	local GIT_PS1=$(__git_ps1)
+	if [ -n "$GIT_PS1" ]
+	then
+		# remove leading whitespace and append trailing space instead
+		GIT_PS1=$(echo $GIT_PS1" ")
+	fi
+	echo "$GIT_PS1"
+};
+
+export GIT_PS1_SHOWDIRTYSTATE=true
 
 # default: "\h:\W \u\$ "
-export PS1="\n\w\$(__git_ps1)\n\$ "
+export PS1="\n\[\e[32m\]\$(__git_ps1_custom)\[\e[31m\]➜\[\e[0m\]  "
 
 # ------------------------------------------------------------------------------
 # Ref.: http://noiseandheat.com/blog/2011/12/os-x-lion-terminal-colours/
@@ -52,13 +76,6 @@ _expand(){ true; }
 # Common typos
 # ------------------------------------------------------------------------------
 alias cd..="cd .."
-
-# ------------------------------------------------------------------------------
-# See "brew info bash-completion"
-# ------------------------------------------------------------------------------
-if [ -f $(brew --prefix)/etc/bash_completion ]; then
-    . $(brew --prefix)/etc/bash_completion
-fi
 
 # ------------------------------------------------------------------------------
 # Ref.: https://github.com/defunkt/hub#aliasing

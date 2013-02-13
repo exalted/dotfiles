@@ -161,6 +161,8 @@
 	<true/>
 	<key>Bell</key>
 	<true/>
+	<key>BlinkText</key>
+	<true/>
 	<key>CursorBlink</key>
 	<false/>
 	<key>CursorColor</key>
@@ -189,6 +191,8 @@
 	</data>
 	<key>FontAntialias</key>
 	<true/>
+	<key>Linewrap</key>
+	<true/>
 	<key>ProfileCurrentVersion</key>
 	<real>2.02</real>
 	<key>SelectionColor</key>
@@ -205,7 +209,7 @@
 	<key>ShowActiveProcessInTitle</key>
 	<false/>
 	<key>ShowCommandKeyInTitle</key>
-	<true/>
+	<false/>
 	<key>ShowDimensionsInTitle</key>
 	<false/>
 	<key>ShowShellCommandInTitle</key>
@@ -234,9 +238,9 @@
 	AAAZAAAAAAAAAAAAAAAAAAAA2Q==
 	</data>
 	<key>UseBoldFonts</key>
-	<false/>
-	<key>UseBrightBold</key>
 	<true/>
+	<key>UseBrightBold</key>
+	<false/>
 	<key>VisualBell</key>
 	<false/>
 	<key>blackColour</key>
