@@ -3,13 +3,34 @@ README
 
 Get your shit together.
 
-How to Use
-----------
+Homebrew
+--------
 
 ```bash
-$ cd $DEVELOPMENT_DIR `# export DEVELOPMENT_DIR=$HOME/Development`
-$ git clone https://github.com/exalted/dotfiles.git
+$ ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
+$ brew install brew-gem
+```
 
+Git
+---
+
+```bash
+$ brew install git
+$ brew install hub
+$ brew install gibo
+`# $ brew install svn2git	`# installed via brew-gem``
+
+$ gibo -u
+$ gibo Django Objective-C Python Archives OSX PyCharm SublimeText SVN > .gitignore_global
+```
+
+dotfiles
+--------
+
+```bash
+`# export DEVELOPMENT_DIR="$HOME/Development"`
+$ git clone exalted/dotfiles "$DEVELOPMENT_DIR/dotfiles"
+$ cd "$DEVELOPMENT_DIR/dotfiles"
 $ f() { local DOTFILES=("bash_profile" "bashrc" "gitconfig" "inputrc" "sqliterc" "hushlogin"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
 ```
 
@@ -38,13 +59,12 @@ such as git and subversion:
 $ ln -s /Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl /usr/local/bin/sublime
 ```
 
-Homebrew
---------
+Utilities
+---------
 
 ```bash
-$ ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
-
-$ brew install brew-gem
+$ brew install python `# Depends on: pkg-config, readline, sqlite, gdbm`
+$ brew install node
 
 $ brew install rmtrash
 $ brew install bash-completion
@@ -52,19 +72,15 @@ $ brew install pwgen
 
 $ brew install colordiff
 $ brew install grc
-
-$ brew install python `# Depends on: pkg-config, readline, sqlite, gdbm`
-
-$ brew install git
-$ brew install hub
-$ brew install svn2git `# installed via brew-gem`
-$ brew install gibo
 ```
 
-Git
----
+Markdown
+--------
 
 ```bash
-$ gibo -u
-$ gibo Django Objective-C Python Archives OSX PyCharm SublimeText SVN > .gitignore_global
+$ sudo gem install redcarpet pygments.rb `# Read "Note for rvm/rbenv users" at http://support.markedapp.com/kb/how-to-tips-and-tricks/using-marked-with-github-flavored-markdown-and-syntax-highlighting`
+$ git clone alampros/Docter "$DEVELOPMENT_DIR/Docter"
+$ cd "$DEVELOPMENT_DIR/Docter"
+$ npm --global install
+`# Continue here: https://github.com/alampros/Docter#using-with-markedapp`
 ```
