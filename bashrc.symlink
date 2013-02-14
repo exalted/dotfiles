@@ -29,20 +29,20 @@ fi
 # ------------------------------------------------------------------------------
 # Pimp my prompt
 # ------------------------------------------------------------------------------
-function __git_ps1_custom {
-	local GIT_PS1=$(__git_ps1)
-	if [ -n "$GIT_PS1" ]
-	then
-		# remove leading whitespace and append trailing space instead
-		GIT_PS1=$(echo $GIT_PS1" ")
+function __ps1_newline_login {
+	if [[ -n "${PS1_NEWLINE_LOGIN-}" ]]; then
+		echo
+	else
+		PS1_NEWLINE_LOGIN=true
 	fi
-	echo "$GIT_PS1"
-};
+}
 
-export GIT_PS1_SHOWDIRTYSTATE=true
+PROMPT_COMMAND="${PROMPT_COMMAND}__ps1_newline_login;"
 
-# default: "\h:\W \u\$ "
-export PS1="\n\[\e[32m\]\$(__git_ps1_custom)\[\e[31m\]➜\[\e[0m\]  "
+export GIT_PS1_SHOWDIRTYSTATE=true `# show unstaged (*) and staged (+) changes`
+
+# export PS1="\h:\W \u\$ "
+export PS1="\[\e[32m\]\$(__git_ps1 \"%s \")\[\e[31m\]➜\[\e[0m\]  "
 
 # ------------------------------------------------------------------------------
 # Ref.: http://noiseandheat.com/blog/2011/12/os-x-lion-terminal-colours/
