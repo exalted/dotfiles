@@ -57,6 +57,12 @@ export GREP_OPTIONS='--color=auto'
 source "`brew --prefix`/etc/grc.bashrc"
 
 # ------------------------------------------------------------------------------
+# rbenv
+# ------------------------------------------------------------------------------
+# Enable shims and autocompletion
+if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+
+# ------------------------------------------------------------------------------
 # EDITOR
 # ------------------------------------------------------------------------------
 export EDITOR='sublime -w'
@@ -99,16 +105,3 @@ alias kionpw='pwgen -cnyB 10 1'
 # ------------------------------------------------------------------------------
 alias spider='wget --force-directories --recursive --no-clobber --convert-links --no-parent'
 alias diskusage='du -sh'
-
-# ------------------------------------------------------------------------------
-# Replace `gem install` with `brew gem`
-# ------------------------------------------------------------------------------
-function gembrewinstall {
-	if [[ "$1" == "install" ]]; then
-		shift
-		eval "brew gem $@"
-	else
-		eval "$(which gem) $@"
-	fi
-}
-alias gem='gembrewinstall'
