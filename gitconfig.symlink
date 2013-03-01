@@ -3,7 +3,7 @@
 	email = asd@pittle.org
 [core]
 	trustctime = false
-	editor = sublime --new-window --wait
+	editor = edit --wait --new-window
 [credential]
 	helper = osxkeychain
 [hub]
@@ -12,18 +12,30 @@
 	rmdir = true
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
-[mergetool]
-	keepBackup = true
+[diff]
+	tool = Kaleidoscope
+[difftool]
+	prompt = false
 [mergetool "Kaleidoscope"]
 	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
 	trustExitCode = true
+[mergetool]
+	prompt = false
+	keepBackup = true
+[merge]
+	tool = Kaleidoscope
 [color]
 	ui = auto
 [alias]
-	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool -y -t Kaleidoscope $BRANCH...$SHA; }; f"
+	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
 	co = checkout
 	st = status
 	br = branch
-	hist = log --color --pretty=format:\"%C(yellow)%h%C(reset) %s%C(bold red)%d%C(reset) %C(green)%ad%C(reset) %C(blue)[%an]%C(reset)\" --relative-date --decorate
-	graph = log --color --graph --pretty=format:\"%h | %ad | %an | %s%d\" --date=short
+	hist = log --color --pretty=format:\"%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(blue)— %an%C(reset) %C(green)(%ad)%C(reset)\" --relative-date --decorate
 	unstage = reset HEAD
+	sync = "!git up && git push"
+[git-up "rebase"]
+	arguments = --preserve-merges
+	log-hook = "echo \"changes on $1:\"; git log --oneline --decorate $1..$2"
+[push]
+	default = simple

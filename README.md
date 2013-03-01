@@ -16,6 +16,7 @@ Git
 ```bash
 brew install git
 brew install hub
+sudo gem install git-up
 brew install gibo
 sudo gem install svn2git
 
@@ -48,7 +49,7 @@ Fonts and Colors
 ### Xcode
 
 ```bash
-ln -s "$DEVELOPMENT_DIR/dotfiles/Midnight\ \(custom\).dvtcolortheme" "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/Midnight\ \(custom\).dvtcolortheme"
+ln -s "$DEVELOPMENT_DIR/dotfiles/Midnight (custom).dvtcolortheme" "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/Midnight (custom).dvtcolortheme"
 ```
 
 Sublime Text 2
@@ -57,7 +58,9 @@ Sublime Text 2
 Use as command line tool to open files and projects, as well working as an EDITOR for unix tools, such as git and subversion:
 
 ```bash
-ln -s /Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl /usr/local/bin/sublime
+ln -s "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl" /usr/local/bin/edit
+
+ln -s "$DEVELOPMENT_DIR/dotfiles/Preferences.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings"
 ```
 
 Utilities
@@ -93,3 +96,8 @@ npm --global install
 `# Continue here: https://github.com/alampros/Docter#using-with-markedapp`
 ln -s "/Applications/Marked.app/Contents/Resources/mark" /usr/local/bin/mark
 ```
+
+Todo
+----
+
+ * Installing gems using `sudo` sucks! How to install in `/usr/local` instead?
