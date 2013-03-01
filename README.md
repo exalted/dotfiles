@@ -63,9 +63,7 @@ ln -s "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl" /usr/lo
 
 [Install Sublime Package Control](http://wbond.net/sublime_packages/package_control/installation).
 
-```bash
 Link stuff:
-```
 
 ```bash
 ln -s "$DEVELOPMENT_DIR/dotfiles/Preferences.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings"
