@@ -59,8 +59,17 @@ Use as command line tool to open files and projects, as well working as an EDITO
 
 ```bash
 ln -s "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl" /usr/local/bin/edit
+```
 
+[Install Sublime Package Control](http://wbond.net/sublime_packages/package_control/installation).
+
+```bash
+Link stuff:
+```
+
+```bash
 ln -s "$DEVELOPMENT_DIR/dotfiles/Preferences.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings"
+ln -s "$DEVELOPMENT_DIR/dotfiles/Package Control.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Package Control.sublime-settings"
 ```
 
 Utilities
