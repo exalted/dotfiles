@@ -55,20 +55,26 @@ ln -s "$DEVELOPMENT_DIR/dotfiles/Midnight (custom).dvtcolortheme" "$HOME/Library
 Sublime Text 2
 --------------
 
-Use as command line tool to open files and projects, as well working as an EDITOR for unix tools, such as git and subversion:
+### Use as command line tool
+
+... to open files and projects, as well working as an EDITOR for unix tools, such as git and subversion:
 
 ```bash
 ln -s "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl" /usr/local/bin/edit
 ```
 
-[Install Sublime Package Control](http://wbond.net/sublime_packages/package_control/installation).
-
-Link stuff:
+### Configure
 
 ```bash
 ln -s "$DEVELOPMENT_DIR/dotfiles/Preferences.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/Package Control.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Package Control.sublime-settings"
 ```
+
+### Install Sublime Package Control
+
+ 1. Open Sublime Text
+ 2. [Follow these instructions](http://wbond.net/sublime_packages/package_control/installation)
+ 3. Restart Sublime Text
 
 Utilities
 ---------
