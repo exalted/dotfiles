@@ -30,11 +30,11 @@ fi
 # Pimp my prompt
 # ------------------------------------------------------------------------------
 function __ps1_newline_login {
-	if [[ -n "${PS1_NEWLINE_LOGIN-}" ]]; then
-		echo
-	else
-		PS1_NEWLINE_LOGIN=true
-	fi
+    if [[ -n "${PS1_NEWLINE_LOGIN-}" ]]; then
+        echo
+    else
+        PS1_NEWLINE_LOGIN=true
+    fi
 }
 
 PROMPT_COMMAND="${PROMPT_COMMAND}__ps1_newline_login;"
