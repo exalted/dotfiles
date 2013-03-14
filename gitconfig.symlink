@@ -3,7 +3,7 @@
 	email = asd@pittle.org
 [core]
 	trustctime = false
-	editor = edit --wait --new-window
+	editor = subl --wait --new-window
 [credential]
 	helper = osxkeychain
 [hub]

@@ -1,6 +1,12 @@
 {
 	"installed_packages":
 	[
-		"GitGutter"
+		"AdvancedNewFile",
+		"GitGutter",
+		"Package Control",
+		"SideBarEnhancements",
+		"SublimeLinter",
+		"Theme - Soda",
+		"TomDoc"
 	]
 }

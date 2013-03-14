@@ -65,7 +65,7 @@ if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 # ------------------------------------------------------------------------------
 # EDITOR
 # ------------------------------------------------------------------------------
-export EDITOR='edit --wait --new-window'
+export EDITOR='subl'
 
 # ------------------------------------------------------------------------------
 # Default Development Directory
@@ -104,4 +104,21 @@ alias kionpw='pwgen -cnyB 10 1'
 # Fake commands
 # ------------------------------------------------------------------------------
 alias spider='wget --force-directories --recursive --no-clobber --convert-links --no-parent'
+
 alias diskusage='du -sh'
+
+function google {
+    local search=""
+    for term in "$@"; do
+        if [[ -z "${search-}" ]]; then
+            search="$term"
+        else
+            search="$search%20$term"
+        fi
+    done
+    open "http://www.google.com/?q=$search";
+}
+alias search=google
+
+alias facebook="open http://www.facebook.com/"
+alias fb=facebook
