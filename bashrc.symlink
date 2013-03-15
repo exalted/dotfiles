@@ -27,6 +27,12 @@ if [ -f $(brew --prefix)/etc/bash_completion ]; then
 fi
 
 # ------------------------------------------------------------------------------
+# Add the /bin directory that ships with Postgres.app
+# Ref.: http://postgresapp.com/documentation
+# ------------------------------------------------------------------------------
+export PATH=/Applications/Postgres.app/Contents/MacOS/bin:$PATH
+
+# ------------------------------------------------------------------------------
 # Pimp my prompt
 # ------------------------------------------------------------------------------
 function __ps1_newline_login {
@@ -61,6 +67,10 @@ source "`brew --prefix`/etc/grc.bashrc"
 # ------------------------------------------------------------------------------
 # Enable shims and autocompletion
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+
+# Adding project-specific binstubs to PATH
+# (Ref.: https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs)
+export PATH="./bin:$PATH"
 
 # ------------------------------------------------------------------------------
 # EDITOR

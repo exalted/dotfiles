@@ -91,6 +91,8 @@ brew install node
 brew install rbenv
 brew install ruby-build
 brew install rbenv-gem-rehash
+brew install rbenv-vars
+brew install rbenv-default-gems
 
 brew install rmtrash
 brew install bash-completion
@@ -101,6 +103,14 @@ brew install colordiff
 brew install grc
 
 sudo gem install liftoff
+```
+
+### Configure
+
+```bash
+mkdir -p "$HOME/.rbenv"
+
+ln -s "$DEVELOPMENT_DIR/dotfiles/default-gems.symlink" "$HOME/.rbenv/default-gems"
 ```
 
 Mark(ed)down
