@@ -101,6 +101,7 @@ brew install wget
 
 brew install colordiff
 brew install grc
+brew install jsonpp
 
 sudo gem install liftoff
 ```
