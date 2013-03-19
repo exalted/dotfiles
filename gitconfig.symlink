@@ -34,6 +34,7 @@
 	hist = log --color --pretty=format:\"%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(blue)— %an%C(reset) %C(green)(%ad)%C(reset)\" --relative-date --decorate
 	unstage = reset HEAD
 	sync = "!git up && git push"
+	ls-ignored = "!git ls-files --others -i --exclude-standard"
 [git-up "rebase"]
 	arguments = --preserve-merges
 	log-hook = "echo \"changes on $1:\"; git log --oneline --decorate $1..$2"
