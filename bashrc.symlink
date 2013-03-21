@@ -63,6 +63,14 @@ export GREP_OPTIONS='--color=auto'
 source "`brew --prefix`/etc/grc.bashrc"
 
 # ------------------------------------------------------------------------------
+# virtualenv
+# ------------------------------------------------------------------------------
+# startup virtualenv-burrito
+if [ -f $HOME/.venvburrito/startup.sh ]; then
+    . $HOME/.venvburrito/startup.sh
+fi
+
+# ------------------------------------------------------------------------------
 # rbenv
 # ------------------------------------------------------------------------------
 # Enable shims and autocompletion
