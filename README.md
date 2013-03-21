@@ -1,25 +1,29 @@
 README
 ======
 
-Get your shit together.
-
-Homebrew
---------
+Get your shit together
+----------------------
 
 ```bash
-ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
+export DEVELOPMENT_DIR="$HOME/Development"
 ```
 
 Git
 ---
 
+### Install
+
 ```bash
 brew install git
 brew install hub
-sudo gem install git-up
+sudo gem install --verbose git-up
 brew install gibo
-sudo gem install svn2git
+sudo gem install --verbose svn2git
+```
 
+### Configure
+
+```bash
 mkdir -p "$HOME/.config/git"
 
 ln -s "$DEVELOPMENT_DIR/dotfiles/gitconfig.symlink" "$HOME/.config/git/config"
@@ -31,25 +35,14 @@ dotfiles
 --------
 
 ```bash
-`# export DEVELOPMENT_DIR="$HOME/Development"`
-git clone exalted/dotfiles "$DEVELOPMENT_DIR/dotfiles"
-cd "$DEVELOPMENT_DIR/dotfiles"
 f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
 ```
 
-Fonts and Colors
-----------------
-
-### Terminal (OS X)
-
-1. Open Terminal.app and go to Settings tab in application preferences
-2. Drag and drop `IR_Black (custom).terminal` file on profiles list section of the window
-3. Select "IR_Black (custom)" and click on "Default" button at the bottom of profiles list
-
-### Xcode
+Homebrew
+--------
 
 ```bash
-ln -s "$DEVELOPMENT_DIR/dotfiles/Midnight (custom).dvtcolortheme" "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/Midnight (custom).dvtcolortheme"
+ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
 ```
 
 Sublime Text 2
@@ -81,29 +74,25 @@ ln -s "$DEVELOPMENT_DIR/dotfiles/Marked.sublime-build.symlink" "$HOME/Library/Ap
  2. [Follow these instructions](http://wbond.net/sublime_packages/package_control/installation)
  3. Restart Sublime Text
 
-Utilities
----------
+Python
+------
 
 ```bash
 brew install python
-brew install node
+curl -s https://raw.github.com/brainsik/virtualenv-burrito/master/virtualenv-burrito.sh | exclude_profile=1 $SHELL
+```
 
+Ruby
+----
+
+### Install
+
+```bash
 brew install rbenv
 brew install ruby-build
 brew install rbenv-gem-rehash
 brew install rbenv-vars
 brew install rbenv-default-gems
-
-brew install rmtrash
-brew install bash-completion
-brew install pwgen
-brew install wget
-
-brew install colordiff
-brew install grc
-brew install jsonpp
-
-sudo gem install liftoff
 ```
 
 ### Configure
@@ -114,17 +103,58 @@ mkdir -p "$HOME/.rbenv"
 ln -s "$DEVELOPMENT_DIR/dotfiles/default-gems.symlink" "$HOME/.rbenv/default-gems"
 ```
 
+Node
+----
+
+```bash
+brew install node
+```
+
+Utilities
+---------
+
+```bash
+brew install rmtrash
+brew install bash-completion
+brew install pwgen
+brew install wget
+
+brew install colordiff
+brew install grc
+brew install jsonpp
+
+sudo gem install --verbose liftoff
+```
+
+Fonts and Colors
+----------------
+
+### Terminal (OS X)
+
+1. Open Terminal.app and go to Settings tab in application preferences
+2. Drag and drop `IR_Black (custom).terminal` file on profiles list section of the window
+3. Select "IR_Black (custom)" and click on "Default" button at the bottom of profiles list
+
+### Xcode
+
+```bash
+mkdir -p "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+
+ln -s "$DEVELOPMENT_DIR/dotfiles/Midnight (custom).dvtcolortheme" "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/Midnight (custom).dvtcolortheme"
+```
+
 Mark(ed)down
 ------------
 
 ```bash
 `# Read first: "Note for rvm/rbenv users" at http://support.markedapp.com/kb/how-to-tips-and-tricks/using-marked-with-github-flavored-markdown-and-syntax-highlighting`
-sudo gem install redcarpet pygments.rb
+sudo gem install --verbose redcarpet
+sudo gem install --verbose pygments.rb
 git clone alampros/Docter "$DEVELOPMENT_DIR/Docter"
 cd "$DEVELOPMENT_DIR/Docter"
 npm --global install
-`# Continue here: https://github.com/alampros/Docter#using-with-markedapp`
 ln -s "/Applications/Marked.app/Contents/Resources/mark" /usr/local/bin/mark
+`# Continue here: https://github.com/alampros/Docter#using-with-markedapp`
 ```
 
 Todo
