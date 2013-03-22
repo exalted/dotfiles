@@ -2,6 +2,7 @@
 	"installed_packages":
 	[
 		"AdvancedNewFile",
+		"DetectSyntax",
 		"GitGutter",
 		"Package Control",
 		"SideBarEnhancements",
