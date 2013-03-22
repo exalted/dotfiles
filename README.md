@@ -161,4 +161,5 @@ ln -s "/Applications/Marked.app/Contents/Resources/mark" /usr/local/bin/mark
 Todo
 ----
 
- * Installing gems using `sudo` sucks! How to install in `/usr/local` instead?
+ * Installing gems using `sudo` sucks! Install in `/usr/local` instead.
+ * Replace "hushlogin" with http://apple.stackexchange.com/questions/31872/how-do-i-reset-the-scrollback-in-the-terminal-via-a-shell-command.
