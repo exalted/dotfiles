@@ -114,14 +114,15 @@ Utilities
 ---------
 
 ```bash
-brew install rmtrash
 brew install bash-completion
-brew install pwgen
-brew install wget
 
 brew install colordiff
 brew install grc
 brew install jsonpp
+
+brew install rmtrash
+brew install pwgen
+brew install wget
 
 sudo gem install --verbose liftoff
 ```
