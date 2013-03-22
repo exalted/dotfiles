@@ -1,2 +1,5 @@
 *.pbxproj merge=union
 *.m diff=objc
+*.py diff=python
+*.rb diff=ruby
+*.html diff=html
