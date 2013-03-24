@@ -122,7 +122,9 @@ brew install jsonpp
 
 brew install rmtrash
 brew install pwgen
+
 brew install wget
+sudo pip install --upgrade httpie
 
 sudo gem install --verbose liftoff
 ```
