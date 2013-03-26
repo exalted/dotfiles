@@ -16,7 +16,8 @@ Git
 ```bash
 brew install git
 brew install hub
-sudo gem install --verbose git-up
+`# See todo #3 in README`
+`# sudo gem install --verbose git-up`
 brew install gibo
 sudo gem install --verbose svn2git
 ```
@@ -116,7 +117,6 @@ Utilities
 ```bash
 brew install bash-completion
 
-brew install colordiff
 brew install grc
 brew install jsonpp
 
@@ -163,5 +163,6 @@ ln -s "/Applications/Marked.app/Contents/Resources/mark" /usr/local/bin/mark
 Todo
 ----
 
- * Installing gems using `sudo` sucks! Install in `/usr/local` instead.
- * Replace "hushlogin" with http://apple.stackexchange.com/questions/31872/how-do-i-reset-the-scrollback-in-the-terminal-via-a-shell-command.
+ 1. Installing gems using `sudo` sucks! Install in `/usr/local` instead.
+ 2. Replace "hushlogin" with http://apple.stackexchange.com/questions/31872/how-do-i-reset-the-scrollback-in-the-terminal-via-a-shell-command.
+ 3. Add best-practice alises for git CLI

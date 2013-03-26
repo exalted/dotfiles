@@ -63,6 +63,12 @@ export GREP_OPTIONS='--color=auto'
 source "`brew --prefix`/etc/grc.bashrc"
 
 # ------------------------------------------------------------------------------
+# More less ;-)
+# ------------------------------------------------------------------------------
+
+alias less='less --RAW-CONTROL-CHARS --IGNORE-CASE'
+
+# ------------------------------------------------------------------------------
 # virtualenv
 # ------------------------------------------------------------------------------
 # startup virtualenv-burrito
@@ -110,7 +116,7 @@ eval "$(hub alias -s)"
 # Ref.: https://github.com/jkbr/httpie#redirected-output
 # ------------------------------------------------------------------------------
 function httpless {
-    http --pretty=all "$@" | less -R;
+    http --pretty=all "$@" | less --RAW-CONTROL-CHARS --IGNORE-CASE;
 }
 
 # ------------------------------------------------------------------------------
