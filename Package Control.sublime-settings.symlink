@@ -4,6 +4,7 @@
 		"AdvancedNewFile",
 		"DetectSyntax",
 		"GitGutter",
+		"INI",
 		"Package Control",
 		"SideBarEnhancements",
 		"SublimeLinter",
