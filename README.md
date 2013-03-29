@@ -46,6 +46,15 @@ Homebrew
 ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
 ```
 
+SSH
+---
+
+```bash
+mkdir -p "$HOME/.ssh"
+
+ln -s "$DEVELOPMENT_DIR/dotfiles/sshconfig.symlink" "$HOME/.ssh/config"
+```
+
 Sublime Text 2
 --------------
 

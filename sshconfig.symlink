@@ -1,0 +1,4 @@
+Host heroku.apexnet
+    HostName heroku.com
+    IdentityFile ~/.ssh/heroku_rsa
+    IdentitiesOnly yes
