@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------------------
-# Ref.: http://stackoverflow.com/a/11335979/11895
+# Homebrew
 # ------------------------------------------------------------------------------
 homebrew=/usr/local/bin:/usr/local/sbin
 export PATH=$homebrew:$PATH
@@ -28,7 +28,7 @@ fi
 
 # ------------------------------------------------------------------------------
 # Add the /bin directory that ships with Postgres.app
-# Ref.: http://postgresapp.com/documentation
+# (Ref.: http://postgresapp.com/documentation)
 # ------------------------------------------------------------------------------
 export PATH=/Applications/Postgres.app/Contents/MacOS/bin:$PATH
 
@@ -57,7 +57,8 @@ export GIT_PS1_SHOWDIRTYSTATE=true `# show unstaged (*) and staged (+) changes`
 export PS1="\[\e[32m\]\$(__git_ps1 \"%s \")\[\e[31m\]➜\[\e[0m\]  "
 
 # ------------------------------------------------------------------------------
-# Ref.: http://noiseandheat.com/blog/2011/12/os-x-lion-terminal-colours/
+# Terminal colors
+# (Ref.: http://noiseandheat.com/blog/2011/12/os-x-lion-terminal-colours/)
 # ------------------------------------------------------------------------------
 #
 # Tell ls to be colourful
@@ -136,7 +137,8 @@ export EDITOR='subl'
 export DEVELOPMENT_DIR=$HOME/Development
 
 # ------------------------------------------------------------------------------
-# Ref.: http://superuser.com/a/95655/45837
+# Disabling tilde expansion
+# (Ref.: http://superuser.com/a/95655/45837)
 # ------------------------------------------------------------------------------
 __expand_tilde_by_ref(){ true; }
 _expand(){ true; }
@@ -147,19 +149,21 @@ _expand(){ true; }
 alias cd..="cd .."
 
 # ------------------------------------------------------------------------------
-# Ref.: https://github.com/defunkt/hub#aliasing
+# Alias hub to git
+# (Ref.: https://github.com/defunkt/hub#aliasing)
 # ------------------------------------------------------------------------------
 eval "$(hub alias -s)"
 
 # ------------------------------------------------------------------------------
-# Ref.: https://github.com/jkbr/httpie#redirected-output
+# HTTPie with colorized and paged output
+# (Ref.: https://github.com/jkbr/httpie#redirected-output)
 # ------------------------------------------------------------------------------
 function httpless {
     http --pretty=all "$@" | less --RAW-CONTROL-CHARS --IGNORE-CASE;
 }
 
 # ------------------------------------------------------------------------------
-# Ref.: https://github.com/jkbr/httpie#redirected-output
+# Generate random passwords as by KION SpA specs
 # ------------------------------------------------------------------------------
 alias kionpw='pwgen -cnyB 10 1'
 

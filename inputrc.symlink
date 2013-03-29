@@ -1,5 +1,6 @@
 # ------------------------------------------------------------------------------
-# Ref.: http://osxdaily.com/2012/08/02/improve-tab-completion-in-mac-os-x-terminal/
+# Improve Tab Completion
+# (Ref.: http://osxdaily.com/2012/08/02/improve-tab-completion-in-mac-os-x-terminal/)
 # ------------------------------------------------------------------------------
 set completion-ignore-case on
 set show-all-if-ambiguous on
