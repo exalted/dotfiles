@@ -29,7 +29,7 @@ mkdir -p "$HOME/.config/git"
 
 ln -s "$DEVELOPMENT_DIR/dotfiles/gitconfig.symlink" "$HOME/.config/git/config"
 ln -s "$DEVELOPMENT_DIR/dotfiles/gitattributes.symlink" "$HOME/.config/git/attributes"
-gibo -u && gibo Django Objective-C Python Archives OSX PyCharm SublimeText SVN > "$HOME/.config/git/ignore"
+gibo -u && gibo Django Objective-C Python Archives OSX PyCharm SublimeText SVN Ruby Rails > "$HOME/.config/git/ignore"
 ```
 
 dotfiles
