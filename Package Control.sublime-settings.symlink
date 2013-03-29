@@ -3,6 +3,7 @@
 	[
 		"AdvancedNewFile",
 		"DetectSyntax",
+		"FileClose",
 		"GitGutter",
 		"INI",
 		"Package Control",
