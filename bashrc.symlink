@@ -20,6 +20,21 @@ export PATH=/usr/local/share/python:$PATH
 export PATH=/usr/local/share/npm/bin:$PATH
 
 # ------------------------------------------------------------------------------
+# Better Bash
+# ------------------------------------------------------------------------------
+export HISTSIZE=10000
+# (Ref.: http://www.talug.org/events/20030709/cmdline_history.html)
+export HISTIGNORE="&:[ \t]*:ls:[bf]g:exit"
+
+# Don't tab-complete if prompt is empty
+shopt -s no_empty_cmd_completion
+
+# History completion to what's already on the line
+# (Ref.: http://stackoverflow.com/a/1030206/11895)
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
+
+# ------------------------------------------------------------------------------
 # See "brew info bash-completion"
 # ------------------------------------------------------------------------------
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
