@@ -173,6 +173,6 @@ ln -s "/Applications/Marked.app/Contents/Resources/mark" /usr/local/bin/mark
 Todo
 ----
 
- 1. Installing gems using `sudo` sucks! Install in `/usr/local` instead.
+ 1. Installing gems using `sudo` sucks! (I could install with `rbenv`, but that's a problem for Marked.app: see ["Note for rvm/rbenv users"](http://support.markedapp.com/kb/how-to-tips-and-tricks/using-marked-with-github-flavored-markdown-and-syntax-highlighting))
  2. Replace "hushlogin" with http://apple.stackexchange.com/questions/31872/how-do-i-reset-the-scrollback-in-the-terminal-via-a-shell-command.
  3. Add best-practice alises for git CLI
