@@ -8,6 +8,13 @@ Get your shit together
 export DEVELOPMENT_DIR="$HOME/Development"
 ```
 
+Homebrew
+--------
+
+```bash
+ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
+```
+
 Git
 ---
 
@@ -37,13 +44,6 @@ dotfiles
 
 ```bash
 f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "gemrc"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
-```
-
-Homebrew
---------
-
-```bash
-ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
 ```
 
 SSH
