@@ -3,7 +3,7 @@
 	[
 		"AdvancedNewFile",
 		"Alignment",
-		"DetectSyntax",
+		"ApplySyntax",
 		"ERB Snippets",
 		"FileClose",
 		"Gem Browser",
