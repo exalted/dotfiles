@@ -15,28 +15,30 @@ Homebrew
 ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
 ```
 
-Git
----
+Version Control
+---------------
 
 ### Install
 
 ```bash
 brew install git
 brew install hub
-`# See todo #3 in README`
-`# sudo gem install --verbose git-up`
+sudo gem install --verbose --no-rdoc --no-ri git-up
 brew install gibo
-sudo gem install --verbose svn2git
+sudo gem install --verbose --no-rdoc --no-ri svn2git
 ```
 
 ### Configure
 
 ```bash
 mkdir -p "$HOME/.config/git"
+mkdir -p "$HOME/.subversion"
 
 ln -s "$DEVELOPMENT_DIR/dotfiles/gitconfig.symlink" "$HOME/.config/git/config"
 ln -s "$DEVELOPMENT_DIR/dotfiles/gitattributes.symlink" "$HOME/.config/git/attributes"
 gibo -u && gibo Django Objective-C Python Archives OSX PyCharm SublimeText SVN Ruby Rails > "$HOME/.config/git/ignore"
+
+ln -s "$DEVELOPMENT_DIR/dotfiles/subversionconfig.symlink" "$HOME/.subversion/config"
 ```
 
 dotfiles
@@ -139,7 +141,7 @@ brew install pwgen
 brew install wget
 sudo pip install --upgrade httpie
 
-sudo gem install --verbose liftoff
+sudo gem install --verbose --no-rdoc --no-ri liftoff
 ```
 
 Fonts and Colors
@@ -164,8 +166,8 @@ Mark(ed)down
 
 ```bash
 `# Read first: "Note for rvm/rbenv users" at http://support.markedapp.com/kb/how-to-tips-and-tricks/using-marked-with-github-flavored-markdown-and-syntax-highlighting`
-sudo gem install --verbose redcarpet
-sudo gem install --verbose pygments.rb
+sudo gem install --verbose --no-rdoc --no-ri redcarpet
+sudo gem install --verbose --no-rdoc --no-ri pygments.rb
 git clone alampros/Docter "$DEVELOPMENT_DIR/Docter"
 cd "$DEVELOPMENT_DIR/Docter"
 npm --global install

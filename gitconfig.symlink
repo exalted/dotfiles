@@ -28,20 +28,28 @@
 [color]
 	ui = auto
 [alias]
-	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
 	co = checkout
 	st = status
 	br = branch
-	hist = log --color --pretty=format:\"%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(blue)— %an%C(reset) %C(green)(%ad)%C(reset)\" --relative-date --decorate
+	cm = commit
+	update = up
+	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
+	hist = log --color --pretty=format:'%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(black)— %an (%ad)%C(reset)' --relative-date
+	ls-ignored = !git ls-files --others --ignored --exclude-standard
+	empty-commit = commit --allow-empty --allow-empty-message --message=""
+	rollback = !bash -ic '__git_stash_wrap git reset $@' -
 	unstage = reset HEAD
-	# See todo #3 in README
-# 	sync = "!git up && git push"
-	ls-ignored = "!git ls-files --others --ignored --exclude-standard"
-	# See todo #3 in README
-# [git-up "rebase"]
-# 	arguments = --preserve-merges
-# 	log-hook = "echo \"changes on $1:\"; git log --oneline --decorate $1..$2"
+	discard = checkout --
+	publish = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); git push --set-upstream origin $BRANCH; }; f"
+	sync = !bash -c 'git up && git publish'
+	deploy = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); if [ $BRANCH = "master" ]; then git merge --no-ff $@; else echo "You must switch to \\'master\\' to deploy a feature branch." >&2; exit 1; fi; }; f"
 [push]
 	default = simple
 [rebase]
 	autosquash = true
+[help]
+	autocorrect = 1
+[rerere]
+	enabled = 1
+[git-up "rebase"]
+	arguments = --preserve-merges
