@@ -31,7 +31,7 @@
 	co = checkout
 	st = status
 	br = branch
-	cm = commit
+	ci = commit
 	update = up
 	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
 	hist = log --color --pretty=format:'%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(black)— %an (%ad)%C(reset)' --relative-date
