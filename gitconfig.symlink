@@ -41,7 +41,8 @@
 	unstage = reset HEAD
 	discard = checkout --
 	publish = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); git push --set-upstream origin $BRANCH; }; f"
-	sync = !bash -c 'git up && git publish'
+	cleanup = !bash -c 'git branch --merged | grep -v "\\*" | xargs -n 1 git branch -d'
+	sync = "!f() { git up && git publish && if [[ "$1" == "--cleanup" ]]; then echo 'Cleaning-up... '; git cleanup; fi }; f"
 	deploy = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); if [ $BRANCH = "master" ]; then git merge --no-ff $@; else echo "You must switch to \\'master\\' to deploy a feature branch." >&2; exit 1; fi; }; f"
 [push]
 	default = simple
