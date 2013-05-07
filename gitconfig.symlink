@@ -44,6 +44,7 @@
 	cleanup = !bash -c 'git branch --merged | grep -v "\\*" | xargs -n 1 git branch -d'
 	sync = "!f() { git up && git publish && if [[ "$1" == "--cleanup" ]]; then echo 'Cleaning-up... '; git cleanup; fi }; f"
 	deploy = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); if [ $BRANCH = "master" ]; then git merge --no-ff $@; else echo "You must switch to \\'master\\' to deploy a feature branch." >&2; exit 1; fi; }; f"
+	issues = !ghi --no-pager
 [push]
 	default = simple
 [rebase]
@@ -54,3 +55,5 @@
 	enabled = 1
 [git-up "rebase"]
 	arguments = --preserve-merges
+[github]
+	user = exalted

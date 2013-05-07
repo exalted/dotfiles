@@ -24,6 +24,7 @@ Version Control
 brew install git
 brew install hub
 sudo gem install --verbose --no-rdoc --no-ri git-up
+sudo gem install --verbose --no-rdoc --no-ri ghi
 brew install gibo
 sudo gem install --verbose --no-rdoc --no-ri svn2git
 ```
@@ -46,6 +47,8 @@ dotfiles
 
 ```bash
 f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "gemrc"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
+`# Private dotfiles:`
+f() { local PRIVATE_DOTFILES=("bashrc_private"); for i in ${PRIVATE_DOTFILES[@]}; do ln -s "$HOME/Dropbox/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
 ```
 
 SSH
