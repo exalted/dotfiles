@@ -23,8 +23,10 @@ export PATH=/usr/local/share/npm/bin:$PATH
 # Better Bash
 # ------------------------------------------------------------------------------
 export HISTSIZE=10000
-# (Ref.: http://www.talug.org/events/20030709/cmdline_history.html)
-export HISTIGNORE="&:[ \t]*:ls:[bf]g:exit"
+# (Ref.: http://askubuntu.com/a/15929)
+export HISTCONTROL=ignoreboth:erasedups
+# # (Ref.: http://www.talug.org/events/20030709/cmdline_history.html)
+# export HISTIGNORE="&:ls:[bf]g:exit"
 
 # Don't tab-complete if prompt is empty
 shopt -s no_empty_cmd_completion
