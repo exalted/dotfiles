@@ -1,5 +1,6 @@
 {
 	"color_scheme": "Packages/User/Monokai Soda.tmTheme",
+	"detect_slow_plugins": false,
 	"draw_minimap_border": true,
 	"ensure_newline_at_eof_on_save": true,
 	"font_face": "Monaco",
@@ -10,6 +11,11 @@
 	[
 		"Vintage"
 	],
+	"indent_guide_options":
+	[
+		"draw_normal",
+		"draw_active"
+	],
 	"indent_to_bracket": true,
 	"rulers":
 	[
@@ -19,5 +25,5 @@
 	"theme": "Soda Dark.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"trim_trailing_white_space_on_save": true,
-	"word_wrap": true
+	"wrap_width": 81
 }

@@ -48,7 +48,11 @@ dotfiles
 
 ```bash
 f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "gemrc"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
-`# Private dotfiles:`
+```
+
+### Private dotfiles
+
+```bash
 f() { local PRIVATE_DOTFILES=("bashrc_private"); for i in ${PRIVATE_DOTFILES[@]}; do ln -s "$HOME/Dropbox/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
 ```
 
@@ -74,18 +78,33 @@ ln -s "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl" /usr/lo
 
 ### Configure
 
+#### Application
+
 ```bash
-ln -s "$DEVELOPMENT_DIR/dotfiles/Preferences.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/Default (OSX).sublime-keymap.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap"
-ln -s "$DEVELOPMENT_DIR/dotfiles/Package Control.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Package Control.sublime-settings"
-ln -s "$DEVELOPMENT_DIR/dotfiles/GitGutter.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/GitGutter.sublime-settings"
-ln -s "$DEVELOPMENT_DIR/dotfiles/Monokai Soda.tmTheme.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Monokai Soda.tmTheme"
+ln -s "$DEVELOPMENT_DIR/dotfiles/Preferences.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings"
+```
+
+#### Themes
+
+```bash
 ln -s "$DEVELOPMENT_DIR/dotfiles/Espresso Soda.tmTheme.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Espresso Soda.tmTheme"
-ln -s "$DEVELOPMENT_DIR/dotfiles/Ruby.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Ruby.sublime-settings"
+ln -s "$DEVELOPMENT_DIR/dotfiles/Monokai Soda.tmTheme.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Monokai Soda.tmTheme"
+```
+
+#### Packages
+
+```bash
+ln -s "$DEVELOPMENT_DIR/dotfiles/GitGutter.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/GitGutter.sublime-settings"
+ln -s "$DEVELOPMENT_DIR/dotfiles/Package Control.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Package Control.sublime-settings"
+```
+#### Syntax Specific
+
+```bash
+ln -s "$DEVELOPMENT_DIR/dotfiles/CoffeeScript.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/CoffeeScript.sublime-settings"
+ln -s "$DEVELOPMENT_DIR/dotfiles/JSON.sublime-settings.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/JSON.sublime-settings.sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/Ruby on Rails.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Ruby on Rails.sublime-settings"
-ln -s "$DEVELOPMENT_DIR/dotfiles/ApplySyntax.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/ApplySyntax.sublime-settings"
-`# Marked Bonus Pack available here: http://support.markedapp.com/kb/how-to-tips-and-tricks/marked-bonus-pack-scripts-commands-and-bundles`
-ln -s "$DEVELOPMENT_DIR/dotfiles/Marked.sublime-build.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Marked.sublime-build"
+ln -s "$DEVELOPMENT_DIR/dotfiles/Ruby.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Ruby.sublime-settings"
 ```
 
 ### Install Sublime Package Control
@@ -168,15 +187,23 @@ ln -s "$DEVELOPMENT_DIR/dotfiles/Midnight (custom).dvtcolortheme" "$HOME/Library
 Mark(ed)down
 ------------
 
+Read first: "Note for rvm/rbenv users" at http://support.markedapp.com/kb/how-to-tips-and-tricks/using-marked-with-github-flavored-markdown-and-syntax-highlighting
+
 ```bash
-`# Read first: "Note for rvm/rbenv users" at http://support.markedapp.com/kb/how-to-tips-and-tricks/using-marked-with-github-flavored-markdown-and-syntax-highlighting`
 sudo gem install --verbose --no-rdoc --no-ri redcarpet
 sudo gem install --verbose --no-rdoc --no-ri pygments.rb
 git clone alampros/Docter "$DEVELOPMENT_DIR/Docter"
 cd "$DEVELOPMENT_DIR/Docter"
 npm --global install
 ln -s "/Applications/Marked.app/Contents/Resources/mark" /usr/local/bin/mark
-`# Continue here: https://github.com/alampros/Docter#using-with-markedapp`
+```
+
+Continue here: https://github.com/alampros/Docter#using-with-markedapp
+
+Configure Sublime Text with "Marked Bonus Pack" (available here: http://support.markedapp.com/kb/how-to-tips-and-tricks/marked-bonus-pack-scripts-commands-and-bundles)
+
+```bash
+ln -s "$DEVELOPMENT_DIR/dotfiles/Marked.sublime-build.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Marked.sublime-build"
 ```
 
 Todo
