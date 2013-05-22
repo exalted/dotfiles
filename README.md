@@ -215,3 +215,4 @@ Todo
  4. Replace most of the `mkdir`s in this file by symlinking to that directory instead (For private files/folders symlink to `~/Dropbox/dotfiles/` instead)
  5. Create `script/bootstrap` that you could run over and over again which would install or setup what's missing automagically or do nothing if everything is just in place
  6. Checkout [legit](https://github.com/kennethreitz/legit) which *could* replace current git aliases
+ 7. Add `~/.pow` (a symlink to it, or sth.)
