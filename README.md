@@ -157,6 +157,7 @@ brew install bash-completion
 
 brew install grc
 brew install jsonpp
+brew install graphviz
 
 brew install rmtrash
 brew install pwgen
