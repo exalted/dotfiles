@@ -207,6 +207,13 @@ Configure Sublime Text with "Marked Bonus Pack" (available here: http://support.
 ln -s "$DEVELOPMENT_DIR/dotfiles/Marked.sublime-build.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Marked.sublime-build"
 ```
 
+Mail
+----
+
+```bash
+defaults write com.apple.mail SuppressAddressHistory -bool true
+```
+
 Todo
 ----
 
