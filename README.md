@@ -113,6 +113,10 @@ ln -s "$DEVELOPMENT_DIR/dotfiles/Ruby.sublime-settings.symlink" "$HOME/Library/A
  2. [Follow these instructions](http://wbond.net/sublime_packages/package_control/installation)
  3. Restart Sublime Text
 
+### Plugins to Install Without Package Control
+
+ 1. [Install Rails Snippets](https://github.com/tadast/sublime-rails-snippets/#readme) ([Why?](https://github.com/tadast/sublime-rails-snippets/issues/8))
+
 Python
 ------
 
