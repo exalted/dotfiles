@@ -4,6 +4,7 @@
 		"AdvancedNewFile",
 		"Alignment",
 		"ApplySyntax",
+		"Better CoffeeScript",
 		"CoffeeLint",
 		"ERB Snippets",
 		"FileClose",
@@ -13,10 +14,9 @@
 		"Package Control",
 		"Pretty JSON",
 		"Rake",
-		"SCSS",
 		"SideBarEnhancements",
-		"sublime-better-coffeescript",
 		"SublimeLinter",
+		"Syntax Highlighting for Sass",
 		"Theme - Soda",
 		"TomDoc"
 	]
