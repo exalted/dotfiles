@@ -1,4 +1,6 @@
 [
-    { "keys": ["super+alt+w"], "command": "file_close_others" },
-    { "keys": ["super+alt+shift+w"], "command": "file_close_to_right" }
+    { "keys": ["super+shift+left"], "command": "prev_view" },
+    { "keys": ["super+shift+right"], "command": "next_view" },
+    { "keys": ["super+alt+shift+w"], "command": "file_close_to_right" },
+    { "keys": ["super+alt+w"], "command": "file_close_others" }
 ]
