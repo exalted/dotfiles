@@ -163,6 +163,8 @@
 	<true/>
 	<key>BlinkText</key>
 	<true/>
+	<key>CommandString</key>
+	<string></string>
 	<key>CursorBlink</key>
 	<true/>
 	<key>CursorColor</key>
@@ -195,6 +197,8 @@
 	<true/>
 	<key>ProfileCurrentVersion</key>
 	<real>2.02</real>
+	<key>RunCommandAsShell</key>
+	<true/>
 	<key>SelectionColor</key>
 	<data>
 	YnBsaXN0MDDUAQIDBAUGFRZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3AS
@@ -205,13 +209,13 @@
 	AAAAAAAAAAAAAAAAAADV
 	</data>
 	<key>ShouldLimitScrollback</key>
-	<integer>0</integer>
+	<integer>1</integer>
 	<key>ShowActiveProcessInTitle</key>
 	<false/>
 	<key>ShowCommandKeyInTitle</key>
 	<false/>
 	<key>ShowDimensionsInTitle</key>
-	<false/>
+	<true/>
 	<key>ShowShellCommandInTitle</key>
 	<false/>
 	<key>ShowTTYNameInTitle</key>
@@ -294,7 +298,7 @@
 	ZmZmAQGDzbVMPwGG
 	</data>
 	<key>columnCount</key>
-	<integer>150</integer>
+	<integer>120</integer>
 	<key>cyanColour</key>
 	<data>
 	BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARm
@@ -439,7 +443,7 @@
 	<key>type</key>
 	<string>Window Settings</string>
 	<key>useOptionAsMetaKey</key>
-	<false/>
+	<true/>
 	<key>whiteColour</key>
 	<data>
 	BAtzdHJlYW10eXBlZIHoA4QBQISEhAdOU0NvbG9yAISECE5TT2JqZWN0AIWEAWMBhARm
