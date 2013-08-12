@@ -47,7 +47,7 @@ dotfiles
 --------
 
 ```bash
-f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "gemrc"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
+f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "ackrc"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
 ```
 
 ### Private dotfiles
@@ -92,16 +92,42 @@ ln -s "$DEVELOPMENT_DIR/dotfiles/Espresso Soda.tmTheme.symlink" "$HOME/Library/A
 ln -s "$DEVELOPMENT_DIR/dotfiles/Monokai Soda.tmTheme.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Monokai Soda.tmTheme"
 ```
 
+#### Requirements
+
+```bash
+brew install ctags
+cat <<EOF >> "$HOME/.config/git/ignore"
+# Ignore tags created by ctags
+.tags
+.tags_sorted_by_file
+.gemtags
+
+
+EOF
+```
+
+If you are a Rubyist, you can build a Ruby Gem's tags with the following script:
+
+```ruby
+# (Ref.: https://github.com/SublimeText/CTags/blob/master/README.creole#usage)
+require 'bundler'
+paths = Bundler.load.specs.map(&:full_gem_path)
+system("ctags -R -f .gemtags #{paths.join(' ')}")
+```
+
 #### Packages
 
 ```bash
 ln -s "$DEVELOPMENT_DIR/dotfiles/GitGutter.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/GitGutter.sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/Package Control.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Package Control.sublime-settings"
+ln -s "$DEVELOPMENT_DIR/dotfiles/SublimeLinter.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/SublimeLinter.sublime-settings"
 ```
+
 #### Syntax Specific
 
 ```bash
 ln -s "$DEVELOPMENT_DIR/dotfiles/CoffeeScript.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/CoffeeScript.sublime-settings"
+ln -s "$DEVELOPMENT_DIR/dotfiles/Find Results.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Find Results.sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/HTML (Rails).sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/HTML (Rails).sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/JSON.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/JSON.sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/Ruby on Rails.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Ruby on Rails.sublime-settings"
