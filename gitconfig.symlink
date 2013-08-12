@@ -15,6 +15,7 @@
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [diff]
 	tool = Kaleidoscope
+	algorithm = histogram
 [difftool]
 	prompt = false
 [mergetool "Kaleidoscope"]
@@ -35,17 +36,24 @@
 	update = up
 	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
 	hist = log --color --pretty=format:'%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(black)— %an (%ad)%C(reset)' --relative-date
-	ls-ignored = !git ls-files --others --ignored --exclude-standard
+	live-log = "!f() { while true; do clear; echo 'Live log:\n'; git --no-pager hist --graph --all ${@:--10}; echo '\n...'; sleep 1; done }; f"
+	; ls-ignored = !git ls-files --others --ignored --exclude-standard
+	ls-ignored = !git status --ignored --short | ack -o '(?<=^!! ).*'
 	empty-commit = commit --allow-empty --allow-empty-message --message=""
-	rollback = !bash -ic '__git_stash_wrap git reset $@' -
-	unstage = reset HEAD
+	; rollback = !bash -ic '__git_stash_wrap git reset $@' -
+	; rollback = git reset --soft
+	unstage = reset HEAD --
 	discard = checkout --
 	publish = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); git push --set-upstream origin $BRANCH; }; f"
-	cleanup = !bash -c 'git branch --merged | grep -v "\\*" | xargs -n 1 git branch -d'
+	cleanup = !bash -c 'git branch --merged | grep -Ev "\\\\*\\|master" | xargs -n 1 git branch -d'
 	sync = "!f() { git up && git publish && if [[ "$1" == "--cleanup" ]]; then echo 'Cleaning-up... '; git cleanup; fi }; f"
 	deploy = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); if [ $BRANCH = "master" ]; then git merge --no-ff $@; else echo "You must switch to \\'master\\' to deploy a feature branch." >&2; exit 1; fi; }; f"
 	issues = !ghi --no-pager
 	search = "!f() { git hist -G $@; }; f"
+	save = stash save --include-untracked
+	assume = update-index --assume-unchanged
+	unassume = update-index --no-assume-unchanged
+	ls-assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
 [push]
 	default = simple
 [rebase]
