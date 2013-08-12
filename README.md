@@ -255,3 +255,4 @@ Todo
  5. Create `script/bootstrap` that you could run over and over again which would install or setup what's missing automagically or do nothing if everything is just in place
  6. Checkout [legit](https://github.com/kennethreitz/legit) which *could* replace current git aliases
  7. Add `~/.pow` (a symlink to it, or sth.)
+ 8. Hard-coded rbenv path [sucks](https://github.com/exalted/dotfiles/blob/1be30f7112c8b5370b9f48d4d69c4df8bc2dd1ff/SublimeLinter.sublime-settings.symlink#L3)
