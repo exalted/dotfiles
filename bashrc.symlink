@@ -71,7 +71,7 @@ PROMPT_COMMAND="${PROMPT_COMMAND}__ps1_newline_login;"
 export GIT_PS1_SHOWDIRTYSTATE=true `# show unstaged (*) and staged (+) changes`
 
 # export PS1="\h:\W \u\$ "
-export PS1="\[\e[32m\]\$(__git_ps1 \"%s \")\[\e[31m\]➜\[\e[0m\]  "
+export PS1="\[\e[32m\]➜  \[\e[34m\]\W:\[\e[31m\]\$(__git_ps1 \" (%s)\")\[\e[0m\]  "
 
 # ------------------------------------------------------------------------------
 # Terminal colors
