@@ -26,7 +26,6 @@ brew install hub
 sudo gem install --verbose --no-rdoc --no-ri git-up
 sudo gem install --verbose --no-rdoc --no-ri ghi
 brew install gibo
-sudo gem install --verbose --no-rdoc --no-ri pro
 sudo gem install --verbose --no-rdoc --no-ri svn2git
 ```
 
