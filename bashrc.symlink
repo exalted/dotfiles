@@ -22,7 +22,7 @@ export PATH=/usr/local/share/npm/bin:$PATH
 # ------------------------------------------------------------------------------
 # Better Bash
 # ------------------------------------------------------------------------------
-export HISTSIZE=10000
+export HISTSIZE=100000
 # (Ref.: http://askubuntu.com/a/15929)
 export HISTCONTROL=ignoreboth:erasedups
 # # (Ref.: http://www.talug.org/events/20030709/cmdline_history.html)
