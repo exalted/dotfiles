@@ -265,6 +265,6 @@ Todo
  4. Replace most of the `mkdir`s in this file by symlinking to that directory instead (For private files/folders symlink to `~/Dropbox/dotfiles/` instead)
  5. Create `script/bootstrap` that you could run over and over again which would install or setup what's missing automagically or do nothing if everything is just in place
  6. Checkout [legit](https://github.com/kennethreitz/legit) which *could* replace current git aliases
- 7. Add `~/.pow` (a symlink to it, or sth.)
+ 7. Symlink to`~/.pow` and `~/Library/Application\ Support/Pow/Hosts` (for Pow.cx, Anvil, etc.)
  8. Hard-coded rbenv path [sucks](https://github.com/exalted/dotfiles/blob/1be30f7112c8b5370b9f48d4d69c4df8bc2dd1ff/SublimeLinter.sublime-settings.symlink#L3)
  9. Set `Terminal.app`'s window (or better: tab?) title to whatever command name that is running at that moment (e.g., "foreman start", "script/start", "guard", etc.). Resources: [1](http://hints.macworld.com/dlfiles/preexec.bash.txt), [2](http://thelucid.com/2012/01/04/naming-your-terminal-tabs-in-osx-lion/), [3](http://dan.doezema.com/2013/04/programmatically-create-title-tabs-within-the-mac-os-x-terminal-app/), [4](http://stackoverflow.com/questions/4197441/get-name-of-last-run-program-in-bash), [5](http://unix.stackexchange.com/questions/33794/how-can-i-alias-to-last-command), [6](http://superuser.com/questions/117227/a-command-before-every-bash-command), [7](http://stackoverflow.com/questions/4585397/bash-run-some-command-before-or-after-every-command-entered-from-console)
