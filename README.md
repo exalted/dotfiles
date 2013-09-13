@@ -244,6 +244,17 @@ Mail
 defaults write com.apple.mail SuppressAddressHistory -bool true
 ```
 
+Dictionary
+----------
+
+```bash
+ln -s "$DEVELOPMENT_DIR/dotfiles/com.apple.Dictionary.plist.symlink" "$HOME/Library/Preferences/com.apple.Dictionary.plist"
+
+mkdir -p "$HOME/Library/Dictionaries/"
+
+ln -s "$DEVELOPMENT_DIR/dotfiles/italian.dictionary" "$HOME/Library/Dictionaries/italian.dictionary"
+```
+
 Todo
 ----
 
