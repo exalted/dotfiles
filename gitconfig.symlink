@@ -59,9 +59,9 @@
 [rebase]
 	autosquash = true
 [help]
-	autocorrect = 1
+	autocorrect = true
 [rerere]
-	enabled = 1
+	enabled = true
 [git-up "fetch"]
 	all = true
 [git-up "rebase"]
