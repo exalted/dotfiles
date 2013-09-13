@@ -220,7 +220,3 @@ function google {
         open "http://www.google.com/?q=$search";
     fi
 }
-alias search=google
-
-alias facebook="open http://www.facebook.com/"
-alias fb=facebook
