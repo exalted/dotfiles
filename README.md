@@ -129,6 +129,7 @@ ln -s "$DEVELOPMENT_DIR/dotfiles/CoffeeScript.sublime-settings.symlink" "$HOME/L
 ln -s "$DEVELOPMENT_DIR/dotfiles/Find Results.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Find Results.sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/HTML (Rails).sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/HTML (Rails).sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/JSON.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/JSON.sublime-settings"
+ln -s "$DEVELOPMENT_DIR/dotfiles/RSpec.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/RSpec.sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/Ruby on Rails.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Ruby on Rails.sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/Ruby.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Ruby.sublime-settings"
 ```
