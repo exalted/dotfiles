@@ -51,6 +51,7 @@
 	issues = !ghi --no-pager
 	search = "!f() { git hist -G $@; }; f"
 	save = stash save --include-untracked
+	restore = stash pop --index
 	assume = update-index --assume-unchanged
 	unassume = update-index --no-assume-unchanged
 	ls-assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
