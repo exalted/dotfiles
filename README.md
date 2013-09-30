@@ -245,6 +245,13 @@ Mail
 defaults write com.apple.mail SuppressAddressHistory -bool true
 ```
 
+Finder
+------
+
+```bash
+defaults write com.apple.desktopservices DSDontWriteNetworkStores true
+```
+
 Dictionary
 ----------
 
