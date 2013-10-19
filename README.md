@@ -42,6 +42,17 @@ gibo -u && gibo OSX Archives SublimeText SVN Tags > "$HOME/.config/git/ignore"
 ln -s "$DEVELOPMENT_DIR/dotfiles/subversionconfig.symlink" "$HOME/.subversion/config"
 ```
 
+Development
+-----------
+
+Apply git ignore rules below to each projects' `.gitignore` file.
+
+| Language & Framework |      Git ignore rules      |
+| -------------------- | -------------------------- |
+| Python & Django      | `Python VirtualEnv Django` |
+| Objective-C          | `Objective-C`              |
+| Ruby & Rails         | `Ruby Rails`               |
+
 dotfiles
 --------
 
