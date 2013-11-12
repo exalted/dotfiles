@@ -206,6 +206,7 @@ brew install pwgen
 
 brew install wget
 sudo pip install --upgrade httpie
+brew install siege
 
 sudo gem install --verbose --no-rdoc --no-ri liftoff
 ```
