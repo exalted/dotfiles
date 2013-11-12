@@ -57,7 +57,7 @@ dotfiles
 --------
 
 ```bash
-f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "ackrc"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
+f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "ackrc" "siegerc"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
 ```
 
 ### Private dotfiles
@@ -206,7 +206,7 @@ brew install pwgen
 
 brew install wget
 sudo pip install --upgrade httpie
-brew install siege
+brew install siege && sudo sysctl -w net.inet.tcp.msl=1000
 
 sudo gem install --verbose --no-rdoc --no-ri liftoff
 ```
