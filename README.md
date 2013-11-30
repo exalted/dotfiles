@@ -168,7 +168,11 @@ Ruby
 
 ### Install
 
+Read more: https://github.com/sstephenson/ruby-build/wiki#installing-200-p195-on-osx-107
+
 ```bash
+brew install openssl
+brew install readline
 brew install rbenv
 brew install ruby-build
 brew install rbenv-gem-rehash
@@ -182,6 +186,13 @@ brew install rbenv-default-gems
 mkdir -p "$HOME/.rbenv"
 
 ln -s "$DEVELOPMENT_DIR/dotfiles/default-gems.symlink" "$HOME/.rbenv/default-gems"
+```
+
+### Install a Ruby
+
+```bash
+export CFLAGS=-Wno-error=shorten-64-to-32
+env RUBY_CONFIGURE_OPTS=--with-openssl-dir=`brew --prefix openssl` CONFIGURE_OPTS=--with-readline-dir=`brew --prefix readline` rbenv install 2.0.0-p195
 ```
 
 Node
