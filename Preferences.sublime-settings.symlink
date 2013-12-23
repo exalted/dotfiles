@@ -39,7 +39,6 @@
 		".bundle",
 		"bin",
 		"log",
-		"public/assets",
 		"tmp",
 		"vendor"
 	],
