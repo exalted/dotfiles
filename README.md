@@ -155,6 +155,14 @@ ln -s "$DEVELOPMENT_DIR/dotfiles/Ruby.sublime-settings.symlink" "$HOME/Library/A
 
  1. [Install Rails Snippets](https://github.com/tadast/sublime-rails-snippets/#readme) ([Why?](https://github.com/tadast/sublime-rails-snippets/issues/8))
 
+Objective-C
+-----------
+
+```bash
+sudo gem install --verbose --no-rdoc --no-ri cocoapods
+pod setup
+```
+
 Python
 ------
 
