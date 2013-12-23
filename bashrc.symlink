@@ -220,3 +220,7 @@ function google {
         open "http://www.google.com/?q=$search";
     fi
 }
+
+function serve {
+    python -m SimpleHTTPServer "${1:-8080}"
+}
