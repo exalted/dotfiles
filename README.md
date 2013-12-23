@@ -228,6 +228,10 @@ sudo pip install --upgrade httpie
 brew install siege && sudo sysctl -w net.inet.tcp.msl=1000
 
 sudo gem install --verbose --no-rdoc --no-ri liftoff
+
+mkdir /usr/local/ThirdParty; cd $_
+curl -fsSkL https://github.com/paulhammond/jp/releases/download/v0.1/jp-0.1-darwin-x86_64.tar.gz | tar xfz -
+ln -s /usr/local/ThirdParty/jp-0.1/jp /usr/local/bin/jp
 ```
 
 Fonts and Colors
