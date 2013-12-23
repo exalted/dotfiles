@@ -296,6 +296,17 @@ mkdir -p "$HOME/Library/Dictionaries/"
 ln -s "$DEVELOPMENT_DIR/dotfiles/italian.dictionary" "$HOME/Library/Dictionaries/italian.dictionary"
 ```
 
+CUPS
+----
+
+Turn on the Mac's web interface for its CUPS server:
+
+```bash
+sudo cupsctl WebInterface=yes
+```
+
+Local printer configuration web page: `http://localhost:631/admin`.
+
 Todo
 ----
 
