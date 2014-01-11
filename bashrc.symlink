@@ -6,13 +6,6 @@ export PATH=$homebrew:$PATH
 unset homebrew
 
 # ------------------------------------------------------------------------------
-# Executable python scripts will be put in:
-#   /usr/local/share/python
-# so you may want to put "/usr/local/share/python" in your PATH, too.
-# ------------------------------------------------------------------------------
-export PATH=/usr/local/share/python:$PATH
-
-# ------------------------------------------------------------------------------
 # Homebrew recommends prepending the following path to your PATH environment
 # variable to have npm-installed binaries picked up:
 #   /usr/local/share/npm/bin
