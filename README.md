@@ -23,10 +23,10 @@ Version Control
 ```bash
 brew install git
 brew install hub
-sudo gem install --verbose --no-rdoc --no-ri git-up
-sudo gem install --verbose --no-rdoc --no-ri ghi
+sudo gem install --verbose --no-document git-up
+sudo gem install --verbose --no-document ghi
 brew install gibo
-sudo gem install --verbose --no-rdoc --no-ri svn2git
+sudo gem install --verbose --no-document svn2git
 ```
 
 ### Configure
@@ -219,7 +219,7 @@ brew install wget
 sudo pip install --upgrade httpie
 brew install siege && sudo sysctl -w net.inet.tcp.msl=1000
 
-sudo gem install --verbose --no-rdoc --no-ri liftoff
+sudo gem install --verbose --no-document liftoff
 ```
 
 Fonts and Colors
@@ -245,8 +245,8 @@ Mark(ed)down
 Read first: "Note for rvm/rbenv users" at http://support.markedapp.com/kb/how-to-tips-and-tricks/using-marked-with-github-flavored-markdown-and-syntax-highlighting
 
 ```bash
-sudo gem install --verbose --no-rdoc --no-ri redcarpet
-sudo gem install --verbose --no-rdoc --no-ri pygments.rb
+sudo gem install --verbose --no-document redcarpet
+sudo gem install --verbose --no-document pygments.rb
 git clone alampros/Docter "$DEVELOPMENT_DIR/Docter"
 cd "$DEVELOPMENT_DIR/Docter"
 npm --global install
