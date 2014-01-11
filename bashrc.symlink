@@ -193,7 +193,7 @@ alias kionpw='pwgen -cnyB 10 1'
 # ------------------------------------------------------------------------------
 # Fake commands
 # ------------------------------------------------------------------------------
-alias spider='wget --force-directories --recursive --no-clobber --convert-links --no-parent'
+alias spider='wget --force-directories --recursive --no-parent --no-clobber --convert-links --adjust-extension'
 
 alias diskusage='du -sh'
 
@@ -212,4 +212,8 @@ function google {
     else
         open "http://www.google.com/?q=$search";
     fi
+}
+
+function serve {
+    python -m SimpleHTTPServer "${1:-8080}"
 }
