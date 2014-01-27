@@ -25,7 +25,6 @@
 		"*.psd",
 		"*.db",
 		"*.orig",
-		"*.sublime-project",
 		".gemtags",
 		".git*",
 		".tags*"
