@@ -251,28 +251,6 @@ mkdir -p "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
 ln -s "$DEVELOPMENT_DIR/dotfiles/Midnight (custom).dvtcolortheme" "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes/Midnight (custom).dvtcolortheme"
 ```
 
-Mark(ed)down
-------------
-
-Read first: "Note for rvm/rbenv users" at http://support.markedapp.com/kb/how-to-tips-and-tricks/using-marked-with-github-flavored-markdown-and-syntax-highlighting
-
-```bash
-sudo gem install --verbose --no-document redcarpet
-sudo gem install --verbose --no-document pygments.rb
-git clone alampros/Docter "$DEVELOPMENT_DIR/Docter"
-cd "$DEVELOPMENT_DIR/Docter"
-npm --global install
-ln -s "/Applications/Marked.app/Contents/Resources/mark" /usr/local/bin/mark
-```
-
-Continue here: https://github.com/alampros/Docter#using-with-markedapp
-
-Configure Sublime Text with "Marked Bonus Pack" (available here: http://support.markedapp.com/kb/how-to-tips-and-tricks/marked-bonus-pack-scripts-commands-and-bundles)
-
-```bash
-ln -s "$DEVELOPMENT_DIR/dotfiles/Marked.sublime-build.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Marked.sublime-build"
-```
-
 Mail
 ----
 
