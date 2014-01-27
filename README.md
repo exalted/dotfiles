@@ -143,6 +143,7 @@ ln -s "$DEVELOPMENT_DIR/dotfiles/JSON.sublime-settings.symlink" "$HOME/Library/A
 ln -s "$DEVELOPMENT_DIR/dotfiles/RSpec.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/RSpec.sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/Ruby on Rails.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Ruby on Rails.sublime-settings"
 ln -s "$DEVELOPMENT_DIR/dotfiles/Ruby.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Ruby.sublime-settings"
+ln -s "$DEVELOPMENT_DIR/dotfiles/SCSS.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/SCSS.sublime-settings"
 ```
 
 ### Install Sublime Package Control
