@@ -306,3 +306,4 @@ Todo
 * Improve git alias `live-log` with [watchng](https://github.com/lpenz/watchng/)
 * [Compare Commits Between Git Branches](http://robots.thoughtbot.com/compare-commits-between-git-branches)
 * [gitver](http://onethingwell.org/post/72550558317/gitver)
+* [a simple git branching model](https://gist.github.com/jbenet/ee6c9ac48068889b0912)
