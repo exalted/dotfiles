@@ -313,3 +313,4 @@ Todo
 * Don't rebase a feature branch from `master` once it's published
 * To avoid merge bubbles you _may_ rebase a feature branch **only** prior to "merging" it into `master`
 * Merge to `master` **always** with `--no-ff`
+* Use _maybe_ [git_pretty_accept](https://github.com/lovewithfood/git_pretty_accept), or *maybe not* ;-)
