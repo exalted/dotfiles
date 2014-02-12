@@ -60,7 +60,7 @@
 [rebase]
 	autosquash = true
 [help]
-	autocorrect = true
+	autocorrect = 1
 [rerere]
 	enabled = true
 [git-up "fetch"]
