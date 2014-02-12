@@ -69,3 +69,6 @@
 	arguments = --preserve-merges
 [github]
 	user = exalted
+[filter "media"]
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f
