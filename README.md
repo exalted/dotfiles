@@ -296,14 +296,20 @@ Todo
 
 * Installing gems using `sudo` sucks! (I could install with `rbenv`, but that's a problem for Marked.app: see ["Note for rvm/rbenv users"](http://support.markedapp.com/kb/how-to-tips-and-tricks/using-marked-with-github-flavored-markdown-and-syntax-highlighting))
 * Replace "hushlogin" with http://apple.stackexchange.com/questions/31872/how-do-i-reset-the-scrollback-in-the-terminal-via-a-shell-command.
-* ~~Add best-practice alises for git CLI~~
 * Replace most of the `mkdir`s in this file by symlinking to that directory instead (For private files/folders symlink to `~/Dropbox/dotfiles/` instead)
 * Create `script/bootstrap` that you could run over and over again which would install or setup what's missing automagically or do nothing if everything is just in place
-* Checkout [legit](https://github.com/kennethreitz/legit) which *could* replace current git aliases
 * ~~Symlink to`~/.pow` and `~/Library/Application\ Support/Pow/Hosts` (for Pow.cx, Anvil, etc.)~~
 * Hard-coded rbenv path [sucks](https://github.com/exalted/dotfiles/blob/1be30f7112c8b5370b9f48d4d69c4df8bc2dd1ff/SublimeLinter.sublime-settings.symlink#L3)
 * Set `Terminal.app`'s window (or better: tab?) title to whatever command name that is running at that moment (e.g., "foreman start", "script/start", "guard", etc.). Resources: [1](http://hints.macworld.com/dlfiles/preexec.bash.txt), [2](http://thelucid.com/2012/01/04/naming-your-terminal-tabs-in-osx-lion/), [3](http://dan.doezema.com/2013/04/programmatically-create-title-tabs-within-the-mac-os-x-terminal-app/), [4](http://stackoverflow.com/questions/4197441/get-name-of-last-run-program-in-bash), [5](http://unix.stackexchange.com/questions/33794/how-can-i-alias-to-last-command), [6](http://superuser.com/questions/117227/a-command-before-every-bash-command), [7](http://stackoverflow.com/questions/4585397/bash-run-some-command-before-or-after-every-command-entered-from-console)
+
+### Git(Hub) related
+
+* ~~Add best-practice alises for git CLI~~
+* Checkout [legit](https://github.com/kennethreitz/legit) which *could* replace current git aliases
 * Improve git alias `live-log` with [watchng](https://github.com/lpenz/watchng/)
 * [Compare Commits Between Git Branches](http://robots.thoughtbot.com/compare-commits-between-git-branches)
 * [gitver](http://onethingwell.org/post/72550558317/gitver)
 * [a simple git branching model](https://gist.github.com/jbenet/ee6c9ac48068889b0912)
+* Don't rebase a feature branch from `master` once it's published
+* To avoid merge bubbles you _may_ rebase a feature branch **only** prior to "merging" it into `master`
+* Merge to `master` **always** with `--no-ff`
