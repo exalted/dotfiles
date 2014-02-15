@@ -6,11 +6,9 @@ export PATH=$homebrew:$PATH
 unset homebrew
 
 # ------------------------------------------------------------------------------
-# Homebrew recommends prepending the following path to your PATH environment
-# variable to have npm-installed binaries picked up:
-#   /usr/local/share/npm/bin
+# Include npm-installed binaries
 # ------------------------------------------------------------------------------
-export PATH=/usr/local/share/npm/bin:$PATH
+export PATH=$PATH:/usr/local/share/npm/bin
 
 # ------------------------------------------------------------------------------
 # Better Bash
@@ -37,16 +35,10 @@ if [ -f $(brew --prefix)/etc/bash_completion ]; then
 fi
 
 # ------------------------------------------------------------------------------
-# Add the /bin directory that ships with Postgres.app
-# (Ref.: http://postgresapp.com/documentation)
-# ------------------------------------------------------------------------------
-export PATH=/Applications/Postgres.app/Contents/MacOS/bin:$PATH
-
-# ------------------------------------------------------------------------------
 # Heroku
 # ------------------------------------------------------------------------------
 ### Added by the Heroku Toolbelt
-export PATH=/usr/local/heroku/bin:$PATH
+export PATH=$PATH:/usr/local/heroku/bin
 
 # ------------------------------------------------------------------------------
 # Pimp my prompt
@@ -82,8 +74,22 @@ source "`brew --prefix`/etc/grc.bashrc"
 # ------------------------------------------------------------------------------
 # More less ;-)
 # ------------------------------------------------------------------------------
-
 alias less='less --RAW-CONTROL-CHARS --IGNORE-CASE'
+
+# ------------------------------------------------------------------------------
+# Python stuff
+# (Ref.: http://hackercodex.com/guide/python-development-environment-on-mac-osx/)
+# ------------------------------------------------------------------------------
+
+# pip should only run if there is a virtualenv currently activated
+export PIP_REQUIRE_VIRTUALENV=true
+
+# cache pip-installed packages to avoid re-downloading
+export PIP_DOWNLOAD_CACHE=$HOME/.pip/cache
+
+syspip(){
+   PIP_REQUIRE_VIRTUALENV="" pip "$@"
+}
 
 # ------------------------------------------------------------------------------
 # virtualenv
@@ -96,45 +102,7 @@ fi
 # ------------------------------------------------------------------------------
 # rbenv
 # ------------------------------------------------------------------------------
-if which rbenv > /dev/null; then
-    # Enable shims and autocompletion
-    eval "$(rbenv init -)";
-
-    # Adding project-specific binstubs to PATH
-    # (Ref.: https://github.com/sstephenson/rbenv/wiki/Understanding-binstubs)
-    export PATH=./bin:$PATH
-fi
-
-# Workaround: revert side effect of adding './bin' to your PATH above using
-# rbenv's "ri" instead of Bundler binstub's
-function ri {
-    eval "$(rbenv which ri) $@"
-}
-
-# Workaround: apparently "gem rdoc --all" can't generate documentation for
-# pseudo gems like bigdecimal, io-console, psych and the others that are bundled
-# with Ruby that are not placed in the directories RubyGems is expecting but
-# instead they are in stdlib path.
-# (Ref.: https://github.com/rubygems/rubygems/issues/79)
-function gem-gendocs {
-    if [[ "$@" == *--all* ]]; then
-        echo 'Watch out! I accept same options as "gem rdoc" except "--all.' >&2
-        return 1
-    fi
-    local env_version="$(rbenv version | cut -d" " -f1)"
-    # just in case you have write permissions to system path (which usually you
-    # don't and that's okay):
-    if [[ "$env_version" == 'system' ]]; then
-        echo "Trying to generate documentation for system, \
-switch to an environment instead?" >&2
-        return 1
-    fi
-    echo "Generating documentation for $env_version..."
-    for gemname in $(gem list | cut -d' ' -f1); do
-        gem rdoc "$@ $gemname" 2> /dev/null
-    done
-    echo 'Done.'
-}
+if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 
 # ------------------------------------------------------------------------------
 # EDITOR
