@@ -33,28 +33,26 @@
 	st = status
 	br = branch
 	ci = commit
-	update = up
-	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
-	hist = log --color --pretty=format:'%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(black)— %an (%ad)%C(reset)' --relative-date
-	live-log = "!f() { while true; do clear; echo 'Live log:\n'; git --no-pager hist --graph --all ${@:--10}; echo '\n...'; sleep 1; done }; f"
-	; ls-ignored = !git ls-files --others --ignored --exclude-standard
-	ls-ignored = !git status --ignored --short | ack -o '(?<=^!! ).*'
-	empty-commit = commit --allow-empty --allow-empty-message --message=""
+  ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
+  hist = log --color --pretty=format:'%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(black)— %an (%ad)%C(reset)' --relative-date
+  live-log = "!f() { while true; do clear; echo 'Live log:\n'; git --no-pager hist --graph --all ${@:--10}; echo '\n...'; sleep 1; done }; f"
+  ; ls-ignored = !git ls-files --others --ignored --exclude-standard
+  ls-ignored = !git status --ignored --short | ack -o '(?<=^!! ).*'
 	; rollback = !bash -ic '__git_stash_wrap git reset $@' -
 	; rollback = git reset --soft
 	unstage = reset HEAD --
 	discard = checkout --
 	publish = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); git push --set-upstream origin $BRANCH; }; f"
 	cleanup = !bash -c 'git branch --merged | grep -Ev "\\\\*\\|master" | xargs -n 1 git branch -d'
-	sync = "!f() { git up && git publish && if [[ "$1" == "--cleanup" ]]; then echo 'Cleaning-up... '; git cleanup; fi }; f"
-	deploy = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); if [ $BRANCH = "master" ]; then git merge --no-ff $@; else echo "You must switch to \\'master\\' to deploy a feature branch." >&2; exit 1; fi; }; f"
-	issues = !ghi --no-pager
 	search = "!f() { git hist -G $@; }; f"
 	save = stash save --include-untracked
 	restore = stash pop --index
 	assume = update-index --assume-unchanged
 	unassume = update-index --no-assume-unchanged
 	ls-assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
+  ; update = up
+  ; sync = "!f() { git up && git publish && if [[ "$1" == "--cleanup" ]]; then echo 'Cleaning-up... '; git cleanup; fi }; f"
+  ; deploy = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); if [ $BRANCH = "master" ]; then git merge --no-ff $@; else echo "You must switch to \\'master\\' to deploy a feature branch." >&2; exit 1; fi; }; f"
 [push]
 	default = simple
 [rebase]
@@ -63,10 +61,6 @@
 	autocorrect = 1
 [rerere]
 	enabled = true
-[git-up "fetch"]
-	all = true
-[git-up "rebase"]
-	arguments = --preserve-merges
 [github]
 	user = exalted
 [filter "media"]

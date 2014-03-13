@@ -23,8 +23,6 @@ Version Control
 ```bash
 brew install git
 brew install hub
-sudo gem install --verbose --no-document git-up
-sudo gem install --verbose --no-document ghi
 brew install gibo
 sudo gem install --verbose --no-document svn2git
 ```
