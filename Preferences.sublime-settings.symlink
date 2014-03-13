@@ -26,9 +26,7 @@
 		"*.psd",
 		"*.db",
 		"*.orig",
-		".gemtags",
-		".git*",
-		".tags*"
+		".git*"
 	],
 	"folder_exclude_patterns":
 	[

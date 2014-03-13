@@ -37,7 +37,7 @@ mkdir -p "$HOME/.subversion"
 
 ln -s "$DEVELOPMENT_DIR/dotfiles/gitconfig.symlink" "$HOME/.config/git/config"
 ln -s "$DEVELOPMENT_DIR/dotfiles/gitattributes.symlink" "$HOME/.config/git/attributes"
-gibo -u && gibo OSX Archives SublimeText SVN Tags > "$HOME/.config/git/ignore"
+gibo -u && gibo OSX Archives SublimeText SVN > "$HOME/.config/git/ignore"
 
 ln -s "$DEVELOPMENT_DIR/dotfiles/subversionconfig.symlink" "$HOME/.subversion/config"
 ```
@@ -94,29 +94,6 @@ ln -s "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl" /usr/lo
 ```bash
 ln -s "$DEVELOPMENT_DIR/dotfiles/Default (OSX).sublime-keymap.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap"
 ln -s "$DEVELOPMENT_DIR/dotfiles/Preferences.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings"
-```
-
-#### Requirements
-
-```bash
-brew install ctags
-cat <<EOF >> "$HOME/.config/git/ignore"
-# Ignore tags created by ctags
-.tags
-.tags_sorted_by_file
-.gemtags
-
-
-EOF
-```
-
-If you are a Rubyist, you can build a Ruby Gem's tags with the following script:
-
-```ruby
-# (Ref.: https://github.com/SublimeText/CTags/blob/master/README.creole#usage)
-require 'bundler'
-paths = Bundler.load.specs.map(&:full_gem_path)
-system("ctags -R -f .gemtags #{paths.join(' ')}")
 ```
 
 #### Packages

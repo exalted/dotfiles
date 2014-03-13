@@ -1,4 +1,3 @@
 --ignore-directory=is:log
 --ignore-directory=is:tmp
 --ignore-directory=is:vendor
---ignore-file=is:.tags
