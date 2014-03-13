@@ -8,6 +8,34 @@ Get your shit together
 export DEVELOPMENT_DIR="$HOME/Development"
 ```
 
+Ruby
+----
+
+### Install
+
+Read more: https://github.com/sstephenson/ruby-build/wiki#installing-200-p195-on-osx-107
+
+```bash
+brew install openssl
+brew install readline
+brew install rbenv
+brew install ruby-build
+brew install rbenv-gem-rehash
+brew install rbenv-vars
+```
+
+### Install and set a default Ruby
+
+This will take precedence over system's Ruby.
+
+```bash
+export __RUBY_VERSION__='2.0.0-p247'
+
+export CFLAGS=-Wno-error=shorten-64-to-32
+env RUBY_CONFIGURE_OPTS=--with-openssl-dir=`brew --prefix openssl` CONFIGURE_OPTS=--with-readline-dir=`brew --prefix readline` rbenv install "$__RUBY_VERSION__"
+rbenv global "$__RUBY_VERSION__"
+```
+
 Homebrew
 --------
 
@@ -24,7 +52,7 @@ Version Control
 brew install git
 brew install hub
 brew install gibo
-sudo gem install --verbose --no-document svn2git
+gem install --verbose --no-document svn2git
 ```
 
 ### Configure
@@ -128,7 +156,7 @@ Objective-C
 -----------
 
 ```bash
-sudo gem install --verbose --no-document cocoapods
+gem install --verbose --no-document cocoapods
 pod setup
 ```
 
@@ -138,38 +166,6 @@ Python
 ```bash
 brew install python
 curl -s https://raw.github.com/brainsik/virtualenv-burrito/master/virtualenv-burrito.sh | exclude_profile=1 $SHELL
-```
-
-Ruby
-----
-
-### Install
-
-Read more: https://github.com/sstephenson/ruby-build/wiki#installing-200-p195-on-osx-107
-
-```bash
-brew install openssl
-brew install readline
-brew install rbenv
-brew install ruby-build
-brew install rbenv-gem-rehash
-brew install rbenv-vars
-brew install rbenv-default-gems
-```
-
-### Configure
-
-```bash
-mkdir -p "$HOME/.rbenv"
-
-ln -s "$DEVELOPMENT_DIR/dotfiles/default-gems.symlink" "$HOME/.rbenv/default-gems"
-```
-
-### Install a Ruby
-
-```bash
-export CFLAGS=-Wno-error=shorten-64-to-32
-env RUBY_CONFIGURE_OPTS=--with-openssl-dir=`brew --prefix openssl` CONFIGURE_OPTS=--with-readline-dir=`brew --prefix readline` rbenv install 2.0.0-p195
 ```
 
 Node
@@ -195,8 +191,6 @@ brew install pwgen
 brew install wget
 sudo pip install --upgrade httpie
 brew install siege && sudo sysctl -w net.inet.tcp.msl=1000
-
-sudo gem install --verbose --no-document liftoff
 
 mkdir /usr/local/ThirdParty; cd $_
 curl -fsSkL https://github.com/paulhammond/jp/releases/download/v0.1/jp-0.1-darwin-x86_64.tar.gz | tar xfz -
