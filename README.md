@@ -76,6 +76,18 @@ mkdir -p "$HOME/.ssh"
 ln -s "$DEVELOPMENT_DIR/dotfiles/sshconfig.symlink" "$HOME/.ssh/config"
 ```
 
+### Create a new key
+
+```bash
+ssh-keygen -t rsa -C "$(whoami)@$(hostname)" -f ~/.ssh/foobar_rsa
+```
+
+## Upload keys to Heroku
+
+```bash
+heroku keys:add ~/.ssh/foobar_rsa.pub
+```
+
 Sublime Text 2
 --------------
 
