@@ -263,7 +263,7 @@ Local printer configuration web page: `http://localhost:631/admin`.
 Todo
 ----
 
-* Installing gems using `sudo` sucks! (I could install with `rbenv`, but that's a problem for Marked.app: see ["Note for rvm/rbenv users"](http://support.markedapp.com/kb/how-to-tips-and-tricks/using-marked-with-github-flavored-markdown-and-syntax-highlighting))
+* Installing gems using `sudo` sucks! ~~(I could install with `rbenv`, but that's a problem for Marked.app: see ["Note for rvm/rbenv users"](http://support.markedapp.com/kb/how-to-tips-and-tricks/using-marked-with-github-flavored-markdown-and-syntax-highlighting))~~
 * Replace "hushlogin" with http://apple.stackexchange.com/questions/31872/how-do-i-reset-the-scrollback-in-the-terminal-via-a-shell-command.
 * Replace most of the `mkdir`s in this file by symlinking to that directory instead (For private files/folders symlink to `~/Dropbox/dotfiles/` instead)
 * Create `script/bootstrap` that you could run over and over again which would install or setup what's missing automagically or do nothing if everything is just in place
