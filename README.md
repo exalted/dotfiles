@@ -82,7 +82,7 @@ ln -s "$DEVELOPMENT_DIR/dotfiles/sshconfig.symlink" "$HOME/.ssh/config"
 ssh-keygen -t rsa -C "$(whoami)@$(hostname)" -f ~/.ssh/foobar_rsa
 ```
 
-## Upload keys to Heroku
+### Upload keys to Heroku
 
 ```bash
 heroku keys:add ~/.ssh/foobar_rsa.pub
