@@ -63,7 +63,7 @@ Git
 brew install git
 brew install hub
 brew install gibo
-gem install --verbose --no-document svn2git
+gem install --no-document --verbose svn2git
 ```
 
 ### Configure
@@ -103,7 +103,7 @@ Also, append the relevant git ignore rules to each projects’ `.gitignore` file
 ### Objective-C
 
 ```bash
-gem install --verbose --no-document cocoapods
+gem install --no-document --verbose cocoapods
 pod setup
 ```
 
