@@ -100,6 +100,20 @@ Also, append the relevant git ignore rules to each projects’ `.gitignore` file
 | Objective-C          | `gibo -u && gibo Objective-C >> .gitignore`              |
 | Python & Django      | `gibo -u && gibo Python VirtualEnv Django >> .gitignore` |
 
+### Ruby
+
+Install Pry:
+
+```bash
+gem install --no-document --verbose pry pry-doc
+```
+
+Additional plugins for Pry:
+
+```bash
+gem install --no-document --verbose pry-coolline
+```
+
 ### Objective-C
 
 ```bash
@@ -118,6 +132,13 @@ curl -s https://raw.github.com/brainsik/virtualenv-burrito/master/virtualenv-bur
 
 ```bash
 brew install node
+```
+
+### Go
+
+```bash
+brew install go
+mkdir -p "$DEVELOPMENT_DIR/go"
 ```
 
 ### Utilities
@@ -139,6 +160,14 @@ brew install siege && sudo sysctl -w net.inet.tcp.msl=1000
 mkdir /usr/local/ThirdParty; cd $_
 curl -fsSkL https://github.com/paulhammond/jp/releases/download/v0.1/jp-0.1-darwin-x86_64.tar.gz | tar xfz -
 ln -s /usr/local/ThirdParty/jp-0.1/jp /usr/local/bin/jp
+```
+
+Atom
+----
+
+```bash
+brew install mercurial
+go get -u github.com/shurcooL/markdownfmt
 ```
 
 Sublime Text 2

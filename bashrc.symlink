@@ -1,4 +1,9 @@
 # ------------------------------------------------------------------------------
+# Default Development Directory
+# ------------------------------------------------------------------------------
+export DEVELOPMENT_DIR=$HOME/Development
+
+# ------------------------------------------------------------------------------
 # Homebrew
 # ------------------------------------------------------------------------------
 homebrew=/usr/local/bin:/usr/local/sbin
@@ -39,6 +44,13 @@ fi
 # ------------------------------------------------------------------------------
 ### Added by the Heroku Toolbelt
 export PATH=$PATH:/usr/local/heroku/bin
+
+# ------------------------------------------------------------------------------
+# Go
+# ------------------------------------------------------------------------------
+# (Ref.: http://golang.org/doc/code.html#GOPATH)
+export GOPATH=$DEVELOPMENT_DIR/go
+export PATH=$PATH:$GOPATH/bin
 
 # ------------------------------------------------------------------------------
 # Pimp my prompt
@@ -108,12 +120,7 @@ if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 # ------------------------------------------------------------------------------
 # EDITOR
 # ------------------------------------------------------------------------------
-export EDITOR='subl'
-
-# ------------------------------------------------------------------------------
-# Default Development Directory
-# ------------------------------------------------------------------------------
-export DEVELOPMENT_DIR=$HOME/Development
+export EDITOR='atom'
 
 # ------------------------------------------------------------------------------
 # Disabling tilde expansion
@@ -186,3 +193,5 @@ function google {
 function serve {
     python -m SimpleHTTPServer "${1:-8080}"
 }
+
+alias reset-open-with='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'

@@ -3,7 +3,7 @@
 	email = asd@pittle.org
 [core]
 	trustctime = false
-	editor = subl --wait --new-window
+	editor = atom --wait --new-window
 	pager = less --RAW-CONTROL-CHARS --IGNORE-CASE
 [credential]
 	helper = osxkeychain
@@ -31,7 +31,7 @@
 [alias]
 	co = checkout
 	st = status
-	br = branch
+	br = branch --verbose --verbose
 	ci = commit
   ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
   hist = log --color --pretty=format:'%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(black)— %an (%ad)%C(reset)' --relative-date
@@ -59,8 +59,6 @@
 	autosquash = true
 [help]
 	autocorrect = 1
-[rerere]
-	enabled = true
 [github]
 	user = exalted
 [filter "media"]
@@ -68,3 +66,5 @@
 	smudge = git-media-smudge %f
 [pull]
 	rebase = preserve
+[status]
+	showUntrackedFiles = all
