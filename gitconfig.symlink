@@ -43,7 +43,7 @@
 	unstage = reset HEAD --
 	discard = checkout --
 	publish = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); git push --set-upstream origin $BRANCH; }; f"
-	cleanup = !bash -c 'git branch --merged | grep -Ev "\\\\*\\|master" | xargs -n 1 git branch -d'
+	cleanup = !bash -c 'git branch --merged | grep -Ev "\\\\*\\|master" | xargs -n 1 git branch -d && git remote prune origin'
 	search = "!f() { git hist -G $@; }; f"
 	save = stash save --include-untracked
 	restore = stash pop --index
