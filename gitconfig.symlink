@@ -33,11 +33,12 @@
 	st = status
 	br = branch --verbose --verbose
 	ci = commit
-  ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
-  hist = log --color --pretty=format:'%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(black)— %an (%ad)%C(reset)' --relative-date
-  live-log = "!f() { while true; do clear; echo 'Live log:\n'; git --no-pager hist --graph --all ${@:--10}; echo '\n...'; sleep 1; done }; f"
-  ; ls-ignored = !git ls-files --others --ignored --exclude-standard
-  ls-ignored = !git status --ignored --short | ack -o '(?<=^!! ).*'
+	add = add --all --intent-to-add
+	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
+	hist = log --color --pretty=format:'%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(black)— %an (%ad)%C(reset)' --relative-date
+	live-log = "!f() { while true; do clear; echo 'Live log:\n'; git --no-pager hist --graph --all ${@:--10}; echo '\n...'; sleep 1; done }; f"
+	; ls-ignored = !git ls-files --others --ignored --exclude-standard
+	ls-ignored = !git status --ignored --short | ack -o '(?<=^!! ).*'
 	; rollback = !bash -ic '__git_stash_wrap git reset $@' -
 	; rollback = git reset --soft
 	unstage = reset HEAD --
@@ -50,9 +51,9 @@
 	assume = update-index --assume-unchanged
 	unassume = update-index --no-assume-unchanged
 	ls-assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
-  ; update = up
-  ; sync = "!f() { git up && git publish && if [[ "$1" == "--cleanup" ]]; then echo 'Cleaning-up... '; git cleanup; fi }; f"
-  ; deploy = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); if [ $BRANCH = "master" ]; then git merge --no-ff $@; else echo "You must switch to \\'master\\' to deploy a feature branch." >&2; exit 1; fi; }; f"
+	; update = up
+	; sync = "!f() { git up && git publish && if [[ "$1" == "--cleanup" ]]; then echo 'Cleaning-up... '; git cleanup; fi }; f"
+	; deploy = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); if [ $BRANCH = "master" ]; then git merge --no-ff $@; else echo "You must switch to \\'master\\' to deploy a feature branch." >&2; exit 1; fi; }; f"
 [push]
 	default = simple
 [rebase]
@@ -68,3 +69,7 @@
 	rebase = preserve
 [status]
 	showUntrackedFiles = all
+[fetch]
+	prune = true
+[grep]
+	lineNumber = true
