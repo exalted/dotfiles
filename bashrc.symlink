@@ -196,10 +196,14 @@ function serve {
 
 alias reset-open-with='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'
 
-function update-catchup-web-design {
-    local source="$HOME/Dropbox/Projects/catchup-web/New Design/Macaw Project/Catchup/"
-    local destination="$DEVELOPMENT_DIR/catchup-web/design/"
+function sync-catchup-web-design {
+    local from="$HOME/Dropbox/Projects/catchup-web/New Design/Macaw Project/Catchup/"
+    local to="$DEVELOPMENT_DIR/catchup-web/"
 
-    find "$source" -iname '*.html' -exec cp {} "$destination/pages/" \;
-    find "$source" -iname '*.css' -exec cp {} "$destination/stylesheets/" \;
+    ack -i '\.[\w-]+-[0-9]+' "$from/css/styles.css" 2> /dev/null
+
+    find "$to/design/pages/" -iname '*.html' -exec rm {} \;
+    find "$from" -iname '*.html' -exec cp {} "$to/design/pages/" \;
+
+    find "$from" -iname '*.css' -exec cp {} "$to/app/assets/stylesheets/" \;
 }
