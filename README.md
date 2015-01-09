@@ -74,7 +74,7 @@ mkdir -p "$HOME/.subversion"
 
 ln -s "$DEVELOPMENT_DIR/dotfiles/gitconfig.symlink" "$HOME/.config/git/config"
 ln -s "$DEVELOPMENT_DIR/dotfiles/gitattributes.symlink" "$HOME/.config/git/attributes"
-gibo -u && gibo OSX Archives SublimeText Jetbrains SVN > "$HOME/.config/git/ignore"
+gibo -u && gibo OSX Archives > "$HOME/.config/git/ignore"
 
 ln -s "$DEVELOPMENT_DIR/dotfiles/subversionconfig.symlink" "$HOME/.subversion/config"
 ```
@@ -89,15 +89,15 @@ Note: Keep a project’s root level `.gitignore` file with up–to–date rules 
 Although they might already be globally ignored, play safe and add the following git ignore rules in every project:
 
 ```bash
-gibo -u && gibo OSX Archives SublimeText > .gitignore
+gibo -u && gibo OSX Archives > .gitignore
 ```
 
 Also, append the relevant git ignore rules to each projects’ `.gitignore` file:
 
-| Language & Framework | Git ignore rules                                         |
-| -------------------- | -------------------------------------------------------- |
+| Language & Framework | Git ignore rules                                                   |
+| -------------------- | ------------------------------------------------------------------ |
 | Ruby & Rails         | `gibo -u && gibo Ruby Rails >> .gitignore`               |
-| Objective-C          | `gibo -u && gibo Objective-C >> .gitignore`              |
+| Objective-C & Swift  | `gibo -u && gibo Objective-C Swift Xcode >> .gitignore`  |
 | Python & Django      | `gibo -u && gibo Python VirtualEnv Django >> .gitignore` |
 
 ### Ruby
