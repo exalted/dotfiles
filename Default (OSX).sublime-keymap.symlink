@@ -1,4 +1,0 @@
-[
-    { "keys": ["super+alt+shift+w"], "command": "file_close_to_right" },
-    { "keys": ["super+alt+w"], "command": "file_close_others" }
-]

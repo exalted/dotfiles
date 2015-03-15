@@ -170,44 +170,6 @@ brew install mercurial
 go get -u github.com/shurcooL/markdownfmt
 ```
 
-Sublime Text 2
---------------
-
-### Use as command line tool
-
-... to open files and projects, as well working as an EDITOR for unix tools, such as git and subversion:
-
-```bash
-ln -s "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl" /usr/local/bin/subl
-```
-
-### Configure
-
-#### Application
-
-```bash
-ln -s "$DEVELOPMENT_DIR/dotfiles/Default (OSX).sublime-keymap.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap"
-ln -s "$DEVELOPMENT_DIR/dotfiles/Preferences.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings"
-```
-
-#### Packages
-
-```bash
-ln -s "$DEVELOPMENT_DIR/dotfiles/GitGutter.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/GitGutter.sublime-settings"
-ln -s "$DEVELOPMENT_DIR/dotfiles/Package Control.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/Package Control.sublime-settings"
-ln -s "$DEVELOPMENT_DIR/dotfiles/SublimeLinter.sublime-settings.symlink" "$HOME/Library/Application Support/Sublime Text 2/Packages/User/SublimeLinter.sublime-settings"
-```
-
-### Install Sublime Package Control
-
- 1. Open Sublime Text
- 2. [Follow these instructions](http://wbond.net/sublime_packages/package_control/installation)
- 3. Restart Sublime Text
-
-### Plugins to Install Without Package Control
-
- 1. [Install Rails Snippets](https://github.com/tadast/sublime-rails-snippets/#readme) ([Why?](https://github.com/tadast/sublime-rails-snippets/issues/8))
-
 Fonts and Colors
 ----------------
 
@@ -292,7 +254,7 @@ Todo
 * Replace most of the `mkdir`s in this file by symlinking to that directory instead (For private files/folders symlink to `$HOME/Dropbox/dotfiles/` instead)
 * Create `script/bootstrap` that you could run over and over again which would install or setup what’s missing automagically or do nothing if everything is just in place
 * ~~Symlink to`$HOME/.pow` and `$HOME/Library/Application\ Support/Pow/Hosts` (for Pow.cx, Anvil, etc.)~~
-* Hard-coded rbenv path [sucks](https://github.com/exalted/dotfiles/blob/1be30f7112c8b5370b9f48d4d69c4df8bc2dd1ff/SublimeLinter.sublime-settings.symlink#L3)
+* ~~Hard-coded rbenv path [sucks](https://github.com/exalted/dotfiles/blob/1be30f7112c8b5370b9f48d4d69c4df8bc2dd1ff/SublimeLinter.sublime-settings.symlink#L3)~~
 * Set `Terminal.app`’s window (or better: tab?) title to whatever command name that is running at that moment (e.g., "foreman start", "script/start", "guard", etc.). Resources: [1](http://hints.macworld.com/dlfiles/preexec.bash.txt), [2](http://thelucid.com/2012/01/04/naming-your-terminal-tabs-in-osx-lion/), [3](http://dan.doezema.com/2013/04/programmatically-create-title-tabs-within-the-mac-os-x-terminal-app/), [4](http://stackoverflow.com/questions/4197441/get-name-of-last-run-program-in-bash), [5](http://unix.stackexchange.com/questions/33794/how-can-i-alias-to-last-command), [6](http://superuser.com/questions/117227/a-command-before-every-bash-command), [7](http://stackoverflow.com/questions/4585397/bash-run-some-command-before-or-after-every-command-entered-from-console)
 * Kinda better [`{dot/rc}files` management](http://robots.thoughtbot.com/rcm-for-rc-files-in-dotfiles-repos)?
 
