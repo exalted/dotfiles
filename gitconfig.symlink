@@ -33,7 +33,7 @@
 	st = status
 	br = branch --verbose --verbose
 	ci = commit
-	add = add --all --intent-to-add
+	add = add --all
 	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
 	hist = log --color --pretty=format:'%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(black)— %an (%ad)%C(reset)' --relative-date
 	live-log = "!f() { while true; do clear; echo 'Live log:\n'; git --no-pager hist --graph --all ${@:--10}; echo '\n...'; sleep 1; done }; f"
