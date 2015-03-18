@@ -154,7 +154,7 @@ brew install rmtrash
 brew install pwgen
 
 brew install wget
-sudo pip install --upgrade httpie
+brew install httpie
 brew install siege && sudo sysctl -w net.inet.tcp.msl=1000
 
 mkdir /usr/local/ThirdParty; cd $_

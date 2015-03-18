@@ -87,7 +87,7 @@ source "`brew --prefix`/etc/grc.bashrc"
 # ------------------------------------------------------------------------------
 # More less ;-)
 # ------------------------------------------------------------------------------
-alias less='less --RAW-CONTROL-CHARS --IGNORE-CASE'
+alias less='less --raw-control-chars --IGNORE-CASE'
 
 # ------------------------------------------------------------------------------
 # rbenv
@@ -134,9 +134,7 @@ function __git_stash_wrap {
 # HTTPie with colorized and paged output
 # (Ref.: https://github.com/jkbr/httpie#redirected-output)
 # ------------------------------------------------------------------------------
-function httpless {
-    http --pretty=all "$@" | less --RAW-CONTROL-CHARS --IGNORE-CASE;
-}
+alias http='http --pretty=all "$@"'
 
 # ------------------------------------------------------------------------------
 # Generate random passwords as by KION SpA specs
