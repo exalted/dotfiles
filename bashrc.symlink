@@ -40,12 +40,6 @@ if [ -f $(brew --prefix)/etc/bash_completion ]; then
 fi
 
 # ------------------------------------------------------------------------------
-# Heroku
-# ------------------------------------------------------------------------------
-### Added by the Heroku Toolbelt
-export PATH=$PATH:/usr/local/heroku/bin
-
-# ------------------------------------------------------------------------------
 # Go
 # ------------------------------------------------------------------------------
 # (Ref.: http://golang.org/doc/code.html#GOPATH)
@@ -93,6 +87,17 @@ alias less='less --raw-control-chars --IGNORE-CASE'
 # rbenv
 # ------------------------------------------------------------------------------
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+
+# ------------------------------------------------------------------------------
+# Heroku
+# ------------------------------------------------------------------------------
+
+# !!! It is important that this section comes _after_ `rbenv` initialization,
+# because (if `heroku` gem is installed in an environment) shimmed version of
+# `heroku` would take precedence otherwise.
+
+### Added by the Heroku Toolbelt
+export PATH=/usr/local/heroku/bin:$PATH
 
 # ------------------------------------------------------------------------------
 # EDITOR
