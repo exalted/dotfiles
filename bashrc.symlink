@@ -166,7 +166,7 @@ function google {
         echo 'Usage: google something' >&2
         return 1
     else
-        open "http://www.google.com/?q=$search";
+        open "https://www.google.com/?gws_rd=ssl#safe=off&q=$search";
     fi
 }
 
