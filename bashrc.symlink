@@ -170,6 +170,11 @@ function google {
     fi
 }
 
+function browse {
+    # TODO: check if `$@` is already prepended with `http://`
+    open "http://$@"
+}
+
 function serve {
     python -m SimpleHTTPServer "${1:-8080}"
 }
