@@ -24,8 +24,14 @@ export HISTCONTROL=ignoreboth:erasedups
 # # (Ref.: http://www.talug.org/events/20030709/cmdline_history.html)
 # export HISTIGNORE="&:ls:[bf]g:exit"
 
+# Append when the shell exits, rather than overwriting the history file
+shopt -s histappend
+
 # Don't tab-complete if prompt is empty
 shopt -s no_empty_cmd_completion
+
+# Correct minor errors in the spelling of a directory component in a cd command
+shopt -s cdspell
 
 # History completion to what's already on the line
 # (Ref.: http://stackoverflow.com/a/1030206/11895)
@@ -57,7 +63,7 @@ function __ps1_newline_login {
     fi
 }
 
-PROMPT_COMMAND="${PROMPT_COMMAND}__ps1_newline_login;"
+PROMPT_COMMAND="history -a;${PROMPT_COMMAND}__ps1_newline_login;"
 
 export GIT_PS1_SHOWDIRTYSTATE=true `# show unstaged (*) and staged (+) changes`
 
