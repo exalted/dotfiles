@@ -1,3 +1,0 @@
-Host heroku.com
-  IdentityFile "$HOME/.ssh/heroku_rsa"
-  IdentitiesOnly yes
