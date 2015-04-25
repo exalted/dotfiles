@@ -188,14 +188,23 @@ function serve {
 
 alias reset-open-with='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'
 
-function sync-catchup-web-design {
-    local from="$HOME/Dropbox/Projects/catchup-web/New Design/Macaw Project/Catchup/"
-    local to="$DEVELOPMENT_DIR/catchup-web/"
+function catchup-sync-web-design {
+    local from="$HOME/Dropbox/Projects/catchup-web/Macaw Project/Catchup"
+    local to="$DEVELOPMENT_DIR/catchup-web"
 
-    ack -i '\.[\w-]+-[0-9]+' "$from/css/styles.css" 2> /dev/null
+    # remove `page-` prefix from css and html
+    find "$from/css/" -maxdepth 1 -iname '*.css' ! -name 'standardize.css' -exec sed -i.bak s/page-//g {} \;
+    find "$from/css/" -maxdepth 1 -iname '*.css' ! -name 'standardize.css' -exec sed -i.bak s/..\\/images\\//https:\\/\\/cdn.rawgit.com\\/catchup\\/catchup-web-assets\\/master\\//g {} \;
+    find "$from/" -maxdepth 1 -iname '*.html' -exec sed -i.bak s/page-//g {} \;
 
+    # print out duplicate selectors
+    find "$from/css/" -maxdepth 1 -iname '*.css' -print -exec ack -i '\.[\w-]+-[0-9]+' {} 2> /dev/null \;
+
+    # clear destination
+    find "$to/app/assets/stylesheets/" -iname '*.css' ! \( -name 'application.css' -o -name 'comments.css' \) -exec rm {} \;
     find "$to/design/pages/" -iname '*.html' -exec rm {} \;
-    find "$from" -iname '*.html' -exec cp {} "$to/design/pages/" \;
 
-    find "$from" -iname '*.css' -exec cp {} "$to/app/assets/stylesheets/" \;
+    # copy to destination
+    find "$from/css/" -maxdepth 1 -iname '*.css' -exec cp {} "$to/app/assets/stylesheets/" \;
+    find "$from/" -maxdepth 1 -iname '*.html' -exec cp {} "$to/design/pages/" \;
 }
