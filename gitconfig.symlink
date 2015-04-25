@@ -4,7 +4,7 @@
 [core]
 	trustctime = false
 	editor = atom --wait --new-window
-	pager = less --raw-control-chars --IGNORE-CASE
+	pager = emojify | $PAGER
 [credential]
 	helper = osxkeychain
 [hub]
@@ -35,8 +35,8 @@
 	ci = commit
 	add = add --all
 	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
-	hist = "!f() { git --no-pager log $@ --color --pretty=format:'%C(yellow)%h%C(reset)%C(bold red)%d%C(reset) %s %C(black)— %an (%ad)%C(reset)' --relative-date | emojify | $(git config core.pager); }; f"
-	live-log = "!f() { while true; do clear; echo 'Live log:\n'; git --no-pager hist --graph --all ${@:--10}; echo '\n...'; sleep 1; done }; f"
+	hist = "!f() { git log $@ --color --pretty=format:'%C(yellow)%h%C(bold red)%d%C(reset) %s %C(black)— %an (%ad)%C(reset)' --relative-date; }; f"
+	live-log = "!f() { while true; do clear; echo 'Live log:\n'; git hist --graph --all ${@:--10}; echo '\n...'; sleep 1; done }; f"
 	; ls-ignored = !git ls-files --others --ignored --exclude-standard
 	ls-ignored = !git status --ignored --short | ack -o '(?<=^!! ).*'
 	; rollback = !bash -ic '__git_stash_wrap git reset $@' -

@@ -85,9 +85,10 @@ export GREP_OPTIONS='--color=auto'
 source "`brew --prefix`/etc/grc.bashrc"
 
 # ------------------------------------------------------------------------------
-# More less ;-)
+# Pager
 # ------------------------------------------------------------------------------
-alias less='less --raw-control-chars --IGNORE-CASE'
+export PAGER=less
+export LESS='--raw-control-chars --IGNORE-CASE'
 
 # ------------------------------------------------------------------------------
 # rbenv
