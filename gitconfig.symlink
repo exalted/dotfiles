@@ -3,7 +3,6 @@
 	email = asd@pittle.org
 [core]
 	trustctime = false
-	editor = atom --wait --new-window
 [pager]
 	log = emojify | $PAGER
 	live-log = false
