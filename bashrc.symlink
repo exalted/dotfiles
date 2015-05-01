@@ -181,6 +181,7 @@ function __man {
             ;;
     esac
 }
+alias man=__man
 
 # ------------------------------------------------------------------------------
 # HTTPie with colorized and paged output
