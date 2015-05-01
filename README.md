@@ -162,7 +162,7 @@ brew install wget
 brew install httpie
 brew install siege && sudo sysctl -w net.inet.tcp.msl=1000
 
-mkdir /usr/local/ThirdParty; cd $_
+mkdir -p /usr/local/ThirdParty; cd $_
 curl -fsSkL https://github.com/paulhammond/jp/releases/download/v0.1/jp-0.1-darwin-x86_64.tar.gz | tar xfz -
 ln -s /usr/local/ThirdParty/jp-0.1/jp /usr/local/bin/jp
 ```
