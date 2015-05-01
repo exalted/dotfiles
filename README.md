@@ -151,6 +151,7 @@ mkdir -p "$DEVELOPMENT_DIR/go"
 ```bash
 brew install bash-completion
 brew install most
+brew install autojump
 
 brew install grc
 brew install jsonpp
