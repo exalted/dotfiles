@@ -94,6 +94,8 @@ source "`brew --prefix`/etc/grc.bashrc"
 # export LESS='--quit-if-one-screen --raw-control-chars --chop-long-lines --no-init --IGNORE-CASE'
 export PAGER=least
 
+alias less=most
+
 # ------------------------------------------------------------------------------
 # rbenv
 # ------------------------------------------------------------------------------
