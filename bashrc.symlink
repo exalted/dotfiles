@@ -120,10 +120,12 @@ export PATH=/usr/local/heroku/bin:$PATH
 # export EDITOR=
 
 # new (old) editor that is better than a line editor
-export VISUAL='emacs'
+export VISUAL='emacsclient'
 
 # `INTEGRATED` (as in "I" in IDE) is not standard, but I like the idea
 export INTEGRATED='atom'
+
+alias emacs=emacsclient
 
 # ------------------------------------------------------------------------------
 # Disabling tilde expansion
