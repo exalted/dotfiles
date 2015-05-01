@@ -80,3 +80,5 @@
 	clean = git hawser clean %f
 	smudge = git hawser smudge %f
 	required = true
+[mailmap]
+	file = ~/.config/git/mailmap

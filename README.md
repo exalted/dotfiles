@@ -78,6 +78,7 @@ mkdir -p "$HOME/.subversion"
 
 ln -s "$DEVELOPMENT_DIR/dotfiles/gitconfig.symlink" "$HOME/.config/git/config"
 ln -s "$DEVELOPMENT_DIR/dotfiles/gitattributes.symlink" "$HOME/.config/git/attributes"
+ln -s "$HOME/Dropbox/dotfiles/gitmailmap.symlink" "$HOME/.config/git/mailmap"
 gibo --upgrade && gibo OSX Emacs Archives > "$HOME/.config/git/ignore"
 
 ln -s "$DEVELOPMENT_DIR/dotfiles/subversionconfig.symlink" "$HOME/.subversion/config"
