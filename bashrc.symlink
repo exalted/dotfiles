@@ -147,13 +147,14 @@ eval "$(hub alias -s)"
 # Better Git
 # ------------------------------------------------------------------------------
 
-function __git_stash_wrap {
-    SHA=$(git rev-list --max-count=1 HEAD) &&
-    touch $SHA &&
-    git stash --keep-index --include-untracked &> /dev/null &&
-    eval '$@' &&
-    git stash pop --index &> /dev/null &&
-    rm -f $SHA
+# function __git_stash_wrap {
+#     SHA=$(git rev-list --max-count=1 HEAD) &&
+#     touch $SHA &&
+#     git stash --keep-index --include-untracked &> /dev/null &&
+#     eval '$@' &&
+#     git stash pop --index &> /dev/null &&
+#     rm -f $SHA
+# }
 }
 
 # ------------------------------------------------------------------------------
