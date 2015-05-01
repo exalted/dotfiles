@@ -94,7 +94,7 @@ source "`brew --prefix`/etc/grc.bashrc"
 # export LESS='--quit-if-one-screen --raw-control-chars --chop-long-lines --no-init --IGNORE-CASE'
 export PAGER=least
 
-alias less=most
+alias less="$PAGER"
 
 # ------------------------------------------------------------------------------
 # rbenv
@@ -182,7 +182,7 @@ function __man {
         *)
             # something else, presumed to be an external command
             # or options for the man command or a section number
-            command -p man "$@"
+            command man "$@"
             ;;
     esac
 }

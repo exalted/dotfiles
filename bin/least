@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Don't run `most` if content is less than screen's height
 
 # $(cat) is a shorthand for $(cat /dev/stdin)
 # (Ref.: http://mockingeye.com/blog/2013/01/22/reading-everything-stdin-in-a-bash-script/)
