@@ -11,9 +11,7 @@ export PATH=$HOME/bin:$PATH
 # ------------------------------------------------------------------------------
 # Homebrew
 # ------------------------------------------------------------------------------
-homebrew=/usr/local/bin:/usr/local/sbin
-export PATH=$homebrew:$PATH
-unset homebrew
+export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 
 # ------------------------------------------------------------------------------
 # Include npm-installed binaries
