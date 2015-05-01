@@ -220,6 +220,11 @@ function browse {
     open "http://$@"
 }
 
+function chrome {
+    # TODO: check if `$@` is already prepended with `http://`
+    open "http://$@" -a /Applications/Google\ Chrome.app/
+}
+
 function serve {
     python -m SimpleHTTPServer "${1:-8080}"
 }
