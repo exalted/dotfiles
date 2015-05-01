@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# $(cat) is a shorthand for $(cat /dev/stdin)
+# (Ref.: http://mockingeye.com/blog/2013/01/22/reading-everything-stdin-in-a-bash-script/)
+CONTENT=$(cat)
+
+if (( $(wc -l <<<"$CONTENT") < $(tput lines) )); then
+    echo "$CONTENT"; exit
+fi
+
+most <<<"$CONTENT"

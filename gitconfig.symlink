@@ -4,7 +4,9 @@
 [core]
 	trustctime = false
 	editor = atom --wait --new-window
-	pager = emojify | $PAGER
+[pager]
+	log = emojify | $PAGER
+	live-log = false
 [credential]
 	helper = osxkeychain
 [hub]

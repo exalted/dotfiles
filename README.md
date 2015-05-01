@@ -48,6 +48,10 @@ dotfiles
 f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "ackrc" "siegerc" "gemrc" "rspec"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
 ```
 
+```bash
+f() { local COMMANDS=("least"); for i in ${COMMANDS[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/bin/$i" "/usr/local/bin/$i"; done }; f; unset -f f;
+```
+
 ### Secrets
 
 ```bash
@@ -145,6 +149,7 @@ mkdir -p "$DEVELOPMENT_DIR/go"
 
 ```bash
 brew install bash-completion
+brew install most
 
 brew install grc
 brew install jsonpp
