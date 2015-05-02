@@ -5,6 +5,7 @@
 	trustctime = false
 [pager]
 	log = emojify | $PAGER
+	branch = less --chop-long-lines --QUIT-AT-EOF
 	live-log = false
 [credential]
 	helper = osxkeychain

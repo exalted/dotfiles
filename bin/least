@@ -5,7 +5,9 @@
 # (Ref.: http://mockingeye.com/blog/2013/01/22/reading-everything-stdin-in-a-bash-script/)
 CONTENT=$(cat)
 
-if (( $(wc -l <<<"$CONTENT") < $(tput lines) )); then
+FOLDED_CONTENT=$(fold -w $(tput cols) <<<"$CONTENT")
+
+if (( $(wc -l <<<"$FOLDED_CONTENT") < $(tput lines) )); then
     echo "$CONTENT"; exit
 fi
 
