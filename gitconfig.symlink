@@ -39,7 +39,7 @@
 	diff = diff --color-words
 	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
 	hist = "!f() { git log $@ --color --pretty=format:'%C(black)%h%C(bold red)%d %C(reset)%s %C(black)%ar, %aN%C(reset)'; }; f"
-	live-log = "!f() { while true; do clear; echo 'Live log:\n'; git hist --max-count=$(( $(tput lines)-9 )) ${@:---graph --all}; echo '\n...'; sleep 2; done }; f"
+	live-log = "!f() { while true; do output=\"Live log:\n\n$(git hist --max-count=$(( $(tput lines)-9 )) ${@:---graph --all}) \n...\"; clear; echo \"$output\"; sleep 1; done }; f"
 	; ls-ignored = !git ls-files --others --ignored --exclude-standard
 	ls-ignored = !git status --ignored --short | ack -o '(?<=^!! ).*'
 	; rollback = !bash -ic '__git_stash_wrap git reset $@' -
