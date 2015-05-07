@@ -90,12 +90,12 @@ source "`brew --prefix`/etc/grc.bashrc"
 # ------------------------------------------------------------------------------
 # Pager
 # ------------------------------------------------------------------------------
-# export PAGER=less
-export PAGER=least
-export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --no-init --IGNORE-CASE'
+# export PAGER=more
+export PAGER=less
+# export PAGER=most
+# export PAGER=least # my custom wrapper around `most`
 
-alias paginate="$PAGER"
-alias less="$PAGER"
+export LESS='--quit-if-one-screen --RAW-CONTROL-CHARS --no-init --IGNORE-CASE'
 
 # ------------------------------------------------------------------------------
 # rbenv

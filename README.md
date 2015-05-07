@@ -23,6 +23,9 @@ Upgrade Ruby
 brew install rbenv
 brew install ruby-build
 brew install rbenv-gem-rehash
+brew install rbenv-default-gems
+
+ln -s "$DEVELOPMENT_DIR/dotfiles/rbenv-default-gems.symlink" "$HOME/.rbenv/default-gems"
 ```
 
 ### Install and override system Ruby
@@ -67,7 +70,7 @@ Git
 brew install git
 brew install hub
 brew install gibo
-gem install --no-document --verbose svn2git
+gem install --verbose svn2git
 ```
 
 ### Configure
@@ -110,19 +113,19 @@ Also, append the relevant git ignore rules to each projects’ `.gitignore` file
 Install Pry:
 
 ```bash
-gem install --no-document --verbose pry pry-doc
+gem install --verbose pry pry-doc
 ```
 
 Additional plugins for Pry:
 
 ```bash
-gem install --no-document --verbose pry-coolline
+gem install --verbose pry-coolline
 ```
 
 ### Objective-C
 
 ```bash
-gem install --no-document --verbose cocoapods
+gem install --verbose cocoapods
 pod setup
 ```
 
@@ -149,24 +152,34 @@ mkdir -p "$DEVELOPMENT_DIR/go"
 ### Utilities
 
 ```bash
-brew install bash-completion
-brew install most
+brew install --devel "https://raw.githubusercontent.com/exalted/homebrew-dupes/add-less-devel/less.rb"
+brew install ack
 brew install autojump
-
-brew install grc
-brew install jsonpp
+brew install bash-completion
+brew install gnupg
 brew install graphviz
-
-brew install rmtrash
-brew install pwgen
-
-brew install wget
+brew install grc
 brew install httpie
+brew install jsonpp
+brew install most
+brew install pwgen
+brew install rmtrash
 brew install siege && sudo sysctl -w net.inet.tcp.msl=1000
+brew install tree
+brew install wget
+gem install --verbose terminal-emojify
 
 mkdir -p /usr/local/ThirdParty; cd $_
 curl -fsSkL https://github.com/paulhammond/jp/releases/download/v0.1/jp-0.1-darwin-x86_64.tar.gz | tar xfz -
 ln -s /usr/local/ThirdParty/jp-0.1/jp /usr/local/bin/jp
+```
+
+Emacs
+----
+
+```bash
+brew install emacs
+launchctl load "$HOME/Library/LaunchAgents/homebrew.mxcl.emacs.plist"
 ```
 
 Atom
@@ -174,7 +187,8 @@ Atom
 
 ```bash
 brew install mercurial
-go get -u github.com/shurcooL/markdownfmt
+brew install shellcheck
+brew install tidy-html5
 ```
 
 Fonts and Colors
