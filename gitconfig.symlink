@@ -84,3 +84,5 @@
 	required = true
 [mailmap]
 	file = ~/.config/git/mailmap
+[log]
+	decorate = short
