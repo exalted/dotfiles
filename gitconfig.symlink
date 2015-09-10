@@ -36,7 +36,6 @@
 	br = branch --verbose --verbose
 	ci = commit
 	add = add --all
-	diff = diff --color-words
 	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool --no-prompt --tool=Kaleidoscope $BRANCH...$SHA; }; f"
 	hist = "!f() { git log $@ --color --pretty=format:'%C(black)%h%C(bold red)%d %C(reset)%s  %C(black)%aN (%ar)%C(reset)'; }; f"
 	live-log = "!f() { while true; do output=\"Live log:\n\n$(git hist --max-count=$(( $(tput lines)-9 )) ${@:---graph --all}) \n...\"; clear; echo \"$output\"; sleep 1; done }; f"
@@ -55,6 +54,10 @@
 	assume = update-index --assume-unchanged
 	unassume = update-index --no-assume-unchanged
 	ls-assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
+	back = checkout @{-1}
+	undo = !git-undo
+	repl = !git-repl
+	remote = remote --verbose
 	; update = up
 	; sync = "!f() { git up && git publish && if [[ "$1" == "--cleanup" ]]; then echo 'Cleaning-up... '; git cleanup; fi }; f"
 	; deploy = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); if [ $BRANCH = "master" ]; then git merge --no-ff $@; else echo "You must switch to \\'master\\' to deploy a feature branch." >&2; exit 1; fi; }; f"
