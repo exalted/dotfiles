@@ -52,7 +52,8 @@ f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "
 ```
 
 ```bash
-f() { local COMMANDS=("least"); for i in ${COMMANDS[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/bin/$i" "/usr/local/bin/$i"; done }; f; unset -f f;
+ln -s "$DEVELOPMENT_DIR/dotfiles/bin/least.sh" "/usr/local/bin/least"
+ln -s "$DEVELOPMENT_DIR/dotfiles/bin/git_undo.rb" "/usr/local/bin/git-undo"
 ```
 
 ### Secrets
