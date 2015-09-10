@@ -66,7 +66,7 @@ function __ps1_newline_login {
     fi
 }
 
-PROMPT_COMMAND="history -a;${PROMPT_COMMAND}__ps1_newline_login;"
+export PROMPT_COMMAND="__ps1_newline_login; history -a; $PROMPT_COMMAND"
 
 export GIT_PS1_SHOWDIRTYSTATE=true `# show unstaged (*) and staged (+) changes`
 
