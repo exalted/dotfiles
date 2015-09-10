@@ -180,6 +180,7 @@ Emacs
 
 ```bash
 brew install emacs
+ln -sfv /usr/local/opt/emacs/*.plist ~/Library/LaunchAgents
 launchctl load "$HOME/Library/LaunchAgents/homebrew.mxcl.emacs.plist"
 ```
 
