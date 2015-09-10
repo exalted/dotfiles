@@ -48,7 +48,7 @@ dotfiles
 --------
 
 ```bash
-f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "ackrc" "siegerc" "gemrc" "rspec" "mostrc"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
+f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "ackrc" "siegerc" "gemrc" "rspec" "mostrc" "mdlrc"); for i in ${DOTFILES[@]}; do ln -s "$DEVELOPMENT_DIR/dotfiles/$i.symlink" "$HOME/.$i"; done }; f; unset -f f;
 ```
 
 ```bash
@@ -189,6 +189,7 @@ Atom
 brew install mercurial
 brew install shellcheck
 brew install tidy-html5
+gem install --verbose mdl
 ```
 
 Fonts and Colors
