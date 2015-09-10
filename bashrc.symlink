@@ -203,7 +203,7 @@ alias kionpw='pwgen -cnyB 10 1'
 # ------------------------------------------------------------------------------
 # Fake commands
 # ------------------------------------------------------------------------------
-alias spider='wget --force-directories --recursive --no-parent --no-clobber --convert-links --adjust-extension'
+alias spider='wget --force-directories --recursive --convert-links --adjust-extension'
 
 alias diskusage='du -sh'
 
