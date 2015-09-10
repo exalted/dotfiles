@@ -89,3 +89,7 @@
 	file = ~/.config/git/mailmap
 [log]
 	decorate = short
+[filter "lfs"]
+	clean = git lfs clean %f
+	smudge = git lfs smudge %f
+	required = true
