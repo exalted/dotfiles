@@ -30,17 +30,22 @@ ln -s "$DEVELOPMENT_DIR/dotfiles/rbenv-default-gems.symlink" "$HOME/.rbenv/defau
 
 ### Install and override system Ruby
 
-```bash
-export __RUBY_VERSION__='2.0.0-p247'
-```
-
-Why bother with openssl below? [Because](https://github.com/sstephenson/ruby-build/wiki#installing-200-p195-on-osx-107).
+For latest best practices [read here first](https://github.com/sstephenson/ruby-build/wiki)!
 
 ```bash
-brew install openssl
-brew install readline
-export CFLAGS=-Wno-error=shorten-64-to-32
-env RUBY_CONFIGURE_OPTS=--with-openssl-dir=`brew --prefix openssl` CONFIGURE_OPTS=--with-readline-dir=`brew --prefix readline` rbenv install "$__RUBY_VERSION__"
+export __RUBY_VERSION__='2.2.3'
+
+brew update
+brew upgrade rbenv || brew install rbenv
+brew upgrade ruby-build || brew install ruby-build
+brew upgrade rbenv-gem-rehash || brew install rbenv-gem-rehash
+brew upgrade rbenv-default-gems || brew install rbenv-default-gems
+brew upgrade openssl || brew install openssl
+brew upgrade libyaml || brew install libyaml
+brew upgrade libffi || brew install libffi
+brew upgrade readline || brew install readline
+
+RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl) --with-readline-dir=$(brew --prefix readline)" rbenv install "$__RUBY_VERSION__"
 rbenv global "$__RUBY_VERSION__"
 ```
 
@@ -71,7 +76,7 @@ Git
 brew install git
 brew install hub
 brew install gibo
-gem install --verbose svn2git
+gem install svn2git
 ```
 
 ### Configure
@@ -114,19 +119,19 @@ Also, append the relevant git ignore rules to each projects’ `.gitignore` file
 Install Pry:
 
 ```bash
-gem install --verbose pry pry-doc
+gem install pry pry-doc
 ```
 
 Additional plugins for Pry:
 
 ```bash
-gem install --verbose pry-coolline
+gem install pry-coolline
 ```
 
 ### Objective-C
 
 ```bash
-gem install --verbose cocoapods
+gem install cocoapods
 pod setup
 ```
 
@@ -168,11 +173,8 @@ brew install rmtrash
 brew install siege && sudo sysctl -w net.inet.tcp.msl=1000
 brew install tree
 brew install wget
-gem install --verbose terminal-emojify
-
-mkdir -p /usr/local/ThirdParty; cd $_
-curl -fsSkL https://github.com/paulhammond/jp/releases/download/v0.1/jp-0.1-darwin-x86_64.tar.gz | tar xfz -
-ln -s /usr/local/ThirdParty/jp-0.1/jp /usr/local/bin/jp
+gem install terminal-emojify
+brew install https://gist.github.com/paulhammond/9441506/raw/jp.rb
 ```
 
 Emacs
@@ -191,7 +193,8 @@ Atom
 brew install mercurial
 brew install shellcheck
 brew install tidy-html5
-gem install --verbose mdl
+gem install rubocop
+gem install mdl
 ```
 
 Fonts and Colors
