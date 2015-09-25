@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # ------------------------------------------------------------------------------
 # Default Development Directory
 # ------------------------------------------------------------------------------
@@ -44,8 +46,8 @@ bind '"\e[B": history-search-forward'
 # ------------------------------------------------------------------------------
 # See "brew info bash-completion"
 # ------------------------------------------------------------------------------
-if [ -f $(brew --prefix)/etc/bash_completion ]; then
-    . $(brew --prefix)/etc/bash_completion
+if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
+    . "$(brew --prefix)/etc/bash_completion"
 fi
 
 # ------------------------------------------------------------------------------
@@ -169,7 +171,7 @@ eval "$(hub alias -s)"
 # ------------------------------------------------------------------------------
 # Autojump
 # ------------------------------------------------------------------------------
-[[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
+[[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . "$(brew --prefix)/etc/profile.d/autojump.sh"
 
 # ------------------------------------------------------------------------------
 # Better Git
@@ -213,7 +215,9 @@ alias man=__man
 # HTTPie with colorized and paged output
 # (Ref.: https://github.com/jkbr/httpie#redirected-output)
 # ------------------------------------------------------------------------------
-alias http='http --pretty=all "$@"'
+function http {
+    command http --pretty=all "$@"
+}
 
 # ------------------------------------------------------------------------------
 # Generate random passwords as by KION SpA specs
@@ -226,6 +230,18 @@ alias kionpw='pwgen -cnyB 10 1'
 alias spider='wget --force-directories --recursive --convert-links --adjust-extension'
 
 alias diskusage='du -sh'
+
+function browse {
+    local url="$1" && shift
+    if [[ "$url" != http*  ]]; then
+        url="http://$url"
+    fi
+    open "$url" "$@"
+}
+
+function chrome {
+    browse "$1" -a /Applications/Google\ Chrome.app/
+}
 
 function google {
     local search=""
@@ -240,22 +256,29 @@ function google {
         echo 'Usage: google something' >&2
         return 1
     else
-        open "https://www.google.com/?gws_rd=ssl#safe=off&q=$search";
+        browse "https://www.google.com/?gws_rd=ssl#safe=off&q=$search";
     fi
-}
-
-function browse {
-    # TODO: check if `$@` is already prepended with `http://`
-    open "http://$@"
-}
-
-function chrome {
-    # TODO: check if `$@` is already prepended with `http://`
-    open "http://$@" -a /Applications/Google\ Chrome.app/
 }
 
 function serve {
     python -m SimpleHTTPServer "${1:-8080}"
 }
+
+function atom {
+    params=$*
+    if [[ $# -eq 0 ]]; then
+        params=$PWD
+    fi
+    command atom $params
+}
+
+function stree {
+    params=$*
+    if [[ $# -eq 0 ]]; then
+        params=$PWD
+    fi
+    command stree $params
+}
+alias sourcetree=stree
 
 alias reset-open-with='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'
