@@ -110,9 +110,10 @@ Also, append the relevant git ignore rules to each projects’ `.gitignore` file
 
 | Language & Framework | Git ignore rules                                                   |
 | -------------------- | ------------------------------------------------------------------ |
-| Ruby & Rails         | `gibo --upgrade && gibo Ruby Rails >> .gitignore`               |
-| Objective-C & Swift  | `gibo --upgrade && gibo Objective-C Swift Xcode >> .gitignore`  |
-| Python & Django      | `gibo --upgrade && gibo Python VirtualEnv Django >> .gitignore` |
+| Ruby & Rails         | `gibo --upgrade && gibo Ruby Rails >> .gitignore`                  | 
+| Swift                | `gibo --upgrade && gibo Swift Xcode >> .gitignore`                 |
+| Objective-C          | `gibo --upgrade && gibo Objective-C Xcode >> .gitignore`           |
+| Python & Django      | `gibo --upgrade && gibo Python VirtualEnv Django >> .gitignore`    |
 
 ### Ruby
 
