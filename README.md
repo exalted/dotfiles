@@ -59,6 +59,7 @@ f() { local DOTFILES=("bash_profile" "bashrc" "inputrc" "sqliterc" "hushlogin" "
 ```bash
 ln -s "$DEVELOPMENT_DIR/dotfiles/bin/least.sh" "/usr/local/bin/least"
 ln -s "$DEVELOPMENT_DIR/dotfiles/bin/git_undo.rb" "/usr/local/bin/git-undo"
+ln -s "$DEVELOPMENT_DIR/dotfiles/bin/xcode-open.sh" "/usr/local/bin/x"
 ```
 
 ### Secrets
