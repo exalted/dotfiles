@@ -112,7 +112,7 @@ Also, append the relevant git ignore rules to each projects’ `.gitignore` file
 
 | Language & Framework | Git ignore rules                                                   |
 | -------------------- | ------------------------------------------------------------------ |
-| Ruby & Rails         | `gibo --upgrade && gibo Ruby Rails >> .gitignore`                  | 
+| Ruby & Rails         | `gibo --upgrade && gibo Ruby Rails >> .gitignore`                  |
 | Swift                | `gibo --upgrade && gibo Swift Xcode >> .gitignore`                 |
 | Objective-C          | `gibo --upgrade && gibo Objective-C Xcode >> .gitignore`           |
 | Python & Django      | `gibo --upgrade && gibo Python VirtualEnv Django >> .gitignore`    |
@@ -131,12 +131,11 @@ Additional plugins for Pry:
 gem install pry-coolline
 ```
 
-### Objective-C
+### Objective-C & Swift
 
 ```bash
-gem install cocoapods
-pod setup
 xcode-select --install; sudo xcodebuild -license accept
+gem install cocoapods && pod setup
 gem install fastlane watchbuild
 ```
 
