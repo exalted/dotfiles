@@ -11,6 +11,7 @@ Install the :shit:
 ------------------
 
 ```bash
+xcode-select --install
 ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
 ```
 
@@ -135,6 +136,7 @@ gem install pry-coolline
 ```bash
 gem install cocoapods
 pod setup
+xcode-select --install; sudo xcodebuild -license accept
 gem install fastlane watchbuild
 ```
 
