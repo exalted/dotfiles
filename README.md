@@ -135,6 +135,7 @@ gem install pry-coolline
 ```bash
 gem install cocoapods
 pod setup
+gem install fastlane watchbuild
 ```
 
 ### Python
