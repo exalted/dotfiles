@@ -3,9 +3,8 @@
 	email = asd@pittle.org
 [core]
 	trustctime = false
+	pager = diff-so-fancy | emojify | less --chop-long-lines --quit-at-eof
 [pager]
-	log = emojify | less --chop-long-lines --QUIT-AT-EOF
-	branch = less --chop-long-lines --QUIT-AT-EOF
 	live-log = false
 [credential]
 	helper = osxkeychain

@@ -76,6 +76,7 @@ Git
 
 ```bash
 brew install git
+brew install diff-so-fancy
 brew install hub
 brew install gibo
 gem install svn2git
