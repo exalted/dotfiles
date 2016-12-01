@@ -235,7 +235,7 @@ alias lll='ls -1A'
 # ------------------------------------------------------------------------------
 # Fake commands
 # ------------------------------------------------------------------------------
-alias spider='wget --force-directories --recursive --convert-links --adjust-extension'
+alias spider='wget --force-directories --recursive --level=inf --page-requisites --convert-links --adjust-extension --no-remove-listing'
 
 alias diskusage='du -sh'
 
