@@ -13,6 +13,6 @@ Paste the following to a Terminal prompt:
 
 Whenever you feel like, run a simple command to keep your environment up-to-date:
 
-````bash
+``bash
 dotfiles
 ```
