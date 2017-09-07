@@ -1,12 +1,9 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
-require_relative '../src/steps/brew_upgrade'
+require_relative '../src/steps/upgrade_everything'
 require_relative '../src/steps/install_everything'
 
-brew_upgrade
+upgrade_everything
 install_everything
 
-ohai "Okey dokey, see you next time!"
+ohai "Okey dokey... see you next time!"
 puts
-
-# Use the shell's audible bell.
-print "\a"

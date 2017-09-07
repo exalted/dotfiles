@@ -1,6 +1,6 @@
 require_relative '../common'
 
-def brew_upgrade
+def upgrade_everything
   ohai "Upgrading existing software..."
   system 'brew upgrade'
 
