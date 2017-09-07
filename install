@@ -41,7 +41,7 @@ class Array
 end
 
 def ohai(*args)
-  puts "#{Tty.blue}==>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
+  puts "#{Tty.blue}====>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
 end
 
 def warn(warning)

@@ -1,3 +1,12 @@
-#!/usr/bin/env bash
+#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+require_relative '../src/steps/brew_upgrade'
+require_relative '../src/steps/install_everything'
 
-echo 'It Works!'
+brew_upgrade
+install_everything
+
+ohai "Okey dokey, see you next time!"
+puts
+
+# Use the shell's audible bell.
+print "\a"
