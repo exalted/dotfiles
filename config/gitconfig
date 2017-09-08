@@ -4,6 +4,7 @@
 [core]
 	trustctime = false
 	pager = diff-so-fancy | emojify | less --chop-long-lines --quit-at-eof
+	excludesfile = /Users/ali/.config/git/ignore
 [pager]
 	live-log = false
 [credential]
@@ -90,7 +91,7 @@
 	decorate = short
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path =
+	path = 
 [mergetool "sourcetree"]
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
@@ -98,3 +99,5 @@
 	clean = git-lfs clean %f
 	smudge = git-lfs smudge %f
 	required = true
+[commit]
+	template = /Users/ali/.stCommitMsg
