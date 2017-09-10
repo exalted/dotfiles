@@ -4,8 +4,8 @@ require 'fileutils'
 require_relative './common'
 
 def brew(formula)
-  Kernel.system "brew ls --versions #{formula} > /dev/null"
-  system "brew install #{formula}" unless $?.success?
+  return if Kernel.system "brew ls --versions #{formula} > /dev/null"
+  system "brew install #{formula}"
 end
 
 def link(src, dest, backup: false)
