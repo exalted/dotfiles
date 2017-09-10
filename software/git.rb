@@ -11,7 +11,6 @@ link 'gitattributes', '.config/git/attributes'
 
 globalignore_boilerplates = %w[ macOS Archives Dropbox Emacs Xcode ]
 
-system "gibo --upgrade"
 system [
   "gibo",
   globalignore_boilerplates.join(' '),
