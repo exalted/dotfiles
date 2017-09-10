@@ -1,4 +1,5 @@
 require 'pathname'
+require 'fileutils'
 
 require_relative './common'
 
@@ -7,11 +8,15 @@ def brew(formula)
   system "brew install #{formula}" unless $?.success?
 end
 
-def link(from, to)
-  to_path = "#{ENV["HOME"]}/#{to}"
+def link(src, dest, backup: false)
+  src = "#{__dir__}/../dotfiles/#{src}"
+  dest = "#{ENV["HOME"]}/#{dest}"
 
-  dirname = Pathname.new(to_path).dirname.to_s
-  system "/bin/mkdir", "-p", dirname unless Dir.exists?(dirname)
+  if backup && File.exists?(dest)
+    dest_backup = "#{dest}.backup"
+    FileUtils.copy_file(dest, dest_backup, preserve: true) unless File.exists?(dest_backup)
+  end
 
-  system "ln -sf #{__dir__}/../dotfiles/#{from} #{to_path}"
+  FileUtils.mkdir_p Pathname.new(dest).dirname
+  FileUtils.ln_sf src, dest
 end
