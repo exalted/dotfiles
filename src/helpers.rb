@@ -13,6 +13,11 @@ def mas(app_id, name)
   system "mas install #{app_id}"
 end
 
+def cask(token)
+  return if Kernel.system "brew cask ls --versions #{token} &> /dev/null"
+  system "brew cask install #{token}"
+end
+
 def link(src, dest, backup: false)
   src = "#{__dir__}/../dotfiles/#{src}"
   dest = "#{ENV["HOME"]}/#{dest}"
