@@ -44,6 +44,10 @@ def warn(warning)
   puts "#{Tty.red}Warning#{Tty.reset}: #{warning.chomp}"
 end
 
+def cmd_exists(cmdname)
+  Kernel.system "command -v #{cmdname} > /dev/null"
+end
+
 def system(*args)
   abort "Failed during: #{args.shell_s}" unless Kernel.system(*args)
 end

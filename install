@@ -57,8 +57,6 @@ abort <<-EOABORT if File.directory?(DOTFILES_REPOSITORY)
 The dotfiles appears to be installed already. Run `dotfiles` to update.
 EOABORT
 
-system "/usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\""
-
 system "/bin/mkdir #{USER_BIN}" unless File.directory? "#{USER_BIN}"
 
 ohai "Downloading and installing dotfiles..."

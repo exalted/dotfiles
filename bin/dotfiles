@@ -1,7 +1,11 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
-require_relative '../src/steps/upgrade_everything'
-require_relative '../src/steps/install_everything'
+require 'pathname'
 
+Dir.glob("#{__dir__}/../src/steps/*")
+   .map { |file| Pathname.new(file).sub_ext '' }
+   .each { |file| require_relative file }
+
+install_homebrew
 upgrade_everything
 install_everything
 
