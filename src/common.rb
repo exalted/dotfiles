@@ -37,14 +37,14 @@ class Array
 end
 
 def ohai(*args)
-  puts "#{Tty.blue}====>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
+  puts "#{Tty.blue}>>>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
 end
 
 def warn(warning)
   puts "#{Tty.red}Warning#{Tty.reset}: #{warning.chomp}"
 end
 
-def cmd_exists(cmdname)
+def cmd_exists?(cmdname)
   Kernel.system "command -v #{cmdname} > /dev/null"
 end
 

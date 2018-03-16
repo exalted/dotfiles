@@ -41,7 +41,7 @@ class Array
 end
 
 def ohai(*args)
-  puts "#{Tty.blue}====>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
+  puts "#{Tty.blue}>>>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
 end
 
 def warn(warning)
@@ -52,14 +52,17 @@ def system(*args)
   abort "Failed during: #{args.shell_s}" unless Kernel.system(*args)
 end
 
-####################################################################### script
+##
+## script ......................................................................
+##
+
 abort <<-EOABORT if File.directory?(DOTFILES_REPOSITORY)
 The dotfiles appears to be installed already. Run `dotfiles` to update.
 EOABORT
 
 system "/bin/mkdir #{USER_BIN}" unless File.directory? "#{USER_BIN}"
 
-ohai "Downloading and installing dotfiles..."
+ohai "Downloading and installing dotfiles…"
 
 system "git clone #{DOTFILES_REPO} #{DOTFILES_REPOSITORY}"
 

@@ -5,9 +5,15 @@ Dir.glob("#{__dir__}/../src/steps/*")
    .map { |file| Pathname.new(file).sub_ext '' }
    .each { |file| require_relative file }
 
+# These are various system-wide installers, homebrew being the mother of all:
 install_homebrew
+install_mas
+
+# … then comes the real deal:
+setup
 upgrade_everything
 install_everything
+# TODO: consider `source ~/.bashrc` to make changes effective immediately…
 
-ohai "Okey dokey... see you next time!"
+ohai "Okey dokey… see you next time!"
 puts

@@ -1,9 +1,0 @@
-# (Ref.: http://www.joshstaiger.org/archives/2005/07/bash_profile_vs.html)
-if [ -f $HOME/.bashrc ]; then
-   source $HOME/.bashrc
-fi
-
-# A separate file that contains private things (such as private API tokens).
-if [ -f $HOME/.bashrc_private ]; then
-   source $HOME/.bashrc_private
-fi

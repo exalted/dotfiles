@@ -1,0 +1,113 @@
+[user]
+	name = Ali Servet Donmez
+	email = asd@pittle.org
+[core]
+	trustctime = false
+	; TODO: pager = diff-so-fancy | emojify | less --chop-long-lines --quit-at-eof
+	pager = diff-so-fancy | less --chop-long-lines --quit-at-eof
+	excludesfile = /Users/ali/.config/git/ignore
+[pager]
+	live-log = false
+[credential]
+	helper = osxkeychain
+[hub]
+	protocol = https
+[svn]
+	rmdir = true
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[diff]
+	tool = Kaleidoscope
+	algorithm = histogram
+	indentHeuristic = true
+[difftool]
+	prompt = false
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+	trustExitCode = true
+[mergetool]
+	prompt = false
+	keepBackup = true
+[merge]
+	tool = Kaleidoscope
+[color]
+	ui = auto
+[alias]
+	;co = checkout
+	;st = status
+	;br = branch --verbose --verbose
+	;ci = commit
+	;add = add --all
+	;hist = "!f() { git log $@ --color --pretty=format:'%C(black)%h%C(bold red)%d %C(reset)%s  %C(black)%aN (%ar)%C(reset)'; }; f"
+	;; ls-ignored = !git ls-files --others --ignored --exclude-standard
+	;ls-ignored = !git status --ignored --short | ack -o '(?<=^!! ).*'
+	;; rollback = !bash -ic '__git_stash_wrap git reset $@' -
+	;; rollback = git reset --soft
+	;unstage = reset HEAD --
+	;discard = checkout --
+	;publish = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); git push --set-upstream origin $BRANCH; }; f"
+	;cleanup = !bash -c 'git branch --merged | grep -Ev "\\\\*\\|master" | xargs -n 1 git branch -d && git remote prune origin'
+	;; cleanup = !git branch --merged | grep -Ev '^\\*|master' | xargs -n 1 git branch --delete
+	;search = "!f() { git hist -G $@; }; f"
+	;save = stash save --include-untracked
+	;restore = stash pop --index
+	;assume = update-index --assume-unchanged
+	;unassume = update-index --no-assume-unchanged
+	;ls-assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
+	;back = checkout @{-1}
+	;undo = !git-undo
+	;repl = !git-repl
+	;remote = remote --verbose
+	;; update = up
+	;; sync = "!f() { git up && git publish && if [[ "$1" == "--cleanup" ]]; then echo 'Cleaning-up… '; git cleanup; fi }; f"
+	;; deploy = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); if [ $BRANCH = "master" ]; then git merge --no-ff $@; else echo "You must switch to \\'master\\' to deploy a feature branch." >&2; exit 1; fi; }; f"
+[push]
+	default = simple
+[rebase]
+	autosquash = true
+[github]
+	user = exalted
+[filter "media"]
+	required = true
+	clean = git media clean %f
+	smudge = git media smudge %f
+[pull]
+	rebase = preserve
+[status]
+	showUntrackedFiles = all
+[fetch]
+	prune = true
+[grep]
+	lineNumber = true
+[filter "hawser"]
+	clean = git hawser clean %f
+	smudge = git hawser smudge %f
+	required = true
+[mailmap]
+	file = ~/.config/git/mailmap
+[log]
+	decorate = short
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[filter "lfs"]
+	clean = git-lfs clean %f
+	smudge = git-lfs smudge %f
+	required = true
+[commit]
+	template = /Users/ali/.stCommitMsg
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[color "diff"]
+	meta = yellow
+	frag = magenta bold
+	commit = yellow bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse

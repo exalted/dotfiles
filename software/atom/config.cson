@@ -1,0 +1,42 @@
+"*":
+  "atom-ide-ui":
+    "atom-ide-diagnostics-ui": {}
+    use: {}
+  "atom-package-deps":
+    ignored: [
+      "linter-eslint"
+    ]
+  "bracket-matcher":
+    highlightMatchingLineNumber: true
+  core:
+    disabledPackages: [
+      "deprecation-cop"
+    ]
+    restorePreviousWindowsOnStart: "no"
+    telemetryConsent: "limited"
+  editor:
+    fontSize: 21
+    scrollPastEnd: true
+    showIndentGuide: true
+    showInvisibles: true
+  "exception-reporting":
+    userId: "356841a2-c458-4982-b7b8-e162248d00d2"
+  "find-and-replace":
+    scrollToResultOnLiveSearch: true
+  github:
+    viewChangesForCurrentFileDiffPaneSplitDirection: "right"
+  "highlight-selected":
+    highlightBackground: true
+    lightTheme: true
+    minimumLength: 1
+  "language-babel": {}
+  "linter-ui-default":
+    panelHeight: 300
+  "markdown-preview":
+    useGitHubStyle: true
+  "one-dark-ui": {}
+  "tree-view":
+    hideIgnoredNames: true
+    squashDirectoryNames: true
+  welcome:
+    showOnStartup: false
