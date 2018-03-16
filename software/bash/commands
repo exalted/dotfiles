@@ -66,7 +66,7 @@ reset-open-with() {
 
 alias b-com='browse "balsamiq.com"'
 alias b-cloud='browse "balsamiq.cloud"'
-alias b-agenda='browse "https://balsamiq.atlassian.net/wiki/spaces/intranet/pages/edit/384139387"'
+alias b-agenda='open /Users/ali/Library/Mobile\ Documents/74ZAFF46HB\~jp\~informationarchitects\~Writer/Documents/Balsamiq\ Agenda/Latest.md -a /Applications/iA\ Writer\ Classic.app/'
 alias b-wiki='browse "https://balsamiq.atlassian.net/wiki/my/saved-for-later"'
 alias b-jenkins='browse "https://jenkins.balsamiq.com"'
 alias b-jenkins-com='browse "https://jenkins.balsamiq.com/job/balsamiq.com/"'
