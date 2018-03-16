@@ -14,8 +14,8 @@ bash_source_relative 'git.bashrc'
 bash_source_relative 'hub.bashrc'
 
 globalignore_boilerplates = %w[ macOS Archives Dropbox Emacs Xcode ]
-Kernel.system [
-  "gibo",
-  globalignore_boilerplates.join(' '),
-  "> #{ENV["HOME"]}/.config/git/ignore",
-].join ' '
+Kernel.system(
+  "mkdir -p #{ENV["HOME"]}/.config/git && "\
+  "gibo #{globalignore_boilerplates.join(' ')} "\
+  "> #{ENV["HOME"]}/.config/git/ignore"
+)
