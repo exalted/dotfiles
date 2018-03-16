@@ -9,11 +9,24 @@
   "bracket-matcher":
     highlightMatchingLineNumber: true
   core:
+    automaticallyUpdate: false
     disabledPackages: [
       "deprecation-cop"
     ]
+    ignoredNames: [
+      ".git"
+      ".hg"
+      ".svn"
+      ".DS_Store"
+      "._*"
+      "Thumbs.db"
+      "desktop.ini"
+      "node_modules"
+    ]
+    projectHome: "/Users/ali/Development"
     restorePreviousWindowsOnStart: "no"
     telemetryConsent: "limited"
+    useTreeSitterParsers: true
   editor:
     fontSize: 21
     scrollPastEnd: true
@@ -30,8 +43,7 @@
     lightTheme: true
     minimumLength: 1
   "language-babel": {}
-  "linter-ui-default":
-    panelHeight: 300
+  "linter-ui-default": {}
   "markdown-preview":
     useGitHubStyle: true
   "one-dark-ui": {}
