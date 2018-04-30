@@ -1,0 +1,83 @@
+#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+# Inspired by https://github.com/Homebrew/install/blob/63e779e5d6cc1cd7ddefda9c0eb404687d1a1c79/install
+DOTFILES_REPOSITORY = "#{ENV["HOME"]}/.dotfiles".freeze
+DOTFILES_REPO = "https://github.com/exalted/dotfiles.git".freeze
+USER_BIN = "#{ENV["HOME"]}/bin".freeze
+
+module Tty
+  module_function
+
+  def blue
+    bold 34
+  end
+
+  def red
+    bold 31
+  end
+
+  def reset
+    escape 0
+  end
+
+  def bold(n = 39)
+    escape "1;#{n}"
+  end
+
+  def underline
+    escape "4;39"
+  end
+
+  def escape(n)
+    "\033[#{n}m" if STDOUT.tty?
+  end
+end
+
+class Array
+  def shell_s
+    cp = dup
+    first = cp.shift
+    cp.map { |arg| arg.gsub " ", "\\ " }.unshift(first).join(" ")
+  end
+end
+
+def ohai(*args)
+  puts "#{Tty.blue}>>>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
+end
+
+def warn(warning)
+  puts "#{Tty.red}Warning#{Tty.reset}: #{warning.chomp}"
+end
+
+def system(*args)
+  abort "Failed during: #{args.shell_s}" unless Kernel.system(*args)
+end
+
+##
+## script ......................................................................
+##
+
+abort <<-EOABORT if File.directory?(DOTFILES_REPOSITORY)
+The dotfiles appears to be installed already. Run `dotfiles` to update.
+EOABORT
+
+system "/bin/mkdir #{USER_BIN}" unless File.directory? "#{USER_BIN}"
+
+ohai "Downloading and installing dotfiles…"
+
+system "git clone #{DOTFILES_REPO} #{DOTFILES_REPOSITORY}"
+
+system "ln -sf #{DOTFILES_REPOSITORY}/bin/dotfiles #{USER_BIN}/dotfiles"
+
+system "#{USER_BIN}/dotfiles"
+
+warn "#{USER_BIN} is not in your PATH." unless ENV["PATH"].split(":").include? "#{USER_BIN}"
+
+ohai "Installation successful!"
+puts
+
+# Use the shell's audible bell.
+print "\a"
+
+ohai "What now?"
+
+puts "Whenever you feel like, run `dotfiles` to keep your environment up-to-date."

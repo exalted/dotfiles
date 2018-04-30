@@ -1,0 +1,13 @@
+#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+require_relative '../../src/helpers'
+
+brew 'submarine'
+
+# TODO: The technique below is copied from `software/mosaic.rb`, no bueno…
+
+filename = "Download Subtitles.workflow"
+src = "#{__dir__}/#{filename}"
+dest = "#{ENV["HOME"]}/Library/Services/#{filename}"
+
+FileUtils.mkdir_p Pathname.new(dest).dirname
+FileUtils.cp_r(src, dest, preserve: true)

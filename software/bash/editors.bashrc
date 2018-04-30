@@ -1,0 +1,8 @@
+# `INTEGRATED` (as in "I" in IDE) is not standard, but I like the idea
+export INTEGRATED='atom'
+
+# new (old) editor that is better than a line editor
+export VISUAL=$INTEGRATED
+
+# super-old line editor (who cares nowadays?!)
+# export EDITOR=

@@ -1,0 +1,20 @@
+tmux() {
+  >&2 echo -e \
+    'tmux: Consider using `workon` instead.' \
+    'If you really need `tmux` however, try `command tmux`…'
+  return 1
+}
+
+workon() {
+  if [[ "$1" = "ls" ]]; then
+    command tmux list-sessions
+    return
+  fi
+
+  local session_name="$*"
+  if [[ -n "$session_name" ]]; then
+    session_name=$(kebab "$session_name")
+  fi
+
+  command tmux new-session -s "${session_name:-default}" -A
+}

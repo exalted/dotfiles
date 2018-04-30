@@ -1,0 +1,7 @@
+stree() {
+  params=$*
+  if [[ $# -eq 0 ]]; then
+      params=$PWD
+  fi
+  command stree $params
+}

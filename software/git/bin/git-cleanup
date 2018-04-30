@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+trap "echo 'error: Script failed: see failed command above'" ERR
+
+$GIT branch --merged \
+  | { grep -v '^  master$' || true; } \
+  | { grep -v '^*' || true; } \
+  | xargs -n 1 git branch --delete
+
+$GIT remote prune origin

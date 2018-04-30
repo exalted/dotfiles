@@ -1,0 +1,87 @@
+[user]
+	name = Ali Servet Donmez
+	email = asd@pittle.org
+[core]
+	trustctime = false
+	pager = diff-so-fancy | emojify | less --chop-long-lines --quit-at-eof
+	excludesfile = ~/.config/git/ignore
+[credential]
+	helper = osxkeychain
+[hub]
+	protocol = https
+[svn]
+	rmdir = true
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[diff]
+	tool = Kaleidoscope
+	algorithm = histogram
+	indentHeuristic = true
+[difftool]
+	prompt = false
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+	trustExitCode = true
+[mergetool]
+	prompt = false
+	keepBackup = true
+[merge]
+	tool = Kaleidoscope
+[color]
+	ui = auto
+[alias]
+	co = checkout
+	st = status
+	br = !git-wrapper branch
+	ci = commit
+	find = search
+[push]
+	default = simple
+[rebase]
+	autosquash = true
+[github]
+	user = exalted
+[filter "media"]
+	required = true
+	clean = git media clean %f
+	smudge = git media smudge %f
+[pull]
+	rebase = preserve
+[status]
+	showUntrackedFiles = all
+[fetch]
+	prune = true
+[grep]
+	lineNumber = true
+[filter "hawser"]
+	clean = git hawser clean %f
+	smudge = git hawser smudge %f
+	required = true
+[mailmap]
+	file = ~/.config/git/mailmap
+[log]
+	decorate = short
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path =
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[filter "lfs"]
+	clean = git-lfs clean %f
+	smudge = git-lfs smudge %f
+	required = true
+[commit]
+	template = ~/.stCommitMsg
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[color "diff"]
+	meta = yellow
+	frag = magenta bold
+	commit = yellow bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
