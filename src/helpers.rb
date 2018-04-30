@@ -57,10 +57,12 @@ def bash_source(path)
   File.open("#{ENV["HOME"]}/.bashrc", 'a') { |f| f.puts "\nsource #{path}" }
 end
 
-def bash_source_relative(path)
+def bash_source_relative(name = nil)
+  name = name ? "#{name}.bashrc" : 'bashrc'
+
   bash_source(
     File.absolute_path(
-      "#{Pathname.new(Kernel.caller_locations.last.path).dirname}/#{path}",
+      "#{Pathname.new(Kernel.caller_locations.last.path).dirname}/#{name}",
     ),
   )
 end

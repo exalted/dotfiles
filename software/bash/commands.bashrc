@@ -44,24 +44,19 @@ serve() {
   python -m SimpleHTTPServer "${1:-8080}"
 }
 
-atom() {
-  params=$*
-  if [[ $# -eq 0 ]]; then
-      params=$PWD
-  fi
-  command atom $params
-}
-
-stree() {
-  params=$*
-  if [[ $# -eq 0 ]]; then
-      params=$PWD
-  fi
-  command stree $params
-}
-
 reset-open-with() {
   /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
+}
+
+kebab() {
+  echo "$*" \
+  | tr '[:upper:]' '[:lower:]' \
+  | tr -C -d ' [:alnum:]./-' \
+  | tr -s '-' \
+  | tr -s ' ' '-' \
+  | sed -E 's/^-(.*)$/\1/' \
+  | sed -E 's/^(.*)-$/\1/' \
+  | sed -E 's/^-(.*)-$/\1/'
 }
 
 alias b-com='browse "balsamiq.com"'
@@ -80,3 +75,7 @@ alias b-jenkins-uxapprentice='browse "https://jenkins.balsamiq.com/job/ux_appren
 alias b-jenkins-ops='browse "https://jenkins.balsamiq.com/job/Ops/"'
 alias acetaia='browse "https://acetaia.balsamiq.com/#/u31-ali"'
 alias bottega='browse "bottega.balsamiq.com"'
+
+alias cask='brew cask'
+
+alias dns-flush='sudo killall -HUP mDNSResponder'

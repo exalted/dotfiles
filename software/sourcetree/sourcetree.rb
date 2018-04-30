@@ -1,6 +1,6 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
 require_relative '../../src/helpers'
 
-brew 'fd'
+cask 'sourcetree'
 
 bash_source_relative

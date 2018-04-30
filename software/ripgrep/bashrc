@@ -1,0 +1,6 @@
+grep() {
+  >&2 echo -e \
+    'grep: Consider using `rg` instead.' \
+    'If you really need `grep` however, use `command grep`…'
+  return 1
+}

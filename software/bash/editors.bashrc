@@ -2,8 +2,7 @@
 export INTEGRATED='atom'
 
 # new (old) editor that is better than a line editor
-export VISUAL='emacsclient'
-export VISUAL="$INTEGRATED"
+export VISUAL=$INTEGRATED
 
 # super-old line editor (who cares nowadays?!)
 # export EDITOR=

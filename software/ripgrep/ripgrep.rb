@@ -3,4 +3,4 @@ require_relative '../../src/helpers'
 
 brew 'ripgrep'
 
-bash_source_relative 'ripgrep.bashrc'
+bash_source_relative

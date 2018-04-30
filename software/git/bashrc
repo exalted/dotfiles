@@ -12,3 +12,16 @@ export GIT_PS1_SHOWUNTRACKEDFILES=true
 #   - "<>" indicates you have diverged
 #   - "=" indicates that there is no difference
 export GIT_PS1_SHOWUPSTREAM=auto
+
+# TODO: remove hard-coded path
+export PATH="$PATH:/Users/ali/Development/dotfiles/software/git/bin"
+
+# `alias` takes precedence over functions, built-ins, and $PATH
+alias git=git-wrapper
+
+# What's the "original" `git` command?
+#export GIT="command git"
+export GIT="hub"
+
+# For typos:
+alias gti=git

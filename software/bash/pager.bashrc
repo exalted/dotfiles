@@ -2,7 +2,7 @@ export PAGER=less
 
 export LESS="\
   --quit-if-one-screen \
-  --RAW-CONTROL-CHARS \
+  --raw-control-chars \
   --no-init \
   --IGNORE-CASE \
   --hilite-search \

@@ -3,4 +3,4 @@ require_relative '../../src/helpers'
 
 brew 'httpie'
 
-bash_source_relative 'httpie.bashrc'
+bash_source_relative

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+trap "echo 'error: Script failed: see failed command above'" ERR
+
+$GIT log \
+  --color \
+  --pretty=format:'%C(black)%h%C(bold red)%d %C(reset)%s  %C(black)%aN (%ar)%C(reset)' \
+  "$@"

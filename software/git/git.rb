@@ -4,14 +4,12 @@ require_relative '../../src/helpers'
 brew 'git'
 brew 'hub'
 brew 'git-extras'
-# TODO: consider https://www.gitignore.io instead
-brew 'gibo'
+brew 'gibo'  # TODO: consider https://www.gitignore.io instead
 
 link_to_home_relative 'config', '.config/git/config'
 link_to_home_relative 'attributes', '.config/git/attributes'
 
-bash_source_relative 'git.bashrc'
-bash_source_relative 'hub.bashrc'
+bash_source_relative
 
 globalignore_boilerplates = %w[ macOS Archives Dropbox Emacs Xcode ]
 Kernel.system(

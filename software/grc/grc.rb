@@ -6,4 +6,4 @@ brew 'grc'
 # We don't want to colourify everything (see `/usr/local/etc/grc.bashrc`)
 Kernel.system "cat /usr/local/etc/grc.bashrc | grep -v 'alias diff=' > #{__dir__}/grc.bashrc"
 
-bash_source_relative 'grc.bashrc'
+bash_source_relative

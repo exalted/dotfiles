@@ -9,6 +9,8 @@ link_to_home_relative 'keymap.cson', '.atom/keymap.cson'
 link_to_home_relative 'snippets.cson', '.atom/snippets.cson'
 link_to_home_relative 'styles.less', '.atom/styles.less'
 
+bash_source_relative
+
 module APM
   def self.install(package_name)
     return if Kernel.system "apm list --bare --installed | cut -f 1 -d@ -s | grep ^#{package_name}$ > /dev/null"

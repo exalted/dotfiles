@@ -702,13 +702,13 @@ CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASA
         <attribute name="automaticinternal" type="bool">1</attribute>
     </object>
     <object type="WINDOWLAYOUTBASIC" id="z245">
-        <attribute name="starty" type="int16">2</attribute>
+        <attribute name="starty" type="int16">1</attribute>
         <attribute name="startx" type="int16">3</attribute>
         <attribute name="gridresolutiony" type="int16">12</attribute>
         <attribute name="gridresolutionx" type="int16">12</attribute>
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">10</attribute>
-        <attribute name="endx" type="int16">8</attribute>
+        <attribute name="endx" type="int16">9</attribute>
         <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
 CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRfFEcECoSAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
 </attribute>

@@ -2,3 +2,5 @@
 require_relative '../src/helpers'
 
 cask 'sequel-pro'
+
+# TODO: consider saving its settings

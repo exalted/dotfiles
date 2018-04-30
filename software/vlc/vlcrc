@@ -515,7 +515,7 @@
 #subsdec-align=0
 
 # Subtitle text encoding (string)
-subsdec-encoding=UTF-8
+subsdec-encoding=ISO-8859-9
 
 # UTF-8 subtitle autodetection (boolean)
 #subsdec-autodetect-utf8=1

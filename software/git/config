@@ -3,11 +3,8 @@
 	email = asd@pittle.org
 [core]
 	trustctime = false
-	; TODO: pager = diff-so-fancy | emojify | less --chop-long-lines --quit-at-eof
-	pager = diff-so-fancy | less --chop-long-lines --quit-at-eof
-	excludesfile = /Users/ali/.config/git/ignore
-[pager]
-	live-log = false
+	pager = diff-so-fancy | emojify | less --chop-long-lines --quit-at-eof
+	excludesfile = ~/.config/git/ignore
 [credential]
 	helper = osxkeychain
 [hub]
@@ -33,34 +30,11 @@
 [color]
 	ui = auto
 [alias]
-	;co = checkout
-	;st = status
-	;br = branch --verbose --verbose
-	;ci = commit
-	;add = add --all
-	;hist = "!f() { git log $@ --color --pretty=format:'%C(black)%h%C(bold red)%d %C(reset)%s  %C(black)%aN (%ar)%C(reset)'; }; f"
-	;; ls-ignored = !git ls-files --others --ignored --exclude-standard
-	;ls-ignored = !git status --ignored --short | ack -o '(?<=^!! ).*'
-	;; rollback = !bash -ic '__git_stash_wrap git reset $@' -
-	;; rollback = git reset --soft
-	;unstage = reset HEAD --
-	;discard = checkout --
-	;publish = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); git push --set-upstream origin $BRANCH; }; f"
-	;cleanup = !bash -c 'git branch --merged | grep -Ev "\\\\*\\|master" | xargs -n 1 git branch -d && git remote prune origin'
-	;; cleanup = !git branch --merged | grep -Ev '^\\*|master' | xargs -n 1 git branch --delete
-	;search = "!f() { git hist -G $@; }; f"
-	;save = stash save --include-untracked
-	;restore = stash pop --index
-	;assume = update-index --assume-unchanged
-	;unassume = update-index --no-assume-unchanged
-	;ls-assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
-	;back = checkout @{-1}
-	;undo = !git-undo
-	;repl = !git-repl
-	;remote = remote --verbose
-	;; update = up
-	;; sync = "!f() { git up && git publish && if [[ "$1" == "--cleanup" ]]; then echo 'Cleaning-up… '; git cleanup; fi }; f"
-	;; deploy = "!f() { BRANCH=$(git symbolic-ref HEAD 2> /dev/null | sed -e 's/refs\\/heads\\///'); if [ $BRANCH = "master" ]; then git merge --no-ff $@; else echo "You must switch to \\'master\\' to deploy a feature branch." >&2; exit 1; fi; }; f"
+	co = checkout
+	st = status
+	br = !git-wrapper branch
+	ci = commit
+	find = search
 [push]
 	default = simple
 [rebase]
@@ -89,7 +63,7 @@
 	decorate = short
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+	path =
 [mergetool "sourcetree"]
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
@@ -98,7 +72,7 @@
 	smudge = git-lfs smudge %f
 	required = true
 [commit]
-	template = /Users/ali/.stCommitMsg
+	template = ~/.stCommitMsg
 [color "diff-highlight"]
 	oldNormal = red bold
 	oldHighlight = red bold 52

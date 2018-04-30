@@ -3,4 +3,4 @@ require_relative '../src/helpers'
 
 cask 'rocket'
 
-# TODO: save (or link to) custom shortcuts
+# TODO: consider saving its settings

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+trap "echo 'error: Script failed: see failed command above'" ERR
+
+__dir__="$(cd "$(dirname "$0")" ; pwd -P)"
+
+case "${1:-}" in
+  "" )
+    $GIT status
+    ;;
+  "add" )
+    "${__dir__}"/git-add "${@:2}"
+    ;;
+  "branch" )
+    "${__dir__}"/git-branch "${@:2}"
+    ;;
+  "remote" )
+    "${__dir__}"/git-remote "${@:2}"
+    ;;
+  * )
+    $GIT "$@"
+    ;;
+esac
