@@ -1,3 +1,12 @@
+cask() {
+  if [[ "${1:-}" = search ]]; then
+    brew "$@"
+    return
+  fi
+
+  brew cask "$@"
+}
+
 spider() {
   wget \
     --force-directories \
@@ -9,11 +18,14 @@ spider() {
     --no-remove-listing
 }
 
-alias diskusage='du -sh'
+diskusage() { du -sh "$@" | sort --human-numeric-sort --reverse; }
 
 browse() {
   local url="$1" && shift
-  if [[ "$url" != http*  ]]; then
+  # `open` command won't recognize custom protocols, such as `chrome://` and
+  # passing URLs after `--arg` argument doesn't seem to open links in relevant
+  # browsers, so don't even bother to do smart things like `"$url" ~= [a-z]+://`
+  if [[ "$url" != http* ]]; then
       url="http://$url"
   fi
   open "$url" "$@"
@@ -59,23 +71,23 @@ kebab() {
   | sed -E 's/^-(.*)-$/\1/'
 }
 
-alias b-com='browse "balsamiq.com"'
-alias b-cloud='browse "balsamiq.cloud"'
-alias b-agenda='open /Users/ali/Library/Mobile\ Documents/74ZAFF46HB\~jp\~informationarchitects\~Writer/Documents/Balsamiq\ Agenda/Latest.md -a /Applications/iA\ Writer\ Classic.app/'
-alias b-wiki='browse "https://balsamiq.atlassian.net/wiki/my/saved-for-later"'
-alias b-jenkins='browse "https://jenkins.balsamiq.com"'
-alias b-jenkins-com='browse "https://jenkins.balsamiq.com/job/balsamiq.com/"'
-alias b-jenkins-internaltools='browse "https://jenkins.balsamiq.com/job/Internal_Tools/"'
-alias b-jenkins-acetaia='b-jenkins-internaltools'
-alias b-jenkins-bottega='b-jenkins-internaltools'
-alias b-jenkins-pivotalvotes='b-jenkins-internaltools'
-alias b-jenkins-influencers='b-jenkins-internaltools'
-alias b-jenkins-support='browse "https://jenkins.balsamiq.com/job/support.balsamiq.com/"'
-alias b-jenkins-uxapprentice='browse "https://jenkins.balsamiq.com/job/ux_apprentice/"'
-alias b-jenkins-ops='browse "https://jenkins.balsamiq.com/job/Ops/"'
-alias acetaia='browse "https://acetaia.balsamiq.com/#/u31-ali"'
-alias bottega='browse "bottega.balsamiq.com"'
+alias balsamiq-acetaia='browse "https://acetaia.balsamiq.com/#/u31-ali"'
 
-alias cask='brew cask'
+alias balsamiq-agenda='open /Users/ali/Library/Mobile\ Documents/74ZAFF46HB~jp~informationarchitects~Writer/Documents/Balsamiq\ Agenda/0-Current.md -a /Applications/iA\ Writer\ Classic.app/'
+alias balsamiq-wiki='browse "https://balsamiq.atlassian.net/wiki/my/saved-for-later"'
+
+alias balsamiq-ssh-jenkins-master='ssh ubuntu@ec2-46-137-119-50.eu-west-1.compute.amazonaws.com'
+alias balsamiq-ssh-logs-prod='ssh ubuntu@ec2-52-201-211-94.compute-1.amazonaws.com'
+
+alias balsamiq-ci-acetaia='balsamiq-ci-internaltools'
+alias balsamiq-ci-bottega='balsamiq-ci-internaltools'
+alias balsamiq-ci-b.com='browse "https://jenkins.balsamiq.com/job/balsamiq.com/"'
+alias balsamiq-ci-influencers='balsamiq-ci-internaltools'
+alias balsamiq-ci-internaltools='browse "https://jenkins.balsamiq.com/job/Internal_Tools/"'
+alias balsamiq-ci-ops='browse "https://jenkins.balsamiq.com/job/Ops/"'
+alias balsamiq-ci-pivotalvotes='balsamiq-ci-internaltools'
+alias balsamiq-ci-support='browse "https://jenkins.balsamiq.com/job/support.balsamiq.com/"'
+alias balsamiq-ci-uxapprentice='browse "https://jenkins.balsamiq.com/job/ux_apprentice/"'
+alias balsamiq-ci='browse "https://jenkins.balsamiq.com"'
 
 alias dns-flush='sudo killall -HUP mDNSResponder'

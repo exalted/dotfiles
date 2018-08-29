@@ -6,5 +6,6 @@ def install_homebrew
   return if cmd_exists?('brew')
   system "/usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\""
   system 'brew tap caskroom/cask'
+  system 'brew tap caskroom/versions'
   system 'brew tap caskroom/drivers'
 end

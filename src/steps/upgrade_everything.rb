@@ -32,12 +32,12 @@ module Upgrade
   def self.gibo
     return unless cmd_exists?('gibo')
     puts "Updating gitignore boilerplates…"
-    system "gibo --upgrade"
+    system "gibo update"
   end
 
   def self.apm
-    return unless cmd_exists?('apm')
+    return unless cmd_exists?('apm-beta')
     puts "Updating Atom packages…"
-    system "apm upgrade --no-confirm"
+    system "apm-beta upgrade --no-confirm"
   end
 end

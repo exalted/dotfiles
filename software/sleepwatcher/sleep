@@ -1,1 +1,4 @@
 blueutil --power off
+
+mount | grep -E '^/dev/disk.*/Volumes' | cut -d' ' -f1 > /tmp/remount_on_wakeup
+xargs diskutil unmount < /tmp/remount_on_wakeup

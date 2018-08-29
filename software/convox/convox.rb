@@ -1,11 +1,11 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
 require_relative '../../src/helpers'
 
-brew 'convox'
+unless cmd_exists?('convox')
+  Kernel.system "curl -Ls https://convox.com/install/osx.zip > /tmp/convox.zip"
+  Kernel.system "unzip /tmp/convox.zip -d /usr/local/bin"
+  Kernel.system "rm /tmp/convox.zip"
+end
 
-# For some reason Homebrew formula isn't usually up-to-date and
-# even the official guide recommends `convox update` after `brew install`
-# (ref.: https://convox.com/docs/installation/#homebrew)
+# TODO: update convox only if not updated in the last hour or so
 Kernel.system "convox update"
-
-bash_source_relative

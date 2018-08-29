@@ -1,0 +1,4 @@
+export PATH="/usr/local/opt/node@8/bin:$PATH"
+
+# make sure this comes after all the others, so that local binaries win
+export PATH="./node_modules/.bin:$PATH"

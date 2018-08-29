@@ -4,6 +4,8 @@ trap "echo 'error: Script failed: see failed command above'" ERR
 
 __dir__="$(cd "$(dirname "$0")" ; pwd -P)"
 
+# You should put in this switch only git subcommands that are part of the standard
+# git distribution (e.g., `git add`, `git status`, etc.).
 case "${1:-}" in
   "" )
     $GIT status
@@ -11,8 +13,8 @@ case "${1:-}" in
   "add" )
     "${__dir__}"/git-add "${@:2}"
     ;;
-  "branch" )
-    "${__dir__}"/git-branch "${@:2}"
+  "status" )
+    "${__dir__}"/git-status "${@:2}"
     ;;
   "remote" )
     "${__dir__}"/git-remote "${@:2}"

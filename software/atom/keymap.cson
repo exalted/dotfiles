@@ -31,6 +31,8 @@
 # Atom Flight Manual:
 # http://flight-manual.atom.io/using-atom/sections/basic-customization/#_cson
 
+'body':
+  'alt-cmd-w': 'pane:close-other-items'
 'atom-workspace':
   'ctrl--': 'cursor-history:prev'
   'ctrl-_': 'cursor-history:next'

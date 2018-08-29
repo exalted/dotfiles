@@ -12,6 +12,11 @@
     automaticallyUpdate: false
     disabledPackages: [
       "deprecation-cop"
+      "image-view"
+      "archive-view"
+      "welcome"
+      "background-tips"
+      "timecop"
     ]
     ignoredNames: [
       ".git"
@@ -24,11 +29,10 @@
       "node_modules"
     ]
     projectHome: "/Users/ali/Development"
-    restorePreviousWindowsOnStart: "no"
     telemetryConsent: "limited"
     useTreeSitterParsers: true
   editor:
-    fontSize: 21
+    fontSize: 20
     scrollPastEnd: true
     showIndentGuide: true
     showInvisibles: true
@@ -44,12 +48,14 @@
     lightTheme: true
     minimumLength: 1
   "language-babel": {}
-  "linter-ui-default": {}
+  "linter-ui-default":
+    panelHeight: 300
   "markdown-preview":
     useGitHubStyle: true
   "one-dark-ui": {}
   "tree-view":
     hideIgnoredNames: true
+    hideVcsIgnoredFiles: true
     squashDirectoryNames: true
   welcome:
     showOnStartup: false

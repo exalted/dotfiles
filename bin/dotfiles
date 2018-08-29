@@ -13,6 +13,7 @@ install_mas
 setup
 upgrade_everything
 install_everything
+cleanup
 # TODO: consider `source ~/.bashrc` to make changes effective immediately…
 
 ohai "Okey dokey… see you next time!"

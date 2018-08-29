@@ -2,6 +2,7 @@
 require_relative '../../src/helpers'
 
 brew 'git'
+brew 'git-lfs'
 brew 'hub'
 brew 'git-extras'
 brew 'gibo'  # TODO: consider https://www.gitignore.io instead
@@ -14,6 +15,6 @@ bash_source_relative
 globalignore_boilerplates = %w[ macOS Archives Dropbox Emacs Xcode ]
 Kernel.system(
   "mkdir -p #{ENV["HOME"]}/.config/git && "\
-  "gibo #{globalignore_boilerplates.join(' ')} "\
+  "gibo dump #{globalignore_boilerplates.join(' ')} "\
   "> #{ENV["HOME"]}/.config/git/ignore"
 )

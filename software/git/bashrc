@@ -1,3 +1,5 @@
+export GIT_EDITOR='atom-beta --new-window --wait'
+
 # For the settings below, read the docs for `git-prompt.sh`
 
 # unstaged (*) and staged (+) changes will be shown next to the branch name
