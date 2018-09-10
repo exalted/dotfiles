@@ -71,16 +71,20 @@ kebab() {
   | sed -E 's/^-(.*)-$/\1/'
 }
 
-alias balsamiq-acetaia='browse "https://acetaia.balsamiq.com/#/u31-ali"'
-
 alias balsamiq-agenda='open /Users/ali/Library/Mobile\ Documents/74ZAFF46HB~jp~informationarchitects~Writer/Documents/Balsamiq\ Agenda/0-Current.md -a /Applications/iA\ Writer\ Classic.app/'
+alias balsamiq-acetaia='browse "https://acetaia.balsamiq.com/#/u31-ali"'
 alias balsamiq-wiki='browse "https://balsamiq.atlassian.net/wiki/my/saved-for-later"'
 
 alias balsamiq-ssh-jenkins-master='ssh ubuntu@ec2-46-137-119-50.eu-west-1.compute.amazonaws.com'
 alias balsamiq-ssh-logs-prod='ssh ubuntu@ec2-52-201-211-94.compute-1.amazonaws.com'
 
+alias balsamiq-db-acetaia-production='convox resources proxy acetaia-mysql --port 3319'
+alias balsamiq-db-bottega-production='convox resources proxy bottega-mysql --port 3329'
+alias balsamiq-db-swag-production='convox resources proxy swag-mysql --port 3339'
+
 alias balsamiq-ci-acetaia='balsamiq-ci-internaltools'
 alias balsamiq-ci-bottega='balsamiq-ci-internaltools'
+alias balsamiq-ci-swag='balsamiq-ci-internaltools'
 alias balsamiq-ci-b.com='browse "https://jenkins.balsamiq.com/job/balsamiq.com/"'
 alias balsamiq-ci-influencers='balsamiq-ci-internaltools'
 alias balsamiq-ci-internaltools='browse "https://jenkins.balsamiq.com/job/Internal_Tools/"'
