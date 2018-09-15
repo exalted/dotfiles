@@ -1,5 +1,5 @@
 ﻿###
-###  vlc 3.0.3
+###  vlc 3.0.4
 ###
 
 ###
@@ -166,7 +166,7 @@
 #macosx-interfacestyle=0
 
 # Use the native fullscreen mode (boolean)
-#macosx-nativefullscreenmode=0
+macosx-nativefullscreenmode=1
 
 # Display VLC status menu icon (boolean)
 macosx-statusicon=0
@@ -214,7 +214,7 @@ macosx-statusicon=0
 #macosx-control-itunes=1
 
 # Continue playback where you left off (integer)
-#macosx-continue-playback=0
+macosx-continue-playback=1
 
 # Control playback with the Apple Remote (boolean)
 #macosx-appleremote=1
@@ -513,7 +513,7 @@ macosx-statusicon=0
 #sout-avi-subject=
 
 # Encoder (string)
-#sout-avi-encoder=VLC Media Player - 3.0.3 Vetinari
+#sout-avi-encoder=VLC Media Player - 3.0.4 Vetinari
 
 # Keywords (string)
 #sout-avi-keywords=
@@ -1757,7 +1757,7 @@ rss-position=0
 [auhal] # HAL AudioUnit output
 
 # Audio volume (integer)
-#auhal-volume=256
+auhal-volume=358
 
 # Last audio device (string)
 auhal-audio-device=0
@@ -2483,7 +2483,7 @@ logo-position=0
 [subsdec] # Text subtitle decoder
 
 # Subtitle justification (integer)
-#subsdec-align=0
+#subsdec-align=-1
 
 # Subtitle text encoding (string)
 subsdec-encoding=ISO-8859-9
@@ -2499,7 +2499,7 @@ subsdec-encoding=ISO-8859-9
 [upnp] # Universal Plug'n'Play
 
 # SAT>IP channel list (string)
-#satip-channelist=ASTRA_19_2E
+#satip-channelist=auto
 
 # Custom SAT>IP channel list URL (string)
 #satip-channellist-url=
