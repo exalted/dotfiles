@@ -8,4 +8,8 @@ brew 'sleepwatcher'
 link_to_home_relative 'sleep', '.sleep'
 link_to_home_relative 'wakeup', '.wakeup'
 
-Kernel.system "brew services start sleepwatcher"
+unless Kernel.system(
+    "brew services list | grep -E 'sleepwatcher\s+started' > /dev/null"
+  )
+  Kernel.system "brew services start sleepwatcher"
+end
