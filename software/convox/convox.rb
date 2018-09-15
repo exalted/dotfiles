@@ -2,9 +2,10 @@
 require_relative '../../src/helpers'
 
 unless cmd_exists?('convox')
-  Kernel.system "curl -Ls https://convox.com/install/osx.zip > /tmp/convox.zip"
-  Kernel.system "unzip /tmp/convox.zip -d /usr/local/bin"
-  Kernel.system "rm /tmp/convox.zip"
+  # https://convox.com/docs/installation/#os-x
+  Kernel.system "curl -fsSL https://convox.com/cli/osx/convox -o /tmp/convox"
+  Kernel.system "mv /tmp/convox /usr/local/bin/convox"
+  Kernel.system "chmod 755 /usr/local/bin/convox"
 end
 
 # TODO: update convox only if not updated in the last hour or so
