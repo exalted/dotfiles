@@ -82,16 +82,10 @@ alias balsamiq-db-acetaia-production='convox resources proxy acetaia-mysql --por
 alias balsamiq-db-bottega-production='convox resources proxy bottega-mysql --port 3329'
 alias balsamiq-db-swag-production='convox resources proxy swag-mysql --port 3339'
 
-alias balsamiq-ci-acetaia='balsamiq-ci-internaltools'
-alias balsamiq-ci-bottega='balsamiq-ci-internaltools'
-alias balsamiq-ci-swag='balsamiq-ci-internaltools'
+alias balsamiq-ci-acetaia='browse https://jenkins.balsamiq.com/job/Internal_Tools/job/acetaia-production/'
+alias balsamiq-ci-bottega='browse https://jenkins.balsamiq.com/job/Internal_Tools/job/bottega-production/'
+alias balsamiq-ci-swag='browse https://jenkins.balsamiq.com/job/Internal_Tools/job/swag-production/'
+
 alias balsamiq-ci-b.com='browse "https://jenkins.balsamiq.com/job/balsamiq.com/"'
-alias balsamiq-ci-influencers='balsamiq-ci-internaltools'
-alias balsamiq-ci-internaltools='browse "https://jenkins.balsamiq.com/job/Internal_Tools/"'
-alias balsamiq-ci-ops='browse "https://jenkins.balsamiq.com/job/Ops/"'
-alias balsamiq-ci-pivotalvotes='balsamiq-ci-internaltools'
-alias balsamiq-ci-support='browse "https://jenkins.balsamiq.com/job/support.balsamiq.com/"'
-alias balsamiq-ci-uxapprentice='browse "https://jenkins.balsamiq.com/job/ux_apprentice/"'
-alias balsamiq-ci='browse "https://jenkins.balsamiq.com"'
 
 alias dns-flush='sudo killall -HUP mDNSResponder'
