@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>428</string>
+	<string>444.7</string>
 	<key>AMApplicationVersion</key>
-	<string>2.7</string>
+	<string>2.8</string>
 	<key>AMDocumentVersion</key>
 	<string>2</string>
 	<key>actions</key>
@@ -64,22 +64,32 @@
 set -e
 [ -n "$DEBUG" ] &amp;&amp; set -x
 
+CMD='/usr/local/bin/submarine'
 LANGS=("tr" "en" "it")
+SERVERS=($($CMD -s help | tail +2 | awk '{print $1}'))
+
 for f in "$@"; do
 	dirname=$(dirname "$f")
 	basename=$(basename "$f")
 	extension="${basename##*.}"
 	filename="${basename%.*}"
 
-	mv "$dirname/$filename.srt" "$dirname/$filename.srt.backup" || true
-	mv "$dirname/$filename.sub" "$dirname/$filename.sub.backup" || true
+	mv "$dirname/$filename.srt" "$dirname/$filename.srt.backup"  || true
+	mv "$dirname/$filename.sub" "$dirname/$filename.sub.backup"  || true
 
-	for i in ${LANGS[@]}; do
-		mv "$dirname/$filename.$i.srt" "$dirname/$filename.$i.srt.backup" || true
-		mv "$dirname/$filename.$i.sub" "$dirname/$filename.$i.sub.backup" || true
-		/usr/local/bin/submarine -l "$i" "$f" || true
-		mv "$dirname/$filename.srt" "$dirname/$filename.$i.srt" || true
-		mv "$dirname/$filename.sub" "$dirname/$filename.$i.sub" || true
+	for l in ${LANGS[@]}; do
+    for s in ${SERVERS[@]}; do
+  		mv "$dirname/$filename.$l.srt" "$dirname/$filename.$l.srt.backup"  || true
+  		mv "$dirname/$filename.$l.sub" "$dirname/$filename.$l.sub.backup"  || true
+
+  		$CMD -l "$l" -s "$s" "$f" &amp;&amp; status=$? || status=$?
+
+      if [[ $status = 0 ]]; then
+        mv "$dirname/$filename.srt" "$dirname/$filename.$l.srt"  || true
+    		mv "$dirname/$filename.sub" "$dirname/$filename.$l.sub"  || true
+        break
+      fi
+  	done
 	done
 done
 </string>
@@ -199,7 +209,7 @@ done
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>662.500000:603.000000</string>
+				<string>662.500000:689.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/English.lproj/main.nib</string>
 			</dict>
