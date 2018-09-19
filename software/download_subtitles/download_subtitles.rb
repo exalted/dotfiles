@@ -7,7 +7,7 @@ brew 'submarine'
 
 filename = "Download Subtitles.workflow"
 src = "#{__dir__}/#{filename}"
-dest = "#{ENV["HOME"]}/Library/Services/#{filename}"
+dest = "#{ENV["HOME"]}/Library/Services"
 
-FileUtils.mkdir_p Pathname.new(dest).dirname
+FileUtils.mkdir_p dest
 FileUtils.cp_r(src, dest, preserve: true)
