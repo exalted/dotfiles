@@ -7,6 +7,7 @@ bash_source '/usr/local/etc/bash_completion'
 link_to_home_relative 'inputrc', '.inputrc'
 link_to_home_relative 'hushlogin', '.hushlogin'
 
+bash_source_relative 'locale'
 bash_source_relative 'path'
 bash_source_relative 'prompt'
 bash_source_relative 'various'
