@@ -2,5 +2,4 @@
 set -euo pipefail
 trap "echo 'error: Script failed: see failed command above'" ERR
 
-# $GIT ls-files --others --ignored --exclude-standard
-$GIT status --ignored --short | ack -o '(?<=^!! ).*' || true
+$GIT status --ignored=matching --short | ack -o '(?<=^!! ).*' || true

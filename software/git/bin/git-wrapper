@@ -13,9 +13,6 @@ case "${1:-}" in
   "add" )
     "${__dir__}"/git-add "${@:2}"
     ;;
-  "status" )
-    "${__dir__}"/git-status "${@:2}"
-    ;;
   "remote" )
     "${__dir__}"/git-remote "${@:2}"
     ;;
