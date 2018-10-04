@@ -48,8 +48,7 @@
     lightTheme: true
     minimumLength: 1
   "language-babel": {}
-  "linter-ui-default":
-    panelHeight: 300
+  "linter-ui-default": {}
   "markdown-preview":
     useGitHubStyle: true
   "one-dark-ui": {}
