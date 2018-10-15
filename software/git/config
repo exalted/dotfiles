@@ -27,6 +27,7 @@
 	br = !git-wrapper branch --verbose --verbose
 	ci = !git-wrapper commit
 	co = !git-wrapper checkout
+	n  = !git-wrapper new
 	st = !git-wrapper status --short
 [push]
 	default = simple

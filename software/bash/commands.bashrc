@@ -60,17 +60,6 @@ reset-open-with() {
   /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
 }
 
-kebab() {
-  echo "$*" \
-  | tr '[:upper:]' '[:lower:]' \
-  | tr -C -d ' [:alnum:]./-' \
-  | tr -s '-' \
-  | tr -s ' ' '-' \
-  | sed -E 's/^-(.*)$/\1/' \
-  | sed -E 's/^(.*)-$/\1/' \
-  | sed -E 's/^-(.*)-$/\1/'
-}
-
 alias balsamiq-agenda='open /Users/ali/Library/Mobile\ Documents/74ZAFF46HB~jp~informationarchitects~Writer/Documents/Balsamiq\ Agenda/0-Current.md -a /Applications/iA\ Writer\ Classic.app/'
 alias balsamiq-acetaia='browse "https://acetaia.balsamiq.com/#/u31-ali"'
 alias balsamiq-wiki='browse "https://balsamiq.atlassian.net/wiki/my/saved-for-later"'
