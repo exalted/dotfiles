@@ -22,11 +22,12 @@
 [color]
 	ui = auto
 [alias]
-	; aliases are meant to be shorthands (ideally two chars) for existing subcommands with or without preferred flags
-	co = !git-wrapper checkout
-	ci = !git-wrapper commit
-	st = !git-wrapper status --short
+	; Aliases are meant to be shorthands (ideally two chars) for existing
+	; subcommands (standard or not). Keep this list in alphabetical order.
 	br = !git-wrapper branch --verbose --verbose
+	ci = !git-wrapper commit
+	co = !git-wrapper checkout
+	st = !git-wrapper status --short
 [push]
 	default = simple
 [rebase]
