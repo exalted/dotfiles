@@ -61,7 +61,8 @@
     highlightBackground: true
     lightTheme: true
     minimumLength: 1
-  "language-babel": {}
+  "language-babel":
+    allowLocalOverride: true
   "linter-ui-default": {}
   "markdown-preview":
     useGitHubStyle: true
