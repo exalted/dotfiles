@@ -44,7 +44,6 @@
     ]
     projectHome: "/Users/ali/Development"
     telemetryConsent: "limited"
-    useTreeSitterParsers: true
   editor:
     fontSize: 20
     scrollPastEnd: true
