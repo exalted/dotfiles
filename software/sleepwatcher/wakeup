@@ -1,4 +1,6 @@
+# TODO: remove hard-coded path
+export PATH="$PATH:/Users/ali/Development/dotfiles/software/bash/bin"
+
 blueutil --power on
 
-xargs diskutil mount < /tmp/remount_on_wakeup
-rm /tmp/remount_on_wakeup
+remountall
