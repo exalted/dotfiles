@@ -166,7 +166,7 @@
 #macosx-interfacestyle=0
 
 # Use the native fullscreen mode (boolean)
-macosx-nativefullscreenmode=1
+#macosx-nativefullscreenmode=0
 
 # Display VLC status menu icon (boolean)
 macosx-statusicon=0
@@ -1757,7 +1757,7 @@ rss-position=0
 [auhal] # HAL AudioUnit output
 
 # Audio volume (integer)
-auhal-volume=358
+#auhal-volume=256
 
 # Last audio device (string)
 auhal-audio-device=0
