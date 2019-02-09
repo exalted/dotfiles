@@ -2,6 +2,7 @@
   "atom-ide-ui":
     "atom-ide-diagnostics-ui": {}
     use: {}
+  "atom-jest-snippets": {}
   "atom-package-deps":
     ignored: [
       "linter-eslint"
@@ -44,8 +45,9 @@
     ]
     projectHome: "/Users/ali/Development"
     telemetryConsent: "limited"
+    useTreeSitterParsers: false
   editor:
-    fontSize: 20
+    fontSize: 19
     scrollPastEnd: true
     showIndentGuide: true
     showInvisibles: true
@@ -60,14 +62,18 @@
     highlightBackground: true
     lightTheme: true
     minimumLength: 1
+  "indentation-indicator":
+    spaceAfterColon: true
   "language-babel":
     allowLocalOverride: true
-  "linter-ui-default": {}
+  "linter-ui-default":
+    panelHeight: 357
   "markdown-preview":
     useGitHubStyle: true
   "one-dark-ui": {}
   "tree-view":
     hideIgnoredNames: true
+    hideVcsIgnoredFiles: true
     squashDirectoryNames: true
   welcome:
     showOnStartup: false
