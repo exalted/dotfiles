@@ -1,4 +1,6 @@
 atom-ide-ui
+atom-jest-snippets
+auto-detect-indentation
 busy-signal
 center-line
 cursor-history
