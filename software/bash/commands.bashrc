@@ -65,7 +65,6 @@ alias balsamiq-acetaia='browse "https://acetaia.balsamiq.com/#/u31-ali"'
 alias balsamiq-wiki='browse "https://balsamiq.atlassian.net/wiki/my/saved-for-later"'
 
 alias balsamiq-ssh-jenkins-master='ssh ubuntu@ec2-46-137-119-50.eu-west-1.compute.amazonaws.com'
-alias balsamiq-ssh-logs-prod='ssh ubuntu@ec2-52-201-211-94.compute-1.amazonaws.com'
 
 alias balsamiq-db-acetaia-production='convox resources proxy acetaia-mysql --port 3319'
 alias balsamiq-db-bottega-production='convox resources proxy bottega-mysql --port 3329'
