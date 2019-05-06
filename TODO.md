@@ -10,8 +10,3 @@ To-do
 
 * Save secret/private stuff somewhere/somehow `~/.ssh`, `~/.aws`, `~/.gnupgp`, `~/.gpg`, `~/.convox`, etc.
   - Consider https://github.com/sorah/envchain for secure environment variables or `security` command (https://www.netmeister.org/blog/keychain-passwords.html)
-
-* watch file(system) changes
-  - https://facebook.github.io/watchman/
-  - https://github.com/mattgreen/watchexec
-  - https://github.com/emcrisostomo/fswatch
