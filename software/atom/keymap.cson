@@ -38,3 +38,6 @@
   'ctrl-_': 'cursor-history:next'
   'ctrl-alt--': 'cursor-history:prev-within-editor'
   'ctrl-alt-_': 'cursor-history:next-within-editor'
+'atom-text-editor:not(mini)':
+  'alt-cmd-m': 'editor:select-larger-syntax-node'
+  'alt-cmd-l': 'editor:select-smaller-syntax-node'

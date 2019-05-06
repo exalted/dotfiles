@@ -23,15 +23,14 @@
       "language-clojure"
       "language-coffee-script"
       "language-csharp"
-      "language-go"
       "language-less"
       "language-make"
       "language-mustache"
       "language-objective-c"
       "language-perl"
-      "language-php"
       "language-toml"
       "language-typescript"
+      "spell-check"
     ]
     ignoredNames: [
       ".git"
@@ -45,7 +44,6 @@
     ]
     projectHome: "/Users/ali/Development"
     telemetryConsent: "limited"
-    useTreeSitterParsers: false
   editor:
     fontSize: 19
     scrollPastEnd: true
@@ -56,6 +54,9 @@
   "find-and-replace":
     liveSearchMinimumCharacters: 2
     scrollToResultOnLiveSearch: true
+  "fuzzy-finder":
+    prefillFromSelection: true
+    preserveLastSearch: true
   github:
     viewChangesForCurrentFileDiffPaneSplitDirection: "right"
   "highlight-selected":
