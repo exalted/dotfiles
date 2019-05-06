@@ -1,7 +1,7 @@
 atom() {
-  params=$*
+  params="$@"
   if [[ $# -eq 0 ]]; then
-      params=$PWD
+      params="$PWD"
   fi
-  command atom-beta $params
+  command atom-beta --new-window "$params"
 }

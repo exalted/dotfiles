@@ -1,7 +1,7 @@
 stree() {
-  params=$*
+  params="$@"
   if [[ $# -eq 0 ]]; then
-      params=$PWD
+      params="$PWD"
   fi
-  command stree $params
+  command stree "$params"
 }

@@ -1,4 +1,4 @@
-echo "$*" \
+echo "$@" \
 | tr '[:upper:]' '[:lower:]' \
 | tr -C -d ' [:alnum:]./-' \
 | tr -s '-' \
