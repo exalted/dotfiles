@@ -3510,7 +3510,7 @@ volume-save=0
 #mouse-hide-timeout=1000
 
 # Video snapshot directory (or filename) (string)
-#snapshot-path=
+snapshot-path=/Users/ali/Downloads
 
 # Video snapshot file prefix (string)
 #snapshot-prefix=vlcsnap-
