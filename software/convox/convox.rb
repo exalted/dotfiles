@@ -10,3 +10,5 @@ end
 
 # TODO: update convox only if not updated in the last hour or so
 Kernel.system "convox update"
+
+bash_source_relative
