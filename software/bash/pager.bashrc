@@ -2,9 +2,9 @@ export PAGER=less
 
 export LESS="\
   --quit-if-one-screen \
-  --raw-control-chars \
+  --RAW-CONTROL-CHARS \
   --no-init \
   --IGNORE-CASE \
   --hilite-search \
-  --jump-target=$(expr $(tput lines) / 2)\
+  --jump-target=$(expr $(tput lines) / 2) \
 "
