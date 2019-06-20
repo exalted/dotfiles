@@ -41,7 +41,7 @@
 	clean = git media clean %f
 	smudge = git media smudge %f
 [pull]
-	rebase = preserve
+	rebase = merges
 [status]
 	showUntrackedFiles = all
 [fetch]
