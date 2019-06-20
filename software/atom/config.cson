@@ -9,6 +9,8 @@
     ]
   "bracket-matcher":
     highlightMatchingLineNumber: true
+  "command-palette":
+    preserveLastSearch: true
   core:
     automaticallyUpdate: false
     disabledPackages: [
@@ -74,7 +76,5 @@
   "one-dark-ui": {}
   "tree-view":
     hideIgnoredNames: true
-    hideVcsIgnoredFiles: true
-    squashDirectoryNames: true
   welcome:
     showOnStartup: false
