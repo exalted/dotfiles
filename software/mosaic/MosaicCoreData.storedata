@@ -5,7 +5,7 @@
     <databaseInfo>
         <version>134481920</version>
         <UUID>2C0DF9CF-16F0-4A42-9E2A-96195F31D5AC</UUID>
-        <nextObjectID>155</nextObjectID>
+        <nextObjectID>156</nextObjectID>
         <metadata>
             <plist version="1.0">
                 <dict>
@@ -784,5 +784,10 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="displayid" type="int64">458643409</attribute>
         <attribute name="applicationname" type="string">Notes</attribute>
         <relationship name="layout" type="0/1" destination="WINDOWLAYOUT" idrefs="z154"></relationship>
+    </object>
+    <object type="APPLICATIONLAYOUT" id="z156">
+        <attribute name="displayid" type="int64">69733568</attribute>
+        <attribute name="applicationname" type="string">1Password 7</attribute>
+        <relationship name="layout" type="0/1" destination="WINDOWLAYOUT" idrefs="z153"></relationship>
     </object>
 </database>
