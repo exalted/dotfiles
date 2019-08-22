@@ -7,7 +7,9 @@ require_relative '../common'
 #       or `software/foo/foo`s, and nothing else.)
 def install_everything
   ohai "Installing new software…"
-  Dir.glob("#{__dir__}/../../software/**/*.{sh,rb,py,js}") { |file| system file if File.executable? file }
+  Dir.glob("#{__dir__}/../../software/**/*.{sh,rb,py,js}") do |file|
+    system file if File.executable? file
+  end
 
   ohai "New software installation successful!"
   puts
