@@ -5,7 +5,7 @@
     <databaseInfo>
         <version>134481920</version>
         <UUID>2C0DF9CF-16F0-4A42-9E2A-96195F31D5AC</UUID>
-        <nextObjectID>156</nextObjectID>
+        <nextObjectID>149</nextObjectID>
         <metadata>
             <plist version="1.0">
                 <dict>
@@ -27,7 +27,7 @@
 		</data>
                         <key>Preferences</key>
                         <data>
-		I6WytEPJjtQ7TKmA/wZr7TtzzxUq/oTRsbH/reIQxmA=
+		LaTe56H+LOIGN13M2jgU3DVUzljmVeOlE1uq1D+0YT4=
 		</data>
                         <key>PreferencesBase</key>
                         <data>
@@ -68,17 +68,17 @@
             </plist>
         </metadata>
     </databaseInfo>
-    <object type="GUTTERS" id="z102">
-        <attribute name="usedefaults" type="bool">1</attribute>
-        <attribute name="supportsinternalgutters" type="bool">1</attribute>
-        <attribute name="supportsdefaults" type="bool">1</attribute>
-        <attribute name="instanceidentifier" type="string">GuttersQuickLayout</attribute>
-        <attribute name="guttermode" type="string">Pixel Value</attribute>
-        <attribute name="gutterinternal" type="int16">16</attribute>
-        <attribute name="gutterexternal" type="int16">32</attribute>
-        <attribute name="automaticinternal" type="bool">1</attribute>
+    <object type="APPLICATIONLAYOUT" id="z102">
+        <attribute name="displayid" type="int64">69733568</attribute>
+        <attribute name="applicationname" type="string">1Password 7</attribute>
+        <relationship name="layout" type="0/1" destination="WINDOWLAYOUT" idrefs="z129"></relationship>
     </object>
-    <object type="GUTTERS" id="z103">
+    <object type="APPLICATIONLAYOUT" id="z103">
+        <attribute name="displayid" type="int64">458643409</attribute>
+        <attribute name="applicationname" type="string">Notes</attribute>
+        <relationship name="layout" type="0/1" destination="WINDOWLAYOUT" idrefs="z130"></relationship>
+    </object>
+    <object type="GUTTERS" id="z104">
         <attribute name="usedefaults" type="bool">1</attribute>
         <attribute name="supportsinternalgutters" type="bool">1</attribute>
         <attribute name="supportsdefaults" type="bool">1</attribute>
@@ -88,7 +88,7 @@
         <attribute name="gutterexternal" type="int16">32</attribute>
         <attribute name="automaticinternal" type="bool">1</attribute>
     </object>
-    <object type="GUTTERS" id="z104">
+    <object type="GUTTERS" id="z105">
         <attribute name="usedefaults" type="bool">1</attribute>
         <attribute name="supportsinternalgutters" type="bool">1</attribute>
         <attribute name="supportsdefaults" type="bool">1</attribute>
@@ -110,9 +110,9 @@
     </object>
     <object type="GUTTERS" id="z107">
         <attribute name="usedefaults" type="bool">1</attribute>
-        <attribute name="supportsinternalgutters" type="bool">0</attribute>
+        <attribute name="supportsinternalgutters" type="bool">1</attribute>
         <attribute name="supportsdefaults" type="bool">1</attribute>
-        <attribute name="instanceidentifier" type="string">GuttersPositioningExtra</attribute>
+        <attribute name="instanceidentifier" type="string">GuttersQuickLayout</attribute>
         <attribute name="guttermode" type="string">Pixel Value</attribute>
         <attribute name="gutterinternal" type="int16">16</attribute>
         <attribute name="gutterexternal" type="int16">32</attribute>
@@ -181,11 +181,11 @@
     <object type="GUTTERS" id="z114">
         <attribute name="usedefaults" type="bool">1</attribute>
         <attribute name="supportsinternalgutters" type="bool">1</attribute>
-        <attribute name="supportsdefaults" type="bool">0</attribute>
-        <attribute name="instanceidentifier" type="string">GuttersDefault</attribute>
+        <attribute name="supportsdefaults" type="bool">1</attribute>
+        <attribute name="instanceidentifier" type="string">LayoutGutters</attribute>
         <attribute name="guttermode" type="string">Pixel Value</attribute>
-        <attribute name="gutterinternal" type="int16">0</attribute>
-        <attribute name="gutterexternal" type="int16">0</attribute>
+        <attribute name="gutterinternal" type="int16">16</attribute>
+        <attribute name="gutterexternal" type="int16">32</attribute>
         <attribute name="automaticinternal" type="bool">1</attribute>
     </object>
     <object type="GUTTERS" id="z115">
@@ -202,7 +202,7 @@
         <attribute name="usedefaults" type="bool">1</attribute>
         <attribute name="supportsinternalgutters" type="bool">1</attribute>
         <attribute name="supportsdefaults" type="bool">1</attribute>
-        <attribute name="instanceidentifier" type="string">LayoutGutters</attribute>
+        <attribute name="instanceidentifier" type="string">GuttersRemoteApp</attribute>
         <attribute name="guttermode" type="string">Pixel Value</attribute>
         <attribute name="gutterinternal" type="int16">16</attribute>
         <attribute name="gutterexternal" type="int16">32</attribute>
@@ -210,9 +210,9 @@
     </object>
     <object type="GUTTERS" id="z117">
         <attribute name="usedefaults" type="bool">1</attribute>
-        <attribute name="supportsinternalgutters" type="bool">1</attribute>
+        <attribute name="supportsinternalgutters" type="bool">0</attribute>
         <attribute name="supportsdefaults" type="bool">1</attribute>
-        <attribute name="instanceidentifier" type="string">GuttersRemoteApp</attribute>
+        <attribute name="instanceidentifier" type="string">GuttersPositioningExtra</attribute>
         <attribute name="guttermode" type="string">Pixel Value</attribute>
         <attribute name="gutterinternal" type="int16">16</attribute>
         <attribute name="gutterexternal" type="int16">32</attribute>
@@ -248,6 +248,16 @@
         <attribute name="gutterexternal" type="int16">32</attribute>
         <attribute name="automaticinternal" type="bool">1</attribute>
     </object>
+    <object type="GUTTERS" id="z121">
+        <attribute name="usedefaults" type="bool">1</attribute>
+        <attribute name="supportsinternalgutters" type="bool">1</attribute>
+        <attribute name="supportsdefaults" type="bool">1</attribute>
+        <attribute name="instanceidentifier" type="string">LayoutGutters</attribute>
+        <attribute name="guttermode" type="string">Pixel Value</attribute>
+        <attribute name="gutterinternal" type="int16">16</attribute>
+        <attribute name="gutterexternal" type="int16">32</attribute>
+        <attribute name="automaticinternal" type="bool">1</attribute>
+    </object>
     <object type="GUTTERS" id="z122">
         <attribute name="usedefaults" type="bool">1</attribute>
         <attribute name="supportsinternalgutters" type="bool">1</attribute>
@@ -261,11 +271,11 @@
     <object type="GUTTERS" id="z123">
         <attribute name="usedefaults" type="bool">1</attribute>
         <attribute name="supportsinternalgutters" type="bool">1</attribute>
-        <attribute name="supportsdefaults" type="bool">1</attribute>
-        <attribute name="instanceidentifier" type="string">LayoutGutters</attribute>
+        <attribute name="supportsdefaults" type="bool">0</attribute>
+        <attribute name="instanceidentifier" type="string">GuttersDefault</attribute>
         <attribute name="guttermode" type="string">Pixel Value</attribute>
-        <attribute name="gutterinternal" type="int16">16</attribute>
-        <attribute name="gutterexternal" type="int16">32</attribute>
+        <attribute name="gutterinternal" type="int16">0</attribute>
+        <attribute name="gutterexternal" type="int16">0</attribute>
         <attribute name="automaticinternal" type="bool">1</attribute>
     </object>
     <object type="GUTTERS" id="z124">
@@ -298,7 +308,18 @@
         <attribute name="gutterexternal" type="int16">32</attribute>
         <attribute name="automaticinternal" type="bool">1</attribute>
     </object>
-    <object type="PREFERENCES" id="z127">
+    <object type="NOTIFICATION" id="z127">
+        <attribute name="notificationread" type="bool">1</attribute>
+        <attribute name="notificationmessage" type="string">Welcome to Mosaic</attribute>
+        <attribute name="notificationindex" type="int32">4</attribute>
+        <attribute name="notificationimageurl" type="string"></attribute>
+        <attribute name="notificationicon" type="string">info</attribute>
+        <attribute name="notificationdate" type="date">552484507.23420405387878417969</attribute>
+        <attribute name="notificationbuttonurl" type="string">https://lightpillar.zendesk.com/hc/en-us/categories/202029406-Mosaic</attribute>
+        <attribute name="notificationbuttontitle" type="string">Help Centre</attribute>
+        <attribute name="notificationbody" type="string">Thank you for installing Mosaic. If you would like help getting started with Mosaic, or have any questions regarding the app you can take a look at our help centre at any time. We hope you enjoy Mosaic.</attribute>
+    </object>
+    <object type="PREFERENCES" id="z128">
         <attribute name="touchbarshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
 CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRVFZcVTAwY2EQERIAGgAA0iAhIiNaJGNsYXNzbmFtZVgkY2xhc3Nlc1xOU0RpY3Rpb25hcnmiIiRYTlNPYmplY3RfEA9OU0tleWVkQXJjaGl2ZXLRJyhUcm9vdIABAAgAEQAaACMALQAyADcAQwBJAFAAWABjAGoAbwBxAHMAdQB3AHwAfgCAAIIAhACGAKQArwC3AMUAxwDOANAA1QDaAOUA7gD7AP4BBwEZARwBIQAAAAAAAAIBAAAAAAAAACkAAAAAAAAAAAAAAAAAAAEj
 </attribute>
@@ -321,7 +342,7 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="quicklayoutgridresolutiony" type="int16">8</attribute>
         <attribute name="quicklayoutgridresolutionx" type="int16">8</attribute>
         <attribute name="quicklayoutgridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="preferencestab" type="int16">1</attribute>
+        <attribute name="preferencestab" type="int16">0</attribute>
         <attribute name="positioningextraguttermode" type="string">Pixel Value</attribute>
         <attribute name="positioningextragutterexternal" type="int16">20</attribute>
         <attribute name="positioningextragutterdefault" type="bool">1</attribute>
@@ -343,375 +364,16 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="captureextraincludeshadow" type="bool">1</attribute>
         <attribute name="captureextraformat" type="string">PNG</attribute>
         <attribute name="automaticallycheckforupdates" type="bool">1</attribute>
+        <attribute name="autoaddgroupsfortouchbar" type="bool">1</attribute>
+        <attribute name="autoaddgroupsfordraganddrop" type="bool">1</attribute>
+        <attribute name="autoaddgroupsforclickandselect" type="bool">1</attribute>
+        <attribute name="autoaddgroups" type="bool">0</attribute>
         <attribute name="activegrouptouchbar" type="string">x-coredata://2C0DF9CF-16F0-4A42-9E2A-96195F31D5AC/WindowLayoutGroup/p179</attribute>
         <attribute name="activegroupclickandselect" type="string">x-coredata://2C0DF9CF-16F0-4A42-9E2A-96195F31D5AC/WindowLayoutGroup/p179</attribute>
         <attribute name="activegroup" type="string">x-coredata://2C0DF9CF-16F0-4A42-9E2A-96195F31D5AC/WindowLayoutGroup/p179</attribute>
         <attribute name="activationmode" type="int16">2</attribute>
     </object>
-    <object type="WINDOWLAYOUTBASIC" id="z128">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">0</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">4</attribute>
-        <attribute name="endx" type="int16">2</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc1ExEBISAAwAANIfICEiWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiEjWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0SYnVHJvb3SAAQAIABEAGgAjAC0AMgA3AEIASABPAFcAYgBpAG4AcAByAHQAdgB7AH0AfwCBAIMAhQCjAK4AtgDEAMYAyADNANIA3QDmAPMA9gD/AREBFAEZAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAARs=
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">12</attribute>
-        <attribute name="layoutname" type="string">Upper Left</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z123"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z129">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">8</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">12</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">0</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">12</attribute>
-        <attribute name="layoutpositionindex" type="int16">21</attribute>
-        <attribute name="layoutname" type="string">Side</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z119"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z130">
-        <attribute name="starty" type="int16">6</attribute>
-        <attribute name="startx" type="int16">0</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">2</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRWlEaEAYSAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">16</attribute>
-        <attribute name="layoutname" type="string">Small Lower Left</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z120"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z131">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">4</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutpositionindex" type="int16">3</attribute>
-        <attribute name="layoutname" type="string">Right</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z122"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z132">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">2</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AxB8EgAOAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">11</attribute>
-        <attribute name="layoutname" type="string">Large Right</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z109"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z133">
-        <attribute name="starty" type="int16">4</attribute>
-        <attribute name="startx" type="int16">0</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">4</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRYVEBEAASAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">5</attribute>
-        <attribute name="layoutname" type="string">Lower Left</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z124"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z134">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">0</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">4</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AhB7EgAMAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">2</attribute>
-        <attribute name="layoutname" type="string">Left</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z103"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z135">
-        <attribute name="starty" type="int16">4</attribute>
-        <attribute name="startx" type="int16">0</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">2</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRelEaEAYSAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">13</attribute>
-        <attribute name="layoutname" type="string">Lower Left</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z125"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z136">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">4</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutpositionindex" type="int16">6</attribute>
-        <attribute name="layoutname" type="string">Right</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z126"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z137">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">0</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">6</attribute>
-        <attribute name="endx" type="int16">2</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRIVExEBISAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">15</attribute>
-        <attribute name="layoutname" type="string">Large Upper Left</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z111"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z139">
-        <attribute name="starty" type="int16">6</attribute>
-        <attribute name="startx" type="int16">0</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">4</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRQVEBEAASAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">8</attribute>
-        <attribute name="layoutname" type="string">Small Lower Left</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z104"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z141">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">4</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AxB8EgAMAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">1</attribute>
-        <attribute name="layoutname" type="string">Right</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z116"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z142">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">2</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutpositionindex" type="int16">14</attribute>
-        <attribute name="layoutname" type="string">Large Right</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z110"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z143">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">0</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">2</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AhB7EgAOAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">10</attribute>
-        <attribute name="layoutname" type="string">Small Left</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z108"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z144">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">0</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">6</attribute>
-        <attribute name="endx" type="int16">4</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRUVEREAwSAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">7</attribute>
-        <attribute name="layoutname" type="string">Large Upper Left</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z112"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z145">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">1</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">11</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">0</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">10</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc1EvECwSAAwAANIfICEiWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiEjWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0SYnVHJvb3SAAQAIABEAGgAjAC0AMgA3AEIASABPAFcAYgBpAG4AcAByAHQAdgB7AH0AfwCBAIMAhQCjAK4AtgDEAMYAyADNANIA3QDmAPMA9gD/AREBFAEZAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAARs=
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">18</attribute>
-        <attribute name="layoutname" type="string">Normal</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z106"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z146">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">2</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AxB8EgAOAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">9</attribute>
-        <attribute name="layoutname" type="string">Large Right</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z118"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z147">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">0</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc1ENECQSAAwAANIfICEiWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiEjWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0SYnVHJvb3SAAQAIABEAGgAjAC0AMgA3AEIASABPAFcAYgBpAG4AcAByAHQAdgB7AH0AfwCBAIMAhQCjAK4AtgDEAMYAyADNANIA3QDmAPMA9gD/AREBFAEZAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAARs=
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">17</attribute>
-        <attribute name="layoutname" type="string">Full Screen</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z113"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z148">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">0</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">4</attribute>
-        <attribute name="endx" type="int16">4</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRcVEREAwSAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">4</attribute>
-        <attribute name="layoutname" type="string">Upper Left</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z115"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="NOTIFICATION" id="z149">
-        <attribute name="notificationread" type="bool">1</attribute>
-        <attribute name="notificationmessage" type="string">Welcome to Mosaic</attribute>
-        <attribute name="notificationindex" type="int32">4</attribute>
-        <attribute name="notificationimageurl" type="string"></attribute>
-        <attribute name="notificationicon" type="string">info</attribute>
-        <attribute name="notificationdate" type="date">552484507.23420405387878417969</attribute>
-        <attribute name="notificationbuttonurl" type="string">https://lightpillar.zendesk.com/hc/en-us/categories/202029406-Mosaic</attribute>
-        <attribute name="notificationbuttontitle" type="string">Help Centre</attribute>
-        <attribute name="notificationbody" type="string">Thank you for installing Mosaic. If you would like help getting started with Mosaic, or have any questions regarding the app you can take a look at our help centre at any time. We hope you enjoy Mosaic.</attribute>
-    </object>
-    <object type="WINDOWLAYOUTADVANCED" id="z153">
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRfFEcECoSAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
-</attribute>
+    <object type="WINDOWLAYOUTADVANCED" id="z129">
         <attribute name="layoutwidthunits" type="string">px</attribute>
         <attribute name="layoutwidthpx" type="int16">860</attribute>
         <attribute name="layoutwidthpercent" type="float">75</attribute>
@@ -738,16 +400,16 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="layoutheightenabled" type="bool">1</attribute>
         <attribute name="layoutcentrev" type="bool">1</attribute>
         <attribute name="layoutcentreh" type="bool">1</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
+CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRfFEcECoSAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+</attribute>
         <attribute name="layoutpositionindex" type="int16">20</attribute>
         <attribute name="layoutname" type="string">Small Special</attribute>
         <attribute name="layoutdisplayid" type="int64">0</attribute>
         <attribute name="layoutdisplay" type="string">All Screens</attribute>
         <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
     </object>
-    <object type="WINDOWLAYOUTADVANCED" id="z154">
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRXFEcECoSAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
-</attribute>
+    <object type="WINDOWLAYOUTADVANCED" id="z130">
         <attribute name="layoutwidthunits" type="string">px</attribute>
         <attribute name="layoutwidthpx" type="int16">1680</attribute>
         <attribute name="layoutwidthpercent" type="float">75</attribute>
@@ -774,20 +436,362 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="layoutheightenabled" type="bool">1</attribute>
         <attribute name="layoutcentrev" type="bool">1</attribute>
         <attribute name="layoutcentreh" type="bool">1</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
+CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRXFEcECoSAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+</attribute>
         <attribute name="layoutpositionindex" type="int16">19</attribute>
         <attribute name="layoutname" type="string">Special</attribute>
         <attribute name="layoutdisplayid" type="int64">0</attribute>
         <attribute name="layoutdisplay" type="string">All Screens</attribute>
         <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
     </object>
-    <object type="APPLICATIONLAYOUT" id="z155">
-        <attribute name="displayid" type="int64">458643409</attribute>
-        <attribute name="applicationname" type="string">Notes</attribute>
-        <relationship name="layout" type="0/1" destination="WINDOWLAYOUT" idrefs="z154"></relationship>
+    <object type="WINDOWLAYOUTBASIC" id="z131">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">2</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">8</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
+CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AxB8EgAOAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">9</attribute>
+        <attribute name="layoutname" type="string">Large Right</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z110"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
     </object>
-    <object type="APPLICATIONLAYOUT" id="z156">
-        <attribute name="displayid" type="int64">69733568</attribute>
-        <attribute name="applicationname" type="string">1Password 7</attribute>
-        <relationship name="layout" type="0/1" destination="WINDOWLAYOUT" idrefs="z153"></relationship>
+    <object type="WINDOWLAYOUTBASIC" id="z132">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">0</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">8</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
+CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc1ENECQSAAwAANIfICEiWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiEjWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0SYnVHJvb3SAAQAIABEAGgAjAC0AMgA3AEIASABPAFcAYgBpAG4AcAByAHQAdgB7AH0AfwCBAIMAhQCjAK4AtgDEAMYAyADNANIA3QDmAPMA9gD/AREBFAEZAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAARs=
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">17</attribute>
+        <attribute name="layoutname" type="string">Full Screen</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z126"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z133">
+        <attribute name="starty" type="int16">4</attribute>
+        <attribute name="startx" type="int16">0</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">4</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
+CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRYVEBEAASAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">5</attribute>
+        <attribute name="layoutname" type="string">Lower Left</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z121"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z134">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">4</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">8</attribute>
+        <attribute name="layoutpositionindex" type="int16">6</attribute>
+        <attribute name="layoutname" type="string">Right</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z119"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z135">
+        <attribute name="starty" type="int16">4</attribute>
+        <attribute name="startx" type="int16">0</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">2</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
+CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRelEaEAYSAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">13</attribute>
+        <attribute name="layoutname" type="string">Lower Left</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z105"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z136">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">4</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">8</attribute>
+        <attribute name="layoutpositionindex" type="int16">3</attribute>
+        <attribute name="layoutname" type="string">Right</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z108"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z137">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">0</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">4</attribute>
+        <attribute name="endx" type="int16">2</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
+CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc1ExEBISAAwAANIfICEiWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiEjWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0SYnVHJvb3SAAQAIABEAGgAjAC0AMgA3AEIASABPAFcAYgBpAG4AcAByAHQAdgB7AH0AfwCBAIMAhQCjAK4AtgDEAMYAyADNANIA3QDmAPMA9gD/AREBFAEZAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAARs=
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">12</attribute>
+        <attribute name="layoutname" type="string">Upper Left</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z104"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z138">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">0</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">4</attribute>
+        <attribute name="endx" type="int16">4</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
+CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRcVEREAwSAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">4</attribute>
+        <attribute name="layoutname" type="string">Upper Left</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z125"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z139">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">0</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">6</attribute>
+        <attribute name="endx" type="int16">4</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
+CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRUVEREAwSAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">7</attribute>
+        <attribute name="layoutname" type="string">Large Upper Left</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z111"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z140">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">2</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">8</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
+CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AxB8EgAOAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">11</attribute>
+        <attribute name="layoutname" type="string">Large Right</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z114"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z141">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">2</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">8</attribute>
+        <attribute name="layoutpositionindex" type="int16">14</attribute>
+        <attribute name="layoutname" type="string">Large Right</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z109"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z142">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">8</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">12</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">0</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">12</attribute>
+        <attribute name="layoutpositionindex" type="int16">21</attribute>
+        <attribute name="layoutname" type="string">Side</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z113"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z143">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">1</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">11</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">0</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">10</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
+CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc1EvECwSAAwAANIfICEiWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiEjWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0SYnVHJvb3SAAQAIABEAGgAjAC0AMgA3AEIASABPAFcAYgBpAG4AcAByAHQAdgB7AH0AfwCBAIMAhQCjAK4AtgDEAMYAyADNANIA3QDmAPMA9gD/AREBFAEZAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAARs=
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">18</attribute>
+        <attribute name="layoutname" type="string">Normal</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z106"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z144">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">0</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">2</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
+CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AhB7EgAOAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">10</attribute>
+        <attribute name="layoutname" type="string">Small Left</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z124"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z145">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">4</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">8</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
+CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AxB8EgAMAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">1</attribute>
+        <attribute name="layoutname" type="string">Right</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z120"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z146">
+        <attribute name="starty" type="int16">6</attribute>
+        <attribute name="startx" type="int16">0</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">4</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
+CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRQVEBEAASAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">8</attribute>
+        <attribute name="layoutname" type="string">Small Lower Left</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z122"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z147">
+        <attribute name="starty" type="int16">6</attribute>
+        <attribute name="startx" type="int16">0</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">2</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
+CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRWlEaEAYSAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">16</attribute>
+        <attribute name="layoutname" type="string">Small Lower Left</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z112"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z148">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">0</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">6</attribute>
+        <attribute name="endx" type="int16">2</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
+CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRIVExEBISAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">15</attribute>
+        <attribute name="layoutname" type="string">Large Upper Left</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z118"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
+    </object>
+    <object type="WINDOWLAYOUTBASIC" id="z149">
+        <attribute name="starty" type="int16">0</attribute>
+        <attribute name="startx" type="int16">0</attribute>
+        <attribute name="gridusedefaults" type="bool">0</attribute>
+        <attribute name="gridresolutiony" type="int16">8</attribute>
+        <attribute name="gridresolutionx" type="int16">8</attribute>
+        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
+        <attribute name="endy" type="int16">8</attribute>
+        <attribute name="endx" type="int16">4</attribute>
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
+CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AhB7EgAMAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
+</attribute>
+        <attribute name="layoutpositionindex" type="int16">2</attribute>
+        <attribute name="layoutname" type="string">Left</attribute>
+        <attribute name="layoutdisplayid" type="int64">0</attribute>
+        <attribute name="layoutdisplay" type="string">All Screens</attribute>
+        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z115"></relationship>
+        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
     </object>
 </database>

@@ -1,6 +1,17 @@
-#!/usr/bin/env bash
-set -euo pipefail
-trap "echo 'error: Script failed: see failed command above'" ERR
+#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+
+MAX_LENGTH=40
+
+kebab_string = `kebab #{ARGV}`
 
 # TODO: try to update master from origin/master first, but don't fail if cannot
-$GIT checkout -b $(kebab "$@") --no-track
+Kernel.system(
+  "#{ENV['GIT']} checkout -b $("\
+  "  echo \"#{kebab_string}\" "\
+  "  | cut -c 1-#{MAX_LENGTH} "\
+  "  | rev "\
+  "  | cut -d - -f #{kebab_string.length > MAX_LENGTH ? 2 : 1}- "\
+  "  | rev"\
+  ")"\
+  "  --no-track"
+)

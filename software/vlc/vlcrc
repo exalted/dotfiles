@@ -1,5 +1,5 @@
 ﻿###
-###  vlc 3.0.6
+###  vlc 3.0.7.1
 ###
 
 ###
@@ -522,7 +522,7 @@ macosx-continue-playback=1
 #sout-avi-subject=
 
 # Encoder (string)
-#sout-avi-encoder=VLC Media Player - 3.0.6 Vetinari
+#sout-avi-encoder=VLC Media Player - 3.0.7.1 Vetinari
 
 # Keywords (string)
 #sout-avi-keywords=
@@ -2963,6 +2963,9 @@ subsdec-encoding=ISO-8859-9
 
 # Advanced options (string)
 #sout-avformat-options=
+
+# Reset timestamps (boolean)
+#sout-avformat-reset-ts=0
 
 # Advanced options (string)
 #avio-options=

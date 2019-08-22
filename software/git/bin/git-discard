@@ -2,4 +2,4 @@
 set -euo pipefail
 trap "echo 'error: Script failed: see failed command above'" ERR
 
-$GIT stash push --include-untracked
+$GIT checkout -- "${@:-}"

@@ -16,12 +16,3 @@ alias ll='ls -l'
 # lla === lal
 alias lla='ll -A'
 alias lal='la -l'
-
-
-##
-## Missing bits ................................................................
-##
-
-# complementary to `whoami`
-alias whereami=pwd
-alias whattimeisit=date

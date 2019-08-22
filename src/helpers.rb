@@ -3,6 +3,12 @@ require 'fileutils'
 
 require_relative './common'
 
+# TODO: remember last execution time, and run again only after a certain
+# period of time has passed (e.g. 1 hour)
+def debounce
+  yield
+end
+
 def brew(formula)
   return if Kernel.system "brew list #{formula} &> /dev/null"
   system "brew install #{formula}"
@@ -54,7 +60,9 @@ end
 
 def bash_source(path)
   abort "#{path}: No such file or directory" unless File.exists? path
-  File.open("#{ENV["HOME"]}/.bashrc", 'a') { |f| f.puts "\nsource #{path}" }
+  if File.readlines("#{ENV["HOME"]}/.bashrc").grep(/^#{"source #{path}"}$/).size == 0
+    File.open("#{ENV["HOME"]}/.bashrc", 'a') { |f| f.puts "\n#{"source #{path}"}" }
+  end
 end
 
 def bash_source_relative(name = nil)
