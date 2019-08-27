@@ -3,7 +3,7 @@ const zoomLinkFromGCal = /https?:\/\/(.+\.)?google\.com\/url\?q=https?:\/\/zoom\
 module.exports = {
   options: {
     // Hide the finicky icon from the top bar
-    hideIcon: false
+    hideIcon: true
   },
   defaultBrowser: 'Safari',
   rewrite: [
