@@ -17,7 +17,7 @@ module.exports = {
       match: ({ sourceBundleIdentifier, urlString }) => {
         if (sourceBundleIdentifier !== 'com.mailplaneapp.Mailplane3') { return false }
 
-        return urlString.match(zoomLinkFromGCal);
+        return zoomLinkFromGCal.test(urlString);
       },
       url: ({ urlString }) => {
         const matches = urlString.match(zoomLinkFromGCal);
