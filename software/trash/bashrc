@@ -1,0 +1,2 @@
+alias trash='trash -F'
+alias rmtrash=trash
