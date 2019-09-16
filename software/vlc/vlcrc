@@ -1,5 +1,5 @@
 ﻿###
-###  vlc 3.0.7.1
+###  vlc 3.0.8
 ###
 
 ###
@@ -522,7 +522,7 @@ macosx-continue-playback=1
 #sout-avi-subject=
 
 # Encoder (string)
-#sout-avi-encoder=VLC Media Player - 3.0.7.1 Vetinari
+#sout-avi-encoder=VLC Media Player - 3.0.8 Vetinari
 
 # Keywords (string)
 #sout-avi-keywords=
@@ -1253,7 +1253,7 @@ macosx-continue-playback=1
 #prefetch-buffer-size=16384
 
 # Read size (integer)
-#prefetch-read-size=16384
+#prefetch-read-size=16777216
 
 # Seek threshold (integer)
 #prefetch-seek-threshold=16384
