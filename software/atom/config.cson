@@ -12,7 +12,6 @@
   "command-palette":
     preserveLastSearch: true
   core:
-    automaticallyUpdate: false
     disabledPackages: [
       "deprecation-cop"
       "image-view"
@@ -30,14 +29,16 @@
       "Thumbs.db"
       "desktop.ini"
       "node_modules"
+      "package-lock.json"
     ]
     projectHome: "/Users/ali/Development"
     telemetryConsent: "limited"
   editor:
+    fontFamily: "monaco"
     fontSize: 19
+    lineHeight: 1.7
     scrollPastEnd: true
     showIndentGuide: true
-    showInvisibles: true
   "exception-reporting":
     userId: "356841a2-c458-4982-b7b8-e162248d00d2"
   "find-and-replace":
@@ -49,9 +50,11 @@
   github:
     viewChangesForCurrentFileDiffPaneSplitDirection: "right"
   "highlight-selected":
+    hideHighlightOnSelectedWord: true
     highlightBackground: true
     lightTheme: true
-    minimumLength: 1
+    onlyHighlightWholeWords: false
+    showResultsOnScrollBar: true
   "indentation-indicator":
     spaceAfterColon: true
   "language-babel":
@@ -60,7 +63,14 @@
     panelHeight: 357
   "markdown-preview":
     useGitHubStyle: true
-  "one-dark-ui": {}
+  "one-dark-ui":
+    fontSize: 14
+  termination:
+    style: {}
+    toggles:
+      cloneTerminalPlus: false
+      cursorBlink: false
+      selectToCopy: false
   "tree-view":
     hideIgnoredNames: true
   welcome:

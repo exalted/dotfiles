@@ -20,7 +20,7 @@ module.exports = {
         return zoomLinkFromGCal.test(urlString);
       },
       url: ({ urlString }) => {
-        const matches = urlString.match(zoomLinkFromGCal);
+        const matches = zoomLinkFromGCal.exec(urlString);
 
         return {
           protocol: 'https',
@@ -32,7 +32,7 @@ module.exports = {
   ],
   handlers: [
     {
-      match: finicky.matchDomains([ 'localhost' ]),
+      match: finicky.matchDomains([ 'localhost', /\.convox$/ ]),
       browser: 'Google Chrome'
     },
     {
@@ -40,7 +40,7 @@ module.exports = {
       browser: 'Pivotal Tracker'
     },
     {
-      match: finicky.matchDomains([ /(plus|hangouts|meet)\.google\.com/ ]),
+      match: finicky.matchDomains([ /(chrome|plus|hangouts|meet)\.google\.com/ ]),
       browser: 'Google Chrome'
     },
     {

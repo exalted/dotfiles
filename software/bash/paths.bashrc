@@ -14,4 +14,4 @@ export PATH="$PATH:/Users/ali/Development/dotfiles/software/bash/bin"
 ##
 
 # TODO: remove hard-coded path
-CDPATH=".:$HOME:/Users/ali/Development:/Users/ali/Development/balsamiq"
+CDPATH=".:$HOME:/Users/ali/Development:/Users/ali/Development/balsamiq:/Users/ali/Development/_downloads"

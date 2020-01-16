@@ -12,10 +12,12 @@ ide-json
 ide-typescript
 intentions
 language-babel
+language-diff
 language-docker
 linter-eslint
 linter-ui-default
 multi-cursor
+open-in-sourcetree
 sort-lines
 teletype
 toggle-quotes

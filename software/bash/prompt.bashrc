@@ -1,3 +1,6 @@
+# (Ref.: https://support.apple.com/en-us/HT208050)
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
 # original: `export PS1="\h:\W \u\$ "`
 # TODO: consider moving `__git_ps1` to `PROMPT_COMMAND`, because;
 #         1. it's slightly faster,

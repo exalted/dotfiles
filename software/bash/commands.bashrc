@@ -60,20 +60,16 @@ reset-open-with() {
   /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
 }
 
-alias balsamiq-agenda='open /Users/ali/Library/Mobile\ Documents/74ZAFF46HB~jp~informationarchitects~Writer/Documents/Balsamiq\ Agenda/0-Current.md -a /Applications/iA\ Writer\ Classic.app/'
-alias balsamiq-acetaia='browse "https://acetaia.balsamiq.com/#/u31-ali"'
-alias balsamiq-wiki='browse "https://balsamiq.atlassian.net/wiki/my/saved-for-later"'
+alias dns-flush='sudo killall -HUP mDNSResponder'
 
 alias balsamiq-ssh-jenkins-master='ssh ubuntu@ec2-46-137-119-50.eu-west-1.compute.amazonaws.com'
 
-alias balsamiq-db-acetaia-production='convox resources proxy acetaia-mysql --port 3319'
-alias balsamiq-db-bottega-production='convox resources proxy bottega-mysql --port 3329'
-alias balsamiq-db-swag-production='convox resources proxy swag-mysql --port 3339'
+alias balsamiq-db-acetaia-production='convox rack resources proxy acetaia-mysql --port 3319'
+alias balsamiq-db-bottega-production='convox rack resources proxy bottega-mysql --port 3329'
+alias balsamiq-db-swag-production='convox rack resources proxy swag-mysql --port 3339'
+
+alias balsamiq-ci-b.com='browse "https://jenkins.balsamiq.com/job/balsamiq.com/"'
 
 alias balsamiq-ci-acetaia='browse https://jenkins.balsamiq.com/job/Internal_Tools/job/acetaia-production/'
 alias balsamiq-ci-bottega='browse https://jenkins.balsamiq.com/job/Internal_Tools/job/bottega-production/'
 alias balsamiq-ci-swag='browse https://jenkins.balsamiq.com/job/Internal_Tools/job/swag-production/'
-
-alias balsamiq-ci-b.com='browse "https://jenkins.balsamiq.com/job/balsamiq.com/"'
-
-alias dns-flush='sudo killall -HUP mDNSResponder'

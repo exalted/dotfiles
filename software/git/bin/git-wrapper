@@ -13,6 +13,9 @@ case "${1:-}" in
   "add" )
     "${__dir__}"/git-add "${@:2}"
     ;;
+  "merge" )
+    "${__dir__}"/git-merge "${@:2}"
+    ;;
   "remote" )
     "${__dir__}"/git-remote "${@:2}"
     ;;
