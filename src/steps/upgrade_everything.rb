@@ -6,10 +6,8 @@ def upgrade_everything
   Upgrade.cask
   Upgrade.mas
   # TODO: these are not system-wide enough to belong here, so consider moving
-  #       them out (read "better idea" section of the NOTE in `software/atom.rb`)
-  #       and replace with something like `Upgrade.existing`.
+  #       them out.
   Upgrade.gibo
-  Upgrade.apm
 
   ohai "Upgrade successful!"
   puts
@@ -33,11 +31,5 @@ module Upgrade
     return unless cmd_exists?('gibo')
     puts "Updating gitignore boilerplates…"
     system "gibo update"
-  end
-
-  def self.apm
-    return unless cmd_exists?('apm-beta')
-    puts "Updating Atom packages…"
-    system "apm-beta upgrade --no-confirm"
   end
 end

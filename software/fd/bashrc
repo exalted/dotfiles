@@ -1,6 +1,0 @@
-find() {
-  >&2 echo \
-    'find: Consider using simpler and faster `fd` instead.' \
-    'If you really need `find` however, use `command find`…'
-  return 1
-}

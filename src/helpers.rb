@@ -20,20 +20,16 @@ def cask(token)
 end
 
 def mas(app_id)
-  return if Kernel.system(
-    "mas list | cut -f 1 -d' ' -s | grep ^#{app_id}$ > /dev/null",
-  )
+  return if Kernel.system "mas list | cut -f 1 -d' ' -s | grep ^#{app_id}$ > /dev/null"
   system "mas install #{app_id}"
 end
 
 def link(src, dest, backup: false)
-  abort "#{src}: No such file or directory" unless File.exists? src
+  abort "#{src}: No such file or directory" unless File.exist? src
 
-  if backup && File.exists?(dest)
+  if backup && File.exist?(dest)
     dest_backup = "#{dest}.backup"
-    (
-      FileUtils.copy_file(dest, dest_backup, preserve: true)
-    ) unless File.exists?(dest_backup)
+    FileUtils.copy_file(dest, dest_backup, preserve: true) unless File.exist?(dest_backup)
   end
 
   FileUtils.mkdir_p Pathname.new(dest).dirname
@@ -42,9 +38,7 @@ end
 
 def link_relative(src, dest, backup: false)
   link(
-    File.absolute_path(
-      "#{Pathname.new(Kernel.caller_locations.last.path).dirname}/#{src}",
-    ),
+    File.absolute_path("#{Pathname.new(Kernel.caller_locations.last.path).dirname}/#{src}"),
     dest,
     backup: backup
   )
@@ -59,9 +53,9 @@ def link_to_home_relative(src, dest, backup: false)
 end
 
 def bash_source(path)
-  abort "#{path}: No such file or directory" unless File.exists? path
-  if File.readlines("#{ENV["HOME"]}/.bashrc").grep(/^#{"source #{path}"}$/).size == 0
-    File.open("#{ENV["HOME"]}/.bashrc", 'a') { |f| f.puts "\n#{"source #{path}"}" }
+  abort "#{path}: No such file" unless File.file? path
+  if File.readlines("#{ENV["HOME"]}/.bashrc.dotfiles").grep(/^#{"source #{path}"}$/).size == 0
+    File.open("#{ENV["HOME"]}/.bashrc.dotfiles", 'a') { |f| f.puts "\n#{"source #{path}"}" }
   end
 end
 
@@ -69,8 +63,6 @@ def bash_source_relative(name = nil)
   name = name ? "#{name}.bashrc" : 'bashrc'
 
   bash_source(
-    File.absolute_path(
-      "#{Pathname.new(Kernel.caller_locations.last.path).dirname}/#{name}",
-    ),
+    File.absolute_path "#{Pathname.new(Kernel.caller_locations.last.path).dirname}/#{name}"
   )
 end

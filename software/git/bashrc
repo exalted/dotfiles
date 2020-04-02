@@ -1,4 +1,4 @@
-export GIT_EDITOR='atom-beta --new-window --wait'
+export GIT_EDITOR='edit --new-window --wait'
 
 # For the settings below, read the docs for `git-prompt.sh`
 

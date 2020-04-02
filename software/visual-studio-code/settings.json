@@ -1,0 +1,36 @@
+{
+    "window.zoomLevel": 1,
+    "editor.fontSize": 16,
+    "editor.fontFamily": "Monaco",
+    "editor.tabSize": 2,
+    "editor.lineHeight": 26,
+    "editor.renderWhitespace": "selection",
+    "editor.cursorSurroundingLines": 5,
+    "editor.minimap.enabled": false,
+    "editor.rulers": [
+        80
+    ],
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "workbench.commandPalette.preserveInput": true,
+    "workbench.quickOpen.preserveInput": true,
+    "files.associations": {
+        "bashrc": "shellscript"
+    },
+    "explorer.sortOrder": "mixed",
+    "ruby.useLanguageServer": true,
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "vsintellicode.java.completionsEnabled": false,
+    "vsintellicode.sql.completionsEnabled": false,
+    "workbench.activityBar.visible": false,
+    "files.exclude": {
+        "**/package-lock.json": true
+    },
+    "search.smartCase": true,
+    "terminal.integrated.scrollback": 100000,
+    "workbench.colorTheme": "Atom One Dark",
+    "terminal.integrated.minimumContrastRatio": 4,
+    "workbench.startupEditor": "newUntitledFile",
+    "files.insertFinalNewline": true
+}

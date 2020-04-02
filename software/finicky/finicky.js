@@ -1,4 +1,5 @@
 const zoomLinkFromGCal = /https?:\/\/(.+\.)?google\.com\/url\?q=https?:\/\/zoom\.us(\/.+?)&/;
+const pivotalTrackerLinkFromGCal = /https?:\/\/(.+\.)?google\.com\/url\?q=https?:\/\/www\.pivotaltracker\.com(\/.+?)&/;
 
 module.exports = {
   options: {
@@ -28,11 +29,28 @@ module.exports = {
           pathname: matches[2]
         };
       }
+    },
+    // Extract pivotaltracker link when clicked from Mailplane
+    {
+      match: ({ sourceBundleIdentifier, urlString }) => {
+        if (sourceBundleIdentifier !== 'com.mailplaneapp.Mailplane3') { return false }
+
+        return pivotalTrackerLinkFromGCal.test(urlString);
+      },
+      url: ({ urlString }) => {
+        const matches = pivotalTrackerLinkFromGCal.exec(urlString);
+
+        return {
+          protocol: 'https',
+          host: 'www.pivotaltracker.com',
+          pathname: matches[2]
+        };
+      }
     }
   ],
   handlers: [
     {
-      match: finicky.matchDomains([ 'localhost', /\.convox$/ ]),
+      match: finicky.matchDomains([ 'localhost', /\.local$/, /\.convox$/ ]),
       browser: 'Google Chrome'
     },
     {

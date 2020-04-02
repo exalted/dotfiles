@@ -9,7 +9,7 @@ filename = "vlcrc"
 src = "#{__dir__}/#{filename}"
 dest = "#{ENV["HOME"]}/Library/Preferences/org.videolan.vlc/#{filename}"
 
-if File.exists?(dest)
+if File.file?(dest)
   FileUtils.copy_file(dest, src, preserve: true)
 else
   FileUtils.mkdir_p Pathname.new(dest).dirname

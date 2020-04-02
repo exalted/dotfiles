@@ -10,7 +10,7 @@
             <plist version="1.0">
                 <dict>
                     <key>NSPersistenceFrameworkVersion</key>
-                    <integer>973</integer>
+                    <integer>977</integer>
                     <key>NSStoreModelVersionHashes</key>
                     <dict>
                         <key>ApplicationLayout</key>
@@ -344,7 +344,7 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNa
         <attribute name="quicklayoutgridresolutiony" type="int16">8</attribute>
         <attribute name="quicklayoutgridresolutionx" type="int16">8</attribute>
         <attribute name="quicklayoutgridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="preferencestab" type="int16">7</attribute>
+        <attribute name="preferencestab" type="int16">0</attribute>
         <attribute name="positioningextraguttermode" type="string">Pixel Value</attribute>
         <attribute name="positioningextragutterexternal" type="int16">20</attribute>
         <attribute name="positioningextragutterdefault" type="bool">1</attribute>

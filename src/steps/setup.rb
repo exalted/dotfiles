@@ -2,10 +2,18 @@ require_relative '../common'
 
 def setup
   ohai "Initial setup…"
-  Create.bash_profile
-  Create.bashrc
+  Setup.create_bash_profile
+  Setup.create_temp_bashrc
 
   ohai "Ready!"
+  puts
+end
+
+def wrapup
+  ohai "Almost there…"
+  Setup.save_bashrc
+
+  ohai "All good."
   puts
 end
 
@@ -13,12 +21,12 @@ def cleanup
   ohai "Cleaning up…"
   Kernel.system "brew cleanup"
 
-  ohai "All good."
+  ohai "Clean as a whistle."
   puts
 end
 
-module Create
-  def self.bash_profile
+module Setup
+  def self.create_bash_profile
     File.open("#{ENV["HOME"]}/.bash_profile", 'w') do |f|
       f << <<-EOF
 # This file is generated automatically and will be overridden every time
@@ -31,8 +39,8 @@ EOF
     end
   end
 
-  def self.bashrc
-    File.open("#{ENV["HOME"]}/.bashrc", 'w') do |f|
+  def self.create_temp_bashrc
+    File.open("#{ENV["HOME"]}/.bashrc.dotfiles", 'w') do |f|
       f << <<-EOF
 # This file is generated automatically and will be overridden every time
 # `dotfiles` is run. So, do yourself a favor and don't modify it manually or
@@ -40,5 +48,13 @@ EOF
 
 EOF
     end
+  end
+
+  def self.save_bashrc
+    FileUtils.mv(
+      "#{ENV["HOME"]}/.bashrc.dotfiles",
+      "#{ENV["HOME"]}/.bashrc",
+      force: true,
+    )
   end
 end

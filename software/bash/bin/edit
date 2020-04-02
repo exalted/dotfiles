@@ -1,0 +1,22 @@
+#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+#
+# Usage: edit [options] [paths...]
+#
+# Options
+#   --new-window  Force to open a new window.
+#   --wait        Wait for the files to be closed before returning.
+#
+# Paths
+#   If not specified, defaults to current directory.
+
+new_window = ARGV.include? '--new-window'
+wait = ARGV.include? '--wait'
+paths = ARGV.reverse.take_while { |arg| !arg.start_with? '--' }
+
+# Visual Studio Code specific code
+args = [ 'code' ]
+args.push '--new-window' if ( new_window || ARGV.empty?)
+args.push '--wait' if wait
+args.concat(paths.empty? ? [ '.' ] : paths)
+
+Kernel.system(*args)
