@@ -1,5 +1,5 @@
 ﻿###
-###  vlc 3.0.8
+###  vlc 3.0.11
 ###
 
 ###
@@ -522,7 +522,7 @@ macosx-continue-playback=1
 #sout-avi-subject=
 
 # Encoder (string)
-#sout-avi-encoder=VLC Media Player - 3.0.8 Vetinari
+#sout-avi-encoder=VLC Media Player - 3.0.11 Vetinari
 
 # Keywords (string)
 #sout-avi-keywords=
@@ -684,6 +684,15 @@ macosx-continue-playback=1
 
 # Use regular HTTP modules (boolean)
 #adaptive-use-access=0
+
+# Live Playback delay (ms) (integer)
+#adaptive-livedelay=15000
+
+# Max buffering (ms) (integer)
+#adaptive-maxbuffer=30000
+
+# Low latency (integer)
+#adaptive-lowlatency=-1
 
 [erase] # Erase video filter
 
@@ -3078,9 +3087,6 @@ subsdec-encoding=ISO-8859-9
 # Tone-mapping parameter (float)
 #tone-mapping-param=0.000000
 
-# Tone-mapping desaturation coefficient (float)
-#tone-mapping-desat=0.500000
-
 # Highlight clipped pixels (boolean)
 #tone-mapping-warn=0
 
@@ -3089,6 +3095,9 @@ subsdec-encoding=ISO-8859-9
 
 # Dither depth override (0 = framebuffer depth) (integer)
 #dither-depth=0
+
+# Tone-mapping desaturation coefficient (float)
+#tone-mapping-desat=0.500000
 
 [file] # File stream output
 
@@ -3639,7 +3648,7 @@ text-renderer=any
 #audio-language=
 
 # Subtitle language (string)
-#sub-language=
+sub-language=tr,en,it
 
 # Menu language (string)
 #menu-language=
@@ -3750,7 +3759,7 @@ text-renderer=any
 #meta-url=
 
 # File caching (ms) (integer)
-#file-caching=300
+#file-caching=1000
 
 # Live capture caching (ms) (integer)
 #live-caching=300
