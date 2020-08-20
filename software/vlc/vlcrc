@@ -1,5 +1,5 @@
 ﻿###
-###  vlc 3.0.11
+###  vlc 3.0.11.1
 ###
 
 ###
@@ -522,7 +522,7 @@ macosx-continue-playback=1
 #sout-avi-subject=
 
 # Encoder (string)
-#sout-avi-encoder=VLC Media Player - 3.0.11 Vetinari
+#sout-avi-encoder=VLC Media Player - 3.0.11.1 Vetinari
 
 # Keywords (string)
 #sout-avi-keywords=
