@@ -19,6 +19,12 @@ case "${1:-}" in
   "remote" )
     "${__dir__}"/git-remote "${@:2}"
     ;;
+  "restore" )
+    "${__dir__}"/git-restore "${@:2}"
+    ;;
+  "stash" )
+    "${__dir__}"/git-stash "${@:2}"
+    ;;
   * )
     $GIT "$@"
     ;;

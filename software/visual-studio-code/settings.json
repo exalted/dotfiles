@@ -56,5 +56,6 @@
         "terminal.ansiBrightYellow": "#fefdc2"
     },
     "workbench.panel.defaultLocation": "right",
-    "update.showReleaseNotes": false
+    "update.showReleaseNotes": false,
+    "terminal.integrated.rendererType": "dom"
 }

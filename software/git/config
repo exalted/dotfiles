@@ -19,6 +19,7 @@
 	prompt = false
 [merge]
 	tool = Kaleidoscope
+	autoStash = true
 [mergetool]
 	prompt = false
 	keepBackup = true
