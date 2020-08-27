@@ -57,5 +57,8 @@
     },
     "workbench.panel.defaultLocation": "right",
     "update.showReleaseNotes": false,
-    "terminal.integrated.rendererType": "dom"
+    "terminal.integrated.rendererType": "dom",
+    "search.showLineNumbers": true,
+    "search.useGlobalIgnoreFiles": true,
+    "search.quickOpen.includeHistory": false
 }

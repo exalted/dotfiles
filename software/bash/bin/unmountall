@@ -1,2 +1,8 @@
-mount | grep -E '^/dev/disk.*/Volumes' | grep -v '/Volumes/Recovery' | cut -d' ' -f1 > /tmp/remount_on_wakeup
+mount \
+  | grep -E '^/dev/disk.*/Volumes' \
+  | grep -v '/Volumes/Recovery' \
+  | grep -v '/System/Volumes/' \
+  | cut -d' ' -f1 \
+  > /tmp/remount_on_wakeup
+
 xargs diskutil unmount < /tmp/remount_on_wakeup

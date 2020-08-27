@@ -31,9 +31,9 @@ browse() {
   open "$url" "$@"
 }
 
-alias safari='browse "$@" -a /Applications/Safari.app/'
-alias chrome='browse "$@" -a /Applications/Google\ Chrome.app/'
-alias firefox='browse "$@" -a /Applications/Firefox.app/'
+alias safari='browse "$@" -a /Applications/Safari.app'
+alias chrome='browse "$@" -a /Applications/Google\ Chrome.app'
+alias firefox='browse "$@" -a /Applications/Firefox\ Developer\ Edition.app'
 
 google() {
   local search=""
