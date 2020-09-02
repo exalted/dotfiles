@@ -5,4 +5,4 @@ mount \
   | cut -d' ' -f1 \
   > /tmp/remount_on_wakeup
 
-xargs diskutil unmount < /tmp/remount_on_wakeup
+xargs -L 1 diskutil unmount < /tmp/remount_on_wakeup
