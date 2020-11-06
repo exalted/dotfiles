@@ -19,7 +19,7 @@ module Upgrade
   end
 
   def self.cask
-    system "brew cask upgrade"
+    system "brew upgrade --cask"
   end
 
   def self.mas

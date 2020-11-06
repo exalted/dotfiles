@@ -344,7 +344,7 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNa
         <attribute name="quicklayoutgridresolutiony" type="int16">8</attribute>
         <attribute name="quicklayoutgridresolutionx" type="int16">8</attribute>
         <attribute name="quicklayoutgridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="preferencestab" type="int16">0</attribute>
+        <attribute name="preferencestab" type="int16">1</attribute>
         <attribute name="positioningextraguttermode" type="string">Pixel Value</attribute>
         <attribute name="positioningextragutterexternal" type="int16">20</attribute>
         <attribute name="positioningextragutterdefault" type="bool">1</attribute>
@@ -382,7 +382,7 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNa
         <attribute name="layoutwidthenabled" type="bool">1</attribute>
         <attribute name="layoutmargintopunits" type="string">px</attribute>
         <attribute name="layoutmargintoppx" type="int16">0</attribute>
-        <attribute name="layoutmargintoppercent" type="float">0</attribute>
+        <attribute name="layoutmargintoppercent" type="float">10</attribute>
         <attribute name="layoutmargintopenabled" type="bool">0</attribute>
         <attribute name="layoutmarginrightunits" type="string">px</attribute>
         <attribute name="layoutmarginrightpx" type="int16">0</attribute>
@@ -402,8 +402,8 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNa
         <attribute name="layoutheightenabled" type="bool">1</attribute>
         <attribute name="layoutcentrev" type="bool">1</attribute>
         <attribute name="layoutcentreh" type="bool">1</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRfFEcECoSAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUXxRHBAqEgAOAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
 </attribute>
         <attribute name="layoutpositionindex" type="int16">20</attribute>
         <attribute name="layoutname" type="string">Small Special</attribute>
@@ -416,10 +416,10 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="layoutwidthpx" type="int16">1680</attribute>
         <attribute name="layoutwidthpercent" type="float">75</attribute>
         <attribute name="layoutwidthenabled" type="bool">1</attribute>
-        <attribute name="layoutmargintopunits" type="string">px</attribute>
+        <attribute name="layoutmargintopunits" type="string">%</attribute>
         <attribute name="layoutmargintoppx" type="int16">0</attribute>
-        <attribute name="layoutmargintoppercent" type="float">0</attribute>
-        <attribute name="layoutmargintopenabled" type="bool">0</attribute>
+        <attribute name="layoutmargintoppercent" type="float">5</attribute>
+        <attribute name="layoutmargintopenabled" type="bool">1</attribute>
         <attribute name="layoutmarginrightunits" type="string">px</attribute>
         <attribute name="layoutmarginrightpx" type="int16">0</attribute>
         <attribute name="layoutmarginrightpercent" type="float">0</attribute>
@@ -436,10 +436,10 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="layoutheightpx" type="int16">1050</attribute>
         <attribute name="layoutheightpercent" type="float">75</attribute>
         <attribute name="layoutheightenabled" type="bool">1</attribute>
-        <attribute name="layoutcentrev" type="bool">1</attribute>
+        <attribute name="layoutcentrev" type="bool">0</attribute>
         <attribute name="layoutcentreh" type="bool">1</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRXFEcECoSAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUVxRHBAqEgAMAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
 </attribute>
         <attribute name="layoutpositionindex" type="int16">19</attribute>
         <attribute name="layoutname" type="string">Special</attribute>

@@ -4,6 +4,11 @@ cask() {
     return
   fi
 
+  if [[ "${1:-}" = home ]]; then
+    brew "$@"
+    return
+  fi
+
   brew cask "$@"
 }
 
@@ -59,6 +64,11 @@ serve() {
 reset-open-with() {
   /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
 }
+
+compact() {
+  hdiutil compact "$@"
+}
+alias shrink=compact
 
 alias dns-flush='sudo killall -HUP mDNSResponder'
 

@@ -60,5 +60,8 @@
     "terminal.integrated.rendererType": "dom",
     "search.showLineNumbers": true,
     "search.useGlobalIgnoreFiles": true,
-    "search.quickOpen.includeHistory": false
+    "search.quickOpen.includeHistory": false,
+    "python.linting.pylintPath": "/usr/local/bin/pylint",
+    "python.languageServer": "Microsoft",
+    "python.showStartPage": false
 }
