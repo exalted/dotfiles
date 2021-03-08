@@ -12,7 +12,11 @@ module.exports = {
   rewrite: [
     // Redirect all urls to use https
     {
-      match: ({ url }) => url.protocol === 'http' && url.host !== 'localhost',
+      match: ({ url }) => (
+        url.protocol === 'http' &&
+        url.host !== 'localhost' &&
+        url.host !== '127.0.0.1'
+      ),
       url: ({ url }) => ({ ...url, protocol: 'https' }),
     },
     // Extract zoom meeting link when clicked from Mailplane
@@ -26,12 +30,9 @@ module.exports = {
       },
       url: ({ urlString }) => {
         const matches = zoomLinkFromGCal.exec(decodeURIComponent(urlString));
+        const pathname = matches[3];
 
-        return {
-          protocol: 'https',
-          host: 'zoom.us',
-          pathname: matches[3],
-        };
+        return `https://zoom.us${pathname}`;
       },
     },
     // Extract pivotaltracker link when clicked from Mailplane
@@ -47,19 +48,16 @@ module.exports = {
         const matches = pivotalTrackerLinkFromGCal.exec(
           decodeURIComponent(urlString)
         );
+        const pathname = matches[2];
 
-        return {
-          protocol: 'https',
-          host: 'www.pivotaltracker.com',
-          pathname: matches[2],
-        };
+        return `https://www.pivotaltracker.com${pathname}`;
       },
     },
   ],
   handlers: [
     {
-      match: finicky.matchDomains(['localhost', /\.local$/, /\.convox$/]),
-      browser: 'Google Chrome',
+      match: finicky.matchDomains(['localhost', '127.0.0.1', /\.local$/, /\.convox$/]),
+      browser: 'Google Chrome Dev',
     },
     {
       match: finicky.matchDomains([/(.+\.)?pivotaltracker\.com/]),
@@ -67,7 +65,7 @@ module.exports = {
     },
     {
       match: finicky.matchDomains([/(chrome|plus|hangouts|meet)\.google\.com/]),
-      browser: 'Google Chrome',
+      browser: 'Google Chrome Dev',
     },
     {
       match: finicky.matchDomains([/(.+\.)?zoom\.us/]),

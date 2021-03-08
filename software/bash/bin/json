@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+
+const vm = require('vm');
+
+////////////////////////////////////////////////////////////////////////////////
+
+let exit = -1;
+
+setInterval(() => {
+  if (exit !== -1) {
+    process.exit(exit);
+  }
+}, 100);
+
+////////////////////////////////////////////////////////////////////////////////
+
+function _exit(code = 0) {
+  exit = code;
+}
+
+async function _readStdin() {
+  return new Promise(function (resolve) {
+    const chunks = [];
+
+    process.stdin.setEncoding('utf-8');
+    process.stdin.on('readable', () => {
+      let chunk;
+      while (null !== (chunk = process.stdin.read())) {
+        chunks.push(chunk);
+      }
+    });
+
+    process.stdin.on('end', () => {
+      resolve(chunks.join(''));
+    });
+  })
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+(async function main() {
+  try {
+    const json = JSON.parse(await _readStdin());
+    const cmd = process.argv.slice(2).join(' ');
+    const foo = vm.runInNewContext(`json${cmd}`, { json })
+    console.log(JSON.stringify(foo, null, 2));
+    _exit();
+  } catch (error) {
+    console.error(error);
+    _exit(1);
+  }
+})();

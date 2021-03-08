@@ -55,5 +55,9 @@
   {
     "key": "shift+cmd+o",
     "command": "-cgroovy.organizeImports"
+  },
+  {
+    "key": "shift+cmd+k shift+cmd+d",
+    "command": "editor.action.moveSelectionToPreviousFindMatch"
   }
 ]

@@ -60,7 +60,7 @@
 				<dict>
 					<key>COMMAND_STRING</key>
 					<string># TODO: remove hard-coded path
-export PATH="$PATH:/Users/ali/Development/dotfiles/software/bash/bin"
+export PATH="$PATH:$HOME/Development/dotfiles/software/bash/bin"
 
 remountall
 </string>

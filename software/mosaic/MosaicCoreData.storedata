@@ -5,12 +5,12 @@
     <databaseInfo>
         <version>134481920</version>
         <UUID>2C0DF9CF-16F0-4A42-9E2A-96195F31D5AC</UUID>
-        <nextObjectID>150</nextObjectID>
+        <nextObjectID>151</nextObjectID>
         <metadata>
             <plist version="1.0">
                 <dict>
                     <key>NSPersistenceFrameworkVersion</key>
-                    <integer>977</integer>
+                    <integer>1044</integer>
                     <key>NSStoreModelVersionHashes</key>
                     <dict>
                         <key>ApplicationLayout</key>
@@ -70,16 +70,6 @@
             </plist>
         </metadata>
     </databaseInfo>
-    <object type="APPLICATIONLAYOUT" id="z102">
-        <attribute name="displayid" type="int64">69733568</attribute>
-        <attribute name="applicationname" type="string">1Password 7</attribute>
-        <relationship name="layout" type="0/1" destination="WINDOWLAYOUT" idrefs="z129"></relationship>
-    </object>
-    <object type="APPLICATIONLAYOUT" id="z103">
-        <attribute name="displayid" type="int64">458643409</attribute>
-        <attribute name="applicationname" type="string">Notes</attribute>
-        <relationship name="layout" type="0/1" destination="WINDOWLAYOUT" idrefs="z130"></relationship>
-    </object>
     <object type="GUTTERS" id="z104">
         <attribute name="usedefaults" type="bool">1</attribute>
         <attribute name="supportsinternalgutters" type="bool">1</attribute>
@@ -475,8 +465,8 @@ CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASA
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc1ENECQSAAwAANIfICEiWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiEjWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0SYnVHJvb3SAAQAIABEAGgAjAC0AMgA3AEIASABPAFcAYgBpAG4AcAByAHQAdgB7AH0AfwCBAIMAhQCjAK4AtgDEAMYAyADNANIA3QDmAPMA9gD/AREBFAEZAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAARs=
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRDRAkEgAMAADSIyQlJlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIlJ1hOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXgBkAGsAcwB+AIUAigCMAI4AkACSAJcAmQCbAJ0AnwChAL8AygDSAOAA4gDkAOkA7gD5AQIBDwESAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAARs=
 </attribute>
         <attribute name="layoutpositionindex" type="int16">17</attribute>
         <attribute name="layoutname" type="string">Full Screen</attribute>
@@ -494,8 +484,8 @@ CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASA
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">4</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRYVEBEAASAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUWFRARAAEgAMAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
 </attribute>
         <attribute name="layoutpositionindex" type="int16">5</attribute>
         <attribute name="layoutname" type="string">Lower Left</attribute>
@@ -583,8 +573,8 @@ CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASA
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">4</attribute>
         <attribute name="endx" type="int16">4</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRcVEREAwSAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUXFRERAMEgAMAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
 </attribute>
         <attribute name="layoutpositionindex" type="int16">4</attribute>
         <attribute name="layoutname" type="string">Upper Left</attribute>
@@ -602,8 +592,8 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">6</attribute>
         <attribute name="endx" type="int16">4</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRUVEREAwSAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUVFRERAMEgAOAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
 </attribute>
         <attribute name="layoutpositionindex" type="int16">7</attribute>
         <attribute name="layoutname" type="string">Large Upper Left</attribute>
@@ -672,8 +662,8 @@ CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASA
         <attribute name="gridmaintainaspectratio" type="bool">0</attribute>
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">10</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc1EvECwSAAwAANIfICEiWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiEjWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0SYnVHJvb3SAAQAIABEAGgAjAC0AMgA3AEIASABPAFcAYgBpAG4AcAByAHQAdgB7AH0AfwCBAIMAhQCjAK4AtgDEAMYAyADNANIA3QDmAPMA9gD/AREBFAEZAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAARs=
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRLxAsEgAMAADSIyQlJlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIlJ1hOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXgBkAGsAcwB+AIUAigCMAI4AkACSAJcAmQCbAJ0AnwChAL8AygDSAOAA4gDkAOkA7gD5AQIBDwESAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAARs=
 </attribute>
         <attribute name="layoutpositionindex" type="int16">18</attribute>
         <attribute name="layoutname" type="string">Normal</attribute>
@@ -691,8 +681,8 @@ CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASA
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">2</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AhB7EgAOAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3Nh9wIQexIADgAA0iMkJSZaJGNsYXNzbmFtZVgkY2xhc3Nlc1xOU0RpY3Rpb25hcnmiJSdYTlNPYmplY3QACAARABoAJAApADIANwBJAEwAUQBTAF4AZABrAHMAfgCFAIoAjACOAJAAkgCXAJkAmwCdAJ8AoQC/AMoA0gDgAOMA5QDqAO8A+gEDARABEwAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
 </attribute>
         <attribute name="layoutpositionindex" type="int16">10</attribute>
         <attribute name="layoutname" type="string">Small Left</attribute>
@@ -729,8 +719,8 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pO
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">4</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRQVEBEAASAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUUFRARAAEgAOAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
 </attribute>
         <attribute name="layoutpositionindex" type="int16">8</attribute>
         <attribute name="layoutname" type="string">Small Lower Left</attribute>
@@ -786,8 +776,8 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">4</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AhB7EgAMAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3Nh9wIQexIADAAA0iMkJSZaJGNsYXNzbmFtZVgkY2xhc3Nlc1xOU0RpY3Rpb25hcnmiJSdYTlNPYmplY3QACAARABoAJAApADIANwBJAEwAUQBTAF4AZABrAHMAfgCFAIoAjACOAJAAkgCXAJkAmwCdAJ8AoQC/AMoA0gDgAOMA5QDqAO8A+gEDARABEwAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
 </attribute>
         <attribute name="layoutpositionindex" type="int16">2</attribute>
         <attribute name="layoutname" type="string">Left</attribute>

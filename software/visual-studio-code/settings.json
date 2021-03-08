@@ -1,5 +1,4 @@
 {
-    "window.zoomLevel": 1,
     "editor.fontSize": 16,
     "editor.fontFamily": "Monaco",
     "editor.tabSize": 2,
@@ -14,7 +13,9 @@
     "workbench.commandPalette.preserveInput": true,
     "workbench.quickOpen.preserveInput": true,
     "files.associations": {
-        "bashrc": "shellscript"
+        "bashrc": "shellscript",
+        ".prettierrc": "json",
+        ".eslintrc": "json"
     },
     "explorer.sortOrder": "mixed",
     "ruby.useLanguageServer": true,
@@ -23,9 +24,6 @@
     "vsintellicode.java.completionsEnabled": false,
     "vsintellicode.sql.completionsEnabled": false,
     "workbench.activityBar.visible": false,
-    "files.exclude": {
-        "**/package-lock.json": true
-    },
     "search.smartCase": true,
     "terminal.integrated.scrollback": 100000,
     "workbench.colorTheme": "One Dark Pro",
@@ -63,5 +61,14 @@
     "search.quickOpen.includeHistory": false,
     "python.linting.pylintPath": "/usr/local/bin/pylint",
     "python.languageServer": "Microsoft",
-    "python.showStartPage": false
+    "python.showStartPage": false,
+    "alignment.surroundSpace": {
+        "colon": [ 1, 1 ]
+    },
+    "search.exclude": {
+        "**/package-lock.json": true
+    },
+    "javascript.updateImportsOnFileMove.enabled": "never",
+    "window.zoomLevel": 1,
+    "liveshare.authenticationProvider": "GitHub",
 }

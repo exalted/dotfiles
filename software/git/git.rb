@@ -3,7 +3,7 @@ require_relative '../../src/helpers'
 
 brew 'git'
 brew 'git-lfs'
-brew 'github/gh/gh'
+brew 'gh'
 brew 'hub'
 brew 'git-extras'
 brew 'gibo'  # TODO: consider https://www.gitignore.io instead
