@@ -70,5 +70,6 @@
     },
     "javascript.updateImportsOnFileMove.enabled": "never",
     "window.zoomLevel": 1,
-    "liveshare.authenticationProvider": "GitHub",
+    "editor.renderWhitespace": "none",
+    "editor.colorDecorators": false
 }
