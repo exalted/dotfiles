@@ -8,7 +8,7 @@ This assumes your shell of choice is Bash.
 Paste the following to a Terminal prompt:
 
 ```bash
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/exalted/dotfiles/master/install)"
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/exalted/dotfiles/main/install)"
 ```
 
 ## Usage

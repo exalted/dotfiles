@@ -4,6 +4,7 @@ trap "echo 'error: Script failed: see failed command above'" ERR
 
 $GIT branch --merged \
   | { grep -v '^  master$' || true; } \
+  | { grep -v '^  main$' || true; } \
   | { grep -v '^*' || true; } \
   | xargs -n 1 git branch --delete
 

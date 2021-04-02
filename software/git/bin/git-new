@@ -4,7 +4,7 @@ MAX_LENGTH=40
 
 kebab_string = `kebab #{ARGV}`
 
-# TODO: try to update master from origin/master first, but don't fail if cannot
+# TODO: try to update (master|main) from origin/(master|main) first, but don't fail if cannot
 Kernel.system(
   "#{ENV['GIT']} checkout -b $("\
   "  echo \"#{kebab_string}\" "\
