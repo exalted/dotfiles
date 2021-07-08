@@ -1,9 +1,6 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
 require_relative '../../src/helpers'
 
-brew 'node@6'
-brew 'node@8'
-brew 'node@10'
 brew 'node@12'  # this is the version I set as "default" in my system (see `software/node/bashrc`)
 brew 'node@14'  # this is the current LTS
 brew 'node'     # this is the latest and greatest (aka "current")

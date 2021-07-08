@@ -69,7 +69,11 @@
         "**/package-lock.json": true
     },
     "javascript.updateImportsOnFileMove.enabled": "never",
-    "window.zoomLevel": 1,
     "editor.renderWhitespace": "none",
-    "editor.colorDecorators": false
+    "editor.colorDecorators": false,
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter.notebook.ipynb"
+    },
+    "terminal.integrated.tabs.enabled": false,
+    "window.zoomLevel": 1
 }

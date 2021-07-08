@@ -1,15 +1,14 @@
 DeepInThought.vscode-shell-snippets
 EditorConfig.EditorConfig
 VisualStudioExptTeam.vscodeintellicode
-akamud.vscode-theme-onedark
 bibhasdn.unique-lines
-bierner.markdown-preview-github-styles
 bradlc.vscode-tailwindcss
+dbaeumer.vscode-eslint
 marlon407.code-groovy
 matklad.rust-analyzer
-mrorz.language-gettext
 ms-azuretools.vscode-docker
 ms-python.python
+ms-python.vscode-pylance
 ms-toolsai.jupyter
 ms-vsliveshare.vsliveshare
 neilding.language-liquid
@@ -21,4 +20,5 @@ sleistner.vscode-fileutils
 syler.sass-indented
 wingrunr21.vscode-ruby
 wwm.better-align
+yzhang.markdown-all-in-one
 zhuangtongfa.material-theme

@@ -10,7 +10,7 @@
             <plist version="1.0">
                 <dict>
                     <key>NSPersistenceFrameworkVersion</key>
-                    <integer>1044</integer>
+                    <integer>1048</integer>
                     <key>NSStoreModelVersionHashes</key>
                     <dict>
                         <key>ApplicationLayout</key>
@@ -110,26 +110,6 @@
         <attribute name="gutterexternal" type="int16">32</attribute>
         <attribute name="automaticinternal" type="bool">1</attribute>
     </object>
-    <object type="GUTTERS" id="z108">
-        <attribute name="usedefaults" type="bool">1</attribute>
-        <attribute name="supportsinternalgutters" type="bool">1</attribute>
-        <attribute name="supportsdefaults" type="bool">1</attribute>
-        <attribute name="instanceidentifier" type="string">LayoutGutters</attribute>
-        <attribute name="guttermode" type="string">Pixel Value</attribute>
-        <attribute name="gutterinternal" type="int16">16</attribute>
-        <attribute name="gutterexternal" type="int16">32</attribute>
-        <attribute name="automaticinternal" type="bool">1</attribute>
-    </object>
-    <object type="GUTTERS" id="z109">
-        <attribute name="usedefaults" type="bool">1</attribute>
-        <attribute name="supportsinternalgutters" type="bool">1</attribute>
-        <attribute name="supportsdefaults" type="bool">1</attribute>
-        <attribute name="instanceidentifier" type="string">LayoutGutters</attribute>
-        <attribute name="guttermode" type="string">Pixel Value</attribute>
-        <attribute name="gutterinternal" type="int16">16</attribute>
-        <attribute name="gutterexternal" type="int16">32</attribute>
-        <attribute name="automaticinternal" type="bool">1</attribute>
-    </object>
     <object type="GUTTERS" id="z110">
         <attribute name="usedefaults" type="bool">1</attribute>
         <attribute name="supportsinternalgutters" type="bool">1</attribute>
@@ -170,16 +150,6 @@
         <attribute name="gutterexternal" type="int16">32</attribute>
         <attribute name="automaticinternal" type="bool">1</attribute>
     </object>
-    <object type="GUTTERS" id="z114">
-        <attribute name="usedefaults" type="bool">1</attribute>
-        <attribute name="supportsinternalgutters" type="bool">1</attribute>
-        <attribute name="supportsdefaults" type="bool">1</attribute>
-        <attribute name="instanceidentifier" type="string">LayoutGutters</attribute>
-        <attribute name="guttermode" type="string">Pixel Value</attribute>
-        <attribute name="gutterinternal" type="int16">16</attribute>
-        <attribute name="gutterexternal" type="int16">32</attribute>
-        <attribute name="automaticinternal" type="bool">1</attribute>
-    </object>
     <object type="GUTTERS" id="z115">
         <attribute name="usedefaults" type="bool">1</attribute>
         <attribute name="supportsinternalgutters" type="bool">1</attribute>
@@ -211,16 +181,6 @@
         <attribute name="automaticinternal" type="bool">1</attribute>
     </object>
     <object type="GUTTERS" id="z118">
-        <attribute name="usedefaults" type="bool">1</attribute>
-        <attribute name="supportsinternalgutters" type="bool">1</attribute>
-        <attribute name="supportsdefaults" type="bool">1</attribute>
-        <attribute name="instanceidentifier" type="string">LayoutGutters</attribute>
-        <attribute name="guttermode" type="string">Pixel Value</attribute>
-        <attribute name="gutterinternal" type="int16">16</attribute>
-        <attribute name="gutterexternal" type="int16">32</attribute>
-        <attribute name="automaticinternal" type="bool">1</attribute>
-    </object>
-    <object type="GUTTERS" id="z119">
         <attribute name="usedefaults" type="bool">1</attribute>
         <attribute name="supportsinternalgutters" type="bool">1</attribute>
         <attribute name="supportsdefaults" type="bool">1</attribute>
@@ -313,7 +273,7 @@
     </object>
     <object type="PREFERENCES" id="z128">
         <attribute name="touchbarshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
-D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUVRWXFUwMGNhEBESABoAANIkJSYnWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiYoWE5TT2JqZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBfAGUAbAB0AH8AhgCLAI0AjwCRAJMAmACaAJwAngCgAKIAwADLANMA4QDjAOoA7ADxAPYBAQEKARcBGgAAAAAAAAIBAAAAAAAAACkAAAAAAAAAAAAAAAAAAAEj
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUVRWXFUwMGNhEBESABoAANIkJSYnWiRjbGFzc25hbWVYJGNsYXNzZXNfEBNOU011dGFibGVEaWN0aW9uYXJ5oyYoKVxOU0RpY3Rpb25hcnlYTlNPYmplY3QACAARABoAJAApADIANwBJAEwAUQBTAF8AZQBsAHQAfwCGAIsAjQCPAJEAkwCYAJoAnACeAKAAogDAAMsA0wDhAOMA6gDsAPEA9gEBAQoBIAEkATEAAAAAAAACAQAAAAAAAAAqAAAAAAAAAAAAAAAAAAABOg==
 </attribute>
         <attribute name="touchbarenabled" type="bool">1</attribute>
         <attribute name="showquickpositions" type="bool">1</attribute>
@@ -329,12 +289,12 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNa
         <attribute name="remoteappgridresolutionx" type="int16">6</attribute>
         <attribute name="remoteappgridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="quicklayoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
-D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUUxWXFUwMGQyECUSABoAANIkJSYnWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiYoWE5TT2JqZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBfAGUAbAB0AH8AhgCLAI0AjwCRAJMAmACaAJwAngCgAKIAwADLANMA4QDjAOoA7ADxAPYBAQEKARcBGgAAAAAAAAIBAAAAAAAAACkAAAAAAAAAAAAAAAAAAAEj
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUUxWXFUwMGQyECUSABoAANIkJSYnWiRjbGFzc25hbWVYJGNsYXNzZXNfEBNOU011dGFibGVEaWN0aW9uYXJ5oyYoKVxOU0RpY3Rpb25hcnlYTlNPYmplY3QACAARABoAJAApADIANwBJAEwAUQBTAF8AZQBsAHQAfwCGAIsAjQCPAJEAkwCYAJoAnACeAKAAogDAAMsA0wDhAOMA6gDsAPEA9gEBAQoBIAEkATEAAAAAAAACAQAAAAAAAAAqAAAAAAAAAAAAAAAAAAABOg==
 </attribute>
         <attribute name="quicklayoutgridresolutiony" type="int16">8</attribute>
         <attribute name="quicklayoutgridresolutionx" type="int16">8</attribute>
         <attribute name="quicklayoutgridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="preferencestab" type="int16">1</attribute>
+        <attribute name="preferencestab" type="int16">8</attribute>
         <attribute name="positioningextraguttermode" type="string">Pixel Value</attribute>
         <attribute name="positioningextragutterexternal" type="int16">20</attribute>
         <attribute name="positioningextragutterdefault" type="bool">1</attribute>
@@ -393,7 +353,7 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNa
         <attribute name="layoutcentrev" type="bool">1</attribute>
         <attribute name="layoutcentreh" type="bool">1</attribute>
         <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
-D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUXxRHBAqEgAOAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUXxRHBAqEgAOAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxlRGljdGlvbmFyeaMmKClcTlNEaWN0aW9uYXJ5WE5TT2JqZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBfAGUAbAB0AH8AhgCLAI0AjwCRAJMAmACaAJwAngCgAKIAwADLANMA4QDjAOUA5wDsAPEA/AEFARsBHwEsAAAAAAAAAgEAAAAAAAAAKgAAAAAAAAAAAAAAAAAAATU=
 </attribute>
         <attribute name="layoutpositionindex" type="int16">20</attribute>
         <attribute name="layoutname" type="string">Small Special</attribute>
@@ -429,7 +389,7 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNa
         <attribute name="layoutcentrev" type="bool">0</attribute>
         <attribute name="layoutcentreh" type="bool">1</attribute>
         <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
-D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUVxRHBAqEgAMAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUVxRHBAqEgAMAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxlRGljdGlvbmFyeaMmKClcTlNEaWN0aW9uYXJ5WE5TT2JqZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBfAGUAbAB0AH8AhgCLAI0AjwCRAJMAmACaAJwAngCgAKIAwADLANMA4QDjAOUA5wDsAPEA/AEFARsBHwEsAAAAAAAAAgEAAAAAAAAAKgAAAAAAAAAAAAAAAAAAATU=
 </attribute>
         <attribute name="layoutpositionindex" type="int16">19</attribute>
         <attribute name="layoutname" type="string">Special</attribute>
@@ -446,8 +406,8 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNa
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AxB8EgAOAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3Nh9wMQfBIADgAA0iMkJSZaJGNsYXNzbmFtZVgkY2xhc3Nlc18QE05TTXV0YWJsZURpY3Rpb25hcnmjJScoXE5TRGljdGlvbmFyeVhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXgBkAGsAcwB+AIUAigCMAI4AkACSAJcAmQCbAJ0AnwChAL8AygDSAOAA4wDlAOoA7wD6AQMBGQEdASoAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABMw==
 </attribute>
         <attribute name="layoutpositionindex" type="int16">9</attribute>
         <attribute name="layoutname" type="string">Large Right</attribute>
@@ -485,29 +445,13 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pO
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">4</attribute>
         <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
-D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUWFRARAAEgAMAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUWFRARAAEgAMAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxlRGljdGlvbmFyeaMmKClcTlNEaWN0aW9uYXJ5WE5TT2JqZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBfAGUAbAB0AH8AhgCLAI0AjwCRAJMAmACaAJwAngCgAKIAwADLANMA4QDjAOUA5wDsAPEA/AEFARsBHwEsAAAAAAAAAgEAAAAAAAAAKgAAAAAAAAAAAAAAAAAAATU=
 </attribute>
         <attribute name="layoutpositionindex" type="int16">5</attribute>
         <attribute name="layoutname" type="string">Lower Left</attribute>
         <attribute name="layoutdisplayid" type="int64">0</attribute>
         <attribute name="layoutdisplay" type="string">All Screens</attribute>
         <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z121"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z134">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">4</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutpositionindex" type="int16">6</attribute>
-        <attribute name="layoutname" type="string">Right</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z119"></relationship>
         <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
     </object>
     <object type="WINDOWLAYOUTBASIC" id="z135">
@@ -519,30 +463,14 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNa
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">2</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRelEaEAYSAAwAANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUXpRGhAGEgAMAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxlRGljdGlvbmFyeaMmKClcTlNEaWN0aW9uYXJ5WE5TT2JqZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBfAGUAbAB0AH8AhgCLAI0AjwCRAJMAmACaAJwAngCgAKIAwADLANMA4QDjAOUA5wDsAPEA/AEFARsBHwEsAAAAAAAAAgEAAAAAAAAAKgAAAAAAAAAAAAAAAAAAATU=
 </attribute>
         <attribute name="layoutpositionindex" type="int16">13</attribute>
         <attribute name="layoutname" type="string">Lower Left</attribute>
         <attribute name="layoutdisplayid" type="int64">0</attribute>
         <attribute name="layoutdisplay" type="string">All Screens</attribute>
         <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z105"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z136">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">4</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutpositionindex" type="int16">3</attribute>
-        <attribute name="layoutname" type="string">Right</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z108"></relationship>
         <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
     </object>
     <object type="WINDOWLAYOUTBASIC" id="z137">
@@ -554,8 +482,8 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">4</attribute>
         <attribute name="endx" type="int16">2</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc1ExEBISAAwAANIfICEiWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiEjWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0SYnVHJvb3SAAQAIABEAGgAjAC0AMgA3AEIASABPAFcAYgBpAG4AcAByAHQAdgB7AH0AfwCBAIMAhQCjAK4AtgDEAMYAyADNANIA3QDmAPMA9gD/AREBFAEZAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAARs=
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRMRASEgAMAADSIyQlJlokY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxlRGljdGlvbmFyeaMlJyhcTlNEaWN0aW9uYXJ5WE5TT2JqZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBeAGQAawBzAH4AhQCKAIwAjgCQAJIAlwCZAJsAnQCfAKEAvwDKANIA4ADiAOQA6QDuAPkBAgEYARwBKQAAAAAAAAIBAAAAAAAAACkAAAAAAAAAAAAAAAAAAAEy
 </attribute>
         <attribute name="layoutpositionindex" type="int16">12</attribute>
         <attribute name="layoutname" type="string">Upper Left</attribute>
@@ -574,7 +502,7 @@ CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASA
         <attribute name="endy" type="int16">4</attribute>
         <attribute name="endx" type="int16">4</attribute>
         <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
-D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUXFRERAMEgAMAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUXFRERAMEgAMAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxlRGljdGlvbmFyeaMmKClcTlNEaWN0aW9uYXJ5WE5TT2JqZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBfAGUAbAB0AH8AhgCLAI0AjwCRAJMAmACaAJwAngCgAKIAwADLANMA4QDjAOUA5wDsAPEA/AEFARsBHwEsAAAAAAAAAgEAAAAAAAAAKgAAAAAAAAAAAAAAAAAAATU=
 </attribute>
         <attribute name="layoutpositionindex" type="int16">4</attribute>
         <attribute name="layoutname" type="string">Upper Left</attribute>
@@ -593,48 +521,13 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNa
         <attribute name="endy" type="int16">6</attribute>
         <attribute name="endx" type="int16">4</attribute>
         <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
-D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUVFRERAMEgAOAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUVFRERAMEgAOAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxlRGljdGlvbmFyeaMmKClcTlNEaWN0aW9uYXJ5WE5TT2JqZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBfAGUAbAB0AH8AhgCLAI0AjwCRAJMAmACaAJwAngCgAKIAwADLANMA4QDjAOUA5wDsAPEA/AEFARsBHwEsAAAAAAAAAgEAAAAAAAAAKgAAAAAAAAAAAAAAAAAAATU=
 </attribute>
         <attribute name="layoutpositionindex" type="int16">7</attribute>
         <attribute name="layoutname" type="string">Large Upper Left</attribute>
         <attribute name="layoutdisplayid" type="int64">0</attribute>
         <attribute name="layoutdisplay" type="string">All Screens</attribute>
         <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z111"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z140">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">2</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKoH
-CBcYGRobHB0eVSRudWxs0wkKCwwRFldOUy5rZXlzWk5TLm9iamVjdHNWJGNsYXNzpA0ODxCAAoADgASABaQSEhQVgAaABoAHgAiACV8QG2NoYXJhY3RlcnNJZ25vcmluZ01vZGlmaWVyc1pjaGFyYWN0ZXJzV2tleUNvZGVdbW9kaWZpZXJGbGFnc2H3AxB8EgAOAADSHyAhIlokY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaIhI1hOU09iamVjdF8QD05TS2V5ZWRBcmNoaXZlctEmJ1Ryb290gAEACAARABoAIwAtADIANwBCAEgATwBXAGIAaQBuAHAAcgB0AHYAewB9AH8AgQCDAIUAowCuALYAxADHAMkAzgDTAN4A5wD0APcBAAESARUBGgAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
-</attribute>
-        <attribute name="layoutpositionindex" type="int16">11</attribute>
-        <attribute name="layoutname" type="string">Large Right</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z114"></relationship>
-        <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
-    </object>
-    <object type="WINDOWLAYOUTBASIC" id="z141">
-        <attribute name="starty" type="int16">0</attribute>
-        <attribute name="startx" type="int16">2</attribute>
-        <attribute name="gridusedefaults" type="bool">0</attribute>
-        <attribute name="gridresolutiony" type="int16">8</attribute>
-        <attribute name="gridresolutionx" type="int16">8</attribute>
-        <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
-        <attribute name="endy" type="int16">8</attribute>
-        <attribute name="endx" type="int16">8</attribute>
-        <attribute name="layoutpositionindex" type="int16">14</attribute>
-        <attribute name="layoutname" type="string">Large Right</attribute>
-        <attribute name="layoutdisplayid" type="int64">0</attribute>
-        <attribute name="layoutdisplay" type="string">All Screens</attribute>
-        <relationship name="gutters" type="0/1" destination="GUTTERS" idrefs="z109"></relationship>
         <relationship name="membership" type="0/0" destination="WINDOWLAYOUTGROUPMEMBERSHIP"></relationship>
     </object>
     <object type="WINDOWLAYOUTBASIC" id="z142">
@@ -682,7 +575,7 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pO
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">2</attribute>
         <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
-D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3Nh9wIQexIADgAA0iMkJSZaJGNsYXNzbmFtZVgkY2xhc3Nlc1xOU0RpY3Rpb25hcnmiJSdYTlNPYmplY3QACAARABoAJAApADIANwBJAEwAUQBTAF4AZABrAHMAfgCFAIoAjACOAJAAkgCXAJkAmwCdAJ8AoQC/AMoA0gDgAOMA5QDqAO8A+gEDARABEwAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3Nh9wIQexIADgAA0iMkJSZaJGNsYXNzbmFtZVgkY2xhc3Nlc18QE05TTXV0YWJsZURpY3Rpb25hcnmjJScoXE5TRGljdGlvbmFyeVhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXgBkAGsAcwB+AIUAigCMAI4AkACSAJcAmQCbAJ0AnwChAL8AygDSAOAA4wDlAOoA7wD6AQMBGQEdASoAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABMw==
 </attribute>
         <attribute name="layoutpositionindex" type="int16">10</attribute>
         <attribute name="layoutname" type="string">Small Left</attribute>
@@ -701,7 +594,7 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pO
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">8</attribute>
         <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
-D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3Nh9wMQfBIADAAA0iMkJSZaJGNsYXNzbmFtZVgkY2xhc3Nlc1xOU0RpY3Rpb25hcnmiJSdYTlNPYmplY3QACAARABoAJAApADIANwBJAEwAUQBTAF4AZABrAHMAfgCFAIoAjACOAJAAkgCXAJkAmwCdAJ8AoQC/AMoA0gDgAOMA5QDqAO8A+gEDARABEwAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3Nh9wMQfBIADAAA0iMkJSZaJGNsYXNzbmFtZVgkY2xhc3Nlc18QE05TTXV0YWJsZURpY3Rpb25hcnmjJScoXE5TRGljdGlvbmFyeVhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXgBkAGsAcwB+AIUAigCMAI4AkACSAJcAmQCbAJ0AnwChAL8AygDSAOAA4wDlAOoA7wD6AQMBGQEdASoAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABMw==
 </attribute>
         <attribute name="layoutpositionindex" type="int16">1</attribute>
         <attribute name="layoutname" type="string">Right</attribute>
@@ -720,7 +613,7 @@ D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pO
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">4</attribute>
         <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
-D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUUFRARAAEgAOAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXE5TRGljdGlvbmFyeaImKFhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXwBlAGwAdAB/AIYAiwCNAI8AkQCTAJgAmgCcAJ4AoACiAMAAywDTAOEA4wDlAOcA7ADxAPwBBQESARUAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUUFRARAAEgAOAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxlRGljdGlvbmFyeaMmKClcTlNEaWN0aW9uYXJ5WE5TT2JqZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBfAGUAbAB0AH8AhgCLAI0AjwCRAJMAmACaAJwAngCgAKIAwADLANMA4QDjAOUA5wDsAPEA/AEFARsBHwEsAAAAAAAAAgEAAAAAAAAAKgAAAAAAAAAAAAAAAAAAATU=
 </attribute>
         <attribute name="layoutpositionindex" type="int16">8</attribute>
         <attribute name="layoutname" type="string">Small Lower Left</attribute>
@@ -757,8 +650,8 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="gridmaintainaspectratio" type="bool">1</attribute>
         <attribute name="endy" type="int16">6</attribute>
         <attribute name="endx" type="int16">2</attribute>
-        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGJSZYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKsH
-CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AEgAWkEhMUFYAGgAeACIAJgApfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3NRIVExEBISAA4AANIgISIjWiRjbGFzc25hbWVYJGNsYXNzZXNcTlNEaWN0aW9uYXJ5oiIkWE5TT2JqZWN0XxAPTlNLZXllZEFyY2hpdmVy0ScoVHJvb3SAAQAIABEAGgAjAC0AMgA3AEMASQBQAFgAYwBqAG8AcQBzAHUAdwB8AH4AgACCAIQAhgCkAK8AtwDFAMcAyQDLANAA1QDgAOkA9gD5AQIBFAEXARwAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABHg==
+        <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGrCwwbHB0eHyAhIiNVJG51bGzTDQ4PEBUaV05TLmtleXNaTlMub2JqZWN0c1YkY2xhc3OkERITFIACgAOABIAFpBYXGBmABoAHgAiACYAKXxAbY2hhcmFjdGVyc0lnbm9yaW5nTW9kaWZpZXJzWmNoYXJhY3RlcnNXa2V5Q29kZV1tb2RpZmllckZsYWdzUSFRMRASEgAOAADSJCUmJ1okY2xhc3NuYW1lWCRjbGFzc2VzXxATTlNNdXRhYmxlRGljdGlvbmFyeaMmKClcTlNEaWN0aW9uYXJ5WE5TT2JqZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBfAGUAbAB0AH8AhgCLAI0AjwCRAJMAmACaAJwAngCgAKIAwADLANMA4QDjAOUA5wDsAPEA/AEFARsBHwEsAAAAAAAAAgEAAAAAAAAAKgAAAAAAAAAAAAAAAAAAATU=
 </attribute>
         <attribute name="layoutpositionindex" type="int16">15</attribute>
         <attribute name="layoutname" type="string">Large Upper Left</attribute>
@@ -777,7 +670,7 @@ CBcYGRobHB0eH1UkbnVsbNMJCgsMERZXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QNDg8QgAKAA4AE
         <attribute name="endy" type="int16">8</attribute>
         <attribute name="endx" type="int16">4</attribute>
         <attribute name="layoutshortcut" type="binary">YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q
-D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3Nh9wIQexIADAAA0iMkJSZaJGNsYXNzbmFtZVgkY2xhc3Nlc1xOU0RpY3Rpb25hcnmiJSdYTlNPYmplY3QACAARABoAJAApADIANwBJAEwAUQBTAF4AZABrAHMAfgCFAIoAjACOAJAAkgCXAJkAmwCdAJ8AoQC/AMoA0gDgAOMA5QDqAO8A+gEDARABEwAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAEc
+D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGqCwwbHB0eHyAhIlUkbnVsbNMNDg8QFRpXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6QREhMUgAKAA4AEgAWkFhYYGYAGgAaAB4AIgAlfEBtjaGFyYWN0ZXJzSWdub3JpbmdNb2RpZmllcnNaY2hhcmFjdGVyc1drZXlDb2RlXW1vZGlmaWVyRmxhZ3Nh9wIQexIADAAA0iMkJSZaJGNsYXNzbmFtZVgkY2xhc3Nlc18QE05TTXV0YWJsZURpY3Rpb25hcnmjJScoXE5TRGljdGlvbmFyeVhOU09iamVjdAAIABEAGgAkACkAMgA3AEkATABRAFMAXgBkAGsAcwB+AIUAigCMAI4AkACSAJcAmQCbAJ0AnwChAL8AygDSAOAA4wDlAOoA7wD6AQMBGQEdASoAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAABMw==
 </attribute>
         <attribute name="layoutpositionindex" type="int16">2</attribute>
         <attribute name="layoutname" type="string">Left</attribute>

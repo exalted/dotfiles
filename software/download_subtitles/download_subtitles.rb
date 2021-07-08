@@ -1,13 +1,15 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
 require_relative '../../src/helpers'
 
-brew 'submarine'
+# TODO: `submarine` was deleted. You should find replacements for it.
 
-# TODO: The technique below is copied from `software/mosaic.rb`, no bueno…
+# brew 'submarine'
 
-filename = "Download Subtitles.workflow"
-src = "#{__dir__}/#{filename}"
-dest = "#{ENV["HOME"]}/Library/Services"
+# # TODO: The technique below is copied from `software/mosaic.rb`, no bueno…
 
-FileUtils.mkdir_p dest
-FileUtils.cp_r(src, dest, preserve: true)
+# filename = "Download Subtitles.workflow"
+# src = "#{__dir__}/#{filename}"
+# dest = "#{ENV["HOME"]}/Library/Services"
+
+# FileUtils.mkdir_p dest
+# FileUtils.cp_r(src, dest, preserve: true)
