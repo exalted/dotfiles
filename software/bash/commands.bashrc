@@ -83,11 +83,11 @@ alias dns-flush='sudo killall -HUP mDNSResponder'
 
 b-ssh-jenkins-master() {
   cat <<EOF
-Once logged in run:
+Once logged to become Jenkins user do this:
   $ sudo -s
   # su jenkins
 
-... to become Jenkins user (ref: https://balsamiq.atlassian.net/wiki/x/ToQuEw).
+Read more: https://balsamiq.atlassian.net/wiki/x/ToQuEw
 
 EOF
   ssh ubuntu@ec2-46-137-119-50.eu-west-1.compute.amazonaws.com

@@ -2,4 +2,4 @@
 set -euo pipefail
 trap "echo 'error: Script failed: see failed command above'" ERR
 
-$GIT ls-files -v | { grep ^h || true; } | cut -c 3-
+$GIT update-index --skip-worktree "$@"

@@ -75,5 +75,6 @@
         "*.ipynb": "jupyter.notebook.ipynb"
     },
     "terminal.integrated.tabs.enabled": false,
+    "timeline.excludeSources": [],
     "window.zoomLevel": 1
 }

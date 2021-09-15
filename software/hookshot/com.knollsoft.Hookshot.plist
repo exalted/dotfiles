@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSStatusItem Preferred Position Item-0</key>
+	<real>573</real>
+	<key>NSWindow Frame SUUpdateAlert</key>
+	<string>530 470 620 398 0 0 1680 1025 </string>
 	<key>Paddle-Hookshot-580977-SD</key>
 	<string>33f9fd2d7af0ae101d86bc9965164f9e9ff1d8f0b57c7a604ef052b2f91621ee</string>
 	<key>SUEnableAutomaticChecks</key>
@@ -9,7 +13,11 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2021-07-13T10:00:32Z</date>
+	<date>2021-08-01T17:47:49Z</date>
+	<key>SUUpdateRelaunchingMarker</key>
+	<false/>
+	<key>WebKitCacheModelPreferenceKey</key>
+	<integer>1</integer>
 	<key>almostMaximize</key>
 	<dict>
 		<key>keyCode</key>
@@ -48,7 +56,7 @@
 	<key>lastTwoThirds</key>
 	<dict/>
 	<key>lastVersion</key>
-	<string>50</string>
+	<string>52</string>
 	<key>launchOnLogin</key>
 	<true/>
 	<key>manualSpecs</key>
