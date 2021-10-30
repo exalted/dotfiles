@@ -30,7 +30,7 @@
     "workbench.startupEditor": "newUntitledFile",
     "files.insertFinalNewline": true,
     "markdown.links.openLocation": "beside",
-    "terminal.integrated.confirmOnExit": true,
+    "terminal.integrated.confirmOnExit": "always",
     "terminal.integrated.macOptionIsMeta": true,
     "workbench.colorCustomizations": {
         "terminal.background": "#000000",
@@ -53,14 +53,13 @@
         "terminal.ansiBrightWhite": "#f1f1f1",
         "terminal.ansiBrightYellow": "#fefdc2"
     },
-    "workbench.panel.defaultLocation": "right",
+    "workbench.panel.defaultLocation": "left",
     "update.showReleaseNotes": false,
     "terminal.integrated.rendererType": "dom",
     "search.showLineNumbers": true,
     "search.useGlobalIgnoreFiles": true,
     "search.quickOpen.includeHistory": false,
     "python.linting.pylintPath": "/usr/local/bin/pylint",
-    "python.languageServer": "Microsoft",
     "python.showStartPage": false,
     "alignment.surroundSpace": {
         "colon": [ 1, 1 ]
@@ -76,5 +75,11 @@
     },
     "terminal.integrated.tabs.enabled": false,
     "timeline.excludeSources": [],
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    },
     "window.zoomLevel": 1
 }

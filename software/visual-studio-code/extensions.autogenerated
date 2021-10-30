@@ -8,13 +8,12 @@ dawhite.mustache
 dbaeumer.vscode-eslint
 golang.go
 marlon407.code-groovy
-matklad.rust-analyzer
 ms-azuretools.vscode-docker
 ms-python.python
 ms-python.vscode-pylance
 ms-toolsai.jupyter
 ms-toolsai.jupyter-keymap
-ms-vsliveshare.vsliveshare
+ms-toolsai.jupyter-renderers
 neilding.language-liquid
 rebornix.ruby
 redhat.java
@@ -22,6 +21,5 @@ rpinski.shebang-snippets
 sleistner.vscode-fileutils
 syler.sass-indented
 wingrunr21.vscode-ruby
-wwm.better-align
 yzhang.markdown-all-in-one
 zhuangtongfa.material-theme
