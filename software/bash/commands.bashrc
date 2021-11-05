@@ -31,7 +31,7 @@ browse() {
       { gh pr view --web 2> /dev/null || gh repo view --web 2> /dev/null; } && return 0
     fi
 
-    echo 'Usage: browse example.com' >&2
+    >&2 echo 'Usage: browse example.com'
     return 1
   fi
 
@@ -59,7 +59,7 @@ google() {
     fi
   done
   if [[ -z "${search:-}" ]]; then
-    echo 'Usage: google something' >&2
+    >&2 echo 'Usage: google something'
     return 1
   else
     browse "https://www.google.com/search?q=$search";
