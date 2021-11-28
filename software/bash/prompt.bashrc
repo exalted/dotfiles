@@ -12,3 +12,6 @@ export PROMPT_COMMAND='(( PROMPT_CTR-- < 0 )) && {
   unset PROMPT_COMMAND PROMPT_CTR
   PS1="\n\n$PS1"
 }'
+
+# PROMPT_COMMAND="export PROMPT_COMMAND='echo; echo'"
+# alias clear="clear; export PROMPT_COMMAND='export PROMPT_COMMAND='echo''"

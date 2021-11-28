@@ -81,5 +81,11 @@
         "**/.settings": true,
         "**/.factorypath": true
     },
-    "window.zoomLevel": 1
+    "window.zoomLevel": 1,
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
