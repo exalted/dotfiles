@@ -93,10 +93,11 @@ EOF
   ssh ubuntu@ec2-46-137-119-50.eu-west-1.compute.amazonaws.com
 }
 
-alias b-convox-production='envchain convox-production convox-wrapper'
-alias b-convox-rtc-production='envchain convox-rtc-production convox-wrapper'
-alias b-convox-staging='envchain convox-staging convox-wrapper'
-alias b-convox-ondeck='envchain convox-ondeck convox-wrapper'
+# TODO: remove hard-coded path
+alias b-convox-production='envchain convox-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+alias b-convox-rtc-production='envchain convox-rtc-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+alias b-convox-staging='envchain convox-staging $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+alias b-convox-ondeck='envchain convox-ondeck $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 
 alias b-db-acetaia-production='b-convox-production rack resources proxy acetaia-mysql --port 3319'
 alias b-db-bottega-production='b-convox-production rack resources proxy bottega-mysql --port 3329'

@@ -1,6 +1,7 @@
-export PATH="/usr/local/opt/python@3.8/bin:$PATH"
+# Let's keep whatever Python is available in the system as the default for now
+# export PATH="$(brew --prefix)/opt/python@3.10/bin:$PATH"
 
-# startup virtualenv-burrito
-if [ -f $HOME/.venvburrito/startup.sh ]; then
-  . $HOME/.venvburrito/startup.sh
-fi
+# # startup virtualenv-burrito
+# if [ -f $HOME/.venvburrito/startup.sh ]; then
+#   . $HOME/.venvburrito/startup.sh
+# fi

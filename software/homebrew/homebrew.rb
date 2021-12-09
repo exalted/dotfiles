@@ -1,4 +1,4 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
-require_relative '../src/helpers'
+require_relative '../../src/helpers'
 
-mas '1365531024'
+bash_source_relative

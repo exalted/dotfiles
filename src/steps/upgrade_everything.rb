@@ -3,7 +3,6 @@ require_relative '../common'
 def upgrade_everything
   ohai "Upgrading existing software…"
   Upgrade.brew
-  Upgrade.cask
   Upgrade.mas
   # TODO: these are not system-wide enough to belong here, so consider moving
   #       them out.
@@ -15,11 +14,7 @@ end
 
 module Upgrade
   def self.brew
-    system "brew upgrade"
-  end
-
-  def self.cask
-    system "brew upgrade --cask"
+    system "brew upgrade --cask --greedy --greedy-latest --greedy-auto-updates"
   end
 
   def self.mas

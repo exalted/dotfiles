@@ -5,6 +5,10 @@ Dir.glob("#{__dir__}/../src/steps/*")
    .map { |file| Pathname.new(file).sub_ext '' }
    .each { |file| require_relative file }
 
+unless ENV["SHELL"] == '/bin/bash'
+   system "chsh -s /bin/bash"
+end
+
 # These are various system-wide installers, homebrew being the mother of all:
 install_homebrew
 install_mas

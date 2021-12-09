@@ -48,6 +48,7 @@ def cmd_exists?(cmdname)
   Kernel.system "command -v #{cmdname} > /dev/null"
 end
 
+# ? This overrides built-in system command
 def system(*args)
   abort "Failed during: #{args.shell_s}" unless Kernel.system(*args)
 end

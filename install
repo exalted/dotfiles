@@ -48,6 +48,7 @@ def warn(warning)
   puts "#{Tty.red}Warning#{Tty.reset}: #{warning.chomp}"
 end
 
+# ? This overrides built-in system command
 def system(*args)
   abort "Failed during: #{args.shell_s}" unless Kernel.system(*args)
 end

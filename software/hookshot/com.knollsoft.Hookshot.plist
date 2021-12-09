@@ -7,7 +7,7 @@
 	<key>NSWindow Frame SUUpdateAlert</key>
 	<string>530 470 620 398 0 0 1680 1025 </string>
 	<key>Paddle-Hookshot-580977-SD</key>
-	<string>33f9fd2d7af0ae101d86bc9965164f9e9ff1d8f0b57c7a604ef052b2f91621ee</string>
+	<string>43775cd2d397327ccc4c8d3a158947e8eaf2d04053e62b373ebd0ccbcef92932</string>
 	<key>SUEnableAutomaticChecks</key>
 	<false/>
 	<key>SUHasLaunchedBefore</key>
@@ -56,7 +56,7 @@
 	<key>lastTwoThirds</key>
 	<dict/>
 	<key>lastVersion</key>
-	<string>52</string>
+	<string>53</string>
 	<key>launchOnLogin</key>
 	<true/>
 	<key>manualSpecs</key>

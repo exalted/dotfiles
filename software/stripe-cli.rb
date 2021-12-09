@@ -2,7 +2,13 @@
 require_relative '../src/helpers'
 
 # https://stripe.com/docs/stripe-cli#install
-# https://stripe.com/docs/stripe-cli/configure#autocompletion
-bash_source "#{ENV["HOME"]}/.stripe/stripe-completion.bash"
+brew 'stripe/stripe-cli/stripe'
 
-# TODO: install stripe-cli and create autocompletion automatically
+# https://stripe.com/docs/stripe-cli/configure#autocompletion
+unless File.exist? "#{ENV["HOME"]}/.stripe/stripe-completion.bash"
+  Kernel.system "stripe completion --shell bash"
+  Kernel.system "mkdir -p #{ENV["HOME"]}/.stripe"
+  Kernel.system "mv stripe-completion.bash #{ENV["HOME"]}/.stripe"
+end
+
+bash_source "#{ENV["HOME"]}/.stripe/stripe-completion.bash"

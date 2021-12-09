@@ -1,7 +1,7 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
 require_relative '../../src/helpers'
 
-# Read more: /usr/local/opt/sleepwatcher/ReadMe.rtf
+# Read more: $(brew --prefix)/opt/sleepwatcher/ReadMe.rtf
 
 brew 'sleepwatcher'
 

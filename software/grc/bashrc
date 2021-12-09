@@ -1,10 +1,23 @@
+export GRC_ALIASES=true
+# aliases for grc(1)
+
+# this will execute only if there is a line with
+# GRC_ALIASES=true
+# in /etc/default/grc or you export GRC_ALIASES=true prior to sourcing this
+
+[ -f /etc/default/grc ] && . /etc/default/grc
+
+[ x$GRC_ALIASES = xtrue ] || return 0
+
 GRC="$(which grc)"
-if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
-    alias colourify="$GRC -es --colour=auto"
+if tty -s && [ -n "$TERM" ] && [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
+    alias colourify="$GRC -es"
     alias blkid='colourify blkid'
     alias configure='colourify ./configure'
     alias df='colourify df'
+    # alias diff='colourify diff'
     alias docker='colourify docker'
+    alias docker-compose='colourify docker-compose'
     alias docker-machine='colourify docker-machine'
     alias du='colourify du'
     alias env='colourify env'
@@ -19,6 +32,8 @@ if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
     alias iptables='colourify iptables'
     alias as='colourify as'
     alias gas='colourify gas'
+    alias journalctl='colourify journalctl'
+    alias kubectl='colourify kubectl'
     alias ld='colourify ld'
     #alias ls='colourify ls'
     alias lsof='colourify lsof'
@@ -26,6 +41,7 @@ if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
     alias lspci='colourify lspci'
     alias netstat='colourify netstat'
     alias ping='colourify ping'
+    alias ss='colourify ss'
     alias traceroute='colourify traceroute'
     alias traceroute6='colourify traceroute6'
     alias head='colourify head'
@@ -35,7 +51,8 @@ if [ "$TERM" != dumb ] && [ -n "$GRC" ]; then
     alias ps='colourify ps'
     alias mtr='colourify mtr'
     alias semanage='colourify semanage'
-    alias getsebool='colourify setsebool'
+    alias getsebool='colourify getsebool'
     alias ifconfig='colourify ifconfig'
+    alias sockstat='colourify sockstat'
 fi
 

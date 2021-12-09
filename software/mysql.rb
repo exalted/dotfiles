@@ -1,4 +1,4 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
 require_relative '../src/helpers'
 
-cask 'lg-screen-manager'
+brew 'mysql@5.7'

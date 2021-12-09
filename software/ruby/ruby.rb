@@ -1,6 +1,8 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
 require_relative '../../src/helpers'
 
+# Note: There are ruby versions here: `/System/Library/Frameworks/Ruby.framework/Versions/`
+
 # https://www.fngtps.com/2018/rails-development-environment/
 
 brew 'rbenv'

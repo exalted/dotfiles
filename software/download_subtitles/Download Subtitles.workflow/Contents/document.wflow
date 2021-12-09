@@ -64,33 +64,29 @@
 set -e
 [ -n "$DEBUG" ] &amp;&amp; set -x
 
-CMD='/usr/local/bin/submarine'
 LANGS=("tr" "en" "it")
-SERVERS=($($CMD -s help | tail +2 | awk '{print $1}'))
 
 for f in "$@"; do
-	dirname=$(dirname "$f")
-	basename=$(basename "$f")
-	extension="${basename##*.}"
-	filename="${basename%.*}"
+  dirname=$(dirname "$f")
+  basename=$(basename "$f")
+  extension="${basename##*.}"
+  filename="${basename%.*}"
 
-	mv "$dirname/$filename.srt" "$dirname/$filename.srt.backup"  || true
-	mv "$dirname/$filename.sub" "$dirname/$filename.sub.backup"  || true
+  mv "$dirname/$filename.srt" "$dirname/$filename.srt.backup"  || true
+  mv "$dirname/$filename.sub" "$dirname/$filename.sub.backup"  || true
 
-	for l in ${LANGS[@]}; do
-    for s in ${SERVERS[@]}; do
-  		mv "$dirname/$filename.$l.srt" "$dirname/$filename.$l.srt.backup"  || true
-  		mv "$dirname/$filename.$l.sub" "$dirname/$filename.$l.sub.backup"  || true
+  for l in ${LANGS[@]}; do
+    mv "$dirname/$filename.$l.srt" "$dirname/$filename.$l.srt.backup"  || true
+    mv "$dirname/$filename.$l.sub" "$dirname/$filename.$l.sub.backup"  || true
 
-  		$CMD -l "$l" -s "$s" "$f" &amp;&amp; status=$? || status=$?
+    # TODO: remove hard-coded path
+    /opt/homebrew/bin/subliminal download --language "$l" --single "$f" &amp;&amp; status=$? || status=$?
 
-      if [[ $status = 0 ]]; then
-        mv "$dirname/$filename.srt" "$dirname/$filename.$l.srt"  || true
-    		mv "$dirname/$filename.sub" "$dirname/$filename.$l.sub"  || true
-        break
-      fi
-  	done
-	done
+    if [[ $status = 0 ]]; then
+      mv "$dirname/$filename.srt" "$dirname/$filename.$l.srt"  || true
+      mv "$dirname/$filename.sub" "$dirname/$filename.$l.sub"  || true
+    fi
+  done
 done
 </string>
 					<key>CheckedForUserDefaultShell</key>

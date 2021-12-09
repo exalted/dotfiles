@@ -59,7 +59,7 @@
     "search.showLineNumbers": true,
     "search.useGlobalIgnoreFiles": true,
     "search.quickOpen.includeHistory": false,
-    "python.linting.pylintPath": "/usr/local/bin/pylint",
+    "python.linting.pylintPath": "/opt/homebrew/bin/pylint",
     "python.showStartPage": false,
     "alignment.surroundSpace": {
         "colon": [ 1, 1 ]

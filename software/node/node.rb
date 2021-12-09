@@ -1,9 +1,12 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
 require_relative '../../src/helpers'
 
-brew 'node'     # this is the latest and greatest (aka "current")
-brew 'node@14'  # this is the current LTS, also "default" in my system (see `software/node/bashrc`)
-brew 'node@12'  # previous version still might be worth keeping around
+# Default version is set in `software/node/bashrc` via `PATH`
+brew 'node'     # Latest (a.k.a. "current")
+brew 'node@16'  # [Active] LTS
+brew 'node@14'  # Maintenance [LTS]
+# Older versions:
+brew 'node@12'
 
 link_to_home_relative 'npmrc', '.npmrc'
 

@@ -1,4 +1,8 @@
-export PATH="/usr/local/opt/node@14/bin:$PATH"
+# Most recent at the bottom
+export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
+export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
+export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
+
 # make sure these comes after all the others, so that local binaries win
 export PATH="../../../../node_modules/.bin:$PATH"
 export PATH="../../../node_modules/.bin:$PATH"
