@@ -1,6 +1,7 @@
 DeepInThought.vscode-shell-snippets
 DotJoshJohnson.xml
 EditorConfig.EditorConfig
+JuanBlanco.solidity
 VisualStudioExptTeam.vscodeintellicode
 architect.architect
 bibhasdn.unique-lines
@@ -9,6 +10,7 @@ dawhite.mustache
 dbaeumer.vscode-eslint
 esbenp.prettier-vscode
 golang.go
+kddejong.vscode-cfn-lint
 marlon407.code-groovy
 ms-azuretools.vscode-docker
 ms-python.python
@@ -19,6 +21,7 @@ ms-toolsai.jupyter-renderers
 neilding.language-liquid
 rebornix.ruby
 redhat.java
+redhat.vscode-yaml
 rpinski.shebang-snippets
 sleistner.vscode-fileutils
 syler.sass-indented

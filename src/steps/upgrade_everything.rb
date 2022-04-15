@@ -14,7 +14,7 @@ end
 
 module Upgrade
   def self.brew
-    system "brew upgrade --cask --greedy --greedy-latest --greedy-auto-updates"
+    system "brew upgrade --greedy"
   end
 
   def self.mas

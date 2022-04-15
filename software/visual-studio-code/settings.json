@@ -23,7 +23,6 @@
     "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
     "vsintellicode.java.completionsEnabled": false,
     "vsintellicode.sql.completionsEnabled": false,
-    "workbench.activityBar.visible": false,
     "search.smartCase": true,
     "terminal.integrated.scrollback": 100000,
     "workbench.colorTheme": "One Dark Pro",
@@ -81,12 +80,51 @@
         "**/.settings": true,
         "**/.factorypath": true
     },
-    "window.zoomLevel": 1,
     "[html]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[json]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "security.workspace.trust.enabled": false
+    "security.workspace.trust.enabled": false,
+    "redhat.telemetry.enabled": false,
+    "yaml.customTags": [
+        "!And",
+        "!And sequence",
+        "!If",
+        "!If sequence",
+        "!Not",
+        "!Not sequence",
+        "!Equals",
+        "!Equals sequence",
+        "!Or",
+        "!Or sequence",
+        "!FindInMap",
+        "!FindInMap sequence",
+        "!Base64",
+        "!Join",
+        "!Join sequence",
+        "!Cidr",
+        "!Ref",
+        "!Sub",
+        "!Sub sequence",
+        "!GetAtt",
+        "!GetAZs",
+        "!ImportValue",
+        "!ImportValue sequence",
+        "!Select",
+        "!Select sequence",
+        "!Split",
+        "!Split sequence"
+    ],
+    "yaml.validate": false,
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[solidity]": {
+        "editor.defaultFormatter": "JuanBlanco.solidity"
+    },
+    "window.zoomLevel": 1,
+    "workbench.activityBar.visible": false,
+    "workbench.statusBar.visible": false
 }

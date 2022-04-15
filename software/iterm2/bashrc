@@ -523,6 +523,12 @@ if [ -z "${iterm2_hostname:-}" ]; then
   fi
 fi
 
+iterm2_maybe_print_cr() {
+  if [ "$TERM_PROGRAM" = "iTerm.app" ]; then
+    printf "\r"
+  fi
+}
+
 # Runs after interactively edited command but before execution
 __iterm2_preexec() {
     # Save the returned value from our last command
@@ -530,6 +536,7 @@ __iterm2_preexec() {
 
     iterm2_begin_osc
     printf "133;C;"
+    iterm2_maybe_print_cr
     iterm2_end_osc
     # If PS1 still has the value we set it to in iterm2_preexec_invoke_cmd then
     # restore it to its original value. It might have changed if you have
@@ -539,8 +546,8 @@ __iterm2_preexec() {
       export PS1="$ITERM_ORIG_PS1"
     fi
     iterm2_ran_preexec="yes"
-
-    __bp_set_ret_value "$__iterm2_last_ret_value" "$__bp_last_argument_prev_command"
+    # preexec functions can return nonzero to prevent user's command from running.
+    return 0
 }
 
 # Prints the current directory and hostname control sequences. Modifies PS1 to
@@ -548,11 +555,12 @@ __iterm2_preexec() {
 function __iterm2_prompt_command () {
     __iterm2_last_ret_value="$?"
 
-    # Work around a bug in CentOS 7.2 where preexec doesn't run if you press
-    # ^C while entering a command.
     if [[ -z "${iterm2_ran_preexec:-}" ]]
     then
+        # This code path is taken when you press ^C while entering a command.
+        # I observed this behavior in CentOS 7.2 and macOS "GNU bash, version 5.0.18(1)-release".
         __iterm2_preexec ""
+        __bp_set_ret_value "$__iterm2_last_ret_value" "$__bp_last_argument_prev_command"
     fi
     iterm2_ran_preexec=""
 

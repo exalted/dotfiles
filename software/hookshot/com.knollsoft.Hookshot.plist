@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSStatusItem Preferred Position Item-0</key>
-	<real>543</real>
+	<key>NSStatusItem Visible Item-0</key>
+	<false/>
 	<key>NSWindow Frame SUUpdateAlert</key>
 	<string>530 470 620 398 0 0 1680 1025 </string>
 	<key>Paddle-Hookshot-580977-SD</key>
@@ -37,26 +37,36 @@
 	<dict/>
 	<key>bottomRight</key>
 	<dict/>
+	<key>bottomRightSixth</key>
+	<dict/>
 	<key>cascadeAll</key>
 	<dict/>
 	<key>cascadeApp</key>
 	<dict/>
 	<key>centerThird</key>
 	<dict/>
+	<key>firstFourth</key>
+	<dict/>
+	<key>firstSixth</key>
+	<dict/>
 	<key>firstThird</key>
 	<dict/>
 	<key>firstTwoThirds</key>
 	<dict/>
 	<key>gestures</key>
-	<string>[32,{"flags":0,"trail":0},35,{"flags":0,"trail":0},33,{"flags":0,"trail":0}]</string>
+	<string>[33,{"flags":0,"trail":0},35,{"flags":0,"trail":0},32,{"flags":0,"trail":0}]</string>
+	<key>hideMenubarIcon</key>
+	<true/>
 	<key>larger</key>
+	<dict/>
+	<key>lastFourth</key>
 	<dict/>
 	<key>lastThird</key>
 	<dict/>
 	<key>lastTwoThirds</key>
 	<dict/>
 	<key>lastVersion</key>
-	<string>53</string>
+	<string>55</string>
 	<key>launchOnLogin</key>
 	<true/>
 	<key>manualSpecs</key>
@@ -65,9 +75,15 @@
 	<dict/>
 	<key>revealDesktopEdge</key>
 	<dict/>
+	<key>secondFourth</key>
+	<dict/>
 	<key>smaller</key>
 	<dict/>
+	<key>subsequentExecutionMode</key>
+	<integer>4</integer>
 	<key>tile2x2</key>
+	<dict/>
+	<key>tile2x3</key>
 	<dict/>
 	<key>topHalf</key>
 	<dict/>

@@ -9,6 +9,6 @@ unless cmd_exists?('convox')
   Kernel.system "sudo chmod 755 /usr/local/bin/convox"
 end
 
-debounce { Kernel.system "convox update" }
+debounce { Kernel.system "sudo convox update" }
 
 bash_source_relative

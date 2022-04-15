@@ -59,5 +59,13 @@
   {
     "key": "shift+cmd+k shift+cmd+d",
     "command": "editor.action.moveSelectionToPreviousFindMatch"
+  },
+  {
+    "key": "cmd+j",
+    "command": "-workbench.action.togglePanel"
+  },
+  {
+    "key": "cmd+j",
+    "command": "workbench.action.toggleAuxiliaryBar"
   }
 ]

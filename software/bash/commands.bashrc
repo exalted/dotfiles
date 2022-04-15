@@ -37,7 +37,7 @@ browse() {
 
   # `open` command won't recognize custom protocols, such as `chrome://` and
   # passing URLs after `--arg` argument doesn't seem to open links in relevant
-  # browsers, so don't even bother to do smart things like `"$url" ~= [a-z]+://`
+  # browsers, so don't even bother doing "smart" things like `"$url" ~= [a-z]+://`
   if [[ "$url" != http* ]]; then
       url="http://$url"
   fi
@@ -81,6 +81,14 @@ alias shrink=compact
 
 alias dns-flush='sudo killall -HUP mDNSResponder'
 
+# Ref: https://oauth2-proxy.github.io/oauth2-proxy/docs/configuration/overview
+# Python: `python -c 'import os,base64; print(base64.urlsafe_b64encode(os.urandom(32)).decode())'`
+# Bash: `dd if=/dev/urandom bs=32 count=1 2>/dev/null | base64 | tr -d -- '\n' | tr -- '+/' '-_'; echo`
+# OpenSSL: `openssl rand -base64 32 | tr -- '+/' '-_'`
+random-cookie-secret() {
+  openssl rand -base64 32 | tr -- '+/' '-_'
+}
+
 b-ssh-jenkins-master() {
   cat <<EOF
 Once logged to become Jenkins user do this:
@@ -97,13 +105,14 @@ EOF
 alias b-convox-production='envchain convox-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 alias b-convox-rtc-production='envchain convox-rtc-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 alias b-convox-staging='envchain convox-staging $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
-alias b-convox-ondeck='envchain convox-ondeck $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+alias b-convox-ondeck='envchain convox-eu-6 $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 
 alias b-db-acetaia-production='b-convox-production rack resources proxy acetaia-mysql --port 3319'
 alias b-db-bottega-production='b-convox-production rack resources proxy bottega-mysql --port 3329'
 alias b-db-swag-production='b-convox-production rack resources proxy swag-mysql --port 3339'
-alias b-db-olio-staging='ssh -L 33060:olio-staging.ciuzowupcgac.eu-west-1.rds.amazonaws.com:3306 -L 36379:olio-staging-redis.si22bk.0001.euw1.cache.amazonaws.com:6379 -i ~/.ssh/keys/balsamiq-olio-gateway.pem ubuntu@ec2-54-228-238-179.eu-west-1.compute.amazonaws.com'
-alias b-db-olio-production='ssh -L 33306:olio-rds.ciuzowupcgac.eu-west-1.rds.amazonaws.com:3306 -i ~/.ssh/keys/balsamiq-olio-gateway.pem ubuntu@ec2-54-228-238-179.eu-west-1.compute.amazonaws.com'
+alias b-db-olio-staging='(cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-gateway.pem)'
+alias b-db-olio-feature='(cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-gateway.pem)'
+alias b-db-olio-production='(cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-gateway.pem)'
 
 is-git() {
   git rev-parse --git-dir > /dev/null 2>&1
