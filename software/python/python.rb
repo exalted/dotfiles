@@ -5,7 +5,7 @@ require_relative '../../src/helpers'
 brew 'python@3.10'
 brew 'python@3.9'
 brew 'python@3.8'
-# Note: There are other versions here: `/System/Library/Frameworks/Python.framework/Versions/`
+# Note: There may be other versions available here: `/System/Library/Frameworks/Python.framework/Versions/`
 
 # unless File.exist? "#{ENV["HOME"]}/.venvburrito/startup.sh"
 #   Kernel.system "curl -sL https://raw.githubusercontent.com/brainsik/virtualenv-burrito/master/virtualenv-burrito.sh | exclude_profile=1 $SHELL"

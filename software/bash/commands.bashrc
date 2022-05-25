@@ -67,7 +67,7 @@ google() {
 }
 
 serve() {
-  python -m SimpleHTTPServer "${1:-8080}"
+  "$(brew --prefix)/bin/python3" -m http.server "${1:-8080}"
 }
 
 reset-open-with() {

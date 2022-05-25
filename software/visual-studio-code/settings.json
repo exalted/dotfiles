@@ -124,7 +124,10 @@
     "[solidity]": {
         "editor.defaultFormatter": "JuanBlanco.solidity"
     },
-    "window.zoomLevel": 1,
     "workbench.activityBar.visible": false,
-    "workbench.statusBar.visible": false
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "workbench.sideBar.location": "right",
+    "window.zoomLevel": 1
 }
