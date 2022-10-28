@@ -66,6 +66,8 @@ google() {
   fi
 }
 
+alias mdn='google mdn'
+
 serve() {
   "$(brew --prefix)/bin/python3" -m http.server "${1:-8080}"
 }
@@ -110,10 +112,71 @@ alias b-convox-ondeck='envchain convox-eu-6 $HOME/Development/balsamiq/convox-op
 alias b-db-acetaia-production='b-convox-production rack resources proxy acetaia-mysql --port 3319'
 alias b-db-bottega-production='b-convox-production rack resources proxy bottega-mysql --port 3329'
 alias b-db-swag-production='b-convox-production rack resources proxy swag-mysql --port 3339'
-alias b-db-olio-staging='(cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-gateway.pem)'
-alias b-db-olio-feature='(cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-gateway.pem)'
-alias b-db-olio-production='(cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-gateway.pem)'
+alias b-db-olio-staging='(cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem)'
+alias b-db-olio-feature='(cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem)'
+alias b-db-olio-production='(cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem)'
+
+alias node16="$(brew --prefix)/opt/node@16/bin/node"
+alias node14="$(brew --prefix)/opt/node@14/bin/node"
+alias node12="$(brew --prefix)/opt/node@12/bin/node"
+
+b-node() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node'" $*"
+}
+b-node16() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16'" $*"
+}
+b-node14() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node14'" $*"
+}
+b-node12() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12'" $*"
+}
+
+alias node16-npm="$(brew --prefix)/opt/node@16/bin/npm"
+alias node14-npm="$(brew --prefix)/opt/node@14/bin/npm"
+alias node12-npm="$(brew --prefix)/opt/node@12/bin/npm"
+alias npm-node16=node16-npm
+alias npm-node14=node14-npm
+alias npm-node12=node12-npm
+
+b-npm() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npm'" $*"
+}
+b-node16-npm() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16-npm'" $*"
+}
+alias b-npm-node16=b-node16-npm
+b-node14-npm() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node14-npm'" $*"
+}
+alias b-npm-node14=b-node14-npm
+b-node12-npm() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12-npm'" $*"
+}
+alias b-npm-node12=b-node12-npm
 
 is-git() {
   git rev-parse --git-dir > /dev/null 2>&1
 }
+
+bootstrap--bw-jira() {
+  source "$HOME/.sdkman/bin/sdkman-init.sh"
+  sdk use java 8.0.332-tem
+}
+
+workon--bw-jira() {
+  cd ~/Development/balsamiq/bw-jira/
+
+  bootstrap--bw-jira
+
+  envchain balsamiq-private-npm-registry /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "database,front-end,back-end,logs,reload" --kill-others \
+    "/opt/homebrew/opt/postgresql@11/bin/postgres -D /opt/homebrew/var/postgresql@11" \
+    "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@14/bin/node\" ./node_modules/.bin/grunt build" \
+    "./launchJira.sh" \
+    "npx wait-on http-get://localhost:2990/jira/ && tail -f ./target/jira/home/log/atlassian-jira.log" \
+    "npx wait-on http-get://localhost:2990/jira/ && npx onchange '"'"'**'"'"' --exclude-path .gitignore --kill -- time atlas-package -DskipTests -Datlassian.webresource.disable.minification=true"' \
+  || true
+}
+
+alias idea='open -n -a /Applications/IntelliJ\ IDEA.app --args "$@"'

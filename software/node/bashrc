@@ -1,7 +1,7 @@
-# Most recent at the bottom
-export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
-export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
-export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
+# Most recent at the top
+export PATH="$PATH:$(brew --prefix)/opt/node@16/bin"
+export PATH="$PATH:$(brew --prefix)/opt/node@14/bin"
+export PATH="$PATH:$(brew --prefix)/opt/node@12/bin"
 
 # make sure these comes after all the others, so that local binaries win
 export PATH="../../../../node_modules/.bin:$PATH"
@@ -9,3 +9,10 @@ export PATH="../../../node_modules/.bin:$PATH"
 export PATH="../../node_modules/.bin:$PATH"
 export PATH="../node_modules/.bin:$PATH"
 export PATH="./node_modules/.bin:$PATH"
+
+#
+# Node Version Manager (see `brew info nvm`)
+#
+export NVM_DIR="$HOME/.nvm"
+[ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && \. "$(brew --prefix)/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion

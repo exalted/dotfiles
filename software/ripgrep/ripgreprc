@@ -1,3 +1,5 @@
 --smart-case
 --iglob=!*.min.*
 --glob=!package-lock.json
+--max-columns=180
+--max-columns-preview

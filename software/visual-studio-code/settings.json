@@ -29,7 +29,7 @@
     "workbench.startupEditor": "newUntitledFile",
     "files.insertFinalNewline": true,
     "markdown.links.openLocation": "beside",
-    "terminal.integrated.confirmOnExit": "always",
+    "terminal.integrated.confirmOnExit": "hasChildProcesses",
     "terminal.integrated.macOptionIsMeta": true,
     "workbench.colorCustomizations": {
         "terminal.background": "#000000",
@@ -124,10 +124,19 @@
     "[solidity]": {
         "editor.defaultFormatter": "JuanBlanco.solidity"
     },
-    "workbench.activityBar.visible": false,
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
+    "maven.executable.path": "/opt/homebrew/Cellar/atlassian-plugin-sdk/8.2.7/libexec/apache-maven-3.5.4/bin/mvn",
+    "xml.server.binary.trustedHashes": [
+        "c64f9b53e9983e224748f43f6be8b32af18a85f6ec88d4b0c73799c286788758"
+    ],
     "workbench.sideBar.location": "right",
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[yaml]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
     "window.zoomLevel": 1
 }
