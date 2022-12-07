@@ -1,3 +1,7 @@
+# TODO: Add a case for grep installed via homebrew (ie ggrep), because `man grep`
+#       will not found nothing, but `man ggrep` does (do also for `fgrep` and `egrep`
+#       to open `man ggrep`)
+
 # (Ref.: http://unix.stackexchange.com/a/18088)
 function man {
   case "$(type -t "$1"):$1" in

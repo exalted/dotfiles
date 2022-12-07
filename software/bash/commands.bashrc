@@ -17,7 +17,8 @@ spider() {
     --page-requisites \
     --convert-links \
     --adjust-extension \
-    --no-remove-listing
+    --no-remove-listing \
+    "$@"
 }
 
 diskusage() { du -sh "$@" | sort --human-numeric-sort --reverse; }
@@ -116,29 +117,50 @@ alias b-db-olio-staging='(cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/bal
 alias b-db-olio-feature='(cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem)'
 alias b-db-olio-production='(cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem)'
 
-alias node16="$(brew --prefix)/opt/node@16/bin/node"
-alias node14="$(brew --prefix)/opt/node@14/bin/node"
-alias node12="$(brew --prefix)/opt/node@12/bin/node"
+node16() {(
+  export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
+  node $*
+)}
+node14() {(
+  export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
+  node $*
+)}
+node12() {(
+  export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
+  node $*
+)}
 
-b-node() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node'" $*"
-}
-b-node16() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16'" $*"
-}
-b-node14() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node14'" $*"
-}
-b-node12() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12'" $*"
-}
-
-alias node16-npm="$(brew --prefix)/opt/node@16/bin/npm"
-alias node14-npm="$(brew --prefix)/opt/node@14/bin/npm"
-alias node12-npm="$(brew --prefix)/opt/node@12/bin/npm"
+node16-npm() {(
+  export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
+  npm $*
+)}
+node14-npm() {(
+  export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
+  npm $*
+)}
+node12-npm() {(
+  export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
+  npm $*
+)}
 alias npm-node16=node16-npm
 alias npm-node14=node14-npm
 alias npm-node12=node12-npm
+
+node16-npx() {(
+  export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
+  npx $*
+)}
+node14-npx() {(
+  export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
+  npx $*
+)}
+node12-npx() {(
+  export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
+  npx $*
+)}
+alias npx-node16=node16-npx
+alias npx-node14=node14-npx
+alias npx-node12=node12-npx
 
 b-npm() {
   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npm'" $*"
@@ -146,15 +168,31 @@ b-npm() {
 b-node16-npm() {
   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16-npm'" $*"
 }
-alias b-npm-node16=b-node16-npm
 b-node14-npm() {
   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node14-npm'" $*"
 }
-alias b-npm-node14=b-node14-npm
 b-node12-npm() {
   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12-npm'" $*"
 }
+alias b-npm-node16=b-node16-npm
+alias b-npm-node14=b-node14-npm
 alias b-npm-node12=b-node12-npm
+
+b-npx() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx'" $*"
+}
+b-node16-npx() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16-npx'" $*"
+}
+b-node14-npx() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node14-npx'" $*"
+}
+b-node12-npx() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12-npx'" $*"
+}
+alias b-npx-node16=b-node16-npx
+alias b-npx-node14=b-node14-npx
+alias b-npx-node12=b-node12-npx
 
 is-git() {
   git rev-parse --git-dir > /dev/null 2>&1
@@ -163,17 +201,18 @@ is-git() {
 bootstrap--bw-jira() {
   source "$HOME/.sdkman/bin/sdkman-init.sh"
   sdk use java 8.0.332-tem
+
+  b-npm-node12 install
 }
 
 workon--bw-jira() {
-  cd ~/Development/balsamiq/bw-jira/
-
   bootstrap--bw-jira
 
-  envchain balsamiq-private-npm-registry /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "database,front-end,back-end,logs,reload" --kill-others \
-    "/opt/homebrew/opt/postgresql@11/bin/postgres -D /opt/homebrew/var/postgresql@11" \
-    "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@14/bin/node\" ./node_modules/.bin/grunt build" \
-    "./launchJira.sh" \
+  envchain balsamiq-private-npm-registry /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "postgres,redis,grunt,jira,logs,reload" --kill-others \
+    "$(brew --prefix)/opt/postgresql@11/bin/postgres -D $(brew --prefix)/var/postgresql@11" \
+    "$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf" \
+    "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@12/bin/node\" ./node_modules/.bin/grunt build" \
+    "bash -c \"$(cat ./launchJira.sh) -DskipTests\"" \
     "npx wait-on http-get://localhost:2990/jira/ && tail -f ./target/jira/home/log/atlassian-jira.log" \
     "npx wait-on http-get://localhost:2990/jira/ && npx onchange '"'"'**'"'"' --exclude-path .gitignore --kill -- time atlas-package -DskipTests -Datlassian.webresource.disable.minification=true"' \
   || true
