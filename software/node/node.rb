@@ -2,9 +2,10 @@
 require_relative '../../src/helpers'
 
 # Default version is set in `software/node/bashrc` via `PATH`
-brew 'node'     # Latest (a.k.a. "current")
-brew 'node@16'  # [Active] LTS
-brew 'node@14'  # Maintenance [LTS]
+brew 'node'     # Latest (a.k.a. "Current")
+brew 'node@18'  # LTS
+brew 'node@16'  # Maintenance
+brew 'node@14'  # Maintenance
 # Older versions:
 brew 'node@12'
 

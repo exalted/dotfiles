@@ -1,4 +1,5 @@
 # Most recent at the top
+export PATH="$PATH:$(brew --prefix)/opt/node@18/bin"
 export PATH="$PATH:$(brew --prefix)/opt/node@16/bin"
 export PATH="$PATH:$(brew --prefix)/opt/node@14/bin"
 export PATH="$PATH:$(brew --prefix)/opt/node@12/bin"
