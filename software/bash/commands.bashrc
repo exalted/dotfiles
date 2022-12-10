@@ -117,6 +117,10 @@ alias b-db-olio-staging='(cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/bal
 alias b-db-olio-feature='(cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem)'
 alias b-db-olio-production='(cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem)'
 
+node18() {(
+  export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
+  node $*
+)}
 node16() {(
   export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
   node $*
@@ -130,6 +134,10 @@ node12() {(
   node $*
 )}
 
+node18-npm() {(
+  export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
+  npm $*
+)}
 node16-npm() {(
   export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
   npm $*
@@ -142,10 +150,15 @@ node12-npm() {(
   export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
   npm $*
 )}
+alias npm-node18=node18-npm
 alias npm-node16=node16-npm
 alias npm-node14=node14-npm
 alias npm-node12=node12-npm
 
+node18-npx() {(
+  export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
+  npx $*
+)}
 node16-npx() {(
   export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
   npx $*
@@ -158,12 +171,16 @@ node12-npx() {(
   export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
   npx $*
 )}
+alias npx-node18=node18-npx
 alias npx-node16=node16-npx
 alias npx-node14=node14-npx
 alias npx-node12=node12-npx
 
 b-npm() {
   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npm'" $*"
+}
+b-node18-npm() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node18-npm'" $*"
 }
 b-node16-npm() {
   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16-npm'" $*"
@@ -174,12 +191,16 @@ b-node14-npm() {
 b-node12-npm() {
   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12-npm'" $*"
 }
+alias b-npm-node18=b-node18-npm
 alias b-npm-node16=b-node16-npm
 alias b-npm-node14=b-node14-npm
 alias b-npm-node12=b-node12-npm
 
 b-npx() {
   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx'" $*"
+}
+b-node18-npx() {
+  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node18-npx'" $*"
 }
 b-node16-npx() {
   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16-npx'" $*"
@@ -190,6 +211,7 @@ b-node14-npx() {
 b-node12-npx() {
   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12-npx'" $*"
 }
+alias b-npx-node18=b-node18-npx
 alias b-npx-node16=b-node16-npx
 alias b-npx-node14=b-node14-npx
 alias b-npx-node12=b-node12-npx
