@@ -241,3 +241,13 @@ workon--bw-jira() {
 }
 
 alias idea='open -n -a /Applications/IntelliJ\ IDEA.app --args "$@"'
+
+date() {
+  cat <<EOF | node -
+const now = new Date();
+console.log(\`\
+Human :  \${now.toString()}
+ISO   :  \${now.toISOString()}
+\`);
+EOF
+}
