@@ -3,7 +3,7 @@ const { execSync } = require("child_process");
 const ADAPTER_NAME = "Lightning Audio Adapter";
 
 // `SwitchAudioSource` is available via `brew install switchaudio-osx`
-const audioDeviceFound = execSync("SwitchAudioSource -a", {
+const audioDeviceFound = execSync("/opt/homebrew/bin/SwitchAudioSource -a", {
   encoding: "utf-8",
 })
   .split("\n")
@@ -28,9 +28,12 @@ if (!adapterFound) {
 let output;
 
 // `uhubctl` is available via `brew tap mvp/uhubctl https://github.com/mvp/uhubctl && brew install uhubctl`
-output = execSync(`uhubctl --search '${ADAPTER_NAME}' --exact`, {
-  encoding: "utf-8",
-});
+output = execSync(
+  `/opt/homebrew/bin/uhubctl --search '${ADAPTER_NAME}' --exact`,
+  {
+    encoding: "utf-8",
+  }
+);
 
 const noCompatibleDevicesDetectedMessage = "No compatible devices detected!";
 if (output.split("\n")[0] === noCompatibleDevicesDetectedMessage) {
@@ -79,7 +82,7 @@ process.stdout.write(
 );
 
 output = execSync(
-  `uhubctl --action cycle --location ${location} --ports ${port} --exact`,
+  `/opt/homebrew/bin/uhubctl --action cycle --location ${location} --ports ${port} --exact`,
   {
     encoding: "utf-8",
   }
@@ -97,8 +100,8 @@ console.debug(
 console.groupEnd();
 output = undefined;
 
-// // This random sleep of 10 seconds seems to be enough to cycle the USB port
-// // power before attempting again. However, in case this isn't good enough, in
-// // future you could redo `SwitchAudioSource -a` check (see at the very top) with
-// // a timeout until the adapter is detected.
-// execSync("sleep 10");
+// This random sleep of 10 seconds seems to be enough to cycle the USB port
+// power before attempting again. However, in case this isn't good enough, in
+// future you could redo `SwitchAudioSource -a` check (see at the very top) with
+// a timeout until the adapter is detected.
+execSync("sleep 10");
