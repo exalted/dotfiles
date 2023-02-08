@@ -2,7 +2,7 @@
 require_relative '../../src/helpers'
 
 brew 'bash-completion'
-bash_source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+bash_source "/opt/homebrew/etc/profile.d/bash_completion.sh"
 
 link_to_home_relative 'inputrc', '.inputrc'
 link_to_home_relative 'hushlogin', '.hushlogin'

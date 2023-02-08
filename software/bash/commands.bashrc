@@ -69,6 +69,8 @@ google() {
 
 alias mdn='google mdn'
 
+alias speedtest=networkQuality
+
 serve() {
   "$(brew --prefix)/bin/python3" -m http.server "${1:-8080}"
 }
@@ -109,6 +111,12 @@ alias b-convox-production='envchain convox-production $HOME/Development/balsamiq
 alias b-convox-rtc-production='envchain convox-rtc-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 alias b-convox-staging='envchain convox-staging $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 alias b-convox-ondeck='envchain convox-eu-6 $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+
+# TODO: Instead create a new "fake" command in convox-wrapper (e.g., `convox instances docker ps`)
+alias b-convox-production-docker-ps="b-convox-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
+alias b-convox-rtc-production-docker-ps="b-convox-rtc-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
+alias b-convox-staging-docker-ps="b-convox-staging foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
+alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 
 alias b-db-acetaia-production='b-convox-production rack resources proxy acetaia-mysql --port 3319'
 alias b-db-bottega-production='b-convox-production rack resources proxy bottega-mysql --port 3329'
@@ -220,23 +228,35 @@ is-git() {
   git rev-parse --git-dir > /dev/null 2>&1
 }
 
-bootstrap--bw-jira() {
+bootstrap--bw-atlassian() {
   source "$HOME/.sdkman/bin/sdkman-init.sh"
   sdk use java 8.0.332-tem
-
-  b-npm-node12 install
 }
 
 workon--bw-jira() {
-  bootstrap--bw-jira
+  bootstrap--bw-atlassian
+  b-npm-node18 install --legacy-peer-deps
 
   envchain balsamiq-private-npm-registry /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "postgres,redis,grunt,jira,logs,reload" --kill-others \
     "$(brew --prefix)/opt/postgresql@11/bin/postgres -D $(brew --prefix)/var/postgresql@11" \
     "$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf" \
-    "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@12/bin/node\" ./node_modules/.bin/grunt build" \
+    "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" ./node_modules/.bin/grunt build" \
     "bash -c \"$(cat ./launchJira.sh) -DskipTests\"" \
     "npx wait-on http-get://localhost:2990/jira/ && tail -f ./target/jira/home/log/atlassian-jira.log" \
     "npx wait-on http-get://localhost:2990/jira/ && npx onchange '"'"'**'"'"' --exclude-path .gitignore --kill -- time atlas-package -DskipTests -Datlassian.webresource.disable.minification=true"' \
+  || true
+}
+
+workon--bw-confluence() {
+  bootstrap--bw-atlassian
+  b-npm-node18 install --legacy-peer-deps
+
+  envchain balsamiq-private-npm-registry /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "postgres,redis,grunt,confluence,reload" --kill-others \
+    "$(brew --prefix)/opt/postgresql@11/bin/postgres -D $(brew --prefix)/var/postgresql@11" \
+    "$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf" \
+    "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" ./node_modules/.bin/grunt build" \
+    "bash -c \"$(cat ./launchConfluence.sh) -DskipTests\"" \
+    "npx wait-on http-get://localhost:2990/confluence/ && npx onchange '"'"'**'"'"' --exclude-path .gitignore --kill -- time atlas-package -DskipTests -Datlassian.webresource.disable.minification=true"' \
   || true
 }
 

@@ -1,5 +1,5 @@
 ﻿###
-###  vlc 3.0.17.3
+###  vlc 3.0.18
 ###
 
 ###
@@ -551,7 +551,7 @@ macosx-continue-playback=1
 #sout-avi-subject=
 
 # Encoder (string)
-#sout-avi-encoder=VLC Media Player - 3.0.17.3 Vetinari
+#sout-avi-encoder=VLC Media Player - 3.0.18 Vetinari
 
 # Keywords (string)
 #sout-avi-keywords=
@@ -859,9 +859,6 @@ macosx-continue-playback=1
 
 # Frames Threads (integer)
 #dav1d-thread-frames=0
-
-# Tiles Threads (integer)
-#dav1d-thread-tiles=0
 
 [cdda] # Audio CD input
 
@@ -3125,7 +3122,7 @@ subsdec-encoding=ISO-8859-9
 [macosx] # Mac OS X OpenGL video output
 
 # Open GL/GLES hardware converter (string)
-#glconv=
+glconv=any
 
 # Rendering intent for color conversion (integer)
 #rendering-intent=1
@@ -3365,7 +3362,7 @@ subsdec-encoding=ISO-8859-9
 #freetype-fontsize=0
 
 # Relative font size (integer)
-freetype-rel-fontsize=12
+freetype-rel-fontsize=16
 
 # Text opacity (integer)
 #freetype-opacity=255
@@ -3588,7 +3585,7 @@ snapshot-path=/Users/ali/Downloads
 #snapshot-prefix=vlcsnap-
 
 # Video snapshot format (string)
-#snapshot-format=png
+snapshot-format=jpg
 
 # Display video snapshot preview (boolean)
 #snapshot-preview=1
@@ -3654,7 +3651,7 @@ snapshot-path=/Users/ali/Downloads
 #deinterlace-mode=auto
 
 # Video output module (string)
-#vout=
+vout=any
 
 # Video filter module (string)
 #video-filter=
