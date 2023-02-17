@@ -118,9 +118,9 @@ alias b-convox-rtc-production-docker-ps="b-convox-rtc-production foreach instanc
 alias b-convox-staging-docker-ps="b-convox-staging foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 
-alias b-db-acetaia-production='b-convox-production rack resources proxy acetaia-mysql --port 3319'
-alias b-db-bottega-production='b-convox-production rack resources proxy bottega-mysql --port 3329'
-alias b-db-swag-production='b-convox-production rack resources proxy swag-mysql --port 3339'
+alias b-db-acetaia-production='b-convox-production proxy 3319:convox-prod-acetaia-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
+alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
+alias b-db-swag-production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db-olio-staging='(cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem)'
 alias b-db-olio-feature='(cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem)'
 alias b-db-olio-production='(cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem)'

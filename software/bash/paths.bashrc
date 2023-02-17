@@ -11,6 +11,12 @@ export PATH="$(brew --prefix)/sbin:$PATH"
 export PATH="$PATH:$HOME/Development/dotfiles/software/bash/bin"
 
 ##
+## MANPATH
+##
+
+MANPATH="$MANPATH:/usr/share/man"
+
+##
 ## CDPATH
 ##
 
