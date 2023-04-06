@@ -125,6 +125,8 @@ alias b-db-olio-staging='(cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/bal
 alias b-db-olio-feature='(cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem)'
 alias b-db-olio-production='(cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem)'
 
+# TODO: move below node & npm functions and aliases under software/bash
+
 node18() {(
   export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
   node $*
@@ -141,6 +143,14 @@ node12() {(
   export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
   node $*
 )}
+
+npm() {(
+  export BALSAMIQ_NPM_AUTH_TOKEN="$(envchain balsamiq-private-npm-registry env | grep '^BALSAMIQ_NPM_AUTH_TOKEN' | cut -d '=' -f2-)"
+  export PRIVATE_NPM_AUTH_TOKEN="$BALSAMIQ_NPM_AUTH_TOKEN"
+  # Should we use `command npm "$@"` instead? See also `npx` below.
+  command npm $*
+)}
+export -f npm
 
 node18-npm() {(
   export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
@@ -163,6 +173,14 @@ alias npm-node16=node16-npm
 alias npm-node14=node14-npm
 alias npm-node12=node12-npm
 
+npx() {(
+  export BALSAMIQ_NPM_AUTH_TOKEN="$(envchain balsamiq-private-npm-registry env | grep '^BALSAMIQ_NPM_AUTH_TOKEN' | cut -d '=' -f2-)"
+  export PRIVATE_NPM_AUTH_TOKEN="$BALSAMIQ_NPM_AUTH_TOKEN"
+  # `command npx $*` breaks `npx concurrently "echo foo" "echo bar"`
+  command npx "$@"
+)}
+export -f npx
+
 node18-npx() {(
   export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
   npx $*
@@ -184,45 +202,45 @@ alias npx-node16=node16-npx
 alias npx-node14=node14-npx
 alias npx-node12=node12-npx
 
-b-npm() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npm'" $*"
-}
-b-node18-npm() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node18-npm'" $*"
-}
-b-node16-npm() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16-npm'" $*"
-}
-b-node14-npm() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node14-npm'" $*"
-}
-b-node12-npm() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12-npm'" $*"
-}
-alias b-npm-node18=b-node18-npm
-alias b-npm-node16=b-node16-npm
-alias b-npm-node14=b-node14-npm
-alias b-npm-node12=b-node12-npm
+# b-npm() {
+#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npm'" $*"
+# }
+# b-node18-npm() {
+#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node18-npm'" $*"
+# }
+# b-node16-npm() {
+#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16-npm'" $*"
+# }
+# b-node14-npm() {
+#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node14-npm'" $*"
+# }
+# b-node12-npm() {
+#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12-npm'" $*"
+# }
+# alias b-npm-node18=b-node18-npm
+# alias b-npm-node16=b-node16-npm
+# alias b-npm-node14=b-node14-npm
+# alias b-npm-node12=b-node12-npm
 
-b-npx() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx'" $*"
-}
-b-node18-npx() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node18-npx'" $*"
-}
-b-node16-npx() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16-npx'" $*"
-}
-b-node14-npx() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node14-npx'" $*"
-}
-b-node12-npx() {
-  envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12-npx'" $*"
-}
-alias b-npx-node18=b-node18-npx
-alias b-npx-node16=b-node16-npx
-alias b-npx-node14=b-node14-npx
-alias b-npx-node12=b-node12-npx
+# b-npx() {
+#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx'" $*"
+# }
+# b-node18-npx() {
+#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node18-npx'" $*"
+# }
+# b-node16-npx() {
+#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16-npx'" $*"
+# }
+# b-node14-npx() {
+#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node14-npx'" $*"
+# }
+# b-node12-npx() {
+#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12-npx'" $*"
+# }
+# alias b-npx-node18=b-node18-npx
+# alias b-npx-node16=b-node16-npx
+# alias b-npx-node14=b-node14-npx
+# alias b-npx-node12=b-node12-npx
 
 is-git() {
   git rev-parse --git-dir > /dev/null 2>&1

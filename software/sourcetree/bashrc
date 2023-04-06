@@ -5,3 +5,5 @@ stree() {
   fi
   command stree "$params"
 }
+
+alias stre="stree"

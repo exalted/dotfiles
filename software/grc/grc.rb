@@ -6,10 +6,12 @@ brew 'grc'
 disable=['diff']
 enable=['env']
 
-# We want to enable/disable some of the "colourifications"
-# (see `$(brew --prefix)/etc/grc.sh` for defaults)
+# First off, enable "colourification" feature
 Kernel.system "echo \"export GRC_ALIASES=true\" > \"#{__dir__}/bashrc\""
 Kernel.system "cat \"$(brew --prefix)/etc/grc.sh\" >> \"#{__dir__}/bashrc\""
+
+# Then enable/disable some of the specific "colourifications"
+# (see `$(brew --prefix)/etc/grc.sh` for defaults)
 for d in disable do
   Kernel.system "sed -i '' -E \"s/^[[:space:]]*#?[[:space:]]*(alias #{d}='colourify #{d}')$/    # alias #{d}='colourify #{d}'/g\" \"#{__dir__}/bashrc\""
 end

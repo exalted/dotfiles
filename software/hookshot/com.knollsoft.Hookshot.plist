@@ -54,7 +54,7 @@
 	<key>firstTwoThirds</key>
 	<dict/>
 	<key>gestures</key>
-	<string>[35,{"flags":0,"trail":0},33,{"flags":0,"trail":0},32,{"flags":0,"trail":0}]</string>
+	<string>[32,{"flags":0,"trail":0},33,{"flags":0,"trail":0},35,{"flags":0,"trail":0}]</string>
 	<key>hideMenubarIcon</key>
 	<true/>
 	<key>iCloudSync</key>

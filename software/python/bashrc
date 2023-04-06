@@ -1,5 +1,8 @@
 # Let's keep whatever Python is available in the system as the default for now
-# export PATH="$(brew --prefix)/opt/python@3.10/bin:$PATH"
+# export PATH="$PATH:$(brew --prefix)/opt/python@3.11/bin"
+# export PATH="$PATH:$(brew --prefix)/opt/python@3.10/bin"
+# export PATH="$PATH:$(brew --prefix)/opt/python@3.9/bin"
+# export PATH="$PATH:$(brew --prefix)/opt/python@3.8/bin"
 
 # # startup virtualenv-burrito
 # if [ -f $HOME/.venvburrito/startup.sh ]; then
