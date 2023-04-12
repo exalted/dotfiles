@@ -6,6 +6,6 @@ cask 'iterm2'
 # TODO: save its settings
 
 # https://iterm2.com/documentation-shell-integration.html
-Kernel.system "curl -fsSL https://iterm2.com/shell_integration/bash -o #{__dir__}/bashrc"
+Kernel.system "curl -fsSL https://iterm2.com/shell_integration/bash -o #{__dir__}/shell_integration"
 
 bash_source_relative
