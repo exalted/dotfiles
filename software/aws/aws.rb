@@ -2,6 +2,6 @@
 require_relative '../../src/helpers'
 
 brew 'awscli'
-# TODO: install AWS SAM CLI
+brew 'aws/tap/aws-sam-cli'
 
 bash_source_relative
