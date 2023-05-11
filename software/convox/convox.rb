@@ -5,12 +5,12 @@ unless cmd_exists?('convox')
   # https://docsv2.convox.com/introduction/installation#os-x
   # OR http://download.convox.com/cli/darwin/convox
   # OR https://convox.s3.amazonaws.com/cli/darwin/convox
-  Kernel.system "curl -fsSL https://convox.com/cli/macos/convox -o /tmp/convox"
-  Kernel.system "sudo mv /tmp/convox /usr/local/bin/convox"
-  Kernel.system "sudo chown root /usr/local/bin/convox"
-  Kernel.system "sudo chmod 755 /usr/local/bin/convox"
+  system "curl -fsSL https://convox.com/cli/macos/convox -o /tmp/convox"
+  system "sudo mv /tmp/convox /usr/local/bin/convox"
+  system "sudo chown root /usr/local/bin/convox"
+  system "sudo chmod 755 /usr/local/bin/convox"
 end
 
-debounce { Kernel.system "sudo convox update" }
+debounce { system "sudo convox update" }
 
 bash_source_relative

@@ -19,7 +19,7 @@ end
 
 def cleanup
   ohai "Cleaning up…"
-  Kernel.system "brew cleanup"
+  system "brew cleanup"
 
   ohai "Clean as a whistle."
   puts

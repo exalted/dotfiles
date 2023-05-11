@@ -14,8 +14,8 @@ link_to_home_relative(
 
 module Extension
   def self.install(name)
-    return if Kernel.system "code --list-extensions | grep ^#{name}$ > /dev/null"
-    Kernel.system "code --install-extension #{name}"
+    return if system "code --list-extensions | grep ^#{name}$ > /dev/null"
+    system "code --install-extension #{name}"
   end
 end
 
@@ -25,4 +25,4 @@ File.readlines(EXTENSIONS_FILE).each do |package|
   Extension.install package.chomp
 end
 
-Kernel.system "code --list-extensions | sort > #{EXTENSIONS_FILE}"
+system "code --list-extensions | sort > #{EXTENSIONS_FILE}"

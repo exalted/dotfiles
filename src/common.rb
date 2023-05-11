@@ -50,5 +50,7 @@ end
 
 # ? This overrides built-in system command
 def system(*args)
-  abort "Failed during: #{args.shell_s}" unless Kernel.system(*args)
+  result = Kernel.system(*args)
+  abort "Failed during: #{args.shell_s}" unless result
+  return result
 end

@@ -15,7 +15,7 @@ bash_source_relative
 
 globalignore_boilerplates = %w[ macOS Archives Dropbox Emacs VisualStudioCode Xcode ]
 FileUtils.mkdir_p "#{ENV["HOME"]}/.config/git"
-Kernel.system(
+system(
   "gibo dump #{globalignore_boilerplates.join(' ')} "\
   "> #{ENV["HOME"]}/.config/git/ignore"
 )

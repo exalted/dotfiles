@@ -10,9 +10,9 @@ brew 'python@3.8'
 # Note: There may be other versions available here: `/System/Library/Frameworks/Python.framework/Versions/`
 
 # unless File.exist? "#{ENV["HOME"]}/.venvburrito/startup.sh"
-#   Kernel.system "curl -sL https://raw.githubusercontent.com/brainsik/virtualenv-burrito/master/virtualenv-burrito.sh | exclude_profile=1 $SHELL"
+#   system "curl -sL https://raw.githubusercontent.com/brainsik/virtualenv-burrito/master/virtualenv-burrito.sh | exclude_profile=1 $SHELL"
 # end
 
-# debounce { Kernel.system "virtualenv-burrito upgrade" }
+# debounce { system "virtualenv-burrito upgrade" }
 
 bash_source_relative

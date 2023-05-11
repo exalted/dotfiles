@@ -6,9 +6,9 @@ brew 'stripe/stripe-cli/stripe'
 
 # https://stripe.com/docs/stripe-cli/configure#autocompletion
 unless File.exist? "#{ENV["HOME"]}/.stripe/stripe-completion.bash"
-  Kernel.system "stripe completion --shell bash"
-  Kernel.system "mkdir -p #{ENV["HOME"]}/.stripe"
-  Kernel.system "mv stripe-completion.bash #{ENV["HOME"]}/.stripe"
+  system "stripe completion --shell bash"
+  system "mkdir -p #{ENV["HOME"]}/.stripe"
+  system "mv stripe-completion.bash #{ENV["HOME"]}/.stripe"
 end
 
 bash_source "#{ENV["HOME"]}/.stripe/stripe-completion.bash"
