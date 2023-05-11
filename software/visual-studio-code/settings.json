@@ -140,5 +140,8 @@
     },
     "window.zoomLevel": 1,
     "editor.inlineSuggest.enabled": true,
-    "git.openRepositoryInParentFolders": "never"
+    "git.openRepositoryInParentFolders": "never",
+    "aws.suppressPrompts": {
+        "codeWhispererConnectionExpired": true
+    }
 }
