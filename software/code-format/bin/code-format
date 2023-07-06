@@ -1,0 +1,197 @@
+#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+
+require 'pathname'
+require 'json'
+require 'open3'
+
+# ==============================================================================
+#                       Stuff that should be in a library
+# ==============================================================================
+
+class Object
+  # From: https://github.com/rails/rails/blob/d026af43c35c25814b4d16511f1b8fc6d70a4569/activesupport/lib/active_support/core_ext/object/blank.rb#L18-L20
+  def blank?
+    respond_to?(:empty?) ? !!empty? : !self
+  end
+end
+
+# ==============================================================================
+#                                  THE PROGRAM
+# ==============================================================================
+
+#
+# From https://docs.zed.dev/configuration/configuring-zed#formatter:
+# "The buffer's text will be passed to the program on stdin, and the formatted output should be written to stdout."
+#
+
+# `STDIN.read` blocks until EOF, so we need to check if there's anything to read
+# to not get stuck
+text = STDIN.read if IO.select([STDIN], [], [], 0)
+params = ARGV  # for Zed this should contain only one file path (i.e, `{buffer_path}`)
+
+if params.length == 0
+  STDERR.puts "ERROR: This program doesn't work unless you specify an absolute file path as parameter!"
+  exit 1
+end
+
+# In future we might have other things in the params, but for now we only care
+# about file paths
+for path in params do
+  unless Pathname(path).absolute?
+    STDERR.puts "ERROR: Parameter '#{path}' is not an absolute file path!"
+    exit 1
+  end
+
+  unless File.file?(path)
+    STDERR.puts "ERROR: Parameter '#{path}' is not a file!"
+    exit 1
+  end
+end
+
+# In future we might actually support multiple files, (and in that case we
+# shouldn't read from stdin or write to stdout, and instead read files' contents
+# from disk and write back to them,) but for now we don't
+if params.length > 1
+  STDERR.puts "ERROR: This program doesn't support multiple files!"
+  exit 1
+end
+
+# In future we might read files' contents from disk, and write back to them
+if text.blank?
+  STDERR.puts "ERROR: This program doesn't work unless you pass text to it on stdin!"
+  exit 1
+end
+
+# In future we shouldn't assume a single file path
+path = params[0]
+STDERR.puts "Received path '#{path}'"
+
+STDERR.puts "==> Looking for the project directory ..."
+
+projectdir = nil
+currentdir = File.dirname(path)
+
+loop do
+  STDERR.puts "Looking in #{currentdir} ..."
+
+  if File.directory?(File.join(currentdir, ".git"))
+    projectdir = currentdir
+    break
+  end
+
+  if currentdir == Dir.home
+    STDERR.puts "ERROR: Couldn't find the project directory: Reached user's home ('#{Dir.home}') starting from '#{File.dirname(path)}'!"
+    exit 1
+  end
+
+  if currentdir == '/'
+    STDERR.puts "ERROR: Couldn't find the project directory: Reached the root ('/') starting from '#{File.dirname(path)}'!"
+    exit 1
+  end
+
+  currentdir = File.dirname(currentdir)
+end
+
+STDERR.puts "FOUND '#{projectdir}'"
+
+# ------------------------------------------------------------------------------
+#                                  Prettier
+# ------------------------------------------------------------------------------
+
+PRETTIERRC_FILES_TO_CHECK = [
+  ".prettierrc",
+  ".prettierrc.json",
+  ".prettierrc.js",
+  "prettier.config.js",
+]
+
+STDERR.puts "==> Looking for prettier configuration ..."
+
+currentdir = File.dirname(path)
+
+loop do
+  STDERR.puts "Looking in #{currentdir} ..."
+
+  prettier_configured = false
+
+  for prettierrc in PRETTIERRC_FILES_TO_CHECK do
+    prettierrc = File.join(currentdir, prettierrc)
+    if File.file?(prettierrc)
+      STDERR.puts "FOUND #{prettierrc}"
+      prettier_configured = true
+      break
+    end
+  end
+
+  break if prettier_configured
+
+  packagejson = File.join(currentdir, 'package.json')
+  if File.file?(packagejson)
+    if JSON.parse(File.read(packagejson)).key?('prettier')
+      STDERR.puts "FOUND 'prettier' key in #{packagejson}"
+      prettier_configured = true
+      break
+    end
+  end
+
+  if currentdir == projectdir
+    STDERR.puts "ERROR: Couldn't find prettier configuration: Reached the root of the project ('#{projectdir}')!"
+    exit 1
+  end
+
+  currentdir = File.dirname(currentdir)
+end
+
+STDERR.puts "==> Looking for prettier ..."
+
+prettier = nil
+currentdir = File.dirname(path)
+
+loop do
+  STDERR.puts "Looking in #{currentdir} ..."
+
+  prettier_candidate = File.join(currentdir, 'node_modules', '.bin', 'prettier')
+  if File.file?(prettier_candidate)
+    STDERR.puts "FOUND #{prettier_candidate}"
+    prettier = prettier_candidate
+    break
+  end
+
+  if currentdir == projectdir
+    # In future we might consider checking for globally installed prettier (e.g., via Homebrew)
+    # or even running `npx prettier`.
+    STDERR.puts "ERROR: Couldn't find prettier: Reached the root of the project ('#{projectdir}')!"
+    exit 1
+  end
+
+  currentdir = File.dirname(currentdir)
+end
+
+command = "#{prettier} --stdin-filepath #{path}"
+STDERR.puts "==> Running `#{command}` ..."
+
+status = nil
+error = nil
+output = nil
+
+Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
+  stdin.print text
+  stdin.close
+
+  status = wait_thr.value.exitstatus
+  error = stderr.read
+  output = stdout.read
+end
+
+# Prettier will quit with exit code 0 even if there are errors
+unless error.blank?
+  STDERR.puts "ERROR: Command failed (#{status})!"
+  STDERR.puts "DEBUG: prettier: #{error}"
+  exit 1
+end
+
+# ==============================================================================
+#                            FORMATTED OUTPUT
+# ==============================================================================
+
+print output

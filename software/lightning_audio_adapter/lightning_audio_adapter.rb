@@ -7,7 +7,7 @@ brew 'switchaudio-osx'
 # brew 'uhubctl'
 brew 'mvp/uhubctl/uhubctl'
 
-link_relative 'org.pittle.lightning_audio_adapter.plist', "#{ENV["HOME"]}/Library/LaunchAgents/"
+link_to_home_relative 'org.pittle.lightning_audio_adapter.plist', "Library/LaunchAgents/org.pittle.lightning_audio_adapter.plist"
 system "launchctl load -w #{ENV["HOME"]}/Library/LaunchAgents/org.pittle.lightning_audio_adapter.plist"
 # system "launchctl unload #{ENV["HOME"]}/Library/LaunchAgents/org.pittle.lightning_audio_adapter.plist"
 

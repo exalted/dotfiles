@@ -2,8 +2,12 @@
 set -euo pipefail
 trap "echo 'error: Script failed: see failed command above'" ERR
 
+# TODO: Add ability to "include tags" with `--tags` or something similar,
+#       hence *not* adding `--decorate-refs-exclude=refs/tags` below.
+
 $GIT log \
   --color \
   --pretty=format:'%C(black)%h%C(bold red)%d %C(reset)%s  %C(black)%aN (%ar)%C(reset)' \
+  --decorate-refs-exclude=refs/tags \
   "$@" \
 || true

@@ -1,8 +1,4 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
 require_relative '../../src/helpers'
 
-brew 'awscli'
-cask 'session-manager-plugin'
-brew 'aws/tap/aws-sam-cli'
-
-bash_source_relative
+link_to_home_relative 'bin/code-format', 'bin/code-format'

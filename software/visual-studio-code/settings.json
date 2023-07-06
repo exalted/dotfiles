@@ -138,10 +138,7 @@
     "[yaml]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "window.zoomLevel": 1,
     "editor.inlineSuggest.enabled": true,
     "git.openRepositoryInParentFolders": "never",
-    "aws.suppressPrompts": {
-        "codeWhispererConnectionExpired": true
-    }
+    "window.zoomLevel": 1
 }

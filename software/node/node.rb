@@ -7,7 +7,7 @@ brew 'node@18'  # LTS
 brew 'node@16'  # Maintenance
 brew 'node@14'  # Maintenance
 # Older versions:
-brew 'node@12'
+# brew 'node@12'
 
 #
 # Node Version Manager
