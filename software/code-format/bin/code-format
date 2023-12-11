@@ -170,18 +170,20 @@ end
 command = "#{prettier} --stdin-filepath #{path}"
 STDERR.puts "==> Running `#{command}` ..."
 
-status = nil
-error = nil
 output = nil
+error = nil
+status = nil
 
-Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
-  stdin.print text
-  stdin.close
+# Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
+#   stdin.print text
+#   stdin.close
 
-  status = wait_thr.value.exitstatus
-  error = stderr.read
-  output = stdout.read
-end
+#   status = wait_thr.value.exitstatus
+#   error = stderr.read
+#   output = stdout.read
+# end
+
+output, error, status = Open3.capture3(command, stdin_data: text)
 
 # Prettier will quit with exit code 0 even if there are errors
 unless error.blank?

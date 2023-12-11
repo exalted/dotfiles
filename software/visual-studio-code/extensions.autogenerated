@@ -2,10 +2,11 @@ DeepInThought.vscode-shell-snippets
 DotJoshJohnson.xml
 EditorConfig.EditorConfig
 GitHub.copilot
+GitHub.copilot-chat
 JuanBlanco.solidity
+Shopify.ruby-lsp
 VisualStudioExptTeam.intellicode-api-usage-examples
 VisualStudioExptTeam.vscodeintellicode
-amazonwebservices.aws-toolkit-vscode
 architect.architect
 bibhasdn.unique-lines
 bradlc.vscode-tailwindcss
@@ -25,7 +26,6 @@ ms-toolsai.jupyter-renderers
 ms-toolsai.vscode-jupyter-cell-tags
 ms-toolsai.vscode-jupyter-slideshow
 neilding.language-liquid
-rebornix.ruby
 redhat.java
 redhat.vscode-xml
 redhat.vscode-yaml

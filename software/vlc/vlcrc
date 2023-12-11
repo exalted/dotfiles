@@ -1,5 +1,5 @@
 ﻿###
-###  vlc 3.0.18
+###  vlc 3.0.20
 ###
 
 ###
@@ -551,7 +551,7 @@ macosx-continue-playback=1
 #sout-avi-subject=
 
 # Encoder (string)
-#sout-avi-encoder=VLC Media Player - 3.0.18 Vetinari
+#sout-avi-encoder=VLC Media Player - 3.0.20 Vetinari
 
 # Keywords (string)
 #sout-avi-keywords=
@@ -3026,7 +3026,7 @@ subsdec-encoding=ISO-8859-9
 #sout-avformat-options=
 
 # Reset timestamps (boolean)
-#sout-avformat-reset-ts=0
+#sout-avformat-reset-ts=1
 
 # Advanced options (string)
 #avio-options=
@@ -3579,7 +3579,7 @@ volume-save=0
 #mouse-hide-timeout=1000
 
 # Video snapshot directory (or filename) (string)
-snapshot-path=/Users/ali/Downloads
+snapshot-path=/Users/ali/Documents/Downloads
 
 # Video snapshot file prefix (string)
 #snapshot-prefix=vlcsnap-

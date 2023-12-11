@@ -1,4 +1,4 @@
 TODOS
 
 - Do not format files that are not modified (you can check with git)
-- Do not git ignored files (e.g., node_modules)
+- Do not format git ignored files (e.g., node_modules)

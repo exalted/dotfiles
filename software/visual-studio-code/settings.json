@@ -139,6 +139,5 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "editor.inlineSuggest.enabled": true,
-    "git.openRepositoryInParentFolders": "never",
-    "window.zoomLevel": 1
+    "git.openRepositoryInParentFolders": "never"
 }

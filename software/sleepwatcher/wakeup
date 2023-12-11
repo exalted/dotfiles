@@ -1,6 +1,7 @@
 # TODO: remove hard-coded path
 export PATH="$PATH:$HOME/Development/dotfiles/software/bash/bin"
 
-blueutil --power on
+# Commented out to test if recent slowness with the macOS Sonoma is due to this:
+# blueutil --power on
 
 remountall
