@@ -2,14 +2,11 @@
 require_relative '../../src/helpers'
 
 brew 'rustup-init'
-# TODO: This 👆 all by itself will NOT install rust, rustup, cargo, etc. Instead
-#       you need to run `rustup-init` afterwards and follow instructions to
-#       to tweak the installation (e.g., we don't want `rustup-init` to modify
-#       our `~/.bashrc` file).
-#       So, in order to improve your dotfiles you should check if rust is
-#       already installed, and conditionally either call `rustup-init` with all
-#       the options you want (e.g., `--no-modify-path`), to install rust
-#       properly for the first time; OR consider running `rustup update` to
-#       update rust.
+
+if cmd_exists?('rustup')
+  system "rustup update --no-self-update"
+else
+  system "rustup-init --verbose -y --component rust-analyzer --no-modify-path"
+end
 
 bash_source_relative

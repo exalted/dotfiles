@@ -17,7 +17,7 @@ paths = ARGV.reverse.take_while { |arg| !arg.start_with? '--' }
 # path contains `.idea` folder, use IntelliJ IDEA.
 
 # Zed specific code
-args = [ 'zed' ]
+args = [ '/Applications/Zed Preview.app/Contents/MacOS/cli' ]
 # args.push '--new-window' if ( new_window || ARGV.empty?)
 args.push '--wait' if wait
 args.concat(paths.empty? ? [ '.' ] : paths)
