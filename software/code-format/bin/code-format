@@ -18,15 +18,14 @@ end
 # ==============================================================================
 #                                  THE PROGRAM
 # ==============================================================================
-
 #
 # From https://docs.zed.dev/configuration/configuring-zed#formatter:
 # "The buffer's text will be passed to the program on stdin, and the formatted output should be written to stdout."
 #
+# ------------------------------------------------------------------------------
 
-# `STDIN.read` blocks until EOF, so we need to check if there's anything to read
-# to not get stuck
-text = STDIN.read if IO.select([STDIN], [], [], 0)
+STDERR.puts "==> Parsing command line arguments ..."
+
 params = ARGV  # for Zed this should contain only one file path (i.e, `{buffer_path}`)
 
 if params.length == 0
@@ -56,15 +55,49 @@ if params.length > 1
   exit 1
 end
 
+# In future we shouldn't assume a single file path
+path = params[0]
+STDERR.puts "Path: '#{path}'"
+
+# ------------------------------------------------------------------------------
+
+STDERR.puts "==> Selecting formatter tool ..."
+
+extension = File.extname(path)
+
+formatter = {
+  # prettier:
+  ".json" => "prettier",
+  ".js" => "prettier",
+  ".ts" => "prettier",
+  # rustfmt:
+  ".rs" => "rustfmt",
+}[extension]
+
+unless formatter
+  STDERR.puts "ERROR: This program doesn't support *#{extension} files!"
+  exit 1
+end
+
+STDERR.puts "Formatter: #{formatter} (#{extension})"
+
+# ------------------------------------------------------------------------------
+
+STDERR.puts "==> Reading the standard input ..."
+
+# `STDIN.read` blocks until EOF, so we need to check if there's anything to read
+# to not get stuck
+text = STDIN.read if IO.select([STDIN], [], [], 0)
+
 # In future we might read files' contents from disk, and write back to them
 if text.blank?
   STDERR.puts "ERROR: This program doesn't work unless you pass text to it on stdin!"
   exit 1
 end
 
-# In future we shouldn't assume a single file path
-path = params[0]
-STDERR.puts "Received path '#{path}'"
+STDERR.puts "OK"
+
+# ------------------------------------------------------------------------------
 
 STDERR.puts "==> Looking for the project directory ..."
 
@@ -72,7 +105,7 @@ projectdir = nil
 currentdir = File.dirname(path)
 
 loop do
-  STDERR.puts "Looking in #{currentdir} ..."
+  STDERR.puts "DEBUG: Looking in #{currentdir} ..."
 
   if File.directory?(File.join(currentdir, ".git"))
     projectdir = currentdir
@@ -92,44 +125,43 @@ loop do
   currentdir = File.dirname(currentdir)
 end
 
-STDERR.puts "FOUND '#{projectdir}'"
+STDERR.puts "Found '#{projectdir}'"
 
 # ------------------------------------------------------------------------------
-#                                  Prettier
+#                                  prettier
 # ------------------------------------------------------------------------------
-
-PRETTIERRC_FILES_TO_CHECK = [
+if formatter == 'prettier'
+  CONFIG_FILES_TO_CHECK = [
     ".prettierrc",
     ".prettierrc.json",
     ".prettierrc.js",
     "prettier.config.js",
   ]
 
-STDERR.puts "==> Looking for prettier configuration ..."
+  STDERR.puts "==> Looking for prettier (configuration) ..."
 
   currentdir = File.dirname(path)
 
   loop do
-  STDERR.puts "Looking in #{currentdir} ..."
+    STDERR.puts "DEBUG: Looking in #{currentdir} ..."
 
-  prettier_configured = false
+    config_found = false
 
-  for prettierrc in PRETTIERRC_FILES_TO_CHECK do
-    prettierrc = File.join(currentdir, prettierrc)
-    if File.file?(prettierrc)
-      STDERR.puts "FOUND #{prettierrc}"
-      prettier_configured = true
+    for config_file in CONFIG_FILES_TO_CHECK do
+      config_file = File.join(currentdir, config_file)
+      if File.file?(config_file)
+        STDERR.puts "Found #{config_file}"
+        config_found = true
         break
       end
     end
 
-  break if prettier_configured
+    break if config_found
 
     packagejson = File.join(currentdir, 'package.json')
     if File.file?(packagejson)
       if JSON.parse(File.read(packagejson)).key?('prettier')
-      STDERR.puts "FOUND 'prettier' key in #{packagejson}"
-      prettier_configured = true
+        STDERR.puts "Found 'prettier' configuration in #{packagejson}"
         break
       end
     end
@@ -142,17 +174,17 @@ STDERR.puts "==> Looking for prettier configuration ..."
     currentdir = File.dirname(currentdir)
   end
 
-STDERR.puts "==> Looking for prettier ..."
+  STDERR.puts "==> Looking for prettier (binary) ..."
 
   prettier = nil
   currentdir = File.dirname(path)
 
   loop do
-  STDERR.puts "Looking in #{currentdir} ..."
+    STDERR.puts "DEBUG: Looking in #{currentdir} ..."
 
     prettier_candidate = File.join(currentdir, 'node_modules', '.bin', 'prettier')
     if File.file?(prettier_candidate)
-    STDERR.puts "FOUND #{prettier_candidate}"
+      STDERR.puts "Found #{prettier_candidate}"
       prettier = prettier_candidate
       break
     end
@@ -168,7 +200,54 @@ STDERR.puts "==> Looking for prettier ..."
   end
 
   command = "#{prettier} --stdin-filepath #{path}"
-STDERR.puts "==> Running `#{command}` ..."
+end
+
+# ------------------------------------------------------------------------------
+#                                  rustfmt
+# ------------------------------------------------------------------------------
+if formatter == 'rustfmt'
+  CONFIG_FILES_TO_CHECK = [
+    "rustfmt.toml",
+    ".rustfmt.toml",
+  ]
+
+  STDERR.puts "==> Looking for rustfmt (configuration) ..."
+
+  currentdir = File.dirname(path)
+
+  loop do
+    STDERR.puts "DEBUG: Looking in #{currentdir} ..."
+
+    config_found = false
+
+    for config_file in CONFIG_FILES_TO_CHECK do
+      config_file = File.join(currentdir, config_file)
+      if File.file?(config_file)
+          STDERR.puts "Found #{config_file}"
+        config_found = true
+        break
+      end
+    end
+
+    break if config_found
+
+    if currentdir == projectdir
+      STDERR.puts "ERROR: Couldn't find rustfmt configuration: Reached the root of the project ('#{projectdir}')!"
+      exit 1
+    end
+
+    currentdir = File.dirname(currentdir)
+  end
+
+  command = "rustfmt --quiet --emit stdout"
+end
+
+# ==============================================================================
+#                               FORMAT THE CODE
+# ==============================================================================
+
+STDERR.puts "==> Formatting '#{path} (#{formatter}) ..."
+STDERR.puts "DEBUG: Running `#{command}`"
 
 output = nil
 error = nil
@@ -183,12 +262,17 @@ status = nil
 #   output = stdout.read
 # end
 
+begin
   output, error, status = Open3.capture3(command, stdin_data: text)
+rescue e
+  STDERR.puts "ERROR: #{e.message}!"
+  exit 1
+end
 
-# Prettier will quit with exit code 0 even if there are errors
+# prettier will quit with exit code 0 even if there are errors
 unless error.blank?
   STDERR.puts "ERROR: Command failed (#{status})!"
-  STDERR.puts "DEBUG: prettier: #{error}"
+  STDERR.puts "DEBUG: #{error}"
   exit 1
 end
 
