@@ -1,4 +1,4 @@
-#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+#!/usr/bin/env ruby
 require_relative '../src/helpers'
 
 ## TODO: My license expired, so the latest version I can use (43.2) can be

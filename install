@@ -1,4 +1,4 @@
-#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+#!/usr/bin/env ruby
 # Inspired by https://github.com/Homebrew/install/blob/63e779e5d6cc1cd7ddefda9c0eb404687d1a1c79/install
 DOTFILES_REPOSITORY = "#{ENV["HOME"]}/.dotfiles".freeze
 DOTFILES_REPO = "https://github.com/exalted/dotfiles.git".freeze

@@ -1,4 +1,4 @@
-#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+#!/usr/bin/env ruby
 require_relative '../../src/helpers'
 
 # Note: There are ruby versions here: `/System/Library/Frameworks/Ruby.framework/Versions/`

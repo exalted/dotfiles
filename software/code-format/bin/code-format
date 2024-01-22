@@ -1,4 +1,4 @@
-#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+#!/usr/bin/env ruby
 
 require 'pathname'
 require 'json'
@@ -99,17 +99,17 @@ STDERR.puts "FOUND '#{projectdir}'"
 # ------------------------------------------------------------------------------
 
 PRETTIERRC_FILES_TO_CHECK = [
-  ".prettierrc",
-  ".prettierrc.json",
-  ".prettierrc.js",
-  "prettier.config.js",
-]
+    ".prettierrc",
+    ".prettierrc.json",
+    ".prettierrc.js",
+    "prettier.config.js",
+  ]
 
 STDERR.puts "==> Looking for prettier configuration ..."
 
-currentdir = File.dirname(path)
+  currentdir = File.dirname(path)
 
-loop do
+  loop do
   STDERR.puts "Looking in #{currentdir} ..."
 
   prettier_configured = false
@@ -119,55 +119,55 @@ loop do
     if File.file?(prettierrc)
       STDERR.puts "FOUND #{prettierrc}"
       prettier_configured = true
-      break
+        break
+      end
     end
-  end
 
   break if prettier_configured
 
-  packagejson = File.join(currentdir, 'package.json')
-  if File.file?(packagejson)
-    if JSON.parse(File.read(packagejson)).key?('prettier')
+    packagejson = File.join(currentdir, 'package.json')
+    if File.file?(packagejson)
+      if JSON.parse(File.read(packagejson)).key?('prettier')
       STDERR.puts "FOUND 'prettier' key in #{packagejson}"
       prettier_configured = true
-      break
+        break
+      end
     end
-  end
 
-  if currentdir == projectdir
-    STDERR.puts "ERROR: Couldn't find prettier configuration: Reached the root of the project ('#{projectdir}')!"
-    exit 1
-  end
+    if currentdir == projectdir
+      STDERR.puts "ERROR: Couldn't find prettier configuration: Reached the root of the project ('#{projectdir}')!"
+      exit 1
+    end
 
-  currentdir = File.dirname(currentdir)
-end
+    currentdir = File.dirname(currentdir)
+  end
 
 STDERR.puts "==> Looking for prettier ..."
 
-prettier = nil
-currentdir = File.dirname(path)
+  prettier = nil
+  currentdir = File.dirname(path)
 
-loop do
+  loop do
   STDERR.puts "Looking in #{currentdir} ..."
 
-  prettier_candidate = File.join(currentdir, 'node_modules', '.bin', 'prettier')
-  if File.file?(prettier_candidate)
+    prettier_candidate = File.join(currentdir, 'node_modules', '.bin', 'prettier')
+    if File.file?(prettier_candidate)
     STDERR.puts "FOUND #{prettier_candidate}"
-    prettier = prettier_candidate
-    break
+      prettier = prettier_candidate
+      break
+    end
+
+    if currentdir == projectdir
+      # In future we might consider checking for globally installed prettier (e.g., via Homebrew)
+      # or even running `npx prettier`.
+      STDERR.puts "ERROR: Couldn't find prettier: Reached the root of the project ('#{projectdir}')!"
+      exit 1
+    end
+
+    currentdir = File.dirname(currentdir)
   end
 
-  if currentdir == projectdir
-    # In future we might consider checking for globally installed prettier (e.g., via Homebrew)
-    # or even running `npx prettier`.
-    STDERR.puts "ERROR: Couldn't find prettier: Reached the root of the project ('#{projectdir}')!"
-    exit 1
-  end
-
-  currentdir = File.dirname(currentdir)
-end
-
-command = "#{prettier} --stdin-filepath #{path}"
+  command = "#{prettier} --stdin-filepath #{path}"
 STDERR.puts "==> Running `#{command}` ..."
 
 output = nil
@@ -183,7 +183,7 @@ status = nil
 #   output = stdout.read
 # end
 
-output, error, status = Open3.capture3(command, stdin_data: text)
+  output, error, status = Open3.capture3(command, stdin_data: text)
 
 # Prettier will quit with exit code 0 even if there are errors
 unless error.blank?

@@ -1,4 +1,4 @@
-#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+#!/usr/bin/env ruby
 require_relative '../../src/helpers'
 
 # TODO: Automatically set it up on Download's folder instead of manually setting

@@ -1,4 +1,4 @@
-#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+#!/usr/bin/env ruby
 require_relative '../../src/helpers'
 
 # `brew install mysql`, at any version, will create `$(brew --prefix)/var/mysql`

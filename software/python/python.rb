@@ -1,4 +1,4 @@
-#!/System/Library/Frameworks/Ruby.framework/Versions/Current/usr/bin/ruby
+#!/usr/bin/env ruby
 require_relative '../../src/helpers'
 
 # Default version is set in `software/python/bashrc` via `PATH`
