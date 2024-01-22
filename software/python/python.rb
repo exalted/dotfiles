@@ -5,10 +5,9 @@ require_relative '../../src/helpers'
 brew 'python3'
 brew 'python@3.12'
 brew 'python@3.11'
-brew 'python@3.10'
-brew 'python@3.9'
-# Older versions:
-brew 'python@3.8'
+# brew 'python@3.10'
+# brew 'python@3.9'
+# brew 'python@3.8'
 # Note: There may be other versions available here: `/System/Library/Frameworks/Python.framework/Versions/`
 
 # unless File.exist? "#{ENV["HOME"]}/.venvburrito/startup.sh"
