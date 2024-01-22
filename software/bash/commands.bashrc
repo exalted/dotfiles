@@ -125,7 +125,7 @@ alias b-db-olio-staging='(cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/bal
 alias b-db-olio-feature='(cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem)'
 alias b-db-olio-production='(cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem)'
 
-# TODO: move below node & npm functions and aliases under software/bash
+# TODO: move below node & npm functions and aliases under software/node
 
 node18() {(
   export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"

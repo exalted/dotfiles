@@ -10,6 +10,7 @@ alias cd..='cd ..'
 ##
 
 alias cd='hash -r && cd'
+alias dirs='dirs -l -v'
 
 
 ##

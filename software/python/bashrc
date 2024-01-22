@@ -4,6 +4,8 @@
 # export PATH="$PATH:$(brew --prefix)/opt/python@3.9/bin"
 # export PATH="$PATH:$(brew --prefix)/opt/python@3.8/bin"
 
+# TODO: Consider also adding /opt/homebrew/opt/python@<version>/libexec/bin/ to your PATH?
+
 # # startup virtualenv-burrito
 # if [ -f $HOME/.venvburrito/startup.sh ]; then
 #   . $HOME/.venvburrito/startup.sh
