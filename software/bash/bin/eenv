@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+#
+# 'e' in eenv stands for "enhanced".
+
+unless ARGV.empty?
+  command_args = ARGV.join(' ')
+  command_output = `command env #{command_args}`
+  puts command_output
+  exit $?.exitstatus
+end
+
+# When "printing the environment" I usually want to see all variables defined
+# and not just those that are `export`-ed; so this takes care of that.
+# (https://unix.stackexchange.com/a/118050)
+lines = (`printenv` + `set -o posix; set`).lines
+
+full_line = ''
+full_line_ready = false
+full_lines = []
+
+lines.each_with_index do |current_line, index|
+  current_line = current_line.gsub(/[^\t\s[:print:]]/, '').chomp
+  next_line = lines[index + 1]&.gsub(/[^\t\s[:print:]]/, '')&.chomp
+
+  if full_line_ready
+    full_line_ready = false
+    full_lines.push(full_line)
+  end
+
+  if current_line.match?(/^[a-zA-Z_][a-zA-Z0-9_%]*=/)
+    full_line = current_line
+  else
+    full_line += current_line
+  end
+
+  if next_line.nil? || next_line.match?(/^[a-zA-Z_][a-zA-Z0-9_%]*=/)
+    full_line_ready = true
+  end
+end
+
+full_lines.push(full_line)
+
+full_lines = full_lines.reject {
+  | line | line.to_s.strip.empty?
+}.map {
+  | line |
+    name, value = line.split('=', 2)
+    value = value.delete_prefix("'").delete_suffix("'")
+    "#{name}=#{value}"
+}.uniq
+
+puts full_lines
