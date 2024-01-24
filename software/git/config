@@ -3,6 +3,7 @@
 	email = asd@pittle.org
 [core]
 	trustctime = false
+    ; TODO: this is almost exactly repeated in software/diff/bashrc:
 	pager = diff-so-fancy | emojify | less --chop-long-lines --quit-at-eof
 	excludesfile = /Users/ali/.config/git/ignore
 [credential]
@@ -62,7 +63,7 @@
 	decorate = short
 [difftool "sourcetree"]
 	cmd = /usr/local/bin/ksdiff -w \"$LOCAL\" \"$REMOTE\"
-	path = 
+	path =
 [difftool "Kaleidoscope"]
 	cmd = /usr/local/bin/ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [mergetool "sourcetree"]

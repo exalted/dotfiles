@@ -1,3 +1,4 @@
+# TODO: this is almost exactly repeated in software/git/config:
 diff() {
-  colordiff --unified "$@" | diff-so-fancy
+  command diff --color --unified "$@" | diff-so-fancy | emojify | less --chop-long-lines --quit-at-eof
 }
