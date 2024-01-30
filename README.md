@@ -24,5 +24,5 @@ dotfiles
 0. Create a script file anywhere (also in a nested directory) inside `software/` (e.g., `software/example.rb`). (Not necessarily in Ruby, but encouraged. Shell/Python/JavaScript are also welcome.)
 0. Make sure it's executable (`chmod +x software/example.rb`).
 0. Make sure it has correct shebang (e.g., `#!/usr/bin/env ruby` for Ruby, `#!/bin/bash` for Bash, etc.).
-0. Make sure they're self executable, meaning they work even if you run them directly like `./software/example.rb` rather than through `bin/dotfiles`.
+0. Make sure they're self executable, meaning they work even if you run them directly like `software/example.rb` rather than through `bin/dotfiles`.
 0. Try to write your script as less order dependent as possible related to order software.

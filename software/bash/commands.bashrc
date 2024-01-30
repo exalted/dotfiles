@@ -121,9 +121,9 @@ alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --
 alias b-db-acetaia-production='b-convox-production proxy 3319:convox-prod-acetaia-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db-swag-production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
-alias b-db-olio-staging='(cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem)'
-alias b-db-olio-feature='(cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem)'
-alias b-db-olio-production='(cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem)'
+alias b-db-olio-staging='(cd olio/ && ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem)'
+alias b-db-olio-feature='(cd olio/ && ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem)'
+alias b-db-olio-production='(cd olio/ && ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem)'
 
 # TODO: move below node & npm functions and aliases under software/node
 
@@ -258,17 +258,17 @@ b-workon--bw-jira() {
   #envchain balsamiq-private-npm-registry /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "postgres,redis,grunt,jira,logs,reload" --kill-others \
   #  "$(brew --prefix)/opt/postgresql@11/bin/postgres -D $(brew --prefix)/var/postgresql@11" \
   #  "$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf" \
-  #  "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" ./node_modules/.bin/grunt build" \
-  #  "bash -c \"$(cat ./launchJira.sh) -DskipTests\"" \
-  #  "npx wait-on http-get://localhost:2990/jira/ && tail -f ./target/jira/home/log/atlassian-jira.log" \
+  #  "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" node_modules/.bin/grunt build" \
+  #  "bash -c \"$(cat launchJira.sh) -DskipTests\"" \
+  #  "npx wait-on http-get://localhost:2990/jira/ && tail -f target/jira/home/log/atlassian-jira.log" \
   #  "npx wait-on http-get://localhost:2990/jira/ && npx onchange '"'"'**'"'"' --exclude-path .gitignore --kill -- time atlas-package -DskipTests -Datlassian.webresource.disable.minification=true"' \
   #|| true
   npx concurrently --names "postgres,redis,grunt,jira,logs,reload" --kill-others \
     "$(brew --prefix)/opt/postgresql@11/bin/postgres -D $(brew --prefix)/var/postgresql@11" \
     "$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf" \
-    "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" ./node_modules/.bin/grunt build" \
-    "bash -c \"$(cat ./launchJira.sh) -DskipTests\"" \
-    "npx wait-on http-get://localhost:2990/jira/ && tail -f ./target/jira/home/log/atlassian-jira.log" \
+    "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" node_modules/.bin/grunt build" \
+    "bash -c \"$(cat launchJira.sh) -DskipTests\"" \
+    "npx wait-on http-get://localhost:2990/jira/ && tail -f target/jira/home/log/atlassian-jira.log" \
     "npx wait-on http-get://localhost:2990/jira/ && npx onchange '"'"'**'"'"' --exclude-path .gitignore --kill -- time atlas-package -DskipTests -Datlassian.webresource.disable.minification=true" \
   || true
 }
@@ -280,15 +280,15 @@ b-workon--bw-confluence() {
   #envchain balsamiq-private-npm-registry /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "postgres,redis,grunt,confluence,reload" --kill-others \
   #  "$(brew --prefix)/opt/postgresql@11/bin/postgres -D $(brew --prefix)/var/postgresql@11" \
   #  "$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf" \
-  #  "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" ./node_modules/.bin/grunt build" \
-  #  "bash -c \"$(cat ./launchConfluence.sh) -DskipTests\"" \
+  #  "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" node_modules/.bin/grunt build" \
+  #  "bash -c \"$(cat launchConfluence.sh) -DskipTests\"" \
   #  "npx wait-on http-get://localhost:2990/confluence/ && npx onchange '"'"'**'"'"' --exclude-path .gitignore --kill -- time atlas-package -DskipTests -Datlassian.webresource.disable.minification=true"' \
   #|| true
   npx concurrently --names "postgres,redis,grunt,confluence,reload" --kill-others \
     "$(brew --prefix)/opt/postgresql@11/bin/postgres -D $(brew --prefix)/var/postgresql@11" \
     "$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf" \
-    "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" ./node_modules/.bin/grunt build" \
-    "bash -c \"$(cat ./launchConfluence.sh) -DskipTests\"" \
+    "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" node_modules/.bin/grunt build" \
+    "bash -c \"$(cat launchConfluence.sh) -DskipTests\"" \
     "npx wait-on http-get://localhost:2990/confluence/ && npx onchange '"'"'**'"'"' --exclude-path .gitignore --kill -- time atlas-package -DskipTests -Datlassian.webresource.disable.minification=true" \
   || true
 }
