@@ -239,6 +239,8 @@ if formatter == 'rustfmt'
     currentdir = File.dirname(currentdir)
   end
 
+  # Although `rustfmt --help` doesn't mention this, rustfmt will read from the
+  # stdin with no file was given and that's what we're relying on here.
   command = "rustfmt --quiet --emit stdout"
 end
 
