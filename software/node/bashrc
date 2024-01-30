@@ -5,11 +5,11 @@ export PATH="$PATH:$(brew --prefix)/opt/node@14/bin"
 # export PATH="$PATH:$(brew --prefix)/opt/node@12/bin"
 
 # make sure these comes after all the others, so that local binaries win
-export PATH="../../../../node_modules/.bin:$PATH"
-export PATH="../../../node_modules/.bin:$PATH"
-export PATH="../../node_modules/.bin:$PATH"
-export PATH="../node_modules/.bin:$PATH"
-export PATH="./node_modules/.bin:$PATH"
+# export PATH="../../../../node_modules/.bin:$PATH"
+# export PATH="../../../node_modules/.bin:$PATH"
+# export PATH="../../node_modules/.bin:$PATH"
+# export PATH="../node_modules/.bin:$PATH"
+export PATH="node_modules/.bin:$PATH"
 
 #
 # Node Version Manager (see `brew info nvm`)
