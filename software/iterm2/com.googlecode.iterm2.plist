@@ -1482,6 +1482,8 @@
 	</array>
 	<key>TraditionalVisualBell</key>
 	<false/>
+	<key>Use background pattern indicator</key>
+	<false/>
 	<key>UseBorder</key>
 	<false/>
 	<key>UseMetal</key>

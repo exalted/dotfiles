@@ -8,12 +8,9 @@ require_relative '../../src/helpers'
 # Together with `mysql@X-start` and `mysql@X-stop` aliases, things work as
 # one would expected.
 
-brew 'mysql@5.7'
-system 'rm -rf "$(brew --prefix)/var/mysql"'
-unless File.directory? "#{`brew --prefix`.chomp}/var/mysql@5.7"
-  system '"$(brew --prefix)/opt/mysql@5.7/bin/mysqld" --initialize-insecure --user=ali --basedir="$(brew --prefix)/opt/mysql@5.7" --datadir="$(brew --prefix)/var/mysql@5.7" --tmpdir=/tmp'
-end
-
+# ==============================================================================
+# mysql@8.0
+# ==============================================================================
 brew 'mysql@8.0'
 system 'rm -rf "$(brew --prefix)/var/mysql"'
 unless File.directory? "#{`brew --prefix`.chomp}/var/mysql@8.0"
@@ -31,6 +28,15 @@ unless File.directory? "#{`brew --prefix`.chomp}/var/mysql@8.0"
   system '"$(brew --prefix)/opt/mysql@8.0/bin/mysql" -u root --execute="FLUSH PRIVILEGES;"'
 
   system '"$(brew --prefix)/opt/mysql@8.0/bin/mysqladmin" -u root shutdown'
+end
+
+# ==============================================================================
+# mysql@5.7
+# ==============================================================================
+brew 'mysql@5.7'
+system 'rm -rf "$(brew --prefix)/var/mysql"'
+unless File.directory? "#{`brew --prefix`.chomp}/var/mysql@5.7"
+  system '"$(brew --prefix)/opt/mysql@5.7/bin/mysqld" --initialize-insecure --user=ali --basedir="$(brew --prefix)/opt/mysql@5.7" --datadir="$(brew --prefix)/var/mysql@5.7" --tmpdir=/tmp'
 end
 
 bash_source_relative

@@ -70,6 +70,7 @@ formatter = {
   ".json" => "prettier",
   ".js" => "prettier",
   ".ts" => "prettier",
+  ".html" => "prettier",
   # rustfmt:
   ".rs" => "rustfmt",
 }[extension]
