@@ -16,6 +16,8 @@
 	tool = Kaleidoscope
 	algorithm = histogram
 	indentHeuristic = true
+	colorMoved = dimmed-zebra
+	colorMovedWS = allow-indentation-change
 [difftool]
 	prompt = false
 [merge]
