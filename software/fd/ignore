@@ -1,0 +1,7 @@
+#
+# https://github.com/sharkdp/fd?tab=readme-ov-file#excluding-specific-files-or-directories
+#
+
+# We want `fd` to find these files that are hidden by default, even without explicit `--hidden` flag
+!.npmrc
+!.nvmrc
