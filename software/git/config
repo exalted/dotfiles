@@ -31,11 +31,11 @@
 [alias]
 	; Aliases are meant to be shorthands (ideally two chars) for existing
 	; subcommands (standard or not). Keep this list in alphabetical order.
-	br = !git-wrapper branch --verbose --verbose
+	br = !git-wrapper branch
 	ci = !git-wrapper commit
 	co = !git-wrapper checkout
 	n  = !git-wrapper new
-	st = !git-wrapper status --short
+	st = !git-wrapper status
 [push]
 	default = simple
 [rebase]
@@ -65,7 +65,7 @@
 	decorate = short
 [difftool "sourcetree"]
 	cmd = /usr/local/bin/ksdiff -w \"$LOCAL\" \"$REMOTE\"
-	path = 
+	path =
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [mergetool "sourcetree"]

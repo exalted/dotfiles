@@ -8,10 +8,18 @@ __dir__="$(cd "$(dirname "$0")" ; pwd -P)"
 # git distribution (e.g., `git add`, `git status`, etc.).
 case "${1:-}" in
   "" )
-    $GIT status
+    # `git` without any subcommand is the same as `git status`
+    "${__dir__}"/git-status "${@:2}"
     ;;
+
   "add" )
     "${__dir__}"/git-add "${@:2}"
+    ;;
+  "branch" )
+    "${__dir__}"/git-branch "${@:2}"
+    ;;
+  "diff" )
+    "${__dir__}"/git-diff "${@:2}"
     ;;
   "merge" )
     "${__dir__}"/git-merge "${@:2}"
@@ -24,6 +32,9 @@ case "${1:-}" in
     ;;
   "stash" )
     "${__dir__}"/git-stash "${@:2}"
+    ;;
+  "status" )
+    "${__dir__}"/git-status "${@:2}"
     ;;
   * )
     $GIT "$@"
