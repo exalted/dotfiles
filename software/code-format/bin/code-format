@@ -200,7 +200,11 @@ if formatter == 'prettier'
     currentdir = File.dirname(currentdir)
   end
 
-  command = "#{prettier} --stdin-filepath #{path}"
+  # The reason why we're passing both `--log-level` and `--loglevel` is that
+  # at some point prettier added a hyphen to the name of the option, so if we
+  # want to support both old and new versions, we can pass both and that seems
+  # to make prettier happy:
+  command = "#{prettier} --loglevel error --log-level error --stdin-filepath #{path}"
 end
 
 # ------------------------------------------------------------------------------
@@ -282,5 +286,12 @@ end
 # ==============================================================================
 #                            FORMATTED OUTPUT
 # ==============================================================================
+
+# sometimes things don't go as expected, so let's not "risk" to "empty" a file's
+# contents:
+if output.blank?
+  STDERR.puts "ERROR: Output was empty!"
+  exit 1
+end
 
 print output

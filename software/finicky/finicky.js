@@ -76,7 +76,7 @@ module.exports = {
   handlers: [
     {
       match: finicky.matchDomains(['localhost', '127.0.0.1', /\.local$/, /\.convox$/]),
-      browser: 'Google Chrome Dev',
+      browser: 'Google Chrome',
     },
     {
       match: finicky.matchDomains([/(.+\.)?pivotaltracker\.com/]),
@@ -84,7 +84,7 @@ module.exports = {
     },
     {
       match: finicky.matchDomains([/(chrome|plus|hangouts|meet)\.google\.com/]),
-      browser: 'Google Chrome Dev',
+      browser: 'Google Chrome',
     },
     {
       match: finicky.matchDomains([/(.+\.)?zoom\.us/]),

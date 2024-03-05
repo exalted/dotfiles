@@ -47,8 +47,8 @@ browse() {
 }
 
 alias safari='browse "$@" -a /Applications/Safari.app'
-alias chrome='browse "$@" -a /Applications/Google\ Chrome\ Dev.app'
-alias firefox='browse "$@" -a /Applications/Firefox\ Developer\ Edition.app'
+alias chrome='browse "$@" -a /Applications/Google\ Chrome.app'
+alias firefox='browse "$@" -a /Applications/Firefox.app'
 
 google() {
   local search=""
@@ -335,3 +335,5 @@ ISO   :  \${now.toISOString()}
 \`);
 EOF
 }
+
+alias redis-start="$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf"

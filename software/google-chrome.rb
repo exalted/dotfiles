@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
 require_relative '../src/helpers'
 
-cask 'firefox-developer-edition'
+cask 'google-chrome'
+cask 'google-chrome-dev'
