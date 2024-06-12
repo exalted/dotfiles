@@ -41,6 +41,7 @@
 [rebase]
 	autoSquash = true
 	autoStash = true
+	updateRefs = true
 [github]
 	user = exalted
 [filter "media"]
@@ -95,3 +96,7 @@
 	defaultBranch = main
 [commit]
 	template = /Users/ali/.stCommitMsg
+[rerere]
+	enabled = true
+[branch]
+	sort = -committerdate

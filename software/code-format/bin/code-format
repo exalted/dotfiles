@@ -69,6 +69,7 @@ formatter = {
   # prettier:
   ".json" => "prettier",
   ".js" => "prettier",
+  ".mjs" => "prettier",
   ".ts" => "prettier",
   ".html" => "prettier",
   # rustfmt:

@@ -27,3 +27,6 @@ export GIT="hub"
 
 # For typos:
 alias gti=git
+
+# Convenient:
+alias gha='hub browse -- actions'

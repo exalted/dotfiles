@@ -40,15 +40,15 @@ browse() {
   # passing URLs after `--arg` argument doesn't seem to open links in relevant
   # browsers, so don't even bother doing "smart" things like `"$url" ~= [a-z]+://`
   if [[ "$url" != http* ]]; then
-      url="http://$url"
+      url="https://$url"
   fi
 
   open "$url" "$@"
 }
 
-alias safari='browse "$@" -a /Applications/Safari.app'
-alias chrome='browse "$@" -a /Applications/Google\ Chrome.app'
-alias firefox='browse "$@" -a /Applications/Firefox.app'
+safari() { browse "$@" -a "Safari"; }
+chrome() { browse "$@" -a "Google Chrome"; }
+firefox() { browse "$@" -a "Firefox"; }
 
 google() {
   local search=""
@@ -121,9 +121,12 @@ alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --
 alias b-db-acetaia-production='b-convox-production proxy 3319:convox-prod-acetaia-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db-swag-production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
-alias b-db-olio-staging='(cd olio/ && ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem)'
-alias b-db-olio-feature='(cd olio/ && ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem)'
-alias b-db-olio-production='(cd olio/ && ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem)'
+alias b-db-olio-staging='(cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem)'
+alias b-db-olio-feature='(cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem)'
+alias b-db-olio-production='(cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem)'
+
+alias b-aws-llc='open -a "Balsamiq AWS LLC"'
+alias b-aws-srl-internal='open -a "Balsamiq AWS SRL internal"'
 
 # TODO: move below node & npm functions and aliases under software/node
 
@@ -324,7 +327,7 @@ b-workon--bas() {
   || true
 }
 
-alias idea='open -n -a /Applications/IntelliJ\ IDEA.app --args "$@"'
+alias idea='open -n -a "IntelliJ IDEA" --args "$@"'
 
 date() {
   cat <<EOF | node -

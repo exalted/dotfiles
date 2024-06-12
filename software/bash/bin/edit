@@ -16,9 +16,11 @@ paths = ARGV.reverse.take_while { |arg| !arg.start_with? '--' }
 # TODO: auto-detect which editor to use (fallback to Zed). For example, if the
 # path contains `.idea` folder, use IntelliJ IDEA.
 
+# TODO: ? instead of hard-coding any specific editor, use the `EDITOR` (or `VISUAL`)
+
 # Zed specific code
 args = [ '/Applications/Zed Preview.app/Contents/MacOS/cli' ]
-# args.push '--new-window' if ( new_window || ARGV.empty?)
+args.push '--new' if ( new_window || ARGV.empty?)
 args.push '--wait' if wait
 args.concat(paths.empty? ? [ '.' ] : paths)
 

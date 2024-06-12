@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+trap "echo 'error: Script failed: see failed command above'" ERR
+
+# https://stackoverflow.com/a/14203146/11895
+OTHER_ARGS=()
+while [ $# -ne 0 ]; do
+  case "$1" in
+    -f|--force)
+      OTHER_ARGS+=("--force-with-lease")
+      ;;
+    *)
+      OTHER_ARGS+=("$1")
+      ;;
+  esac
+  shift
+done
+set -- "${OTHER_ARGS[@]:-}"  # set positional arguments to whatever is left in `OTHER_ARGS`
+
+$GIT push "$@"
