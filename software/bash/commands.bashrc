@@ -94,116 +94,130 @@ random-cookie-secret() {
   openssl rand -base64 32 | tr -- '+/' '-_'
 }
 
-b-ssh-jenkins-master() {
-  cat <<EOF
-Once logged to become Jenkins user do this:
-  $ sudo -s
-  # su jenkins
+# b-ssh-jenkins-master() {
+#   cat <<EOF
+# Once logged to become Jenkins user do this:
+#   $ sudo -s
+#   # su jenkins
 
-Read more: https://balsamiq.atlassian.net/wiki/x/ToQuEw
+# Read more: https://balsamiq.atlassian.net/wiki/x/ToQuEw
 
-EOF
-  ssh ubuntu@ec2-46-137-119-50.eu-west-1.compute.amazonaws.com
-}
+# EOF
+#   ssh ubuntu@ec2-46-137-119-50.eu-west-1.compute.amazonaws.com
+# }
+
+alias b-aws-production-products='envchain balsamiq-aws-llc aws'
+alias b-aws-olio-production='envchain balsamiq-aws-srl aws'
+alias b-aws-everything-else='envchain balsamiq-aws-srlinternal aws'
 
 # TODO: remove hard-coded path
-alias b-convox-production='envchain convox-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
-alias b-convox-rtc-production='envchain convox-rtc-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
-alias b-convox-staging='envchain convox-staging $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
-alias b-convox-ondeck='envchain convox-eu-6 $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+alias b-convox-production='envchain balsamiq-convox-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+# alias b-convox-rtc-production='envchain balsamiq-convox-rtc-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+alias b-convox-staging='envchain balsamiq-convox-staging $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+# alias b-convox-ondeck='envchain balsamiq-convox-eu-6 $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 
 # TODO: Instead create a new "fake" command in convox-wrapper (e.g., `convox instances docker ps`)
 alias b-convox-production-docker-ps="b-convox-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
-alias b-convox-rtc-production-docker-ps="b-convox-rtc-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
+# alias b-convox-rtc-production-docker-ps="b-convox-rtc-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 alias b-convox-staging-docker-ps="b-convox-staging foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
-alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
+# alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 
-alias b-db-acetaia-production='b-convox-production proxy 3319:convox-prod-acetaia-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
-alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
+# TODO: convert to BIK:
+# alias b-db-acetaia-production='b-convox-production proxy 3319:convox-prod-acetaia-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
+# TODO: convert to BIK:
+# alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db-swag-production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
-alias b-db-olio-staging='(cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem)'
-alias b-db-olio-feature='(cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem)'
-alias b-db-olio-production='(cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem)'
+alias b-db-olio-staging='( cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem )'
+alias b-db-olio-feature='( cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem )'
+alias b-db-olio-production='( cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem )'
 
-alias b-aws-llc='open -a "Balsamiq AWS LLC"'
-alias b-aws-srl-internal='open -a "Balsamiq AWS SRL internal"'
+# alias b-aws-llc='open -a "Balsamiq AWS LLC"'
+# alias b-aws-srl-internal='open -a "Balsamiq AWS SRL internal"'
 
 # TODO: move below node & npm functions and aliases under software/node
 
-node18() {(
-  export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
-  node $*
-)}
-node16() {(
-  export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
-  node $*
-)}
-node14() {(
-  export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
-  node $*
-)}
-node12() {(
-  export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
-  node $*
-)}
+# node18() {(
+#   export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
+#   node $*
+# )}
+# node16() {(
+#   export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
+#   node $*
+# )}
+# node14() {(
+#   export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
+#   node $*
+# )}
+# node12() {(
+#   export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
+#   node $*
+# )}
 
 npm() {(
   export BALSAMIQ_NPM_AUTH_TOKEN="$(envchain balsamiq-private-npm-registry env | grep '^BALSAMIQ_NPM_AUTH_TOKEN' | cut -d '=' -f2-)"
+  # PRIVATE_NPM_AUTH_TOKEN is the name of the original environment variable
+  # picked by Stefano (?), but since I didn't like it I am promoting
+  # `BALSAMIQ_NPM_AUTH_TOKEN`. However, since the original name is still in use
+  # in various codebases, this double export is necessary.
   export PRIVATE_NPM_AUTH_TOKEN="$BALSAMIQ_NPM_AUTH_TOKEN"
   # Should we use `command npm "$@"` instead? See also `npx` below.
   command npm $*
 )}
 export -f npm
 
-node18-npm() {(
-  export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
-  npm $*
-)}
-node16-npm() {(
-  export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
-  npm $*
-)}
-node14-npm() {(
-  export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
-  npm $*
-)}
-node12-npm() {(
-  export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
-  npm $*
-)}
-alias npm-node18=node18-npm
-alias npm-node16=node16-npm
-alias npm-node14=node14-npm
-alias npm-node12=node12-npm
+# node18-npm() {(
+#   export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
+#   npm $*
+# )}
+# node16-npm() {(
+#   export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
+#   npm $*
+# )}
+# node14-npm() {(
+#   export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
+#   npm $*
+# )}
+# node12-npm() {(
+#   export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
+#   npm $*
+# )}
+# alias npm-node18=node18-npm
+# alias npm-node16=node16-npm
+# alias npm-node14=node14-npm
+# alias npm-node12=node12-npm
 
 npx() {(
   export BALSAMIQ_NPM_AUTH_TOKEN="$(envchain balsamiq-private-npm-registry env | grep '^BALSAMIQ_NPM_AUTH_TOKEN' | cut -d '=' -f2-)"
+  # PRIVATE_NPM_AUTH_TOKEN is the name of the original environment variable
+  # picked by Stefano (?), but since I didn't like it I am promoting
+  # `BALSAMIQ_NPM_AUTH_TOKEN`. However, since the original name is still in use
+  # in various codebases, this double export is necessary.
   export PRIVATE_NPM_AUTH_TOKEN="$BALSAMIQ_NPM_AUTH_TOKEN"
   # `command npx $*` breaks `npx concurrently "echo foo" "echo bar"`
   command npx "$@"
 )}
 export -f npx
 
-node18-npx() {(
-  export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
-  npx $*
-)}
-node16-npx() {(
-  export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
-  npx $*
-)}
-node14-npx() {(
-  export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
-  npx $*
-)}
-node12-npx() {(
-  export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
-  npx $*
-)}
-alias npx-node18=node18-npx
-alias npx-node16=node16-npx
-alias npx-node14=node14-npx
-alias npx-node12=node12-npx
+# node18-npx() {(
+#   export PATH="$(brew --prefix)/opt/node@18/bin:$PATH"
+#   npx $*
+# )}
+# node16-npx() {(
+#   export PATH="$(brew --prefix)/opt/node@16/bin:$PATH"
+#   npx $*
+# )}
+# node14-npx() {(
+#   export PATH="$(brew --prefix)/opt/node@14/bin:$PATH"
+#   npx $*
+# )}
+# node12-npx() {(
+#   export PATH="$(brew --prefix)/opt/node@12/bin:$PATH"
+#   npx $*
+# )}
+# alias npx-node18=node18-npx
+# alias npx-node16=node16-npx
+# alias npx-node14=node14-npx
+# alias npx-node12=node12-npx
 
 # b-npm() {
 #   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npm'" $*"

@@ -30,3 +30,4 @@ alias gti=git
 
 # Convenient:
 alias gha='hub browse -- actions'
+alias ghpr='hub browse -- pulls'
