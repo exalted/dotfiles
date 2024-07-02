@@ -24,8 +24,8 @@ module.exports = {
     },
     // Extract zoom meeting link when clicked from Mailplane
     {
-      match: ({ sourceBundleIdentifier, urlString }) => {
-        if (sourceBundleIdentifier !== 'com.mailplaneapp.Mailplane3') {
+      match: ({ opener: { bundleId }, urlString }) => {
+        if (bundleId !== 'com.mailplaneapp.Mailplane3') {
           return false;
         }
 
@@ -40,8 +40,8 @@ module.exports = {
     },
     // Extract video call link for various Google services when clicked from Mailplane
     {
-      match: ({ sourceBundleIdentifier, urlString }) => {
-        if (sourceBundleIdentifier !== 'com.mailplaneapp.Mailplane3') {
+      match: ({ opener: { bundleId }, urlString }) => {
+        if (bundleId !== 'com.mailplaneapp.Mailplane3') {
           return false;
         }
 
@@ -56,8 +56,8 @@ module.exports = {
     },
     // Extract pivotaltracker link when clicked from Mailplane
     {
-      match: ({ sourceBundleIdentifier, urlString }) => {
-        if (sourceBundleIdentifier !== 'com.mailplaneapp.Mailplane3') {
+      match: ({ opener: {  bundleId }, urlString }) => {
+        if (bundleId !== 'com.mailplaneapp.Mailplane3') {
           return false;
         }
 
@@ -75,19 +75,19 @@ module.exports = {
   ],
   handlers: [
     {
-      match: finicky.matchDomains(['localhost', '127.0.0.1', /\.local$/, /\.convox$/]),
+      match: finicky.matchHostnames(['localhost', '127.0.0.1', /\.local$/, /\.convox$/]),
       browser: 'Google Chrome',
     },
     {
-      match: finicky.matchDomains([/(.+\.)?pivotaltracker\.com/]),
+      match: finicky.matchHostnames([/(.+\.)?pivotaltracker\.com/]),
       browser: 'Pivotal Tracker',
     },
     {
-      match: finicky.matchDomains([/(chrome|plus|hangouts|meet)\.google\.com/]),
+      match: finicky.matchHostnames([/(chrome|plus|hangouts|meet)\.google\.com/]),
       browser: 'Google Chrome',
     },
     {
-      match: finicky.matchDomains([/(.+\.)?zoom\.us/]),
+      match: finicky.matchHostnames([/(.+\.)?zoom\.us/]),
       browser: 'us.zoom.xos',
     },
   ],
