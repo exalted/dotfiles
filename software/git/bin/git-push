@@ -1,6 +1,4 @@
-#!/bin/bash
-set -euo pipefail
-trap "echo 'error: Script failed: see failed command above'" ERR
+#!/usr/bin/env bash
 
 # https://stackoverflow.com/a/14203146/11895
 OTHER_ARGS=()

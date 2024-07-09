@@ -59,7 +59,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>#!/bin/bash
+					<string>#!/usr/bin/env bash
 
 set -e
 [ -n "$DEBUG" ] &amp;&amp; set -x

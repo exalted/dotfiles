@@ -1,6 +1,4 @@
-#!/bin/bash
-set -euo pipefail
-trap "echo 'error: Script failed: see failed command above'" ERR
+#!/usr/bin/env bash
 
 if [[ "$@" = "--abort" ]]; then
   # case: `fatal: --abort expects no arguments`
