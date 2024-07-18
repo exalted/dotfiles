@@ -1,4 +1,11 @@
 envchain() {
+    # USAGE: `envchain --list NAMESPACE` to get the list of variables defined
+    #        with their values
+    #
+    # This relies on undocumented `envchain --list NAMESPACE` behavior to get
+    # the list of variables and changes the behavior of that specific execution
+    # to print the variables with their values.
+
     if [ "$#" -ne 2 ] || [ "$1" != "--list" ]; then
         command envchain "$@"
         return
