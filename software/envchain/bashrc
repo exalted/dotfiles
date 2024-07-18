@@ -1,33 +1,14 @@
 envchain() {
-    local first_arg
-    first_arg="$1"
-
-    local namespaces
-    namespaces="$(command envchain --list)"
-
-    if [ "$#" -ne 1 ] || ! echo "$namespaces" | grep --line-regexp --quiet -- "$first_arg"; then
+    if [ "$#" -ne 2 ] || [ "$1" != "--list" ]; then
         command envchain "$@"
         return
     fi
 
-    local keychain_dump
-    keychain_dump="$(security dump-keychain)"
+    local namespace
+    namespace="$2"
 
-    local matches
-    matches="$(echo "$keychain_dump" | grep --line-number "0x00000007 <blob>=\"envchain-$first_arg\"")"
+    local env_vars
+    env_vars=$(command envchain "--list" "$namespace")
 
-    env_vars=()
-    while IFS= read -r match; do
-        local line_number
-        line_number="$(echo "$match" | cut -d: -f1)"
-
-        local env_var
-        env_var="$(echo "$keychain_dump" | tail --lines=+"$line_number" | grep '"acct"<blob>=' | head --lines=1 | cut -d= -f2 | tr -d '"')"
-
-        if [[ ! " ${env_vars[@]} " =~ " ${env_var} " ]]; then
-            env_vars+=("$env_var")
-        fi
-    done <<<"$matches"
-
-    command envchain "$first_arg" sh -c "printenv | grep --extended-regexp '^($(echo "${env_vars[@]}" | tr ' ' '|'))='"
+    command envchain "$namespace" sh -c "printenv | grep --extended-regexp '^(${env_vars//$'\n'/|})='"
 }
