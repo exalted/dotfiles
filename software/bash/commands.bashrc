@@ -110,4 +110,6 @@ ISO   :  \${now.toISOString()}
 EOF
 }
 
-alias redis-start="$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf"
+# alias redis-start="$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf"
+alias redis-start='brew services run redis'
+alias redis-stop='brew services stop redis'

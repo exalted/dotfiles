@@ -26,8 +26,7 @@ alias b-convox-production-docker-ps="b-convox-production foreach instances 'dock
 alias b-convox-staging-docker-ps="b-convox-staging foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 # alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 
-# TODO: convert to BIK:
-# alias b-db-acetaia-production='b-convox-production proxy 3319:convox-prod-acetaia-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
+alias b-db-acetaia-production='( cd acetaia/infrastructure/ && nvm use && npm install && envchain balsamiq-aws-srlinternal bin/cli proxy production mysql )'
 # TODO: convert to BIK:
 # alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db-swag-production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
@@ -153,7 +152,7 @@ b-workon--bas() {
   ( cd architecture/ && nvm use && npm install )
   ( cd src/ && nvm use && npm install --build-from-source --python=/usr/bin/python3 sqlite3 && npm install )
 
-  mysql@5.7-start
+  # mysql@5.7-start
 
   // ask Stefano about NEW_LAMBDA_RTC_USE_JWT and either remove it or set it to true
   //NEW_LAMBDA_RTC_USE_JWT=false
@@ -179,3 +178,19 @@ b-workon--bas() {
     "( cd src/ && RTC_PUBLISH_KEY=pub-bas-ddb9d0ca-52ad-678f-b8ea-ddf525795f03 RTC_SERVER_URL=https://rtc-staging.balsamiq.com \"$(brew --prefix)/opt/node@18/bin/node\" server.js )" \
   || true
 }
+
+b-workon--cloud() {(
+    mysql@8.0-start
+    redis-start
+
+    nvm use
+    npm run start:development -- \
+        --rtc-path=~/Development/balsamiq/rtc/ \
+        --bas-path=~/Development/balsamiq/bas/ \
+        --cloudauth-path=~/Development/balsamiq/cloudauth/ \
+        --skip-tutorial \
+        --cloud-envchain-namespace=balsamiq-cloud-development \
+        --bas-envchain-namespace=balsamiq-bas-development \
+        --rtc-envchain-namespace=balsamiq-rtc-development \
+        --cloudauth-npm-server-script="server-local:ali"
+)}
