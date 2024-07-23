@@ -180,8 +180,8 @@ b-workon--bas() {
 }
 
 b-workon--cloud() {(
-    mysql@8.0-start
-    redis-start
+    # mysql@8.0-start
+    # redis-start
 
     nvm use
     npm run start:development -- \
@@ -189,8 +189,9 @@ b-workon--cloud() {(
         --bas-path=~/Development/balsamiq/bas/ \
         --cloudauth-path=~/Development/balsamiq/cloudauth/ \
         --skip-tutorial \
-        --cloud-envchain-namespace=balsamiq-cloud-development \
+        --cloud-envchain-namespace=balsamiq-cloud-development,balsamiq-aws-llc \
         --bas-envchain-namespace=balsamiq-bas-development \
         --rtc-envchain-namespace=balsamiq-rtc-development \
-        --cloudauth-npm-server-script="server-local:ali"
+        --cloudauth-npm-server-script="server-local:ali" \
+        "$@"
 )}
