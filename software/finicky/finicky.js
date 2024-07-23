@@ -4,7 +4,6 @@ const console = {
 
 const zoomLinkFromGCal = /https?:\/\/(.+\.)?google\.com\/url\?q=https?:\/\/(.+\.)?zoom\.us(\/[^&]+)/;
 const googleVideoCallLinkFromGCal = /https?:\/\/(.+\.)?google\.com\/url\?q=https?:\/\/((chrome|plus|hangouts|meet)\.google\.com\/.+?)&/;
-const pivotalTrackerLinkFromGCal = /https?:\/\/(.+\.)?google\.com\/url\?q=https?:\/\/www\.pivotaltracker\.com(\/.+?)&/;
 
 module.exports = {
   options: {
@@ -54,41 +53,31 @@ module.exports = {
         return `https://${match}`;
       },
     },
-    // Extract pivotaltracker link when clicked from Mailplane
-    {
-      match: ({ opener: {  bundleId }, urlString }) => {
-        if (bundleId !== 'com.mailplaneapp.Mailplane3') {
-          return false;
-        }
-
-        return pivotalTrackerLinkFromGCal.test(decodeURIComponent(urlString));
-      },
-      url: ({ urlString }) => {
-        const matches = pivotalTrackerLinkFromGCal.exec(
-          decodeURIComponent(urlString)
-        );
-        const pathname = matches[2];
-
-        return `https://www.pivotaltracker.com${pathname}`;
-      },
-    },
   ],
   handlers: [
     {
       match: finicky.matchHostnames(['localhost', '127.0.0.1', /\.local$/, /\.convox$/]),
-      browser: 'Google Chrome',
-    },
-    {
-      match: finicky.matchHostnames([/(.+\.)?pivotaltracker\.com/]),
-      browser: 'Pivotal Tracker',
+      browser: {
+        name: 'Google Chrome',
+        profile: "Default",
+      },
     },
     {
       match: finicky.matchHostnames([/(chrome|plus|hangouts|meet)\.google\.com/]),
-      browser: 'Google Chrome',
+      browser: {
+        name: 'Google Chrome',
+        profile: "Default",
+      },
     },
     {
       match: finicky.matchHostnames([/(.+\.)?zoom\.us/]),
       browser: 'us.zoom.xos',
+    },
+    {
+      match: ({ urlString }) => {
+        return /https:\/\/balsamiq\.atlassian\.net\/browse\/[A-Z]+-[0-9]+/.test(urlString);
+      },
+      browser: 'Jira',
     },
   ],
 };
