@@ -38,26 +38,14 @@ alias b-db-olio-production='( cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/k
 # alias b-aws-srl-internal='open -a "Balsamiq AWS SRL internal"'
 
 npm() {(
-  export BALSAMIQ_NPM_AUTH_TOKEN="$(envchain balsamiq-private-npm-registry env | grep '^BALSAMIQ_NPM_AUTH_TOKEN' | cut -d '=' -f2-)"
-  # PRIVATE_NPM_AUTH_TOKEN is the name of the original environment variable
-  # picked by Stefano (?), but since I didn't like it I am promoting
-  # `BALSAMIQ_NPM_AUTH_TOKEN`. However, since the original name is still in use
-  # in various codebases, this double export is necessary.
-  export PRIVATE_NPM_AUTH_TOKEN="$BALSAMIQ_NPM_AUTH_TOKEN"
   # Should we use `command npm "$@"` instead? See also `npx` below.
-  command npm $*
+  envchain balsamiq-private-npm-registry command npm $*
 )}
 export -f npm
 
 npx() {(
-  export BALSAMIQ_NPM_AUTH_TOKEN="$(envchain balsamiq-private-npm-registry env | grep '^BALSAMIQ_NPM_AUTH_TOKEN' | cut -d '=' -f2-)"
-  # PRIVATE_NPM_AUTH_TOKEN is the name of the original environment variable
-  # picked by Stefano (?), but since I didn't like it I am promoting
-  # `BALSAMIQ_NPM_AUTH_TOKEN`. However, since the original name is still in use
-  # in various codebases, this double export is necessary.
-  export PRIVATE_NPM_AUTH_TOKEN="$BALSAMIQ_NPM_AUTH_TOKEN"
   # `command npx $*` breaks `npx concurrently "echo foo" "echo bar"`
-  command npx "$@"
+  envchain balsamiq-private-npm-registry command npx "$@"
 )}
 export -f npx
 
