@@ -1,8 +1,9 @@
 {
-    "editor.fontSize": 16,
+    "window.zoomLevel": 1.4,
     "editor.fontFamily": "Monaco",
+    "editor.fontSize": 13,
+    "editor.lineHeight": 20,
     "editor.tabSize": 2,
-    "editor.lineHeight": 26,
     "editor.cursorSurroundingLines": 5,
     "editor.minimap.enabled": false,
     "editor.rulers": [
@@ -131,7 +132,6 @@
     "xml.server.binary.trustedHashes": [
         "c64f9b53e9983e224748f43f6be8b32af18a85f6ec88d4b0c73799c286788758"
     ],
-    "workbench.sideBar.location": "right",
     "[css]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
@@ -140,5 +140,10 @@
     },
     "editor.inlineSuggest.enabled": true,
     "git.openRepositoryInParentFolders": "never",
-    "editor.accessibilitySupport": "off"
+    "editor.accessibilitySupport": "off",
+    "workbench.activityBar.location": "top",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnSaveMode": "modificationsIfAvailable"
 }

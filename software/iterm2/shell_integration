@@ -226,6 +226,7 @@ __bp_precmd_invoke_cmd() {
     # prompt command" by another precmd execution loop. This avoids infinite
     # recursion.
     if (( __bp_inside_precmd > 0 )); then
+      (exit $__bp_last_ret_value)
       return
     fi
     local __bp_inside_precmd=1
@@ -242,6 +243,7 @@ __bp_precmd_invoke_cmd() {
             "$precmd_function"
         fi
     done
+    (exit $__bp_last_ret_value)
 }
 
 # Sets a return value in $?. We may want to get access to the $? variable in our
@@ -564,6 +566,7 @@ function __iterm2_prompt_command () {
     then
         # This code path is taken when you press ^C while entering a command.
         # I observed this behavior in CentOS 7.2 and macOS "GNU bash, version 5.0.18(1)-release".
+        ( exit $__iterm2_last_ret_value )
         __iterm2_preexec ""
         __bp_set_ret_value "$__iterm2_last_ret_value" "$__bp_last_argument_prev_command"
     fi

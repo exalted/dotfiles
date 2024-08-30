@@ -26,7 +26,7 @@ alias b-convox-production-docker-ps="b-convox-production foreach instances 'dock
 alias b-convox-staging-docker-ps="b-convox-staging foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 # alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 
-alias b-db-acetaia-production='( cd acetaia/infrastructure/ && nvm use && npm install && envchain balsamiq-aws-srlinternal bin/cli proxy production mysql )'
+alias b-db-acetaia-production='( cd acetaia/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal bin/cli proxy production mysql )'
 # TODO: convert to BIK:
 # alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db-swag-production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
@@ -37,17 +37,17 @@ alias b-db-olio-production='( cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/k
 # alias b-aws-llc='open -a "Balsamiq AWS LLC"'
 # alias b-aws-srl-internal='open -a "Balsamiq AWS SRL internal"'
 
-npm() {(
-  # Should we use `command npm "$@"` instead? See also `npx` below.
-  envchain balsamiq-private-npm-registry command npm $*
-)}
-export -f npm
+# npm() {(
+#   # Should we use `command npm "$@"` instead? See also `npx` below.
+#   envchain balsamiq-private-npm-registry command npm $*
+# )}
+# export -f npm
 
-npx() {(
-  # `command npx $*` breaks `npx concurrently "echo foo" "echo bar"`
-  envchain balsamiq-private-npm-registry command npx "$@"
-)}
-export -f npx
+# npx() {(
+#   # `command npx $*` breaks `npx concurrently "echo foo" "echo bar"`
+#   envchain balsamiq-private-npm-registry command npx "$@"
+# )}
+# export -f npx
 
 # b-npm() {
 #   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npm'" $*"
@@ -94,7 +94,7 @@ b-bootstrap--bw-atlassian() {
   sdk use java 8.0.332-tem
 }
 
-b-workon--bw-jira() {
+b-dev--bw-jira() {
   b-bootstrap--bw-atlassian
   node18-npm install --legacy-peer-deps
 
@@ -116,7 +116,7 @@ b-workon--bw-jira() {
   || true
 }
 
-b-workon--bw-confluence() {
+b-dev--bw-confluence() {
   b-bootstrap--bw-atlassian
   node18-npm install --legacy-peer-deps
 
@@ -136,9 +136,9 @@ b-workon--bw-confluence() {
   || true
 }
 
-b-workon--bas() {
-  ( cd architecture/ && nvm use && npm install )
-  ( cd src/ && nvm use && npm install --build-from-source --python=/usr/bin/python3 sqlite3 && npm install )
+b-dev--bas() {
+  ( cd architecture/ && nvm exec npm install )
+  ( cd src/ && nvm exec npm install --build-from-source --python=/usr/bin/python3 sqlite3 && npm install )
 
   # mysql@5.7-start
 
@@ -167,12 +167,13 @@ b-workon--bas() {
   || true
 }
 
-b-workon--cloud() {(
-    # mysql@8.0-start
-    # redis-start
+b-dev--cloud() {(
+    mysql@8.0-start
+    redis-start
 
-    nvm use
-    npm run start:development -- \
+    cd development/
+    envchain balsamiq-private-npm-registry bash -i -c "\
+        nvm exec npm run start:development -- \
         --rtc-path=~/Development/balsamiq/rtc/ \
         --bas-path=~/Development/balsamiq/bas/ \
         --cloudauth-path=~/Development/balsamiq/cloudauth/ \
@@ -180,6 +181,15 @@ b-workon--cloud() {(
         --cloud-envchain-namespace=balsamiq-cloud-development,balsamiq-aws-llc \
         --bas-envchain-namespace=balsamiq-bas-development \
         --rtc-envchain-namespace=balsamiq-rtc-development \
-        --cloudauth-npm-server-script="server-local:ali" \
-        "$@"
+        --cloudauth-npm-server-script='server-local:ali' \
+        $@ \
+    "
+)}
+
+b-test--cloud() {(
+    mysql@8.0-start
+    redis-start
+
+    cd packages/server/
+    envchain balsamiq-cloud-development bash -i -c "nvm exec npm run build-and-test -- -- $*"
 )}

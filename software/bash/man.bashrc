@@ -18,7 +18,10 @@ function man {
     *)
       # something else, presumed to be an external command
       # or options for the man command or a section number
-      command man "$@"
+      #
+      # in case no man page is found, try to run the command with the
+      # --help option as a last resort
+      command man "$@" 2> /dev/null || "$@" --help | "${PAGER:-less}"
       ;;
   esac
 }

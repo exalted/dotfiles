@@ -1,5 +1,5 @@
 ﻿###
-###  vlc 3.0.20
+###  vlc 3.0.21
 ###
 
 ###
@@ -551,7 +551,7 @@ macosx-continue-playback=1
 #sout-avi-subject=
 
 # Encoder (string)
-#sout-avi-encoder=VLC Media Player - 3.0.20 Vetinari
+#sout-avi-encoder=VLC Media Player - 3.0.21 Vetinari
 
 # Keywords (string)
 #sout-avi-keywords=
@@ -3513,7 +3513,7 @@ volume-save=0
 #audio-time-stretch=1
 
 # Audio output module (string)
-#aout=
+aout=any
 
 # Media role (string)
 #role=video
@@ -3525,7 +3525,7 @@ volume-save=0
 #audio-visual=none
 
 # Audio resampler (string)
-#audio-resampler=
+audio-resampler=any
 
 # Enable video (boolean)
 #video=1
