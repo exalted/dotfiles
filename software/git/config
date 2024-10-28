@@ -100,3 +100,5 @@
 	enabled = true
 [branch]
 	sort = -committerdate
+[safe]
+	bareRepository = explicit
