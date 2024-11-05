@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+{ $GIT show-ref --verify --quiet refs/heads/main && echo "main"; } || { $GIT show-ref --verify --quiet refs/heads/master && echo "master"; }

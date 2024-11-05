@@ -36,11 +36,11 @@
 	co = !git-wrapper checkout
 	n  = !git-wrapper new
 	st = !git-wrapper status
+	up = !git-wrapper update
 [push]
 	default = simple
 [rebase]
 	autoSquash = true
-	autoStash = true
 	updateRefs = true
 [github]
 	user = exalted

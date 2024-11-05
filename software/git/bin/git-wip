@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+main_branch = `#{ENV['GIT']} main`.chomp
+current_branch = `#{ENV['GIT']} current`.chomp
+
+if current_branch == main_branch
+  puts "ERROR: You cannot run `git wip` on '#{main_branch}'"
+  exit 1
+end
+
+# TODO: create one commit for all the changes already staged
+# TODO: create one commit for all the changes not staged (including untracked files)
+# .
+# .
+# .
+# TODO: in a separate git subcommand (e.g., `git unwip` use those two commits to restore the working directory to the state before running `git wip`)

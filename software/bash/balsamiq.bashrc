@@ -178,7 +178,7 @@ b-dev--cloud() {(
         --bas-path=~/Development/balsamiq/bas/ \
         --cloudauth-path=~/Development/balsamiq/cloudauth/ \
         --skip-tutorial \
-        --cloud-envchain-namespace=balsamiq-cloud-development,balsamiq-aws-llc \
+        --cloud-envchain-namespace=balsamiq-cloud-development,balsamiq-aws-srlinternal \
         --bas-envchain-namespace=balsamiq-bas-development \
         --rtc-envchain-namespace=balsamiq-rtc-development \
         --cloudauth-npm-server-script='server-local:ali' \

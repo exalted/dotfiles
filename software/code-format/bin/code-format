@@ -72,6 +72,8 @@ formatter = {
   ".mjs" => "prettier",
   ".ts" => "prettier",
   ".html" => "prettier",
+  ".css" => "prettier",
+  ".md" => "prettier",
   # rustfmt:
   ".rs" => "rustfmt",
   # shfmt:
