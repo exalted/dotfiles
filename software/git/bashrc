@@ -22,12 +22,13 @@ export PATH="$PATH:$HOME/Development/dotfiles/software/git/bin"
 alias git=git-wrapper
 
 # What's the "original" `git` command?
-#export GIT="command git"
-export GIT="hub"
+export GIT="command git"
+# export GIT="hub"
 
 # For typos:
 alias gti=git
 
 # Convenient:
-alias gha='hub browse -- actions'
-alias ghpr='hub browse -- pulls'
+# alias gha='hub browse -- actions'
+alias gha='git browse-ci'
+# alias ghpr='hub browse -- pulls'  # you can use `browse` instead

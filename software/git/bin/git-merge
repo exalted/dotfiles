@@ -2,7 +2,7 @@
 
 if [[ "$@" = "--abort" ]]; then
   # case: `fatal: --abort expects no arguments`
-  $GIT merge --abort
+  git merge --abort
 else
-  $GIT merge --no-edit "$@"
+  git merge --no-edit "$@"
 fi

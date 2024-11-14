@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-$GIT stash pop --index
+git stash pop --index

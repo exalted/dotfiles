@@ -17,13 +17,13 @@ alias b-aws-everything-else='envchain balsamiq-aws-srlinternal aws'
 # TODO: remove hard-coded path
 alias b-convox-production='envchain balsamiq-convox-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 # alias b-convox-rtc-production='envchain balsamiq-convox-rtc-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
-alias b-convox-staging='envchain balsamiq-convox-staging $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+# alias b-convox-staging='envchain balsamiq-convox-staging $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 # alias b-convox-ondeck='envchain balsamiq-convox-eu-6 $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 
 # TODO: Instead create a new "fake" command in convox-wrapper (e.g., `convox instances docker ps`)
 alias b-convox-production-docker-ps="b-convox-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 # alias b-convox-rtc-production-docker-ps="b-convox-rtc-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
-alias b-convox-staging-docker-ps="b-convox-staging foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
+# alias b-convox-staging-docker-ps="b-convox-staging foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 # alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 
 alias b-db-acetaia-production='( cd acetaia/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy production mysql )'
@@ -136,7 +136,9 @@ b-dev--bw-confluence() {
   || true
 }
 
-b-dev--bas() {
+b-dev--bas() {(
+  cd bas/
+
   ( cd architecture/ && nvm exec npm install )
   ( cd src/ && nvm exec npm install --build-from-source --python=/usr/bin/python3 sqlite3 && npm install )
 
@@ -165,31 +167,51 @@ b-dev--bas() {
     "$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf" \
     "( cd src/ && RTC_PUBLISH_KEY=pub-bas-ddb9d0ca-52ad-678f-b8ea-ddf525795f03 RTC_SERVER_URL=https://rtc-staging.balsamiq.com \"$(brew --prefix)/opt/node@18/bin/node\" server.js )" \
   || true
-}
+)}
+
+b-test--bas() {(
+  cd bas/
+
+  ( cd src/ && nvm exec npm test )
+)}
+
+b-coverage--bas() {(
+  cd bas/
+
+  ( cd src/ && nvm exec npm run coverage ; open "file://$(pwd)/coverage/lcov-report/index.html" )
+)}
 
 b-dev--cloud() {(
+    cd cloud/
+
     mysql@8.0-start
     redis-start
 
-    cd development/
-    envchain balsamiq-private-npm-registry bash -i -c "\
-        nvm exec npm run start:development -- \
-        --rtc-path=~/Development/balsamiq/rtc/ \
-        --bas-path=~/Development/balsamiq/bas/ \
-        --cloudauth-path=~/Development/balsamiq/cloudauth/ \
-        --skip-tutorial \
-        --cloud-envchain-namespace=balsamiq-cloud-development,balsamiq-aws-srlinternal \
-        --bas-envchain-namespace=balsamiq-bas-development \
-        --rtc-envchain-namespace=balsamiq-rtc-development \
-        --cloudauth-npm-server-script='server-local:ali' \
-        $@ \
-    "
+    (
+        cd development/
+        envchain balsamiq-private-npm-registry bash -i -c "\
+            nvm exec npm run start:development -- \
+            --rtc-path=~/Development/balsamiq/rtc/ \
+            --bas-path=~/Development/balsamiq/bas/ \
+            --cloudauth-path=~/Development/balsamiq/cloudauth/ \
+            --skip-tutorial \
+            --cloud-envchain-namespace=balsamiq-cloud-development,balsamiq-aws-srlinternal \
+            --bas-envchain-namespace=balsamiq-bas-development \
+            --rtc-envchain-namespace=balsamiq-rtc-development \
+            --cloudauth-npm-server-script='server-local:ali' \
+            $@ \
+        "
+    )
 )}
 
 b-test--cloud() {(
+    cd cloud/
+
     mysql@8.0-start
     redis-start
 
-    cd packages/server/
-    envchain balsamiq-cloud-development bash -i -c "nvm exec npm run build-and-test -- -- $*"
+    (
+        cd packages/server/
+        envchain balsamiq-cloud-development bash -i -c "nvm exec npm run build-and-test -- -- $*"
+    )
 )}

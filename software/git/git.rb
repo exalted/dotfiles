@@ -4,8 +4,8 @@ require_relative '../../src/helpers'
 brew 'git'
 brew 'git-lfs'
 brew 'gh'
-brew 'hub'
-brew 'git-extras'
+# brew 'hub'  # See https://hub.github.com/hub.1.html
+brew 'git-extras'  # See https://github.com/tj/git-extras/blob/main/Commands.md
 
 link_to_home_relative 'config', '.config/git/config'
 link_to_home_relative 'attributes', '.config/git/attributes'

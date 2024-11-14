@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-$GIT branch --merged \
+git branch --merged \
   | { grep -v '^  master$' || true; } \
   | { grep -v '^  main$' || true; } \
   | { grep -v '^*' || true; } \
-  | xargs -n 1 $GIT branch --delete
+  | xargs -n 1 git branch --delete
 
-$GIT remote prune origin
+git remote prune origin

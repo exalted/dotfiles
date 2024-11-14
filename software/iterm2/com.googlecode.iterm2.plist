@@ -6,6 +6,8 @@
 	<true/>
 	<key>AboutToPasteTabsWithCancel_selection</key>
 	<integer>2</integer>
+	<key>AdjustWindowForFontSizeChange</key>
+	<false/>
 	<key>AutoCommandHistory</key>
 	<false/>
 	<key>CloseBookmarksWindowAfterOpening</key>

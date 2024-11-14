@@ -15,4 +15,4 @@ while [ $# -ne 0 ]; do
 done
 set -- "${OTHER_ARGS[@]:-}"  # set positional arguments to whatever is left in `OTHER_ARGS`
 
-$GIT push "$@"
+git push "$@"
