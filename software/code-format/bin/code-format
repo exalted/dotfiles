@@ -143,6 +143,7 @@ if formatter == 'prettier'
     ".prettierrc.js",
     "prettier.config.js",
   ]
+  # TODO: Check ".prettierrc" contains `"requirePragma": true,`, because if it does, than we should consider "fail" this command, else user won't see any error and the "formatting" will seem as if it was successful.
 
   STDERR.puts "==> Looking for prettier (configuration) ..."
 
