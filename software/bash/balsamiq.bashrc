@@ -172,13 +172,25 @@ b-dev--bas() {(
 b-test--bas() {(
   cd bas/
 
-  ( cd src/ && nvm exec npm test )
+  mysql@8.0-start
+  redis-start
+
+  (
+      cd src/
+      nvm exec npm test
+  )
 )}
 
 b-coverage--bas() {(
   cd bas/
 
-  ( cd src/ && nvm exec npm run coverage ; open "file://$(pwd)/coverage/lcov-report/index.html" )
+  mysql@8.0-start
+  redis-start
+
+  (
+      cd src/
+      nvm exec npm run coverage ; open "file://$(pwd)/coverage/lcov-report/index.html"
+  )
 )}
 
 b-dev--cloud() {(

@@ -6,7 +6,7 @@ require_relative '../common'
 #       `software/git/bin/git-*`), so only execute executable `software/foo`s
 #       or `software/foo/foo`s, and nothing else.)
 def install_everything
-  # order of these matter!
+  # we want these to be installed before everything else (order of these matter)
   priority = [
     'homebrew/homebrew.rb',
   ].map { |x| "#{__dir__}/../../software/#{x}" }

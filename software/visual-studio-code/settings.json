@@ -1,149 +1,147 @@
 {
-    "window.zoomLevel": 1.4,
-    "editor.fontFamily": "Monaco",
-    "editor.fontSize": 13,
-    "editor.lineHeight": 20,
-    "editor.tabSize": 2,
-    "editor.cursorSurroundingLines": 5,
-    "editor.minimap.enabled": false,
-    "editor.rulers": [
-        80
-    ],
-    "files.trimFinalNewlines": true,
-    "files.trimTrailingWhitespace": true,
-    "workbench.commandPalette.preserveInput": true,
-    "workbench.quickOpen.preserveInput": true,
-    "files.associations": {
-        "bashrc": "shellscript",
-        ".prettierrc": "json",
-        ".eslintrc": "json"
-    },
-    "explorer.sortOrder": "mixed",
-    "ruby.useLanguageServer": true,
-    "editor.suggestSelection": "first",
-    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
-    "vsintellicode.java.completionsEnabled": false,
-    "vsintellicode.sql.completionsEnabled": false,
-    "search.smartCase": true,
-    "terminal.integrated.scrollback": 100000,
-    "workbench.colorTheme": "One Dark Pro",
-    "workbench.startupEditor": "newUntitledFile",
-    "files.insertFinalNewline": true,
-    "markdown.links.openLocation": "beside",
-    "terminal.integrated.confirmOnExit": "hasChildProcesses",
-    "terminal.integrated.macOptionIsMeta": true,
-    "workbench.colorCustomizations": {
-        "terminal.background": "#000000",
-        "terminal.foreground": "#c7c7c7",
-        "terminal.selectionBackground": "#454d95",
-        "terminal.ansiBlack": "#616161",
-        "terminal.ansiBlue": "#a5d5fe",
-        "terminal.ansiCyan": "#d0d1fe",
-        "terminal.ansiGreen": "#b4fa72",
-        "terminal.ansiMagenta": "#ff8ffd",
-        "terminal.ansiRed": "#ff8272",
-        "terminal.ansiWhite": "#f1f1f1",
-        "terminal.ansiYellow": "#fefdc2",
-        "terminal.ansiBrightBlack": "#616161",
-        "terminal.ansiBrightBlue": "#a5d5fe",
-        "terminal.ansiBrightCyan": "#d0d1fe",
-        "terminal.ansiBrightGreen": "#b4fa72",
-        "terminal.ansiBrightMagenta": "#ff8ffd",
-        "terminal.ansiBrightRed": "#ff8272",
-        "terminal.ansiBrightWhite": "#f1f1f1",
-        "terminal.ansiBrightYellow": "#fefdc2"
-    },
-    "workbench.panel.defaultLocation": "left",
-    "update.showReleaseNotes": false,
-    "terminal.integrated.rendererType": "dom",
-    "search.showLineNumbers": true,
-    "search.useGlobalIgnoreFiles": true,
-    "search.quickOpen.includeHistory": false,
-    "python.linting.pylintPath": "/opt/homebrew/bin/pylint",
-    "python.showStartPage": false,
-    "alignment.surroundSpace": {
-        "colon": [ 1, 1 ]
-    },
-    "search.exclude": {
-        "**/package-lock.json": true
-    },
-    "javascript.updateImportsOnFileMove.enabled": "never",
-    "editor.renderWhitespace": "none",
-    "editor.colorDecorators": false,
-    "workbench.editorAssociations": {
-        "*.ipynb": "jupyter.notebook.ipynb"
-    },
-    "terminal.integrated.tabs.enabled": false,
-    "timeline.excludeSources": [],
-    "files.exclude": {
-        "**/.classpath": true,
-        "**/.project": true,
-        "**/.settings": true,
-        "**/.factorypath": true
-    },
-    "[html]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[json]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "security.workspace.trust.enabled": false,
-    "redhat.telemetry.enabled": false,
-    "yaml.customTags": [
-        "!And",
-        "!And sequence",
-        "!If",
-        "!If sequence",
-        "!Not",
-        "!Not sequence",
-        "!Equals",
-        "!Equals sequence",
-        "!Or",
-        "!Or sequence",
-        "!FindInMap",
-        "!FindInMap sequence",
-        "!Base64",
-        "!Join",
-        "!Join sequence",
-        "!Cidr",
-        "!Ref",
-        "!Sub",
-        "!Sub sequence",
-        "!GetAtt",
-        "!GetAZs",
-        "!ImportValue",
-        "!ImportValue sequence",
-        "!Select",
-        "!Select sequence",
-        "!Split",
-        "!Split sequence"
-    ],
-    "yaml.validate": false,
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[solidity]": {
-        "editor.defaultFormatter": "JuanBlanco.solidity"
-    },
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "maven.executable.path": "/opt/homebrew/Cellar/atlassian-plugin-sdk/8.2.7/libexec/apache-maven-3.5.4/bin/mvn",
-    "xml.server.binary.trustedHashes": [
-        "c64f9b53e9983e224748f43f6be8b32af18a85f6ec88d4b0c73799c286788758"
-    ],
-    "[css]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[yaml]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "editor.inlineSuggest.enabled": true,
-    "git.openRepositoryInParentFolders": "never",
-    "editor.accessibilitySupport": "off",
-    "workbench.activityBar.location": "top",
-    "editor.formatOnSave": true,
-    "editor.formatOnType": true,
-    "editor.formatOnPaste": true,
-    "editor.formatOnSaveMode": "modificationsIfAvailable"
+  "window.zoomLevel": 1.4,
+  "editor.fontFamily": "Monaco",
+  "editor.fontSize": 13,
+  "editor.lineHeight": 20,
+  "editor.tabSize": 2,
+  "editor.cursorSurroundingLines": 5,
+  "editor.minimap.enabled": false,
+  "editor.rulers": [80],
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "workbench.commandPalette.preserveInput": true,
+  "workbench.quickOpen.preserveInput": true,
+  "files.associations": {
+    "bashrc": "shellscript",
+    ".prettierrc": "json",
+    ".eslintrc": "json"
+  },
+  "explorer.sortOrder": "mixed",
+  "ruby.useLanguageServer": true,
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+  "vsintellicode.java.completionsEnabled": false,
+  "vsintellicode.sql.completionsEnabled": false,
+  "search.smartCase": true,
+  "terminal.integrated.scrollback": 100000,
+  "workbench.colorTheme": "One Dark Pro",
+  "workbench.startupEditor": "newUntitledFile",
+  "files.insertFinalNewline": true,
+  "markdown.links.openLocation": "beside",
+  "terminal.integrated.confirmOnExit": "hasChildProcesses",
+  "terminal.integrated.macOptionIsMeta": true,
+  "workbench.colorCustomizations": {
+    "terminal.background": "#000000",
+    "terminal.foreground": "#c7c7c7",
+    "terminal.selectionBackground": "#454d95",
+    "terminal.ansiBlack": "#616161",
+    "terminal.ansiBlue": "#a5d5fe",
+    "terminal.ansiCyan": "#d0d1fe",
+    "terminal.ansiGreen": "#b4fa72",
+    "terminal.ansiMagenta": "#ff8ffd",
+    "terminal.ansiRed": "#ff8272",
+    "terminal.ansiWhite": "#f1f1f1",
+    "terminal.ansiYellow": "#fefdc2",
+    "terminal.ansiBrightBlack": "#616161",
+    "terminal.ansiBrightBlue": "#a5d5fe",
+    "terminal.ansiBrightCyan": "#d0d1fe",
+    "terminal.ansiBrightGreen": "#b4fa72",
+    "terminal.ansiBrightMagenta": "#ff8ffd",
+    "terminal.ansiBrightRed": "#ff8272",
+    "terminal.ansiBrightWhite": "#f1f1f1",
+    "terminal.ansiBrightYellow": "#fefdc2"
+  },
+  "workbench.panel.defaultLocation": "left",
+  "update.showReleaseNotes": false,
+  "terminal.integrated.rendererType": "dom",
+  "search.showLineNumbers": true,
+  "search.useGlobalIgnoreFiles": true,
+  "search.quickOpen.includeHistory": false,
+  "python.linting.pylintPath": "/opt/homebrew/bin/pylint",
+  "python.showStartPage": false,
+  "alignment.surroundSpace": {
+    "colon": [1, 1]
+  },
+  "search.exclude": {
+    "**/package-lock.json": true
+  },
+  "javascript.updateImportsOnFileMove.enabled": "never",
+  "editor.renderWhitespace": "none",
+  "editor.colorDecorators": false,
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter.notebook.ipynb"
+  },
+  "terminal.integrated.tabs.enabled": false,
+  "timeline.excludeSources": [],
+  "files.exclude": {
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "security.workspace.trust.enabled": false,
+  "redhat.telemetry.enabled": false,
+  "yaml.customTags": [
+    "!And",
+    "!And sequence",
+    "!If",
+    "!If sequence",
+    "!Not",
+    "!Not sequence",
+    "!Equals",
+    "!Equals sequence",
+    "!Or",
+    "!Or sequence",
+    "!FindInMap",
+    "!FindInMap sequence",
+    "!Base64",
+    "!Join",
+    "!Join sequence",
+    "!Cidr",
+    "!Ref",
+    "!Sub",
+    "!Sub sequence",
+    "!GetAtt",
+    "!GetAZs",
+    "!ImportValue",
+    "!ImportValue sequence",
+    "!Select",
+    "!Select sequence",
+    "!Split",
+    "!Split sequence"
+  ],
+  "yaml.validate": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[solidity]": {
+    "editor.defaultFormatter": "JuanBlanco.solidity"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "maven.executable.path": "/opt/homebrew/Cellar/atlassian-plugin-sdk/8.2.7/libexec/apache-maven-3.5.4/bin/mvn",
+  "xml.server.binary.trustedHashes": [
+    "c64f9b53e9983e224748f43f6be8b32af18a85f6ec88d4b0c73799c286788758"
+  ],
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.inlineSuggest.enabled": true,
+  "git.openRepositoryInParentFolders": "never",
+  "editor.accessibilitySupport": "off",
+  "workbench.activityBar.location": "top",
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnSaveMode": "modificationsIfAvailable"
 }
