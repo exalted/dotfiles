@@ -10,84 +10,30 @@
 #   ssh ubuntu@ec2-46-137-119-50.eu-west-1.compute.amazonaws.com
 # }
 
-alias b-aws-production-products='envchain balsamiq-aws-llc aws'
-alias b-aws-olio-production='envchain balsamiq-aws-srl aws'
-alias b-aws-everything-else='envchain balsamiq-aws-srlinternal aws'
+# alias b-aws-production-products='envchain balsamiq-aws-llc aws'
+# alias b-aws-olio-production='envchain balsamiq-aws-srl aws'
+# alias b-aws-everything-else='envchain balsamiq-aws-srlinternal aws'
 
 # TODO: remove hard-coded path
-alias b-convox-production='envchain balsamiq-convox-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+alias b-convox--production='envchain balsamiq-convox-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 # alias b-convox-rtc-production='envchain balsamiq-convox-rtc-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 # alias b-convox-staging='envchain balsamiq-convox-staging $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 # alias b-convox-ondeck='envchain balsamiq-convox-eu-6 $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
 
 # TODO: Instead create a new "fake" command in convox-wrapper (e.g., `convox instances docker ps`)
-alias b-convox-production-docker-ps="b-convox-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
+alias b-convox--production_docker-ps="b-convox-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 # alias b-convox-rtc-production-docker-ps="b-convox-rtc-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 # alias b-convox-staging-docker-ps="b-convox-staging foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 # alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 
-alias b-db-acetaia-production='( cd acetaia/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy production mysql )'
+alias b-db--acetaia_production='( cd acetaia/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy production mysql )'
 # TODO: convert to BIK:
 # alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
-alias b-db-swag-production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
-alias b-db-olio-staging='( cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem )'
-alias b-db-olio-feature='( cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem )'
-alias b-db-olio-production='( cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem )'
-
-# alias b-aws-llc='open -a "Balsamiq AWS LLC"'
-# alias b-aws-srl-internal='open -a "Balsamiq AWS SRL internal"'
-
-# npm() {(
-#   # Should we use `command npm "$@"` instead? See also `npx` below.
-#   envchain balsamiq-private-npm-registry command npm $*
-# )}
-# export -f npm
-
-# npx() {(
-#   # `command npx $*` breaks `npx concurrently "echo foo" "echo bar"`
-#   envchain balsamiq-private-npm-registry command npx "$@"
-# )}
-# export -f npx
-
-# b-npm() {
-#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npm'" $*"
-# }
-# b-node18-npm() {
-#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node18-npm'" $*"
-# }
-# b-node16-npm() {
-#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16-npm'" $*"
-# }
-# b-node14-npm() {
-#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node14-npm'" $*"
-# }
-# b-node12-npm() {
-#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12-npm'" $*"
-# }
-# alias b-npm-node18=b-node18-npm
-# alias b-npm-node16=b-node16-npm
-# alias b-npm-node14=b-node14-npm
-# alias b-npm-node12=b-node12-npm
-
-# b-npx() {
-#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx'" $*"
-# }
-# b-node18-npx() {
-#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node18-npx'" $*"
-# }
-# b-node16-npx() {
-#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node16-npx'" $*"
-# }
-# b-node14-npx() {
-#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node14-npx'" $*"
-# }
-# b-node12-npx() {
-#   envchain balsamiq-private-npm-registry /bin/bash -ic 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; node12-npx'" $*"
-# }
-# alias b-npx-node18=b-node18-npx
-# alias b-npx-node16=b-node16-npx
-# alias b-npx-node14=b-node14-npx
-# alias b-npx-node12=b-node12-npx
+alias b-db--swag_production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
+alias b-db--cloud_staging='( cd cloud/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy staging mysql )'
+# alias b-db-olio-staging='( cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem )'
+# alias b-db-olio-feature='( cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem )'
+# alias b-db-olio-production='( cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem )'
 
 b-bootstrap--bw-atlassian() {
   source "$HOME/.sdkman/bin/sdkman-init.sh"
@@ -201,8 +147,8 @@ b-dev--cloud() {(
 
     (
         cd development/
-        envchain balsamiq-private-npm-registry bash -i -c "\
-            nvm exec npm run start:development -- \
+        nvm exec envchain balsamiq-private-npm-registry \
+            npm run start:development -- \
             --rtc-path=~/Development/balsamiq/rtc/ \
             --bas-path=~/Development/balsamiq/bas/ \
             --cloudauth-path=~/Development/balsamiq/cloudauth/ \
@@ -210,9 +156,8 @@ b-dev--cloud() {(
             --cloud-envchain-namespace=balsamiq-cloud-development,balsamiq-aws-srlinternal \
             --bas-envchain-namespace=balsamiq-bas-development \
             --rtc-envchain-namespace=balsamiq-rtc-development \
-            --cloudauth-npm-server-script='server-local:ali' \
-            $@ \
-        "
+            --cloudauth-npm-server-script="server-local:ali" \
+            "$@"
     )
 )}
 
@@ -224,6 +169,6 @@ b-test--cloud() {(
 
     (
         cd packages/server/
-        envchain balsamiq-cloud-development bash -i -c "nvm exec npm run build-and-test -- -- $*"
+        nvm exec envchain balsamiq-cloud-development npm run build-and-test -- -- "$*"
     )
 )}
