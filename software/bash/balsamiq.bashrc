@@ -31,6 +31,7 @@ alias b-db--acetaia_production='( cd acetaia/infrastructure/ && nvm exec npm ins
 # alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db--swag_production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db--cloud_staging='( cd cloud/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy staging mysql )'
+alias b-db--bas_staging='( cd bas/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy staging mysql )'
 # alias b-db-olio-staging='( cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem )'
 # alias b-db-olio-feature='( cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem )'
 # alias b-db-olio-production='( cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem )'
