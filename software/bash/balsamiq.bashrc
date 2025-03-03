@@ -15,34 +15,34 @@
 # alias b-aws-everything-else='envchain balsamiq-aws-srlinternal aws'
 
 # TODO: remove hard-coded path
-alias b-convox--production='envchain balsamiq-convox-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
-# alias b-convox-rtc-production='envchain balsamiq-convox-rtc-production $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
-# alias b-convox-staging='envchain balsamiq-convox-staging $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
-# alias b-convox-ondeck='envchain balsamiq-convox-eu-6 $HOME/Development/balsamiq/convox-ops/bin/convox-wrapper'
+alias b-convox-production='envchain balsamiq-convox-production $HOME/Development/_balsamiq-others/convox-ops/bin/convox-wrapper'
+# alias b-convox-rtc-production='envchain balsamiq-convox-rtc-production $HOME/Development/_balsamiq-others/convox-ops/bin/convox-wrapper'
+# alias b-convox-staging='envchain balsamiq-convox-staging $HOME/Development/_balsamiq-others/convox-ops/bin/convox-wrapper'
+# alias b-convox-ondeck='envchain balsamiq-convox-eu-6 $HOME/Development/_balsamiq-others/convox-ops/bin/convox-wrapper'
 
 # TODO: Instead create a new "fake" command in convox-wrapper (e.g., `convox instances docker ps`)
-alias b-convox--production_docker-ps="b-convox-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
+alias b-convox-production_docker-ps="b-convox-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 # alias b-convox-rtc-production-docker-ps="b-convox-rtc-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 # alias b-convox-staging-docker-ps="b-convox-staging foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 # alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 
-alias b-db--acetaia_production='( cd acetaia/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy production mysql )'
+alias b-db-acetaia_production='( cd acetaia/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy production mysql )'
 # TODO: convert to BIK:
 # alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
-alias b-db--swag_production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
-alias b-db--cloud_staging='( cd cloud/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy staging mysql )'
-alias b-db--bas_staging='( cd bas/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy staging mysql )'
+alias b-db-swag_production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
+alias b-db-cloud_staging='( cd cloud/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy staging mysql )'
+alias b-db-bas_staging='( cd bas/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy staging mysql )'
 # alias b-db-olio-staging='( cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem )'
 # alias b-db-olio-feature='( cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem )'
 # alias b-db-olio-production='( cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem )'
 
-b-bootstrap--bw-atlassian() {
+b-bootstrap-bw-atlassian() {
   source "$HOME/.sdkman/bin/sdkman-init.sh"
   sdk use java 8.0.332-tem
 }
 
-b-dev--bw-jira() {
-  b-bootstrap--bw-atlassian
+b-dev-bw-jira() {
+  b-bootstrap-bw-atlassian
   node18-npm install --legacy-peer-deps
 
   #envchain balsamiq-private-npm-registry /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "postgres,redis,grunt,jira,logs,reload" --kill-others \
@@ -63,8 +63,8 @@ b-dev--bw-jira() {
   || true
 }
 
-b-dev--bw-confluence() {
-  b-bootstrap--bw-atlassian
+b-dev-bw-confluence() {
+  b-bootstrap-bw-atlassian
   node18-npm install --legacy-peer-deps
 
   #envchain balsamiq-private-npm-registry /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "postgres,redis,grunt,confluence,reload" --kill-others \
@@ -83,7 +83,7 @@ b-dev--bw-confluence() {
   || true
 }
 
-b-dev--bas() {(
+b-dev-bas() {(
   cd bas/
 
   ( cd architecture/ && nvm exec npm install )
@@ -116,7 +116,7 @@ b-dev--bas() {(
   || true
 )}
 
-b-test--bas() {(
+b-test-bas() {(
   cd bas/
 
   mysql@8.0-start
@@ -128,7 +128,7 @@ b-test--bas() {(
   )
 )}
 
-b-coverage--bas() {(
+b-coverage-bas() {(
   cd bas/
 
   mysql@8.0-start
@@ -140,7 +140,7 @@ b-coverage--bas() {(
   )
 )}
 
-b-dev--cloud() {(
+b-dev-cloud() {(
     cd cloud/
 
     mysql@8.0-start
@@ -162,7 +162,7 @@ b-dev--cloud() {(
     )
 )}
 
-b-test--cloud() {(
+b-test-cloud() {(
     cd cloud/
 
     mysql@8.0-start

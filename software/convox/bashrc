@@ -1,2 +1,2 @@
 # TODO: remove hard-coded path
-alias convox=$HOME/Development/balsamiq/convox-ops/bin/convox-wrapper
+alias convox=$HOME/Development/_balsamiq-others/convox-ops/bin/convox-wrapper
