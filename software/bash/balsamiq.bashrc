@@ -1,40 +1,15 @@
-# b-ssh-jenkins-master() {
-#   cat <<EOF
-# Once logged to become Jenkins user do this:
-#   $ sudo -s
-#   # su jenkins
-
-# Read more: https://balsamiq.atlassian.net/wiki/x/ToQuEw
-
-# EOF
-#   ssh ubuntu@ec2-46-137-119-50.eu-west-1.compute.amazonaws.com
-# }
-
-# alias b-aws-production-products='envchain balsamiq-aws-llc aws'
-# alias b-aws-olio-production='envchain balsamiq-aws-srl aws'
-# alias b-aws-everything-else='envchain balsamiq-aws-srlinternal aws'
-
 # TODO: remove hard-coded path
-alias b-convox-production='envchain balsamiq-convox-production $HOME/Development/_balsamiq-others/convox-ops/bin/convox-wrapper'
-# alias b-convox-rtc-production='envchain balsamiq-convox-rtc-production $HOME/Development/_balsamiq-others/convox-ops/bin/convox-wrapper'
-# alias b-convox-staging='envchain balsamiq-convox-staging $HOME/Development/_balsamiq-others/convox-ops/bin/convox-wrapper'
-# alias b-convox-ondeck='envchain balsamiq-convox-eu-6 $HOME/Development/_balsamiq-others/convox-ops/bin/convox-wrapper'
+alias b-convox-production='envchain b-convox-production $HOME/Development/_balsamiq-others/convox-ops/bin/convox-wrapper'
 
 # TODO: Instead create a new "fake" command in convox-wrapper (e.g., `convox instances docker ps`)
 alias b-convox-production_docker-ps="b-convox-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
-# alias b-convox-rtc-production-docker-ps="b-convox-rtc-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
-# alias b-convox-staging-docker-ps="b-convox-staging foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
-# alias b-convox-ondeck-docker-ps="b-convox-ondeck foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 
-alias b-db-acetaia_production='( cd acetaia/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy production mysql )'
+alias b-db-acetaia_production='( cd acetaia/infrastructure/ && nvm exec npm install && envchain b-aws-srlinternal,b-npm bin/cli proxy production mysql )'
 # TODO: convert to BIK:
 # alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db-swag_production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
-alias b-db-cloud_staging='( cd cloud/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy staging mysql )'
-alias b-db-bas_staging='( cd bas/infrastructure/ && nvm exec npm install && envchain balsamiq-aws-srlinternal,balsamiq-private-npm-registry bin/cli proxy staging mysql )'
-# alias b-db-olio-staging='( cd olio/ && ./ssh-tunnel-staging.sh -i ~/.ssh/keys/balsamiq-olio-staging.pem )'
-# alias b-db-olio-feature='( cd olio/ && ./ssh-tunnel-feature.sh -i ~/.ssh/keys/balsamiq-olio-feature.pem )'
-# alias b-db-olio-production='( cd olio/ && ./ssh-tunnel-production.sh -i ~/.ssh/keys/balsamiq-olio-production.pem )'
+alias b-db-cloud_staging='( cd cloud/infrastructure/ && nvm exec npm install && envchain b-aws-srlinternal,b-npm bin/cli proxy staging mysql )'
+alias b-db-bas_staging='( cd bas/infrastructure/ && nvm exec npm install && envchain b-aws-srlinternal,b-npm bin/cli proxy staging mysql )'
 
 b-bootstrap-bw-atlassian() {
   source "$HOME/.sdkman/bin/sdkman-init.sh"
@@ -45,7 +20,7 @@ b-dev-bw-jira() {
   b-bootstrap-bw-atlassian
   node18-npm install --legacy-peer-deps
 
-  #envchain balsamiq-private-npm-registry /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "postgres,redis,grunt,jira,logs,reload" --kill-others \
+  #envchain b-npm /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "postgres,redis,grunt,jira,logs,reload" --kill-others \
   #  "$(brew --prefix)/opt/postgresql@11/bin/postgres -D $(brew --prefix)/var/postgresql@11" \
   #  "$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf" \
   #  "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" node_modules/.bin/grunt build" \
@@ -67,7 +42,7 @@ b-dev-bw-confluence() {
   b-bootstrap-bw-atlassian
   node18-npm install --legacy-peer-deps
 
-  #envchain balsamiq-private-npm-registry /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "postgres,redis,grunt,confluence,reload" --kill-others \
+  #envchain b-npm /bin/bash -c 'export PRIVATE_NPM_AUTH_TOKEN=$BALSAMIQ_NPM_AUTH_TOKEN; npx concurrently --names "postgres,redis,grunt,confluence,reload" --kill-others \
   #  "$(brew --prefix)/opt/postgresql@11/bin/postgres -D $(brew --prefix)/var/postgresql@11" \
   #  "$(brew --prefix)/opt/redis/bin/redis-server $(brew --prefix)/etc/redis.conf" \
   #  "npx onchange '"'"'src/main/js/**'"'"' --initial --kill -- \"$(brew --prefix)/opt/node@18/bin/node\" node_modules/.bin/grunt build" \
@@ -148,15 +123,15 @@ b-dev-cloud() {(
 
     (
         cd development/
-        nvm exec envchain balsamiq-private-npm-registry \
+        nvm exec envchain b-npm \
             npm run start:development -- \
             --rtc-path=~/Development/balsamiq/rtc/ \
             --bas-path=~/Development/balsamiq/bas/ \
             --cloudauth-path=~/Development/balsamiq/cloudauth/ \
             --skip-tutorial \
-            --cloud-envchain-namespace=balsamiq-cloud-development,balsamiq-aws-srlinternal \
-            --bas-envchain-namespace=balsamiq-bas-development \
-            --rtc-envchain-namespace=balsamiq-rtc-development \
+            --cloud-envchain-namespace=b-dev-cloud,b-aws-srlinternal \
+            --bas-envchain-namespace=b-dev-bas \
+            --rtc-envchain-namespace=b-dev-rtc \
             --cloudauth-npm-server-script="server-local:ali" \
             "$@"
     )
@@ -170,6 +145,6 @@ b-test-cloud() {(
 
     (
         cd packages/server/
-        nvm exec envchain balsamiq-cloud-development npm run build-and-test -- -- "$*"
+        nvm exec envchain b-dev-cloud npm run build-and-test -- -- "$*"
     )
 )}
