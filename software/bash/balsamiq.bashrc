@@ -5,9 +5,9 @@ alias b-convox-production='envchain b-convox-production $HOME/Development/_balsa
 alias b-convox-production_docker-ps="b-convox-production foreach instances 'docker ps --no-trunc --format \"{{.Names}}\" | sort'"
 
 alias b-db-acetaia_production='( cd acetaia/infrastructure/ && nvm exec npm install && envchain b-aws-srlinternal,b-npm bin/cli proxy production mysql )'
+alias b-db-bottega_production='( cd bottega/infrastructure/ && envchain b-aws-srlinternal script/cli proxy production db )'
+alias b-db-swag_production='( cd swag/infrastructure/ && envchain b-aws-llc script/cli proxy production db )'
 # TODO: convert to BIK:
-# alias b-db-bottega-production='b-convox-production proxy 3329:convox-prod-bottega-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
-alias b-db-swag_production='b-convox-production proxy 3339:convox-prod-swag-mysql.cc5xfgbtx6kw.us-east-1.rds.amazonaws.com:3306'
 alias b-db-cloud_staging='( cd cloud/infrastructure/ && nvm exec npm install && envchain b-aws-srlinternal,b-npm bin/cli proxy staging mysql )'
 alias b-db-bas_staging='( cd bas/infrastructure/ && nvm exec npm install && envchain b-aws-srlinternal,b-npm bin/cli proxy staging mysql )'
 
