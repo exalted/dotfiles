@@ -125,14 +125,12 @@ b-dev-cloud() {(
         cd development/
         nvm exec envchain b-npm \
             npm run start:development -- \
-            --rtc-path=~/Development/balsamiq/rtc/ \
-            --bas-path=~/Development/balsamiq/bas/ \
-            --cloudauth-path=~/Development/balsamiq/cloudauth/ \
             --skip-tutorial \
             --cloud-envchain-namespace=b-dev-cloud,b-aws-srlinternal \
             --bas-envchain-namespace=b-dev-bas \
             --rtc-envchain-namespace=b-dev-rtc \
             --cloudauth-npm-server-script="server-local:ali" \
+            --cloud-landing-npm-dev-script="dev:ali" \
             "$@"
     )
 )}
