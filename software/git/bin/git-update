@@ -3,11 +3,9 @@
 git fetch --all --prune
 
 main_branch=$(git main)
-if [ "$(git current)" = "$main_branch" ]; then
-    # TODO: you may want to move any work in progress, if any, using `git wip` first and then "unwip" it
-    git pull
-else
+if [ "$(git current)" != "$main_branch" ]; then
     git fetch origin $main_branch:$main_branch  # Update main branch without checking into it
 fi
 
-# TODO: At this point you should "pull" the current branch, however you may want to move any work in progress, if any, using `git wip` first and then "unwip" it
+# TODO: you may want to move any work in progress, if any, using `git wip` first and then "unwip" it
+git pull
