@@ -9,9 +9,17 @@
 # Paths
 #   If not specified, defaults to current directory.
 
-new_window = ARGV.include? '--new-window'
-wait = ARGV.include? '--wait'
-paths = ARGV.reverse.take_while { |arg| !arg.start_with? '--' }
+new_window = ARGV.include?('--new-window') && ARGV.delete('--new-window')
+wait = ARGV.include?('--wait') && ARGV.delete('--wait')
+other_args = []
+paths = []
+ARGV.each do |arg|
+  if arg.start_with?('--')
+    other_args << arg
+  else
+    paths << arg
+  end
+end
 
 # TODO: auto-detect which editor to use (fallback to Zed). For example, if the
 # path contains `.idea` folder, use IntelliJ IDEA.
@@ -22,6 +30,7 @@ paths = ARGV.reverse.take_while { |arg| !arg.start_with? '--' }
 args = [ '/Applications/Zed Preview.app/Contents/MacOS/cli' ]
 args.push '--new' if ( new_window || ARGV.empty?)
 args.push '--wait' if wait
+args.concat(other_args)
 args.concat(paths.empty? ? [ '.' ] : paths)
 
 Kernel.system(*args)

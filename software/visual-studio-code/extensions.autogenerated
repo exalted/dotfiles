@@ -5,6 +5,8 @@ bradlc.vscode-tailwindcss
 dawhite.mustache
 dbaeumer.vscode-eslint
 deepinthought.vscode-shell-snippets
+denoland.vscode-deno
+docker.docker
 dotjoshjohnson.xml
 editorconfig.editorconfig
 esbenp.prettier-vscode
@@ -14,6 +16,7 @@ golang.go
 juanblanco.solidity
 kddejong.vscode-cfn-lint
 marlon407.code-groovy
+ms-azuretools.vscode-containers
 ms-azuretools.vscode-docker
 ms-python.debugpy
 ms-python.isort

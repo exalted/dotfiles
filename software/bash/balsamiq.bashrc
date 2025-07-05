@@ -143,6 +143,7 @@ b-test-cloud() {(
 
     (
         cd packages/server/
-        nvm exec envchain b-dev-cloud npm run build-and-test -- -- "$*"
+        # nvm exec envchain b-dev-cloud npm run build-and-test -- -- "$*"
+        nvm exec envchain b-dev-cloud npm run build-and-test
     )
 )}

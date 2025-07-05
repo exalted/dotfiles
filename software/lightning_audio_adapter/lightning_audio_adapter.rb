@@ -3,9 +3,7 @@ require_relative '../../src/helpers'
 
 brew 'switchaudio-osx'
 
-# system "brew tap mvp/uhubctl https://github.com/mvp/uhubctl"
-# brew 'uhubctl'
-brew 'mvp/uhubctl/uhubctl'
+brew 'uhubctl'
 
 # 3 Feb 2024: I disabled this because I was having mac sleep/wake issues and I
 # was suspecting this may be contribute to that. Also, I am not using the
