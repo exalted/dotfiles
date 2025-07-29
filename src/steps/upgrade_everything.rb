@@ -1,21 +1,24 @@
 require_relative '../common'
 
 def upgrade_everything
-  ohai "Upgrading existing software…"
+  Upgrade.os
   Upgrade.brew
   Upgrade.mas
-
-  ohai "Upgrade successful!"
-  puts
 end
 
 module Upgrade
+  def self.os
+    ohai "Upgrading macOS software…"
+    system "softwareupdate --install --all"
+  end
+
   def self.brew
+    ohai "Upgrading software installed via Homebrew…"
     system "brew upgrade --greedy"
   end
 
   def self.mas
-    puts "Updating App Store Applications…"
+    ohai "Upgrading App Store Applications…"
     system "mas upgrade"
   end
 end
