@@ -18,18 +18,20 @@ end
 # ==============================================================================
 #                                  THE PROGRAM
 # ==============================================================================
+
 #
 # From https://docs.zed.dev/configuration/configuring-zed#formatter:
 # "The buffer's text will be passed to the program on stdin, and the formatted output should be written to stdout."
 #
-# ------------------------------------------------------------------------------
 
-STDERR.puts "==> Parsing command line arguments ..."
+# ------------------------------------------------------------------------------
+STDERR.puts "==> Parsing the command line arguments ..."
+# ------------------------------------------------------------------------------
 
 params = ARGV  # for Zed this should contain only one file path (i.e, `{buffer_path}`)
 
 if params.length == 0
-  STDERR.puts "ERROR: This program doesn't work unless you specify an absolute file path as parameter!"
+  STDERR.puts "ERROR: This program doesn't work unless you specify a file path parameter!"
   exit 1
 end
 
@@ -60,36 +62,8 @@ path = params[0]
 STDERR.puts "Path: '#{path}'"
 
 # ------------------------------------------------------------------------------
-
-STDERR.puts "==> Selecting formatter tool ..."
-
-extension = File.extname(path)
-
-formatter = {
-  # prettier:
-  ".json" => "prettier",
-  ".js" => "prettier",
-  ".mjs" => "prettier",
-  ".ts" => "prettier",
-  ".html" => "prettier",
-  ".css" => "prettier",
-  ".md" => "prettier",
-  # rustfmt:
-  ".rs" => "rustfmt",
-  # shfmt:
-  ".sh" => "shfmt",
-}[extension]
-
-unless formatter
-  STDERR.puts "ERROR: This program doesn't support *#{extension} files!"
-  exit 1
-end
-
-STDERR.puts "Formatter: #{formatter} (#{extension})"
-
-# ------------------------------------------------------------------------------
-
 STDERR.puts "==> Reading the standard input ..."
+# ------------------------------------------------------------------------------
 
 # `STDIN.read` blocks until EOF, so we need to check if there's anything to read
 # to not get stuck
@@ -104,14 +78,164 @@ end
 STDERR.puts "OK"
 
 # ------------------------------------------------------------------------------
+STDERR.puts "==> Detecting the language ..."
+# ------------------------------------------------------------------------------
 
+def get_language(path, text)
+  def get_mime_type(path)
+    output, _, _ = Open3.capture3("file", "--brief", "--mime", path)
+    mime_type = output.split(';').first.strip
+    mime_type
+  end
+
+  def get_shebang(text)
+    lines = text.split("\n")
+    return nil if lines.empty?
+
+    first_line = lines[0]
+    if first_line.start_with?("#!")
+      first_line
+    else
+      nil
+    end
+  end
+
+  def get_language_for_shebang(shebang)
+    return nil unless shebang
+
+    if shebang.match?(/\bruby\b/)
+      "ruby"
+    end
+
+    if shebang.match?(/\bnode\b/)
+      "javascript"
+    end
+
+    if shebang.match?(/\b(ts-node|deno)\b/)
+      "typescript"
+    end
+
+    if shebang.match?(/\bbash\b/)
+      "shell"
+    end
+  end
+
+  shebang = get_shebang(text)
+  mime_type = get_mime_type(path)
+  extension = File.extname(path)
+
+  language_for_shebang = get_language_for_shebang(shebang)
+  STDERR.puts "Language detected from shebang ('#{shebang}'): '#{language_for_shebang}'"
+
+  language_for_mime_type = {
+    "application/json" => "json",
+    "text/html" => "html",
+    "text/x-ruby" => "ruby",
+    "text/x-script.python" => "python",
+    "text/x-shellscript" => "shell",
+  }[mime_type]
+  STDERR.puts "Language detected from MIME type ('#{mime_type}'): '#{language_for_mime_type}'"
+
+  language_for_extension = {
+    #
+    # json:
+    #
+    ".json" => "json",
+    #
+    # javascript:
+    #
+    ".js" => "javascript",
+    ".mjs" => "javascript",
+    #
+    # typescript:
+    #
+    ".ts" => "typescript",
+    #
+    # html:
+    #
+    ".html" => "html",
+    #
+    # css:
+    #
+    ".css" => "css",
+    #
+    # markdown:
+    #
+    ".md" => "markdown",
+    #
+    # rust:
+    #
+    ".rs" => "rust",
+    #
+    # shell:
+    #
+    ".sh" => "shell",
+    ".bashrc" => "shell",
+  }[extension]
+  STDERR.puts "Language detected from file name extension ('#{extension}'): '#{language_for_extension}'"
+
+  language = nil
+  if language_for_shebang
+    language = language_for_shebang
+    STDERR.puts "Language picked: '#{language}' (shebang)"
+  elsif language_for_mime_type
+    language = language_for_mime_type
+    STDERR.puts "Language picked : '#{language}' (mime type)"
+  elsif language_for_extension
+    language = language_for_extension
+    STDERR.puts "Language picked: '#{language}' (file name extension)"
+  end
+
+  language
+end
+
+language = get_language(path, text)
+
+unless language
+  STDERR.puts "ERROR: Could not determine the language!"
+  exit 1
+end
+
+# ------------------------------------------------------------------------------
+STDERR.puts "==> Selecting a formatter ..."
+# ------------------------------------------------------------------------------
+
+formatter = {
+  #
+  # prettier:
+  #
+  "json" => "prettier",
+  "javascript" => "prettier",
+  "typescript" => "prettier",
+  "html" => "prettier",
+  "css" => "prettier",
+  "markdown" => "prettier",
+  #
+  # rustfmt:
+  #
+  "rust" => "rustfmt",
+  #
+  # shfmt:
+  #
+  "shell" => "shfmt",
+}[language]
+
+unless formatter
+  STDERR.puts "ERROR: Could not determine a formatter!"
+  exit 1
+end
+
+STDERR.puts "Formatter: #{formatter}"
+
+# ------------------------------------------------------------------------------
 STDERR.puts "==> Looking for the project directory ..."
+# ------------------------------------------------------------------------------
 
 projectdir = nil
 currentdir = File.dirname(path)
 
 loop do
-  STDERR.puts "DEBUG: Looking in #{currentdir} ..."
+  STDERR.puts "Looking in #{currentdir} ..."
 
   if File.directory?(File.join(currentdir, ".git"))
     projectdir = currentdir
@@ -150,7 +274,7 @@ if formatter == 'prettier'
   currentdir = File.dirname(path)
 
   loop do
-    STDERR.puts "DEBUG: Looking in #{currentdir} ..."
+    STDERR.puts "Looking in #{currentdir} ..."
 
     config_found = false
 
@@ -187,7 +311,7 @@ if formatter == 'prettier'
   currentdir = File.dirname(path)
 
   loop do
-    STDERR.puts "DEBUG: Looking in #{currentdir} ..."
+    STDERR.puts "Looking in #{currentdir} ..."
 
     prettier_candidate = File.join(currentdir, 'node_modules', '.bin', 'prettier')
     if File.file?(prettier_candidate)
@@ -227,7 +351,7 @@ if formatter == 'rustfmt'
   currentdir = File.dirname(path)
 
   loop do
-    STDERR.puts "DEBUG: Looking in #{currentdir} ..."
+    STDERR.puts "Looking in #{currentdir} ..."
 
     config_found = false
 
@@ -269,20 +393,11 @@ end
 # ==============================================================================
 
 STDERR.puts "==> Formatting '#{path} (#{formatter}) ..."
-STDERR.puts "DEBUG: Running `#{command}`"
+STDERR.puts "Running `#{command}`"
 
 output = nil
 error = nil
 status = nil
-
-# Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
-#   stdin.print text
-#   stdin.close
-
-#   status = wait_thr.value.exitstatus
-#   error = stderr.read
-#   output = stdout.read
-# end
 
 begin
   output, error, status = Open3.capture3(command, stdin_data: text)
@@ -294,7 +409,7 @@ end
 # prettier will quit with exit code 0 even if there are errors
 unless error.blank?
   STDERR.puts "ERROR: Command failed (#{status})!"
-  STDERR.puts "DEBUG: #{error}"
+  STDERR.puts "#{error}"
   exit 1
 end
 

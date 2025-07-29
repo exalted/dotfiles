@@ -2,4 +2,4 @@
 require_relative '../src/helpers'
 
 cask 'firefox'
-cask 'firefox-developer-edition'
+cask 'firefox@developer-edition'

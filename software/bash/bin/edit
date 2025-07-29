@@ -24,10 +24,9 @@ end
 # TODO: auto-detect which editor to use (fallback to Zed). For example, if the
 # path contains `.idea` folder, use IntelliJ IDEA.
 
-# TODO: ? instead of hard-coding any specific editor, use the `EDITOR` (or `VISUAL`)
+args = [ ENV['VISUAL']&.gsub(/\A"|"\z/, '') ]
 
 # Zed specific code
-args = [ '/Applications/Zed Preview.app/Contents/MacOS/cli' ]
 args.push '--new' if ( new_window || ARGV.empty?)
 args.push '--wait' if wait
 args.concat(other_args)

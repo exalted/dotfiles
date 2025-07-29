@@ -4,6 +4,9 @@ export HISTCONTROL=ignoreboth:erasedups
 # # (Ref.: http://www.talug.org/events/20030709/cmdline_history.html)
 # export HISTIGNORE="&:ls:[bf]g:exit"
 
+# Immediately sync history across sessions
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+
 # Append when the shell exits, rather than overwriting the history file
 shopt -s histappend
 

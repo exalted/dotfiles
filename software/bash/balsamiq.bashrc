@@ -9,6 +9,7 @@ alias b-db-bottega_production='( cd bottega/infrastructure/ && envchain b-aws-sr
 alias b-db-swag_production='( cd swag/infrastructure/ && envchain b-aws-llc script/cli proxy production db )'
 # TODO: convert to BIK:
 alias b-db-cloud_staging='( cd cloud/infrastructure/ && nvm exec npm install && envchain b-aws-srlinternal,b-npm bin/cli proxy staging mysql )'
+alias b-db-cloud_production='( cd cloud/infrastructure/ && nvm exec npm install && envchain b-aws-llc,b-npm bin/cli proxy production mysql )'
 alias b-db-bas_staging='( cd bas/infrastructure/ && nvm exec npm install && envchain b-aws-srlinternal,b-npm bin/cli proxy staging mysql )'
 
 b-bootstrap-bw-atlassian() {

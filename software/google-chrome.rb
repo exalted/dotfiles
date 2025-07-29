@@ -2,4 +2,4 @@
 require_relative '../src/helpers'
 
 cask 'google-chrome'
-cask 'google-chrome-dev'
+cask 'google-chrome@dev'
