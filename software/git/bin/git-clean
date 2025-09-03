@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# Make sure to not remove local Claude code settings errorneously:
+git clean --exclude=.claude/ "$@"
