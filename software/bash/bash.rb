@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
 require_relative '../../src/helpers'
 
-brew 'bash-completion'
+brew 'bash'
+system "sudo chsh -s $(brew --prefix)/bin/bash #{ENV["USER"]}"
+
+brew 'bash-completion@2'
 bash_source "/opt/homebrew/etc/profile.d/bash_completion.sh"
 
 link_to_home_relative 'inputrc', '.inputrc'

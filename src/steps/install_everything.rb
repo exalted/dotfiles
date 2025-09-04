@@ -9,6 +9,7 @@ def install_everything
   # we want these to be installed before everything else (order of these matter)
   priority = [
     'homebrew/homebrew.rb',
+    'bash/bash.rb',
   ].map { |x| "#{__dir__}/../../software/#{x}" }
 
   ohai "Installing new software…"
