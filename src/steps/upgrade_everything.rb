@@ -14,7 +14,8 @@ module Upgrade
 
   def self.brew
     ohai "Upgrading software installed via Homebrew…"
-    system "brew upgrade --greedy"
+    # system "brew upgrade --greedy"
+    system "brew upgrade --greedy-latest"
   end
 
   def self.mas

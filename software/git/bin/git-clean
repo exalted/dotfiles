@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
 
+args=()
+
 # Make sure to not remove local Claude code settings errorneously:
-git clean --exclude=.claude/ "$@"
+if [ -d ".claude/" ]; then
+    args+=("--exclude=/$(git rev-parse --show-prefix).claude/")
+fi
+
+git clean "${args[@]}" "$@"

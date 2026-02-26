@@ -3,10 +3,6 @@ require_relative '../../src/helpers'
 
 # Default version is set in `software/node/bashrc` via `PATH`
 brew 'node'
-brew 'node@18'
-# brew 'node@16'
-# brew 'node@14'
-# brew 'node@12'
 
 #
 # Node Version Manager

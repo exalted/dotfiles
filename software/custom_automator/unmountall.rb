@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 require_relative '../../src/helpers'
 
-# TODO: The technique below is copied from `software/mosaic.rb`, no bueno…
+# # TODO: The technique below is copied from `software/mosaic.rb`, no bueno…
 
-filename = "Unmount all.workflow"
-src = "#{__dir__}/#{filename}"
-dest = "#{ENV["HOME"]}/Library/Services"
+# filename = "Unmount all.workflow"
+# src = "#{__dir__}/#{filename}"
+# dest = "#{ENV["HOME"]}/Library/Services"
 
-FileUtils.mkdir_p dest
-FileUtils.cp_r(src, dest, preserve: true)
+# FileUtils.mkdir_p dest
+# FileUtils.cp_r(src, dest, preserve: true)

@@ -24,14 +24,14 @@ export default {
     {
       match: finicky.matchHostnames(['localhost', '127.0.0.1', /\.local$/]),
       browser: {
-        name: 'Google Chrome',
+        name: 'Google Chrome Dev',
         profile: "Default",
       },
     },
     {
       match: finicky.matchHostnames([/(chrome|plus|hangouts|meet)\.google\.com/]),
       browser: {
-        name: 'Google Chrome',
+        name: 'Google Chrome Dev',
         profile: "Default",
       },
     },

@@ -19,7 +19,7 @@ end
 
 def cleanup
   ohai "Cleaning up…"
-  system "brew cleanup"
+  system "brew cleanup --prune=all"
 
   ohai "Clean as a whistle."
   puts

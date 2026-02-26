@@ -1,0 +1,32 @@
+[
+  {
+    "bindings":{
+      "alt-cmd-w":"pane::CloseInactiveItems",
+      "ctrl-tab":"pane::ActivateNextItem",
+      "ctrl-shift-tab":"pane::ActivatePreviousItem"
+    }
+  },
+  {
+    "context":"Editor",
+    "bindings":{
+      "alt-up": "editor::SelectLargerSyntaxNode",
+      "alt-down": "editor::SelectSmallerSyntaxNode",
+      "ctrl-shift-k": "editor::DeleteLine",
+      "cmd-shift-d": "editor::DuplicateLineDown",
+      "ctrl-cmd-up": "editor::MoveLineUp",
+      "ctrl-cmd-down": "editor::MoveLineDown"
+    }
+  },
+  {
+    "context":"ProjectSearchView",
+    "bindings":{
+      "alt-cmd-s":"workspace::SaveAll"
+    }
+  },
+  {
+    "context":"Pane",
+    "bindings":{
+      "alt-cmd-s":"workspace::SaveAll"
+    }
+  }
+]

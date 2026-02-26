@@ -10,7 +10,11 @@ export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 # Append when the shell exits, rather than overwriting the history file
 shopt -s histappend
 
-# History completion to what's already on the line
-# (Ref.: http://stackoverflow.com/a/1030206/11895)
-bind '"\e[A": history-search-backward'
-bind '"\e[B": history-search-forward'
+# Only apply if the shell is interactive (e.g., Claude code running commands
+# in non-interactive Bash sessions that doesn't support keyboard input).
+if [[ $- == *i* ]]; then
+    # History completion to what's already on the line
+    # (Ref.: http://stackoverflow.com/a/1030206/11895)
+    bind '"\e[A": history-search-backward'
+    bind '"\e[B": history-search-forward'
+fi

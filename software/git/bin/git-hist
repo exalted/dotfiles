@@ -5,6 +5,6 @@
 
 git log \
   --color \
-  --pretty=format:'%C(black)%h%C(bold red)%d %C(reset)%s  %C(black)%aN (%ar)%C(reset)' \
+  --pretty=format:'%C(brightblack)%h%C(reset)%C(bold red)%d%C(reset) %C(reset)%s  %C(brightblack)%aN (%ar)%C(reset)' \
   --decorate-refs-exclude=refs/tags \
   "$@"

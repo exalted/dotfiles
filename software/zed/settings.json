@@ -1,0 +1,151 @@
+{
+  "edit_predictions": {
+    "provider": "zed"
+  },
+  "context_servers": {
+    "mcp-server-context7": {
+      "enabled": true,
+      "settings": {
+        "default_minimum_tokens": "10000"
+      }
+    }
+  },
+  "diagnostics": {
+    "inline": {
+      "enabled": true
+    }
+  },
+  "auto_signature_help": true,
+  "show_signature_help_after_edits": true,
+  "wrap_guides": [50, 80, 120, 140],
+  "preferred_line_length": 140,
+  // "soft_wrap": "bounded",
+  "soft_wrap": "bounded",
+  "theme": "One Dark",
+  "base_keymap": "VSCode",
+  "terminal": {
+    "dock": "right"
+  },
+  "ui_font_size": 18,
+  "buffer_font_size": 16,
+  "buffer_font_family": "Monaco",
+  "formatter": {
+    "external": {
+      "command": "code-format",
+      "arguments": ["{buffer_path}"]
+    }
+  },
+  "inlay_hints": {
+    "show_background": true,
+    "toggle_on_modifiers_press": {
+      "function": true
+    }
+  },
+  "agent": {
+    "inline_assistant_model": {
+      "provider": "zed.dev",
+      "model": "claude-opus-4-1"
+    },
+    "profiles": {
+      "write": {
+        "name": "Write",
+        "tools": {
+          "project_notifications": true,
+          "copy_path": true,
+          "create_directory": true,
+          "delete_path": true,
+          "diagnostics": true,
+          "edit_file": true,
+          "fetch": true,
+          "list_directory": true,
+          "move_path": true,
+          "now": true,
+          "find_path": true,
+          "read_file": true,
+          "grep": true,
+          "terminal": true,
+          "thinking": true,
+          "web_search": true,
+          "open": true
+        },
+        "enable_all_context_servers": true,
+        "context_servers": {
+          "mcp-server-context7": {
+            "tools": {
+              "resolve-library-id": true,
+              "get-library-docs": true
+            }
+          }
+        }
+      },
+      "ask": {
+        "name": "Ask",
+        "tools": {
+          "terminal": true,
+          "project_notifications": true,
+          "contents": true,
+          "diagnostics": true,
+          "fetch": true,
+          "list_directory": true,
+          "now": true,
+          "find_path": true,
+          "read_file": true,
+          "open": true,
+          "grep": true,
+          "thinking": true,
+          "web_search": true
+        },
+        "enable_all_context_servers": true,
+        "context_servers": {
+          "mcp-server-context7": {
+            "tools": {
+              "resolve-library-id": true,
+              "get-library-docs": true
+            }
+          }
+        }
+      }
+    },
+    "default_profile": "write",
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-opus-4-1"
+    }
+  },
+  "languages": {
+    // "TypeScript": {
+    //   "language_servers": ["typescript-language-server"]
+    // },
+    // "TSX": {
+    //   "language_servers": ["typescript-language-server"]
+    // },
+    // "JavaScript": {
+    //   "language_servers": ["typescript-language-server"]
+    // }
+  },
+  "lsp": {
+    // "typescript-language-server": {
+    //   "initialization_options": {
+    //     // https://github.com/typescript-language-server/typescript-language-server/blob/master/docs/configuration.md#initializationoptions
+    //     // & https://zed.dev/docs/languages/typescript#large-projects:
+    //     "maxTsServerMemory": 24576 /* 24 GiB */
+    //   }
+    // },
+    "rust-analyzer": {
+      "initialization_options": {
+        "check": {
+          // `rust-analyzer.check.command` (default: "check")
+          // (See https://rust-analyzer.github.io/manual.html#configuration)
+          "command": "clippy" // i.e. `cargo clippy`
+        }
+      }
+    }
+    // "vtsls": {
+    //   "initialization_options": {
+    //     // https://zed.dev/docs/languages/typescript#large-projects:
+    //     "typescript": { "tsserver": { "maxTsServerMemory": 24576 /* 24 GiB */ } },
+    //     "javascript": { "tsserver": { "maxTsServerMemory": 24576 /* 24 GiB */ } }
+    //   }
+    // }
+  }
+}
