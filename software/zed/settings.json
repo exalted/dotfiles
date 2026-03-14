@@ -1,4 +1,5 @@
 {
+  "auto_update": false,
   "edit_predictions": {
     "provider": "zed"
   },

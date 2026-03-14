@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>NSStatusItem Preferred Position rocket_status_item</key>
-	<real>416</real>
+	<real>374</real>
 	<key>NSWindow Frame SUStatusFrame</key>
 	<string>1080 978 400 135 0 0 2560 1410 </string>
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2026-02-26T02:28:06Z</date>
+	<date>2026-03-13T17:28:30Z</date>
 	<key>hot-key-b8-iaK-thyib-yoV-Kep-It</key>
 	<string>:</string>
 	<key>launch-at-login</key>
@@ -19,7 +19,7 @@
 	<key>rocket-pro-macrelease</key>
 	<true/>
 	<key>total-emoji-expanded</key>
-	<integer>481</integer>
+	<integer>556</integer>
 	<key>use-double-trigger</key>
 	<false/>
 	<key>use-fuzzy-search</key>
