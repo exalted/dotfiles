@@ -25,7 +25,7 @@ end
 #
 
 # ------------------------------------------------------------------------------
-STDERR.puts "==> Parsing the command line arguments ..."
+STDERR.puts "==> Parsing command line arguments ..."
 # ------------------------------------------------------------------------------
 
 params = ARGV  # for Zed this should contain only one file path (i.e, `{buffer_path}`)
@@ -78,10 +78,40 @@ end
 STDERR.puts "OK"
 
 # ------------------------------------------------------------------------------
+STDERR.puts "==> Looking for the project directory ..."
+# ------------------------------------------------------------------------------
+
+projectdir = nil
+currentdir = File.dirname(path)
+
+loop do
+  STDERR.puts "Looking in #{currentdir} ..."
+
+  if File.directory?(File.join(currentdir, ".git"))
+    projectdir = currentdir
+    break
+  end
+
+  if currentdir == Dir.home
+    STDERR.puts "ERROR: Couldn't find the project directory: Reached user's home ('#{Dir.home}') starting from '#{File.dirname(path)}'!"
+    exit 1
+  end
+
+  if currentdir == '/'
+    STDERR.puts "ERROR: Couldn't find the project directory: Reached the root ('/') starting from '#{File.dirname(path)}'!"
+    exit 1
+  end
+
+  currentdir = File.dirname(currentdir)
+end
+
+STDERR.puts "Found '#{projectdir}'"
+
+# ------------------------------------------------------------------------------
 STDERR.puts "==> Detecting the language ..."
 # ------------------------------------------------------------------------------
 
-def get_language(path, text)
+def detect_language(path, text)
   def get_mime_type(path)
     output, _, _ = Open3.capture3("file", "--brief", "--mime", path)
     mime_type = output.split(';').first.strip
@@ -125,7 +155,7 @@ def get_language(path, text)
   extension = File.extname(path)
 
   language_for_shebang = get_language_for_shebang(shebang)
-  STDERR.puts "Language detected from shebang ('#{shebang}'): '#{language_for_shebang}'"
+  STDERR.puts "Language for '#{shebang}' (shebang): '#{language_for_shebang}'"
 
   language_for_mime_type = {
     "application/json" => "json",
@@ -134,7 +164,7 @@ def get_language(path, text)
     "text/x-script.python" => "python",
     "text/x-shellscript" => "shell",
   }[mime_type]
-  STDERR.puts "Language detected from MIME type ('#{mime_type}'): '#{language_for_mime_type}'"
+  STDERR.puts "Language for '#{mime_type}' (MIME type): '#{language_for_mime_type}'"
 
   language_for_extension = {
     #
@@ -172,24 +202,26 @@ def get_language(path, text)
     ".sh" => "shell",
     ".bashrc" => "shell",
   }[extension]
-  STDERR.puts "Language detected from file name extension ('#{extension}'): '#{language_for_extension}'"
+  STDERR.puts "Language for '#{extension}' (file name extension): '#{language_for_extension}'"
 
   language = nil
+  from = nil
   if language_for_shebang
     language = language_for_shebang
-    STDERR.puts "Language picked: '#{language}' (shebang)"
+    from = "shebang"
   elsif language_for_mime_type
     language = language_for_mime_type
-    STDERR.puts "Language picked : '#{language}' (mime type)"
+    from = "MIME type"
   elsif language_for_extension
     language = language_for_extension
-    STDERR.puts "Language picked: '#{language}' (file name extension)"
+    from = "file name extension"
   end
+  STDERR.puts "Language detected: '#{language}' from #{from}"
 
   language
 end
 
-language = get_language(path, text)
+language = detect_language(path, text)
 
 unless language
   STDERR.puts "ERROR: Could not determine the language!"
@@ -200,25 +232,35 @@ end
 STDERR.puts "==> Selecting a formatter ..."
 # ------------------------------------------------------------------------------
 
-formatter = {
-  #
-  # prettier:
-  #
-  "json" => "prettier",
-  "javascript" => "prettier",
-  "typescript" => "prettier",
-  "html" => "prettier",
-  "css" => "prettier",
-  "markdown" => "prettier",
-  #
-  # rustfmt:
-  #
-  "rust" => "rustfmt",
-  #
-  # shfmt:
-  #
-  "shell" => "shfmt",
-}[language]
+# TODO: use `cargo fmt` for Rust files instead?
+
+def select_formatter(language)
+  default_formatter_for_language = {
+    #
+    # prettier:
+    #
+    "json" => "prettier",
+    "javascript" => "prettier",
+    "typescript" => "prettier",
+    "html" => "prettier",
+    "css" => "prettier",
+    "markdown" => "prettier",
+    #
+    # rustfmt:
+    #
+    "rust" => "rustfmt",
+    #
+    # shfmt:
+    #
+    "shell" => "shfmt",
+  }[language]
+  STDERR.puts "Default formatter for '#{language}': '#{default_formatter_for_language}'"
+
+  default_formatter_for_language
+end
+
+
+formatter = select_formatter(language)
 
 unless formatter
   STDERR.puts "ERROR: Could not determine a formatter!"
@@ -226,36 +268,6 @@ unless formatter
 end
 
 STDERR.puts "Formatter: #{formatter}"
-
-# ------------------------------------------------------------------------------
-STDERR.puts "==> Looking for the project directory ..."
-# ------------------------------------------------------------------------------
-
-projectdir = nil
-currentdir = File.dirname(path)
-
-loop do
-  STDERR.puts "Looking in #{currentdir} ..."
-
-  if File.directory?(File.join(currentdir, ".git"))
-    projectdir = currentdir
-    break
-  end
-
-  if currentdir == Dir.home
-    STDERR.puts "ERROR: Couldn't find the project directory: Reached user's home ('#{Dir.home}') starting from '#{File.dirname(path)}'!"
-    exit 1
-  end
-
-  if currentdir == '/'
-    STDERR.puts "ERROR: Couldn't find the project directory: Reached the root ('/') starting from '#{File.dirname(path)}'!"
-    exit 1
-  end
-
-  currentdir = File.dirname(currentdir)
-end
-
-STDERR.puts "Found '#{projectdir}'"
 
 # ------------------------------------------------------------------------------
 #                                  prettier
