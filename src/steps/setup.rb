@@ -6,7 +6,6 @@ def setup
   Setup.create_temp_bashrc
 
   ohai "Ready!"
-  puts
 end
 
 def wrapup
@@ -14,7 +13,6 @@ def wrapup
   Setup.save_bashrc
 
   ohai "All good."
-  puts
 end
 
 def cleanup
@@ -22,7 +20,6 @@ def cleanup
   system "brew cleanup --prune=all"
 
   ohai "Clean as a whistle."
-  puts
 end
 
 module Setup

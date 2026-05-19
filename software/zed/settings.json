@@ -1,15 +1,11 @@
 {
+  "cli_default_open_behavior": "new_window",
+  "project_panel": {
+    "dock": "left"
+  },
   "auto_update": false,
   "edit_predictions": {
     "provider": "zed"
-  },
-  "context_servers": {
-    "mcp-server-context7": {
-      "enabled": true,
-      "settings": {
-        "default_minimum_tokens": "10000"
-      }
-    }
   },
   "diagnostics": {
     "inline": {
@@ -40,77 +36,6 @@
     "show_background": true,
     "toggle_on_modifiers_press": {
       "function": true
-    }
-  },
-  "agent": {
-    "inline_assistant_model": {
-      "provider": "zed.dev",
-      "model": "claude-opus-4-1"
-    },
-    "profiles": {
-      "write": {
-        "name": "Write",
-        "tools": {
-          "project_notifications": true,
-          "copy_path": true,
-          "create_directory": true,
-          "delete_path": true,
-          "diagnostics": true,
-          "edit_file": true,
-          "fetch": true,
-          "list_directory": true,
-          "move_path": true,
-          "now": true,
-          "find_path": true,
-          "read_file": true,
-          "grep": true,
-          "terminal": true,
-          "thinking": true,
-          "web_search": true,
-          "open": true
-        },
-        "enable_all_context_servers": true,
-        "context_servers": {
-          "mcp-server-context7": {
-            "tools": {
-              "resolve-library-id": true,
-              "get-library-docs": true
-            }
-          }
-        }
-      },
-      "ask": {
-        "name": "Ask",
-        "tools": {
-          "terminal": true,
-          "project_notifications": true,
-          "contents": true,
-          "diagnostics": true,
-          "fetch": true,
-          "list_directory": true,
-          "now": true,
-          "find_path": true,
-          "read_file": true,
-          "open": true,
-          "grep": true,
-          "thinking": true,
-          "web_search": true
-        },
-        "enable_all_context_servers": true,
-        "context_servers": {
-          "mcp-server-context7": {
-            "tools": {
-              "resolve-library-id": true,
-              "get-library-docs": true
-            }
-          }
-        }
-      }
-    },
-    "default_profile": "write",
-    "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-opus-4-1"
     }
   },
   "languages": {

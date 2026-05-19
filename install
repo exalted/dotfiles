@@ -41,7 +41,7 @@ class Array
 end
 
 def ohai(*args)
-  puts "#{Tty.blue}>>>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
+  puts "#{Tty.blue}dotfiles:#{Tty.bold} #{args.shell_s}#{Tty.reset}"
 end
 
 def warn(warning)
@@ -74,7 +74,6 @@ system "#{USER_BIN}/dotfiles"
 warn "#{USER_BIN} is not in your PATH." unless ENV["PATH"].split(":").include? "#{USER_BIN}"
 
 ohai "Installation successful!"
-puts
 
 # Use the shell's audible bell.
 print "\a"

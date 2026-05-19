@@ -1,5 +1,7 @@
 # Inspired by https://github.com/Homebrew/install/blob/63e779e5d6cc1cd7ddefda9c0eb404687d1a1c79/install
 
+require 'fileutils'
+
 module Tty
   module_function
 
@@ -11,12 +13,20 @@ module Tty
     bold 31
   end
 
+  def cyan
+    italic 36
+  end
+
   def reset
     escape 0
   end
 
   def bold(n = 39)
     escape "1;#{n}"
+  end
+
+  def italic(n = 39)
+    escape "3;#{n}"
   end
 
   def underline
@@ -37,7 +47,7 @@ class Array
 end
 
 def ohai(*args)
-  puts "#{Tty.blue}>>>#{Tty.bold} #{args.shell_s}#{Tty.reset}"
+  puts "#{Tty.blue}dotfiles:#{Tty.bold} #{args.shell_s}#{Tty.reset}"
 end
 
 def warn(warning)
@@ -53,4 +63,64 @@ def system(*args)
   result = Kernel.system(*args)
   abort "Failed during: #{args.shell_s}" unless result
   return result
+end
+
+# Prompt for sudo upfront so the password is asked at a predictable moment,
+# then refresh the timestamp every 60s so it doesn't expire (5-min default)
+# during long stretches between sudo calls. Pairs with shadow_brew_with_pty,
+# which keeps brew from wiping the cache mid-run.
+def keep_sudo_alive
+  Kernel.system("sudo", "--validate") or abort "sudo authentication failed"
+  Thread.new do
+    loop do
+      sleep 60
+      Kernel.system("sudo", "--non-interactive", "--validate")
+    end
+  end
+end
+
+# Shadow `brew` on PATH with a wrapper that runs the real brew inside its own
+# pseudo-TTY (via `script`).
+#
+# Why: every brew invocation runs `sudo --reset-timestamp` at startup
+# (brew.sh:1126) to defend against unauthorized sudo in formula code. That
+# wipes whatever sudo cache `keep_sudo_alive` is maintaining. Since sudo's
+# timestamps are per-TTY, putting brew inside its own pty confines the reset
+# to that pty — our terminal's timestamp keeps living.
+# Ref: https://github.com/Homebrew/brew/issues/17912
+#
+# Caveats:
+# * `script` collapses brew's stdout and stderr into a single channel (a pty
+#   has only one), so `brew foo 2>err.log` won't capture anything in err.log
+#   — both streams come back on stdout.
+# * The wrapper is rewritten on every run, so its contents always match this
+#   function; don't edit software/homebrew/bin/brew directly.
+def shadow_brew_with_pty
+  wrapper_dir = "#{__dir__}/../software/homebrew/bin"
+  FileUtils.mkdir_p(wrapper_dir)
+  File.write("#{wrapper_dir}/brew", <<~SH)
+    #!/bin/bash
+    # Auto-generated each run by src/common.rb::shadow_brew_with_pty.
+    # Runs the real brew in its own pseudo-TTY so brew's `sudo --reset-timestamp`
+    # only kills the timestamp inside that pty, sparing our terminal's sudo cache.
+    # Ref: https://github.com/Homebrew/brew/issues/17912
+    set -o pipefail
+    for p in $(type -ap brew); do
+      if [ "$p" != "$0" ] && [ -x "$p" ]; then
+        if [ -t 1 ]; then
+          # Interactive: let \\r through so brew's progress bars render properly.
+          exec script -q /dev/null "$p" "$@"
+        else
+          # Captured (pipe / `$(...)` / backticks): strip \\r so paths like
+          # `$(brew --prefix)` don't end up as `/opt/homebrew\\r`.
+          script -q /dev/null "$p" "$@" | tr -d '\\r'
+          exit "${PIPESTATUS[0]}"
+        fi
+      fi
+    done
+    echo "brew-pty-wrapper: real brew not found on PATH" >&2
+    exit 127
+  SH
+  File.chmod(0755, "#{wrapper_dir}/brew")
+  ENV["PATH"] = "#{wrapper_dir}:#{ENV["PATH"]}"
 end
