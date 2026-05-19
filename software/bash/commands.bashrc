@@ -72,7 +72,7 @@ alias mdn='google mdn'
 alias speedtest=networkQuality
 
 serve() {
-  "$(brew --prefix)/bin/python3" -m http.server "${1:-8080}"
+  python3 -m http.server "${1:-8080}"
 }
 
 reset-open-with() {

@@ -24,12 +24,12 @@ end
 # TODO: auto-detect which editor to use (fallback to Zed). For example, if the
 # path contains `.idea` folder, use IntelliJ IDEA.
 
-args = [ ENV['VISUAL']&.gsub(/\A"|"\z/, '') ]
+args = [ENV['VISUAL']&.gsub(/\A"|"\z/, '')]
 
 # Zed specific code
-args.push '--new' if (new_window || ARGV.empty?)
+args.push '--new' if new_window || ARGV.empty?
 args.push '--wait' if wait
 args.concat(other_args)
-args.concat(paths.empty? ? [ '.' ] : paths)
+args.concat(paths.empty? ? ['.'] : paths)
 
 Kernel.system(*args)
