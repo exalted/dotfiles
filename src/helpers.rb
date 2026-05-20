@@ -7,7 +7,7 @@ def debounce(period: '1h')
   seconds = period.scan(/(\d+)([smhd])/).sum { |n, u| n.to_i * { 's' => 1, 'm' => 60, 'h' => 3600, 'd' => 86_400 }[u] }
   loc = Kernel.caller_locations.first
   key = "#{loc.path}:#{loc.lineno}".gsub(%r{[^\w.-]}, '_')
-  marker = File.expand_path("~/.cache/dotfiles/debounce/#{key}")
+  marker = File.expand_path("#{ENV["HOME"]}/.cache/dotfiles/debounce/#{key}")
 
   return if File.exist?(marker) && (Time.now - File.mtime(marker)) < seconds
 

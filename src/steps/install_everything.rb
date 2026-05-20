@@ -1,32 +1,43 @@
 require_relative '../common'
 
-def install_everything
-  # we want these to be installed before everything else (order of these matter)
-  priority = [
-    'homebrew/homebrew.rb',
-    'bash/bash.rb',
-  ].map { |x| "#{__dir__}/../../software/#{x}" }
+SOFTWARE_DIR = File.expand_path("#{__dir__}/../../software").freeze
+SOFTWARE_EXTENSIONS = %w[rb sh py js].freeze
 
+def resolve_software(name)
+  stems =
+    if name.include?("/")
+      ["#{SOFTWARE_DIR}/#{name}"]
+    else
+      ["#{SOFTWARE_DIR}/#{name}", "#{SOFTWARE_DIR}/#{name}/#{name}"]
+    end
+  candidates = stems.flat_map { |stem| SOFTWARE_EXTENSIONS.map { |ext| "#{stem}.#{ext}" } }
+  relative = ->(path) { path.sub("#{SOFTWARE_DIR}/", "software/") }
+
+  found = candidates.find { |path| File.file?(path) }
+  abort "profiles.rb lists #{name.inspect}, but no entry script exists " \
+        "(looked for: #{candidates.map(&relative).join(", ")})" unless found
+  abort "#{relative.call(found)} is listed in profiles.rb but is not " \
+        "executable — run `chmod +x` on it" unless File.executable?(found)
+
+  found
+end
+
+def install_everything
   ohai "Installing any new software…"
 
-  for file in priority
+  for name in BOOTSTRAP
+    file = resolve_software(name)
     system file
   end
 
-  time_installer = ->(file) {
+  manifest = (COMMON + PROFILES.fetch(@current_profile)).sort
+  manifest.each do |name|
+    file = resolve_software(name)
+    puts "#{Tty.blue}>#{Tty.bold} #{name}#{Tty.reset}"
+
     started_at = Time.now
     system file
     elapsed = Time.now - started_at
     puts "#{Tty.cyan}(Took #{elapsed.round(2)}s)#{Tty.reset}" if elapsed > 1
-  }
-
-  # TODO: instead of searching executables by file extension, execute all files
-  #       that are actually executable (although there may be other executables
-  #       that are part of a software, but not software itself (e.g.,
-  #       `software/git/bin/git-*`), so only execute executable `software/foo`s
-  #       or `software/foo/foo`s, and nothing else.)
-  for file in Dir.glob("#{__dir__}/../../software/**/*.{sh,rb,py,js}") - priority
-    puts "#{Tty.blue}>#{Tty.bold} #{File.basename(file, '.*')}#{Tty.reset}"
-    time_installer.call file if File.executable? file
   end
 end

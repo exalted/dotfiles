@@ -6,11 +6,12 @@ Dir.glob("#{__dir__}/../src/steps/*")
    .map { |file| Pathname.new(file).sub_ext '' }
    .each { |file| require_relative file }
 
-keep_sudo_alive
+_resolve_profile
+_keep_sudo_alive
 
 # These are various system-wide installers, homebrew being the mother of all:
 install_homebrew
-shadow_brew_with_pty
+_shadow_brew_with_pty
 install_mas
 
 # … then comes the real deal:

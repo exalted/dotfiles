@@ -1,5 +1,5 @@
 #!/bin/bash
-# Auto-generated each run by src/common.rb::shadow_brew_with_pty.
+# Auto-generated each run by src/common.rb::_shadow_brew_with_pty.
 # Runs the real brew in its own pseudo-TTY so brew's `sudo --reset-timestamp`
 # only kills the timestamp inside that pty, sparing our terminal's sudo cache.
 # Ref: https://github.com/Homebrew/brew/issues/17912

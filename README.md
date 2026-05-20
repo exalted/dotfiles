@@ -3,26 +3,54 @@ dotfiles
 
 This assumes your shell of choice is Bash.
 
-## Install dotfiles
+## "Install"
 
-Paste the following to a Terminal prompt:
+Clone this repository and run the entry point:
 
 ```bash
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/exalted/dotfiles/main/install)"
+git clone https://github.com/exalted/dotfiles.git ~/Development/dotfiles
+cd ~/Development/dotfiles/
+bin/dotfiles
 ```
+
+The first run aborts until you've selected a profile — see **Profiles** below.
 
 ## Usage
 
-Whenever you feel like, run a simple command to keep your environment up-to-date:
+Whenever you feel like, run `bin/dotfiles` to keep your environment up to
+date.
+
+## Profiles
+
+`profiles.rb` is the registry of what gets installed:
+
+* `BOOTSTRAP` — the package manager and the shell; installed first.
+* `COMMON` — installed for all profiles.
+* `PROFILES['<name>']` — installed only for the current profile.
+
+A profile is selected via `~/.config/dotfiles/profile`:
 
 ```bash
-dotfiles
+mkdir -p ~/.config/dotfiles
+echo personal > ~/.config/dotfiles/profile
 ```
+
+`bin/dotfiles` aborts with these instructions — and the list of valid
+profiles — if the file is missing.
 
 ## How to add new software
 
-0. Create a script file anywhere (also in a nested directory) inside `software/` (e.g., `software/example.rb`). (Not necessarily in Ruby, but encouraged. Shell/Python/JavaScript are also welcome.)
-0. Make sure it's executable (`chmod +x software/example.rb`).
-0. Make sure it has correct shebang (e.g., `#!/usr/bin/env ruby` for Ruby, `#!/usr/bin/env bash` for Bash, etc.).
-0. Make sure they're self executable, meaning they work even if you run them directly like `software/example.rb` rather than through `bin/dotfiles`.
-0. Try to write your script as less order dependent as possible related to order software.
+0. Create an executable script at `software/<name>.<ext>` (a flat script)
+   or `software/<name>/<name>.<ext>` (its own directory). `<ext>` is one of
+   `rb`, `sh`, `py`, `js`; Ruby is encouraged, the rest are welcome.
+0. Make it executable (`chmod +x`) and give it a correct shebang
+   (`#!/usr/bin/env ruby`, `#!/usr/bin/env bash`, …).
+0. Keep it self-contained — it must work when run directly
+   (e.g. `software/<name>.rb`), not only through `bin/dotfiles`.
+0. List `<name>` in `profiles.rb`, under `COMMON` or a profile. A script
+   that isn't listed there is never run.
+0. Try to keep scripts as order-independent as possible.
+
+Software that can't follow the naming convention may live anywhere under
+`software/` and be listed with a directory-qualified name, `<dir>/<name>`
+(for example `custom_automator/remountall`).
