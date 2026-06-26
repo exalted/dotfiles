@@ -18,7 +18,7 @@ COMMON = %w[
   iterm2
   jq
   keka
-  logitech-options
+  logi-options-plus
   macos
   node
   ripgrep
