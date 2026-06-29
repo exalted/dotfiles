@@ -2,7 +2,7 @@
 require_relative '../../src/helpers'
 
 brew 'git'
-brew 'git-lfs'
+# brew 'git-lfs'
 brew 'gh'
 # brew 'hub'  # See https://hub.github.com/hub.1.html
 brew 'git-extras'  # See https://github.com/tj/git-extras/blob/main/Commands.md
@@ -17,6 +17,8 @@ gitignore_templates = %w[
   Global/Archives.gitignore
   Global/Dropbox.gitignore
   Global/Emacs.gitignore
+  Global/Vim.gitignore
+  Global/Zed.gitignore
   Global/VisualStudioCode.gitignore
   Global/Xcode.gitignore
 ]

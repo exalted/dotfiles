@@ -1,100 +1,100 @@
 [user]
-	name = Ali Servet Donmez
-	email = asd@pittle.org
+    name = Ali Servet Donmez
+    email = asd@pittle.org
 [core]
-	trustctime = false
+    trustctime = false
     ; TODO: this is almost exactly repeated in software/diff/bashrc:
-	pager = diff-so-fancy | emojify | less --chop-long-lines --quit-at-eof
-	excludesfile = /Users/ali/.config/git/ignore
+    pager = diff-so-fancy | emojify | less --chop-long-lines --quit-at-eof
+    excludesfile = /Users/ali/.config/git/ignore
 [credential]
-	helper = osxkeychain
+    helper = osxkeychain
 [svn]
-	rmdir = true
+    rmdir = true
 [diff]
-	tool = Kaleidoscope
-	algorithm = histogram
-	indentHeuristic = true
-	colorMoved = dimmed-zebra
-	colorMovedWS = allow-indentation-change
+    tool = Kaleidoscope
+    algorithm = histogram
+    indentHeuristic = true
+    colorMoved = dimmed-zebra
+    colorMovedWS = allow-indentation-change
 [difftool]
-	prompt = false
+    prompt = false
 [merge]
-	tool = Kaleidoscope
-	autoStash = true
+    tool = Kaleidoscope
+    autoStash = true
 [mergetool]
-	prompt = false
-	keepBackup = true
+    prompt = false
+    keepBackup = true
 [color]
-	ui = auto
+    ui = auto
 [alias]
-	; Aliases are meant to be shorthands (ideally two chars) for existing
-	; subcommands (standard or not). Keep this list in alphabetical order.
-	br = !git-wrapper branch
-	ci = !git-wrapper commit
-	co = !git-wrapper checkout
-	n  = !git-wrapper new
-	st = !git-wrapper status
-	up = !git-wrapper update
+    ; Aliases are meant to be shorthands (ideally two chars) for existing
+    ; subcommands (standard or not). Keep this list in alphabetical order.
+    br = !git-wrapper branch
+    ci = !git-wrapper commit
+    co = !git-wrapper checkout
+    n  = !git-wrapper new
+    st = !git-wrapper status
+    up = !git-wrapper update
 [push]
-	default = simple
+    default = simple
 [rebase]
-	autoSquash = true
-	updateRefs = true
+    autoSquash = true
+    updateRefs = true
 [github]
-	user = exalted
+    user = exalted
 [filter "media"]
-	required = true
-	clean = git media clean %f
-	smudge = git media smudge %f
+    required = true
+    clean = git media clean %f
+    smudge = git media smudge %f
 [pull]
-	rebase = merges
+    rebase = merges
 [status]
-	showUntrackedFiles = all
+    showUntrackedFiles = all
 [fetch]
-	prune = true
+    prune = true
 [grep]
-	lineNumber = true
+    lineNumber = true
 [filter "hawser"]
-	clean = git hawser clean %f
-	smudge = git hawser smudge %f
-	required = true
+    clean = git hawser clean %f
+    smudge = git hawser smudge %f
+    required = true
 [mailmap]
-	file = ~/.config/git/mailmap
+    file = ~/.config/git/mailmap
 [log]
-	decorate = short
+    decorate = short
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
 [difftool "Kaleidoscope"]
-	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+    cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [mergetool "sourcetree"]
 	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [mergetool "Kaleidoscope"]
-	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-	trustExitCode = true
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	required = true
-	process = git-lfs filter-process
+    cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+    trustExitCode = true
+; [filter "lfs"]
+;     clean = git-lfs clean -- %f
+;     smudge = git-lfs smudge -- %f
+;     required = true
+;     process = git-lfs filter-process
 [color "diff-highlight"]
-	oldNormal = red bold
-	oldHighlight = red bold 52
-	newNormal = green bold
-	newHighlight = green bold 22
+    oldNormal = red bold
+    oldHighlight = red bold 52
+    newNormal = green bold
+    newHighlight = green bold 22
 [color "diff"]
-	meta = yellow
-	frag = magenta bold
-	commit = yellow bold
-	old = red bold
-	new = green bold
-	whitespace = red reverse
+    meta = yellow
+    frag = magenta bold
+    commit = yellow bold
+    old = red bold
+    new = green bold
+    whitespace = red reverse
 [init]
-	defaultBranch = main
+    defaultBranch = main
 [commit]
-	template = /Users/ali/.stCommitMsg
+    template = /Users/ali/.stCommitMsg
 [rerere]
-	enabled = true
+    enabled = true
 [branch]
-	sort = -committerdate
+    sort = -committerdate

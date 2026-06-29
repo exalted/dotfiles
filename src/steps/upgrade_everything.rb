@@ -26,7 +26,7 @@ module Upgrade
   def self.homebrew
     ohai "Upgrading software installed via Homebrew…"
     # system "brew upgrade --greedy"
-    system "brew upgrade --greedy-latest"
+    system "brew upgrade --yes --greedy-latest"
   end
 
   def self.appstore
