@@ -32,6 +32,11 @@ def mas(app_id)
   system "mas install #{app_id}"
 end
 
+def install(name, message)
+  return if app_exists?(name)
+  warn message
+end
+
 def link(src, dest, backup: false)
   abort "#{src}: No such file or directory" unless File.exist? src
 

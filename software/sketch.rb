@@ -1,7 +1,14 @@
 #!/usr/bin/env ruby
 require_relative '../src/helpers'
 
-## TODO: My license expired, so the latest version I can use (43.2) can be
-## downloaded from https://www.sketch.com/changelog/43-2/ (direct link:
-## https://download.sketch.com/sketch-43.2-39069.zip)
-# cask 'sketch'
+install 'Sketch', <<~MESSAGE
+  Sketch must be installed manually.
+
+  License expired, so the latest usable version is 43.2 — see the changelog:
+  https://www.sketch.com/changelog/43-2/
+
+  Direct download link:
+  https://download.sketch.com/sketch-43.2-39069.zip
+
+  Previously installed automatically via `cask 'sketch'` — that no longer works.
+MESSAGE
