@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
 
-# TODO: Add ability to "include tags" with `--tags` or something similar,
-#       hence *not* adding `--decorate-refs-exclude=refs/tags` below.
+decorate_args=(--decorate-refs-exclude=refs/tags)
+args=()
+
+for arg in "$@"; do
+  if [[ "$arg" == "--tags" ]]; then
+    decorate_args=()
+  else
+    args+=("$arg")
+  fi
+done
 
 git log \
   --color \
   --pretty=format:'%C(brightblack)%h%C(reset)%C(bold red)%d%C(reset) %C(reset)%s  %C(brightblack)%aN (%ar)%C(reset)' \
-  --decorate-refs-exclude=refs/tags \
-  "$@"
+  "${decorate_args[@]}" \
+  "${args[@]}"
