@@ -6,3 +6,5 @@ cask 'zed@preview'
 link_to_home_relative 'settings.json', '.config/zed/settings.json'
 link_to_home_relative 'keymap.json', '.config/zed/keymap.json'
 
+bash_source_relative
+

@@ -1,6 +1,0 @@
-# TODO: this may or may not be the best place for this (it seems it should
-#       belong to Zed instead)
-if [[ -z "$ZED_TERM" ]]; then
-  # TODO: remove hard-coded path
-  source /Users/ali/Development/dotfiles/software/iterm2/shell_integration
-fi
