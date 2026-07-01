@@ -18,8 +18,7 @@ export GIT_PS1_SHOWUNTRACKEDFILES=true
 #   - "=" indicates that there is no difference
 export GIT_PS1_SHOWUPSTREAM=auto
 
-# TODO: remove hard-coded path
-export PATH="$PATH:$HOME/Development/dotfiles/software/git/bin"
+export PATH="$PATH:$(dirname "${BASH_SOURCE[0]}")/bin"
 
 # `alias` takes precedence over functions, built-ins, and $PATH
 alias git=git-wrapper

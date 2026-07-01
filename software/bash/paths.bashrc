@@ -4,11 +4,7 @@
 
 export PATH="$PATH:$HOME/bin"
 
-# TODO: Is this necessary, or is it already being taken care by `software/homebrew/bashrc`
-export PATH="$PATH:$(brew --prefix)/sbin"
-
-# TODO: remove hard-coded path
-export PATH="$PATH:$HOME/Development/dotfiles/software/bash/bin"
+export PATH="$PATH:$(dirname "${BASH_SOURCE[0]}")/bin"
 
 ##
 ## MANPATH

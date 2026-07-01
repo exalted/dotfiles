@@ -1,5 +1,6 @@
-# TODO: remove hard-coded path
-export PATH="$PATH:$HOME/Development/dotfiles/software/bash/bin"
+#!/usr/bin/env bash
+
+export PATH="$PATH:$(dirname "$(realpath "${BASH_SOURCE[0]}")")/../bash/bin"
 
 blueutil --power on
 
