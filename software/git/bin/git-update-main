@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+main_branch=$(git main 2> /dev/null)
+[ -z "$main_branch" ] && exit 0
+
+if [ "$(git current)" = "$main_branch" ]; then
+  # A fetch into a checked-out branch is refused by git — which is exactly
+  # the case here, since this is the common "start a new branch from an
+  # up-to-date main" workflow. A normal pull isn't restricted that way.
+  git pull --quiet --ff-only 2> /dev/null
+else
+  # Fast-forward-only, so local commits not yet on origin are never
+  # discarded.
+  git fetch --quiet origin "$main_branch:$main_branch" 2> /dev/null
+fi

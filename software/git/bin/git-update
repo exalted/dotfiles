@@ -2,10 +2,7 @@
 
 git fetch --all --prune
 
-main_branch=$(git main)
-if [ "$(git current)" != "$main_branch" ]; then
-    git fetch origin $main_branch:$main_branch  # Update main branch without checking into it
-fi
+git update-main
 
 # TODO: you may want to move any work in progress, if any, using `git wip` first and then "unwip" it
 git pull
