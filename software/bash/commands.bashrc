@@ -113,7 +113,7 @@ is-git() {
   git rev-parse --git-dir > /dev/null 2>&1
 }
 
-alias idea='open -n -a "IntelliJ IDEA" --args "$@"'
+idea() { open -n -a "IntelliJ IDEA" --args "$@"; }
 
 date() {
   cat <<EOF | node -
