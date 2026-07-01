@@ -1,12 +1,27 @@
 cask() {
-  if [[ "${1:-}" = search ]]; then
-    # Prefer `brew search` to `brew search --cask` as former will show results
-    # from both, whilst latter will only show cask results
-    brew search "${@:2}"
-    return
-  fi
+  case "${1:-}" in
+    search)
+      command brew search --cask "${@:2}"
+      ;;
+    install)
+      command brew install --yes --cask "${@:2}"
+      ;;
+    *)
+      >&2 echo 'Usage: cask search|install ...'
+      return 1
+      ;;
+  esac
+}
 
-  brew "$1" --cask "${@:2}"
+brew() {
+  case "${1:-}" in
+    instal | install | reinstall | upgrade)
+      command brew "$1" --yes "${@:2}"
+      ;;
+    *)
+      command brew "$@"
+      ;;
+  esac
 }
 
 spider() {

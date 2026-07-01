@@ -18,13 +18,13 @@ def debounce(period: '1h')
 end
 
 def brew(formula)
-  return if Kernel.system "brew list #{formula} > /dev/null"
-  system "brew install #{formula}"
+  return if Kernel.system "brew list --formula #{formula} > /dev/null"
+  system "brew install --yes --formula #{formula}"
 end
 
 def cask(token)
   return if Kernel.system "brew list --cask #{token} > /dev/null"
-  system "brew install --cask #{token}"
+  system "brew install --yes --cask #{token}"
 end
 
 def mas(app_id)
