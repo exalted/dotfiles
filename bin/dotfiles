@@ -20,6 +20,18 @@ upgrade_everything
 install_everything
 wrapup
 cleanup
-# TODO: consider `source ~/.bashrc` to make changes effective immediately…
+
+# TODO: new/changed commands, aliases, functions, etc. aren't available in the
+# current shell session until it's restarted or ~/.bashrc is re-sourced.
+#
+# Problem: this script runs as a subprocess of the invoking shell, and a child
+# process cannot modify its parent's environment/functions/aliases — not even
+# by shelling out to `source ~/.bashrc` here, since that would only affect a
+# throwaway grandchild subshell, not the shell that ran `dotfiles`.
+#
+# Solution: change how `dotfiles` is invoked — replace the plain PATH
+# executable with a shell function (e.g. in bash/commands.bashrc) that runs
+# this script and then sources ~/.bashrc itself, in the same process:
+#   dotfiles() { command ruby "$DOTFILES_ROOT/bin/dotfiles" "$@" && source ~/.bashrc; }
 
 ohai "Okey dokey… see you next time!"
