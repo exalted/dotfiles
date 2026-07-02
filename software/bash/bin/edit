@@ -21,9 +21,6 @@ ARGV.each do |arg|
   end
 end
 
-# TODO: auto-detect which editor to use (fallback to Zed). For example, if the
-# path contains `.idea` folder, use IntelliJ IDEA.
-
 args = [ENV['VISUAL']&.gsub(/\A"|"\z/, '')]
 
 # Zed specific code
