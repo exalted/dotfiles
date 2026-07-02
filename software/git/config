@@ -3,8 +3,7 @@
     email = asd@pittle.org
 [core]
     trustctime = false
-    ; TODO: this is almost exactly repeated in software/diff/bashrc:
-    pager = diff-so-fancy | emojify | less --chop-long-lines --quit-at-eof
+    pager = diff-pager
     excludesfile = /Users/ali/.config/git/ignore
 [credential]
     helper = osxkeychain
