@@ -33,7 +33,7 @@ def mas(app_id)
 end
 
 def install(name, message)
-  return if app_exists?(name)
+  return if app_installed?(name)
   warn message
 end
 

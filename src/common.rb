@@ -59,7 +59,7 @@ def cmd_exists?(cmdname)
   Kernel.system "command -v #{cmdname} > /dev/null"
 end
 
-def app_exists?(name)
+def app_installed?(name)
   Dir.exist?("/Applications/#{name}.app") || Dir.exist?("#{ENV["HOME"]}/Applications/#{name}.app")
 end
 
