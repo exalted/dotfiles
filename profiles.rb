@@ -39,6 +39,8 @@ PROFILES['personal'] = %w[
   aws
   blueutil
   carbon-copy-cloner
+  claude
+  claude-code
   cleanshot-x
   clipy
   code-format
@@ -87,4 +89,8 @@ PROFILES['personal'] = %w[
   webtorrent
   whatsapp
   ynab
+]
+
+PROFILES['work'] = %w[
+  tuple
 ]
