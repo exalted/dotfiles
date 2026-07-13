@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-export PATH="$PATH:$(dirname "$(realpath "${BASH_SOURCE[0]}")")/../bash/bin"
-
-blueutil --power off
-
-unmountall

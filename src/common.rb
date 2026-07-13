@@ -131,8 +131,8 @@ def _shadow_brew_with_pty
 end
 
 # Only executable files count as entry scripts — that's resolve_software's
-# contract, and it's what tells an installer apart from a support file it
-# sources (e.g. lightning_audio_adapter/index.js).
+# contract, and it's what tells an installer apart from a support file that
+# sits beside it (e.g. finicky/finicky.js, Finicky's config).
 def _defined_software_names
   ext = /\.(#{SOFTWARE_EXTENSIONS.join("|")})\z/
   entry = ->(path) { File.file?(path) && File.executable?(path) && File.basename(path) =~ ext }

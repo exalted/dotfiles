@@ -53,4 +53,4 @@ profiles — if the file is missing.
 
 Software that can't follow the naming convention may live anywhere under
 `software/` and be listed with a directory-qualified name, `<dir>/<name>`
-(for example `custom_automator/remountall`).
+(for example a script at `some_dir/tool.rb`, listed as `some_dir/tool`).

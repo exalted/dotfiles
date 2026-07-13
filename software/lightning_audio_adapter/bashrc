@@ -1,1 +1,0 @@
-alias reset-lightning-audio-adapter='node "$HOME/Development/dotfiles/software/lightning_audio_adapter/index.js"'

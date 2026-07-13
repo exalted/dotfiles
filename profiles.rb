@@ -37,56 +37,40 @@ PROFILES['personal'] = %w[
   ack
   apple_apps
   aws
-  blueutil
-  carbon-copy-cloner
   claude
   claude-code
   cleanshot-x
   clipy
   code-format
   cups
-  custom_automator/remountall
-  custom_automator/unmountall
   cyberduck
   docker
   download_subtitles
   dropbox
   envchain
   firefox
-  fluid
   gnupg
-  grammarly
-  hookshot
-  ia-writer
   insomnia
-  kaleidoscope
-  lightning_audio_adapter
   mactracker
   mysql
   ngrok
-  nosql-workbench
   omnidisksweeper
   openjdk
   pixelmator
   pwgen
   python
-  reeder
   rust
   scapple
   sketch
   slack
-  sleepwatcher
   sourcetree
   stripe-cli
   things
   tor-browser
   transmission
   tripmode
-  virtualbox
-  visual-studio-code
   vlc
   watch
-  webtorrent
   whatsapp
   ynab
 ]
