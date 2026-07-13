@@ -7,6 +7,7 @@ Dir.glob("#{__dir__}/../src/steps/*")
    .each { |file| require_relative file }
 
 _resolve_profile
+_guard_profiles
 _keep_sudo_alive
 
 # These are various system-wide installers, homebrew being the mother of all:

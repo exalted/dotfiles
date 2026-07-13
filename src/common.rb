@@ -130,6 +130,40 @@ def _shadow_brew_with_pty
   ENV["PATH"] = "#{wrapper_dir}:#{ENV["PATH"]}"
 end
 
+# Only executable files count as entry scripts — that's resolve_software's
+# contract, and it's what tells an installer apart from a support file it
+# sources (e.g. lightning_audio_adapter/index.js).
+def _defined_software_names
+  ext = /\.(#{SOFTWARE_EXTENSIONS.join("|")})\z/
+  entry = ->(path) { File.file?(path) && File.executable?(path) && File.basename(path) =~ ext }
+
+  Dir.children(SOFTWARE_DIR).sort.flat_map do |name|
+    path = "#{SOFTWARE_DIR}/#{name}"
+    next name.sub(ext, "") if entry.call(path)
+    next [] unless File.directory?(path)
+    Dir.children(path).sort.filter_map do |child|
+      next unless entry.call("#{path}/#{child}")
+      stem = child.sub(ext, "")
+      stem == name ? name : "#{name}/#{stem}"
+    end
+  end.uniq
+end
+
+# Cross-checks software/ against profiles.rb before anything is installed, so a
+# typo or a stale entry surfaces up front instead of aborting mid-install.
+def _guard_profiles
+  configured = (BOOTSTRAP + COMMON + PROFILES.values.flatten).uniq
+
+  orphaned = _defined_software_names - configured
+  warn "defined in software/ but not configured in any profile: #{orphaned.sort.join(", ")}" unless orphaned.empty?
+
+  undefined = configured.reject do |name|
+    found = software_candidates(name).find { |path| File.file?(path) }
+    found && File.executable?(found)
+  end
+  abort "configured in profiles.rb but no runnable software definition found (missing or not executable): #{undefined.sort.join(", ")}" unless undefined.empty?
+end
+
 PROFILE_FILE = File.expand_path("#{ENV["HOME"]}/.config/dotfiles/profile").freeze
 def _resolve_profile
   @current_profile ||= begin
