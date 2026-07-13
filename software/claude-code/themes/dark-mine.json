@@ -1,0 +1,10 @@
+{
+  "$schema": "./theme.schema.json",
+  "name": "Dark (Mine)",
+  "base": "dark",
+  "overrides": {
+    "userMessageBackground": "#5b21b6",
+    "userMessageBackgroundHover": "#6d28d9",
+    "briefLabelYou": "#d8b4fe"
+  }
+}
