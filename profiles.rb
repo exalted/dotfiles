@@ -76,5 +76,4 @@ PROFILES['personal'] = %w[
 ]
 
 PROFILES['work'] = %w[
-  tuple
 ]
