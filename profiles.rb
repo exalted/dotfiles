@@ -9,24 +9,16 @@ COMMON = %w[
   diff
   emojify
   fd
-  finicky
   git
-  google-chrome
   grc
   grep
   httpie
   iterm2
-  jq
-  keka
-  logi-options-plus
   macos
   node
-  ripgrep
-  rocket
   ruby
   tree
   wget
-  zed
 ]
 
 # these get merged with the common list above (do *NOT* rely on the order of these)
@@ -48,9 +40,14 @@ PROFILES['personal'] = %w[
   download_subtitles
   dropbox
   envchain
+  finicky
   firefox
   gnupg
+  google-chrome
   insomnia
+  jq
+  keka
+  logi-options-plus
   mactracker
   mysql
   ngrok
@@ -59,6 +56,8 @@ PROFILES['personal'] = %w[
   pixelmator
   pwgen
   python
+  ripgrep
+  rocket
   rust
   scapple
   sketch
@@ -73,7 +72,16 @@ PROFILES['personal'] = %w[
   watch
   whatsapp
   ynab
+  zed
 ]
 
 PROFILES['work'] = %w[
+  finicky
+  google-chrome
+  jq
+  keka
+  logi-options-plus
+  ripgrep
+  rocket
+  zed
 ]
