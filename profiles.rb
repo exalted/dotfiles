@@ -83,5 +83,6 @@ PROFILES['work'] = %w[
   logi-options-plus
   ripgrep
   rocket
+  sourcetree
   zed
 ]
