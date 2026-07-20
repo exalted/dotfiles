@@ -1,5 +1,10 @@
 # Inspired by https://github.com/Homebrew/install/blob/63e779e5d6cc1cd7ddefda9c0eb404687d1a1c79/install
 
+# Keep this file — and everything bin/dotfiles loads before software/ruby runs —
+# compatible with macOS's stock /usr/bin/ruby (2.6). A brand new Mac has nothing
+# newer on PATH, and the brewed ruby doesn't exist yet at this point, so 2.7+
+# niceties (filter_map, tally, `_1`, …) blow up mid-bootstrap on exactly the
+# machine this script exists to set up. Verify with: /usr/bin/ruby -c <file>
 require 'fileutils'
 require_relative '../profiles'
 
@@ -141,11 +146,11 @@ def _defined_software_names
     path = "#{SOFTWARE_DIR}/#{name}"
     next name.sub(ext, "") if entry.call(path)
     next [] unless File.directory?(path)
-    Dir.children(path).sort.filter_map do |child|
+    Dir.children(path).sort.map do |child|
       next unless entry.call("#{path}/#{child}")
       stem = child.sub(ext, "")
       stem == name ? name : "#{name}/#{stem}"
-    end
+    end.compact
   end.uniq
 end
 
