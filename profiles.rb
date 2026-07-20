@@ -77,7 +77,6 @@ PROFILES['personal'] = %w[
 
 PROFILES['work'] = %w[
   finicky
-  google-chrome
   jq
   keka
   logi-options-plus
