@@ -18,7 +18,7 @@
 
 ## Comments for code or otherwise
 - Do not add code comments unless they explan the "why" — explain why, not what.
-- Aim to write self-documenting code first, before adding comments. Comments should be your last resort to explain some **VERT** valuable piece of information for future reference, to clarify something that is not immediately obvious, to avoid shooting oneself in the foot, etc.
+- Aim to write self-documenting code first, before adding comments. Comments should be your last resort to explain some **VERY** valuable piece of information for future reference, to clarify something that is not immediately obvious, to avoid shooting oneself in the foot, etc.
 - When changing existing code, make sure to check the existing comments and ask yourself: is this comment still relevant? If not, remove it. If yes, update it as needed inline with the previous points — when you change code, update or remove the comments near it..
 
 ## Git
@@ -33,7 +33,7 @@
 - For browser automation, prefer the Chrome DevTools MCP (`mcp__plugin_chrome-devtools-mcp_chrome-devtools__*`) over Claude in Chrome (`mcp__claude-in-chrome__*`).
 
 ## Scratchpad and temporary files
-- If you need to create temporary files, create them in a dedicated directory within the current working directory as described above instead of inside the system's temp directory (e.g. /tmp/, /private/tmp/, etc.) — do not create plans, scripts, screenshots, diffs, command outputs, scratchpad, etc. outside the current working directory.
+- If you need to create temporary files, create them in a dedicated directory within the current working directory as described above instead of the system's temp directory (e.g. /tmp/, /private/tmp/, etc.) — do not create plans, scripts, screenshots, diffs, command outputs, scratchpad, etc. outside the current working directory.
 - Keep track of temporary files in each session and at the end of the session ask the user whether to keep them around or delete them.
 
 ## Third-party libraries and frameworks
