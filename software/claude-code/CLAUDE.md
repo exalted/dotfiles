@@ -1,6 +1,9 @@
 ## Working directory
 - Make sure to `cd` into the project's root directory (or the relevant git worktree) before running commands
 
+## Running commands
+- When you/agent/LLM/model runs a well-known/built-in commands (eg grep, cat, sed, awk, date, etc.) make sure to prefix'em with `command` (eg `command date` instead of only `date`) or use `/bin/<command>` to make to run the "raw"/original version and not an alias or a "wrapped"/enhanced version. This rule doesn't apply to managed scripts or commands that the user explicitly runs.
+
 ## Writing language
 - When producing text in English, for example for code comments, use American English spelling and grammar, instead of British English (eg "color" instead of "colour")
 
