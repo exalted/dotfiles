@@ -6,6 +6,7 @@ BOOTSTRAP = %w[
 
 # these get "merged" with the profile-specific list below (do *NOT* rely on the order of these)
 COMMON = %w[
+  ack
   diff
   emojify
   fd
@@ -26,7 +27,6 @@ PROFILES = {}
 
 PROFILES['personal'] = %w[
   1blocker
-  ack
   apple_apps
   aws
   claude
