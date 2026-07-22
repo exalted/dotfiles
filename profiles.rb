@@ -76,6 +76,7 @@ PROFILES['personal'] = %w[
 ]
 
 PROFILES['work'] = %w[
+  claude-code
   clipy
   finicky
   jq
