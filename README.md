@@ -20,11 +20,17 @@ The first run aborts until you've selected a profile — see **Profiles** below.
 Whenever you feel like, run `bin/dotfiles` to keep your environment up to
 date.
 
+## Bootstrap
+
+Some software is foundational — `bin/dotfiles` can't run without it — so it
+isn't profile-configurable. The `bootstrap` step (`src/steps/bootstrap.rb`)
+installs it up front, before any profile software: the package manager, the
+shell, and Ruby, followed by this repo's own Ruby bundle (`bundle install`).
+
 ## Profiles
 
-`profiles.rb` is the registry of what gets installed:
+`profiles.rb` is the registry of profile-configurable software:
 
-* `BOOTSTRAP` — the package manager and the shell; installed first.
 * `COMMON` — installed for all profiles.
 * `PROFILES['<name>']` — installed only for the current profile.
 

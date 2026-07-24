@@ -1,9 +1,3 @@
-# we want these to be installed before everything else (order of these matter)
-BOOTSTRAP = %w[
-  homebrew
-  bash
-]
-
 # these get "merged" with the profile-specific list below (do *NOT* rely on the order of these)
 COMMON = %w[
   ack
@@ -17,7 +11,6 @@ COMMON = %w[
   iterm2
   macos
   node
-  ruby
   tree
   wget
 ]

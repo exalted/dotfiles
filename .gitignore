@@ -1,0 +1,6 @@
+# Bundler vendors this repo's gems here (see .bundle/config -> BUNDLE_PATH).
+/vendor/bundle/
+
+# Keep the committed bundler config; ignore anything else Bundler writes here.
+/.bundle/*
+!/.bundle/config

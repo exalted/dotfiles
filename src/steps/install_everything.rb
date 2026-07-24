@@ -29,11 +29,6 @@ end
 def install_everything
   ohai "Installing any new software…"
 
-  for name in BOOTSTRAP
-    file = resolve_software(name)
-    system file
-  end
-
   manifest = (COMMON + PROFILES.fetch(@current_profile)).sort
   manifest.each do |name|
     file = resolve_software(name)

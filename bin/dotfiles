@@ -12,11 +12,14 @@ _keep_sudo_alive
 
 # These are various system-wide installers, homebrew being the mother of all:
 install_homebrew
+# Must stay ahead of every brew-invoking step below: each brew call resets
+# sudo's timestamp, and this shadow keeps that reset from wiping our cache.
 _shadow_brew_with_pty
 install_mas
 
 # … then comes the real deal:
 setup
+bootstrap
 upgrade_everything
 install_everything
 wrapup

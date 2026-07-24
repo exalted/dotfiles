@@ -1,0 +1,6 @@
+---
+# Committed on purpose: pins this repo to vendored gems (vendor/bundle) so a
+# fresh clone is self-contained and does not depend on a machine-global
+# ~/.bundle/config (which is not guaranteed to exist). Populated by
+# `bundle install`, which bin/dotfiles runs in its bootstrap step.
+BUNDLE_PATH: "vendor/bundle"
