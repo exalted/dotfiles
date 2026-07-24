@@ -16,3 +16,4 @@ bash_source_relative
 
 link_to_home_relative 'gemrc', '.gemrc'
 link_to_home_relative 'rspec', '.rspec'
+link_to_home_relative 'bundle-config', '.bundle/config'
