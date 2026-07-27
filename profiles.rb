@@ -71,6 +71,8 @@ PROFILES['personal'] = %w[
 PROFILES['work'] = %w[
   claude-code
   clipy
+  comply365/cortex
+  comply365/web-safety
   finicky
   jq
   keka
