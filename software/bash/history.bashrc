@@ -5,7 +5,7 @@ export HISTCONTROL=ignoreboth:erasedups
 # export HISTIGNORE="&:ls:[bf]g:exit"
 
 # Immediately sync history across sessions
-export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+export PROMPT_COMMAND="history -a; history -c; history -r${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 
 # Append when the shell exits, rather than overwriting the history file
 shopt -s histappend
