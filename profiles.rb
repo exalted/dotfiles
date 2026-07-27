@@ -81,5 +81,6 @@ PROFILES['work'] = %w[
   ripgrep
   rocket
   sourcetree
+  ssh
   zed
 ]

@@ -37,7 +37,22 @@ def install(name, message)
   warn message
 end
 
+# Given a source path, prefer a sibling carrying the active profile just before
+# the final extension (appended when there is none), falling back to the path
+# as-is. Keeping the extension last means editors/formatters still recognize the
+# variant's type (e.g. settings.<profile>.json stays JSON), and a single generic
+# call site can ship per-profile variants without any conditional:
+#   config       -> config.<profile>       || config
+#   foo.txt      -> foo.<profile>.txt       || foo.txt
+#   foo.bar.md   -> foo.bar.<profile>.md    || foo.bar.md
+def profile_specific(path)
+  ext = File.extname(path)
+  candidate = "#{path[0...(path.length - ext.length)]}.#{_resolve_profile}#{ext}"
+  File.exist?(candidate) ? candidate : path
+end
+
 def link(src, dest, backup: false)
+  src = profile_specific(src)
   abort "#{src}: No such file or directory" unless File.exist? src
 
   if backup && File.exist?(dest)
@@ -66,6 +81,7 @@ def link_to_home_relative(src, dest, backup: false)
 end
 
 def bash_source(path)
+  path = profile_specific(path)
   abort "#{path}: No such file" unless File.file? path
   if File.readlines("#{ENV["HOME"]}/.bashrc.dotfiles").grep(/^#{"source #{path}"}$/).size == 0
     File.open("#{ENV["HOME"]}/.bashrc.dotfiles", 'a') { |f| f.puts "\n#{"source #{path}"}" }

@@ -1,0 +1,12 @@
+# Symlinked to ~/.ssh/config by ssh.rb for the `work` profile.
+#
+# cortex (GitLab) is cloned over SSH with a passphrase-protected ~/.ssh/id_rsa,
+# so every connection would otherwise prompt for the passphrase. On macOS the
+# launchd-managed ssh-agent integrates with the Keychain: UseKeychain stores the
+# passphrase there on first use and re-supplies it silently afterwards (surviving
+# reboots), and AddKeysToAgent loads the decrypted key into the agent for the
+# rest of the session. Together they mean we type the passphrase at most once.
+Host gitlab.com
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_rsa
