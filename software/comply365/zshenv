@@ -1,0 +1,53 @@
+# This file is symlinked to ~/.zshenv by software/comply365/zsh.rb.
+#
+# ============================================================================
+# WHY THIS FILE EXISTS
+# ============================================================================
+# We use Bash, not zsh. dotfiles configures Bash and otherwise never touches
+# zsh — this is the single, deliberate exception.
+#
+# Some work repos ship git hooks written in zsh (e.g. web-safety's pre-commit /
+# pre-push start with `#!/bin/zsh`). Git runs those hooks on every commit/push,
+# including when you commit from a GUI app like Sourcetree.
+#
+# The problem: a GUI app is NOT launched from your terminal, so the zsh it
+# spawns for a hook starts with a bare, minimal PATH — one that does NOT include
+# Homebrew. Everything installed through Homebrew (pnpm, node, direnv, …) is
+# then invisible, and the hook dies with "command not found" even though the
+# tools are installed. (From a terminal it happens to work only because the hook
+# inherits the terminal's already-populated PATH — a coincidence we don't want
+# to rely on.)
+#
+# The fix: ~/.zshenv is the ONE startup file zsh reads on EVERY invocation —
+# login, interactive, script, or a hook spawned by a GUI — before .zprofile and
+# .zshrc. So it's the correct, future-proof place to guarantee the tools are
+# findable no matter how a repo decides to run its zsh hooks.
+#
+# This affects zsh only. Your interactive Bash experience is completely
+# unchanged. Each block below is guarded to be a no-op when the work is already
+# done, so nothing is duplicated (e.g. when a login shell later re-runs
+# `brew shellenv` from ~/.zprofile).
+# ============================================================================
+
+# --- Homebrew ---------------------------------------------------------------
+# Put Homebrew — and everything installed through it (pnpm, node, direnv, git…)
+# — on PATH. This is the crux of the whole file: without it a GUI-spawned zsh
+# hook can't find any Homebrew tool. Skip if Homebrew is already on PATH.
+if [ -x /opt/homebrew/bin/brew ] && [[ ":$PATH:" != *":/opt/homebrew/bin:"* ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# --- nvm --------------------------------------------------------------------
+# Make the `nvm` shell function available so a zsh hook can select a project's
+# Node version from its .nvmrc. We load the SAME nvm that Bash uses (Homebrew's,
+# via software/node) — not a second copy — and only if it isn't loaded already.
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+if ! command -v nvm >/dev/null 2>&1; then
+  for __nvm_sh in "$(brew --prefix 2>/dev/null)/opt/nvm/nvm.sh" "$NVM_DIR/nvm.sh"; do
+    if [ -s "$__nvm_sh" ]; then
+      \. "$__nvm_sh"
+      break
+    fi
+  done
+  unset __nvm_sh
+fi

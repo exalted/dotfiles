@@ -73,6 +73,7 @@ PROFILES['work'] = %w[
   clipy
   comply365/cortex
   comply365/web-safety
+  comply365/zsh
   finicky
   jq
   keka
