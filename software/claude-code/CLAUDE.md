@@ -1,8 +1,22 @@
 ## Working directory
 - Make sure to `cd` into the project's root directory (or the relevant git worktree) before running commands
 
+## Answering numbered questions
+- When answering a number of questions (example: Q1, RE2, RE Q3, etc.) make sure to "repeat" a quick summary of the question before the answer, because in long-lasting conversations I tend to forget what was the initial question in the first place.
+
+## Ask clarifying questions
+- When needed (e.g., your confidence is lower than 90%), you should ask clarifying questions instead of making assumptions or "calling the shots".
+- You should NOT limit yourself to a limited number of questions (e.g., three), instead ask as much questions as possible until satisfied.
+
 ## Running commands
 - When you/agent/LLM/model runs a well-known/built-in commands (eg grep, cat, sed, awk, date, etc.) make sure to prefix'em with `command` (eg `command date` instead of only `date`) or use `/bin/<command>` to make to run the "raw"/original version and not an alias or a "wrapped"/enhanced version. This rule doesn't apply to managed scripts or commands that the user explicitly runs.
+
+## Running tests
+- Never add `-s` / `--capture=no` to a pytest run whose results you intend to read. Capturing is what attaches a failing test's output to its failure report (the `Captured stdout/stderr/log call` sections); `-s` strips those sections and scatters the output through the run, interleaved with every passing test's output.
+- `-s` combined with `-n` (pytest-xdist) is worse than either alone: worker stdout is **silently discarded** — it appears neither live nor in the failure report. Verified on pytest + xdist.
+- When live output is genuinely wanted (a hanging test, a slow eval), use `--log-cli-level=INFO` for logs, or `--capture=tee-sys`, which streams output *and* keeps the failure report intact. Reserve `-s` for a single test being actively debugged, or where a script parses a passing test's stdout.
+- For parallelism, prefer an explicit small worker count (`-n 6`) over `-n auto` on a machine you are also working on. Per-worker startup dominates, so returns saturate quickly and `auto` mostly buys CPU contention.
+- Prefer a project's own `make` target or checked-in run configuration over hand-rolled pytest flags — if the target needs different flags, fix the target so everyone gets the fix.
 
 ## Writing language
 - When producing text in English, for example for code comments, use American English spelling and grammar, instead of British English (eg "color" instead of "colour")

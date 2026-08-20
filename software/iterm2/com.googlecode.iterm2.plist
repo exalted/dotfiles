@@ -25,7 +25,7 @@
 	<key>AitermURL</key>
 	<string>https://api.openai.com/v1/responses</string>
 	<key>AllowClipboardAccess</key>
-	<false/>
+	<true/>
 	<key>AlwaysOpenWindowAtStartup</key>
 	<true/>
 	<key>Custom Color Presets</key>
@@ -1506,7 +1506,7 @@
 			<key>Window Type</key>
 			<integer>0</integer>
 			<key>Working Directory</key>
-			<string>/Users/ali</string>
+			<string>~</string>
 		</dict>
 	</array>
 	<key>PointerActions</key>

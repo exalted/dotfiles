@@ -1,10 +1,10 @@
 [user]
-    name = Ali Servet Donmez
-    email = asd@pittle.org
+	name = Ali Servet Donmez
+	email = asd@pittle.org
 [core]
     trustctime = false
     pager = diff-pager
-    excludesfile = /Users/ali/.config/git/ignore
+	excludesfile = ~/.config/git/ignore
 [credential]
     helper = osxkeychain
 [svn]
@@ -63,7 +63,7 @@
     decorate = short
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+	path =
 [difftool "Kaleidoscope"]
     cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [mergetool "sourcetree"]
@@ -92,7 +92,7 @@
 [init]
     defaultBranch = main
 [commit]
-    template = /Users/ali/.stCommitMsg
+	template = ~/.stCommitMsg
 [rerere]
     enabled = true
 [branch]
