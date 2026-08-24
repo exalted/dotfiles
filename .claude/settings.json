@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/comply365-spec-check.sh\"",
+            "timeout": 120,
+            "statusMessage": "Verifying comply365 SPEC.md"
+          },
+          {
+            "type": "agent",
+            "prompt": "Read-only check for ONE thing: does software/comply365/SPEC.md describe code that no longer matches it?\n\nHARD RULES\n- Do not run interpreters, tests or scripts. Do not ask for permissions. Execution is handled by .claude/hooks/comply365-spec-check.sh, which runs alongside you and covers every executable check.\n- Never report an inability to run something, a missing permission, or anything about your own process, confidence or coverage. Those are not findings.\n- Skip every criterion marked [eyes]; a human owns those.\n- Judge only what you actually read. If you are unsure, stay silent about it.\n\nOUTPUT CONTRACT \u2014 your entire final message must be either:\n  (a) the single word OK, or\n  (b) one finding per line, each exactly '<AC-id>: <what the code actually does>' and nothing else.\nNo preamble, no reasoning, no summary, no closing remark. If your findings list would be empty, the answer is OK. Reaching OK after considering and dismissing possibilities is normal \u2014 dismissed possibilities are not findings and must not appear.\n\nA finding is only: a comment that contradicts its own code, a criterion whose code no longer satisfies it, a criterion with no code behind it, or shipped behavior with no criterion covering it. $ARGUMENTS",
+            "timeout": 120,
+            "statusMessage": "Reading comply365 code against SPEC.md"
+          }
+        ]
+      }
+    ]
+  }
+}
