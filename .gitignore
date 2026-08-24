@@ -4,3 +4,7 @@
 # Keep the committed bundler config; ignore anything else Bundler writes here.
 /.bundle/*
 !/.bundle/config
+
+# Per-machine record of which manual SPEC.md criteria were confirmed, and against
+# which code digest. An observation made on this machine, not source.
+/.claude/comply365-manual-signoff.json

@@ -7,5 +7,10 @@ require_relative '../../src/helpers'
 # `eval "$(direnv hook bash)"` to ~/.bashrc — but `bin/dotfiles` regenerates
 # ~/.bashrc from scratch on every run and wipes that hook. So we don't install
 # direnv here (cortex's setup owns that); we only re-add the hook so it survives
-# every regeneration. The fragment is guarded and no-ops if direnv is absent.
+# every regeneration. The fragment no-ops if direnv is absent — which would
+# otherwise leave the .venv/.env auto-activation silently broken, so warn here
+# instead, where there's a person watching the run.
+warn "direnv isn't installed, so cortex's .venv/.env won't auto-activate on cd. " \
+     "Run cortex's own setup (its Brewfile installs direnv), then re-run dotfiles." unless cmd_exists?('direnv')
+
 bash_source_relative 'cortex'

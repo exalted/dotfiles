@@ -24,30 +24,42 @@
 # findable no matter how a repo decides to run its zsh hooks.
 #
 # This affects zsh only. Your interactive Bash experience is completely
-# unchanged. Each block below is guarded to be a no-op when the work is already
-# done, so nothing is duplicated (e.g. when a login shell later re-runs
-# `brew shellenv` from ~/.zprofile).
+# unchanged. Since zsh reads this file on every invocation — including hooks
+# nested inside a shell that already ran it — neither block below may cost
+# anything or change anything the second time round: the Homebrew one is a no-op
+# once its work is visible (see shellenv.sh), and nvm is only a stub until
+# something actually calls it.
 # ============================================================================
+
+# ${(%):-%x} is this file (~/.zshenv) and `:A` resolves the symlink back to the
+# dotfiles repo, so the snippets below are found wherever the clone lives.
+# Deliberately not unset at the end: the lazy `nvm` stub below needs it when it
+# is finally called, which may be long after this file has finished running.
+__dotfiles_software="${${(%):-%x}:A:h}/.."
 
 # --- Homebrew ---------------------------------------------------------------
 # Put Homebrew — and everything installed through it (pnpm, node, direnv, git…)
 # — on PATH. This is the crux of the whole file: without it a GUI-spawned zsh
-# hook can't find any Homebrew tool. Skip if Homebrew is already on PATH.
-if [ -x /opt/homebrew/bin/brew ] && [[ ":$PATH:" != *":/opt/homebrew/bin:"* ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
+# hook can't find any Homebrew tool. Same snippet interactive Bash uses.
+\. "$__dotfiles_software/homebrew/shellenv.sh"
 
 # --- nvm --------------------------------------------------------------------
 # Make the `nvm` shell function available so a zsh hook can select a project's
 # Node version from its .nvmrc. We load the SAME nvm that Bash uses (Homebrew's,
-# via software/node) — not a second copy — and only if it isn't loaded already.
-export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
-if ! command -v nvm >/dev/null 2>&1; then
-  for __nvm_sh in "$(brew --prefix 2>/dev/null)/opt/nvm/nvm.sh" "$NVM_DIR/nvm.sh"; do
-    if [ -s "$__nvm_sh" ]; then
-      \. "$__nvm_sh"
-      break
-    fi
-  done
-  unset __nvm_sh
-fi
+# via software/node) — not a second copy — through the shared loader.
+#
+# LAZILY, though. Sourcing nvm.sh costs ~200ms (it ends in `nvm_auto use`, which
+# execs node), and unlike the Homebrew block above that cost is paid by *every*
+# zsh this file is read by: `zsh -c` one-liners, and pre-commit runners that
+# spawn one zsh per changed file. Almost none of them ever touch nvm.
+#
+# So define a stub that swaps itself for the real nvm on first use. Nothing is
+# lost by waiting: our `nvm alias default system` means sourcing nvm.sh resolves
+# `default` and settles on system Node — it does *not* auto-select the .nvmrc
+# version — so eager loading only ever made the `nvm` name available, which is
+# precisely what the stub does.
+nvm() {
+  unfunction nvm
+  \. "$__dotfiles_software/node/nvm-loader.sh"
+  nvm "$@"
+}

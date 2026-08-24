@@ -1,0 +1,30 @@
+# iTerm2's shell integration, loaded only where it is actually wanted.
+#
+# It used to be sourced from software/zed/bashrc, guarded on $ZED_TERM alone —
+# an accident of history: Zed was the first terminal found to mishandle it, so
+# the exclusion landed in Zed's software entry rather than iTerm2's. The script
+# itself only self-guards on $TERM and interactivity; it never checks whether it
+# is really running inside iTerm2, so it installed itself everywhere else too.
+#
+# IntelliJ's bundled terminal is the second casualty, and a worse one. The
+# integration `export`s a PS1 wrapped in OSC 133 markers, and in IntelliJ that
+# string comes back byte-corrupted: `❯` (E2 9D AF) turns into `â` + U+009D + `¯`
+# — those three bytes read as Latin-1 and re-encoded as UTF-8. Not a font or a
+# rendering problem: the mojibake is in the variable itself. Proven by launching
+# `idea .` from Zed instead of iTerm2 — IntelliJ inherits ZED_TERM, the
+# integration is skipped, and PS1 stays clean with the glyph intact.
+#
+# Why exclusions rather than "load only in iTerm2": there is no trustworthy
+# positive signal. Every variable iTerm2 sets is exported and therefore
+# inherited by anything launched from an iTerm2 shell — LC_TERMINAL, ITERM_*,
+# ITERM_SESSION_ID all leak — and IntelliJ additionally sets
+# TERM_PROGRAM=iTerm.app itself, as a compatibility shim. A positive test would
+# fire in exactly the terminals we are trying to exclude.
+#
+# The `-f` test matters because iterm2.rb curls this file at run time; a failed
+# download must not break every shell.
+if [[ -z "$ZED_TERM" && "$TERMINAL_EMULATOR" != 'JetBrains-JediTerm' ]]; then
+  __iterm2_integration="$(dirname "${BASH_SOURCE[0]}")/shell_integration"
+  [[ -f "$__iterm2_integration" ]] && source "$__iterm2_integration"
+  unset __iterm2_integration
+fi

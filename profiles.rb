@@ -12,6 +12,7 @@ COMMON = %w[
   macos
   node
   tree
+  watch
   wget
 ]
 
@@ -62,7 +63,6 @@ PROFILES['personal'] = %w[
   transmission
   tripmode
   vlc
-  watch
   whatsapp
   ynab
   zed

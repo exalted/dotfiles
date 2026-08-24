@@ -1,3 +1,0 @@
-if [[ -z "$ZED_TERM" ]]; then
-  source "$(dirname "${BASH_SOURCE[0]}")/../iterm2/shell_integration"
-fi
