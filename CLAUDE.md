@@ -80,6 +80,11 @@ Exit code is 0 when nothing is unaccounted for, so it is safe to use as a gate.
 
 ## Before you finish: do not break what you did not touch
 
+The full playbook for this — onboarding a new work repo, adding criteria,
+getting manual ones confirmed, and the traps — is the `comply365` skill
+(`.claude/skills/comply365/SKILL.md`, invocable as `/comply365`). Read it
+before touching `software/comply365/`; what follows is the short version.
+
 `software/comply365/SPEC.md` is the acceptance criteria for this batch of work.
 A `Stop` hook (`.claude/hooks/comply365-spec-check.sh`, wired in
 `.claude/settings.json`) verifies the automated ones and refuses to let a
