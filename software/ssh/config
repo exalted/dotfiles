@@ -1,0 +1,4 @@
+# Fallback for any profile without its own software/ssh/config.<profile> (see
+# profile_specific in src/helpers.rb). Deliberately a no-op: profiles.rb only
+# lists `ssh` for `work` today, but this keeps ssh.rb from aborting the moment
+# another profile ever does.

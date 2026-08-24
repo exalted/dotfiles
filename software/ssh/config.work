@@ -1,4 +1,5 @@
-# Symlinked to ~/.ssh/config by ssh.rb for the `work` profile.
+# Linked to ~/.ssh/config.d/dotfiles and included from ~/.ssh/config by ssh.rb
+# for the `work` profile.
 #
 # cortex (GitLab) is cloned over SSH with a passphrase-protected ~/.ssh/id_rsa,
 # so every connection would otherwise prompt for the passphrase. On macOS the
@@ -6,6 +7,14 @@
 # passphrase there on first use and re-supplies it silently afterwards (surviving
 # reboots), and AddKeysToAgent loads the decrypted key into the agent for the
 # rest of the session. Together they mean we type the passphrase at most once.
+#
+# UseKeychain is an Apple-OpenSSH-only option. It's silently accepted today
+# because /usr/bin/ssh (Apple's OpenSSH) is what's on PATH, but the moment
+# Homebrew's openssh lands on PATH (as some other formula's dependency, or
+# installed directly) a plain ssh would abort on this file with "Bad
+# configuration option: usekeychain". IgnoreUnknown opts it out of that.
+IgnoreUnknown UseKeychain
+
 Host gitlab.com
   AddKeysToAgent yes
   UseKeychain yes
