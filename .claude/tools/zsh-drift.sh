@@ -30,26 +30,31 @@ effective() {
   ' "$1" 2>/dev/null
 }
 
-# Pattern | what in this repo already provides it for Bash
+# Pattern => what in this repo already provides it for Bash.
+#
+# The separator is `=>`, not `|`: the patterns are ERE, so a `|` inside one made
+# `${entry%%|*}` cut the pattern in half — `nvm (use|install|...)` became the
+# unbalanced `nvm (use`, which bash rejected on every line and silently matched
+# nothing.
 MIRRORED=(
-  'direnv hook|software/comply365/cortex.bashrc (direnv hook, any .envrc repo)'
-  'NVM_DIR|software/node/bashrc + node/nvm-loader.sh — but note this line points at a curl-installed nvm; we standardize on Homebrew'"'"'s'
-  'nvm\.sh|software/node/bashrc + node/nvm-loader.sh'
-  'bash_completion|software/node/bashrc'
-  'add-zsh-hook|software/comply365/web-safety.bashrc (auto-nvm-use, any .nvmrc repo)'
-  'auto_nvm_use|software/comply365/web-safety.bashrc'
-  'nvm auto-use|software/comply365/web-safety.bashrc'
-  'chpwd|software/comply365/web-safety.bashrc (PROMPT_COMMAND is the Bash analog)'
-  'nvm_find_nvmrc|software/comply365/web-safety.bashrc (we do our own walk on purpose)'
-  'nvm (use|install|current|version)|software/comply365/web-safety.bashrc'
-  'brew shellenv|software/homebrew/shellenv.sh'
-  'JetBrains|not shell behavior (Toolbox PATH entry) — ignorable'
+  'direnv hook=>software/comply365/cortex.bashrc (direnv hook, any .envrc repo)'
+  'NVM_DIR=>software/node/bashrc + node/nvm-loader.sh — but note this line points at a curl-installed nvm; we standardize on Homebrew'"'"'s'
+  'nvm\.sh=>software/node/bashrc + node/nvm-loader.sh'
+  'bash_completion=>software/node/bashrc'
+  'add-zsh-hook=>software/comply365/web-safety.bashrc (auto-nvm-use, any .nvmrc repo)'
+  'auto_nvm_use=>software/comply365/web-safety.bashrc'
+  'nvm auto-use=>software/comply365/web-safety.bashrc'
+  'chpwd=>software/comply365/web-safety.bashrc (PROMPT_COMMAND is the Bash analog)'
+  'nvm_find_nvmrc=>software/comply365/web-safety.bashrc (we do our own walk on purpose)'
+  'nvm (use|install|current|version)=>software/comply365/web-safety.bashrc'
+  'brew shellenv=>software/homebrew/shellenv.sh'
+  'JetBrains=>not shell behavior (Toolbox PATH entry) — ignorable'
 )
 
 classify() { # prints the mirror note, or nothing when unmirrored
   local line="$1" entry
   for entry in "${MIRRORED[@]}"; do
-    [[ "$line" =~ ${entry%%|*} ]] && { printf '%s' "${entry#*|}"; return 0; }
+    [[ "$line" =~ ${entry%%=>*} ]] && { printf '%s' "${entry#*=>}"; return 0; }
   done
   return 1
 }
