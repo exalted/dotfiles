@@ -59,7 +59,12 @@ working because some work repos ship zsh git hooks.
   directory asked for, so a failed switch retries next prompt instead of being
   cached as success.
 - **AC-14 [eyes]** Round-trip works every time: cortex → web-safety → cortex →
-  web-safety tracks each `.nvmrc`; leaving both lands on `system`.
+  web-cockpit → cortex tracks each `.nvmrc`; leaving them all lands on `system`.
+  The route returns to cortex between the other two because only cortex pins a
+  different major (22, vs 24 in both others), so only a hop through it actually
+  demonstrates a switch. web-cockpit is included because it is the repo that
+  proves the walk is generic — it got zero per-project wiring, so if it tracks
+  its own `.nvmrc` then the mechanism, not a per-project file, is what works.
 
 ## direnv / venv (`cortex.rb`, `cortex.bashrc`)
 
@@ -195,7 +200,7 @@ A sign-off is invalidated when the files it depends on change again.
 Format: `<AC-id>|<comma-separated files the sign-off depends on>|<what to do>`
 
 <!-- manual-checks
-AC-14|software/comply365/web-safety.bashrc|IMPORTANT: run each `cd` and each `nvm current` as SEPARATE commands. The hook runs from PROMPT_COMMAND, i.e. after your command line finishes, so a chained `cd X && nvm current` reports the version from BEFORE the hook ran for X — every reading comes out one step behind and it looks broken when it is not. In a fresh terminal: `cd ~/Developer/cortex`, then `nvm current` (expect the .nvmrc version), `cd ~/Developer/web-safety` then `nvm current` (expect ITS version), then back to cortex and to web-safety again — each must track its own .nvmrc every time. Finally `cd ~` and expect `system`.
+AC-14|software/comply365/web-safety.bashrc|IMPORTANT: run each `cd` and each `nvm current` as SEPARATE commands. The hook runs from PROMPT_COMMAND, i.e. after your command line finishes, so a chained `cd X && nvm current` reports the version from BEFORE the hook ran for X — every reading comes out one step behind and it looks broken when it is not. In a fresh terminal, `cd` into each of the following IN THIS ORDER, running `nvm current` after each one: cortex (expect v22.12.0), web-safety (v24.13.1), cortex again (v22.12.0), web-cockpit (v24.13.1), cortex again (v22.12.0). The route deliberately returns to cortex between the other two: web-safety and web-cockpit both pin 24.13.1, so hopping straight between them reports 24.13.1 whether the hook ran or not — that reading proves nothing. Only a transition to or from cortex's 22.12.0 actually demonstrates a switch. web-cockpit is the repo that matters most: it has no software/comply365 file of its own, so it is what proves the .nvmrc walk is generic rather than per-project — expect no "N/A"/"system" and no nvm install prompt there. Finally `cd ~` and expect `system`.
 AC-17|software/comply365/cortex.rb,software/comply365/cortex.bashrc|In a fresh terminal: `cd ~/Developer/cortex`, then `which python3` (expect a path inside the repo's .venv) and `echo $POSTGRES_HOST` (expect a value from .env, not empty). `cd ..` and confirm both revert.
 AC-18|software/bash/prompt.bashrc,software/comply365/cortex.bashrc|In the same cortex shell, confirm the prompt shows `[venv: cortex]` exactly once — no doubled `(cortex)`, no stray quote characters — and that typing feels instant (no per-keystroke lag).
 AC-23|software/comply365/zshenv,software/comply365/zsh.rb|Do NOT push to origin — nothing needs publishing. The pre-push hook has no remote-specific logic, so a local remote exercises it identically: `git init --bare ~/.cache/dotfiles/hooktest/web-safety.git` then `git -C ~/Developer/web-safety remote add hooktest ~/.cache/dotfiles/hooktest/web-safety.git`. In Sourcetree (NOT a terminal) push main to `hooktest`. The hook must print real versions — `node: vX, pnpm: Y` — rather than "command not found"; that line alone satisfies the criterion, so cancel once you see it instead of waiting for pnpm test/build. An existing branch is enough, no commit required. Afterwards: `git remote remove hooktest`, trash the bare repo, and confirm `git config --get branch.main.remote` is still `origin`.
