@@ -30,7 +30,7 @@ cd "$repo" || exit 0
 DIR=software/comply365
 SPEC="$DIR/SPEC.md"
 LEDGER=.claude/comply365-manual-signoff.json
-WATCHED=("$DIR" software/bash/prompt-command.bashrc software/bash/prompt.bashrc software/node/nvm-loader.sh software/homebrew/shellenv.sh software/watch/bashrc software/git/bin/git-hist software/bash/pager.bashrc software/iterm2/bashrc profiles.rb)
+WATCHED=("$DIR" software/bash/prompt-command.bashrc software/bash/prompt.bashrc software/node/nvm-loader.sh software/homebrew/shellenv.sh software/watch/bashrc software/git/bin/git-hist software/bash/pager.bashrc software/iterm2/bashrc profiles.rb .claude/tools/setup-review.sh .claude/skills/comply365/SKILL.md)
 
 # ---- gate: did this batch move at all? -------------------------------------
 base=origin/main
@@ -297,6 +297,48 @@ check AC-36 "iTerm2's shell integration does NOT load in a plain terminal — sh
 check AC-36 "iTerm2's shell integration loads in Zed's terminal, where it garbles the prompt"
 [ "$(iterm2_loaded TERMINAL_EMULATOR=JetBrains-JediTerm)" != Yes ]
 check AC-36 "iTerm2's shell integration loads in IntelliJ's terminal — it exports an OSC-133 PS1 that comes back mojibaked"
+
+# ---- AC-37  the work repos' own setups must not have moved unread ---------
+# Only the non-OK rows go in the message: the full table is what the tool prints
+# when run by hand, and a hook reason that reprints three passing rows buries the
+# one that needs reading.
+#
+# SKILL.md holds the baselines but is NOT in batch_digest, on purpose — see
+# AC-37 in SPEC.md. Recording "nothing relevant changed" must not expire ten
+# manual sign-offs.
+# --porcelain: `STATUS<TAB>repo<TAB>detail`, no header and no guidance prose.
+# Parsed on the FIRST field only. Grepping the human output instead matched the
+# script's own footer, and AC-37 "failed" quoting a line of its help text.
+review_out="$("$BASH_BIN" "$repo/.claude/tools/setup-review.sh" --porcelain 2>&1)"
+review_rc=$?
+if [ "$review_rc" -ne 0 ]; then
+  # Only the rows that need something. A hook reason that reprints three passing
+  # rows buries the one that matters. HOOKS-INACTIVE is AC-38, the rest AC-37 —
+  # split so the reason names the right criterion, since the two need completely
+  # different actions (run a setup script vs. read a diff and record a verdict).
+  bad_rows() { printf '%s' "$review_out" | command awk -F'\t' -v want="$1" \
+    'BEGIN { n = split(want, w, "|"); for (i in w) sel[w[i]] = 1 }
+     sel[$1] { printf "      %-14s %s: %s\n", $2, $1, $3 }'; }
+  hooks_bad="$(bad_rows 'HOOKS-INACTIVE')"
+  review_bad="$(bad_rows 'NEVER-ANALYZED|DELTA|BASELINE-GONE')"
+  if [ -n "$review_bad" ]; then
+    false
+    check AC-37 "a tracked work repo's setup story has moved unread — read the diff and record a verdict in the skill's tracked repos table:
+$review_bad"
+  fi
+  if [ -n "$hooks_bad" ]; then
+    false
+    check AC-38 "a tracked repo's git hooks are dead because core.hooksPath is unset — run that repo's setup.sh:
+$hooks_bad"
+  fi
+  # Exit 1 with neither pattern present would mean the tool failed for a reason
+  # this parser does not know about; surface it rather than passing silently.
+  if [ -z "$review_bad" ] && [ -z "$hooks_bad" ]; then
+    false
+    check AC-37 "setup-review.sh exited $review_rc with no recognized status; run it by hand:
+$(printf '%s' "$review_out" | command sed 's/^/      /' | head -20)"
+  fi
+fi
 
 # ---- [eyes] criteria: unconfirmed until signed off ------------------------
 # Each entry names the files its sign-off depends on; the digest of those files

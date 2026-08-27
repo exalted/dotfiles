@@ -32,6 +32,14 @@ Its three mechanisms are **generic despite their per-project names**:
 
 Default answer: **add nothing.** Walk the checklist first.
 
+Step 0, which is not optional even when the answer to everything else is "add
+nothing": **add a row to the tracked repos table** in
+`.claude/skills/comply365/SKILL.md`, with `-` as the analyzed-at commit. A repo
+needing no wiring gets no fragment, no `profiles.rb` entry and no criterion — so
+that table is the *only* place it becomes visible. `web-cockpit` was correctly
+onboarded with zero wiring and then went a month with dead git hooks precisely
+because nothing recorded that it existed.
+
 1. `grep -rE 'bashrc|zshrc|zprofile|nvm|direnv|chpwd' <repo>/setup*/setup.sh` —
    does its setup write to an rc file, or install a runtime manager?
 2. Does it have `.envrc`? Covered — `cortex.bashrc` already hooks direnv for
@@ -77,6 +85,33 @@ already provides the same thing for Bash:
   the spec check and get the `[eyes]` criteria re-confirmed.
 
 Exit code is 0 when nothing is unaccounted for, so it is safe to use as a gate.
+
+`zsh-drift.sh` answers "what did that setup leave in my rc files *just now*". It
+cannot answer "has that repo's setup *changed* since we wrote our version of
+it". That is the other tool:
+
+```
+.claude/tools/setup-review.sh
+```
+
+Each tracked repo has a row in the tracked repos table in
+`.claude/skills/comply365/SKILL.md` recording the commit its `setup/`, git
+hooks, runtime pins and local-dev docs were last read at. This diffs each repo's
+tip against that commit and stops there — **it never judges the change**, because
+a diff cannot tell an rc-file write from a reworded paragraph. Read the diff,
+decide whether it touches what we guarantee, then either record the new commit
+with a generic one-line verdict (irrelevant) or wire it and add criteria first
+(relevant). AC-37 blocks while any delta is unread, so nothing goes unexamined.
+
+It also reports `HOOKS-INACTIVE` (AC-38): a repo that ships `.githooks/` while
+`core.hooksPath` is unset has **dead hooks** — git falls back to `.git/hooks`,
+which holds only samples, and fails open with no error. That means its own
+`setup.sh` never ran in the clone. All the zsh-reachability work is worth
+nothing for such a repo, since git never invokes the hook at all.
+
+Onboarding a repo means adding a row with `-` as the commit, so the next run
+reports `NEVER-ANALYZED`. A repo not in `~/Developer` is `NO-CLONE`: reported,
+never a failure, since nothing can be read.
 
 ## Before you finish: do not break what you did not touch
 

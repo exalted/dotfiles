@@ -20,13 +20,76 @@ repo only wires configuration.** Never add a `brew` call to
 
 | Argument | Do this |
 |---|---|
-| *(none)* or `status` | [Status](#status) |
+| *(none)* or `status` | [Status](#status) — includes the upstream re-walk |
 | `drift` | [After a repo's setup.sh ran](#after-a-repos-setupsh-ran) |
+| `review` | [Re-walking the tracked repos](#re-walking-the-tracked-repos) |
 | `onboard <repo>` | [Onboarding a newly cloned work repo](#onboarding-a-newly-cloned-work-repo) |
 | `check` | [Run the verifier](#run-the-verifier) |
 | `sweep` | [Getting the manual criteria confirmed](#getting-the-manual-criteria-confirmed) |
 | `criterion` | [Adding a criterion](#adding-a-criterion) |
 | `fail <AC-id>` | [When a criterion fails](#when-a-criterion-fails) |
+
+## Tracked work repos
+
+This table is both the list of repos comply365 answers for **and** the record of
+where each one's setup story was last read. `profiles.rb` cannot serve as the
+list: a repo needing zero wiring correctly has no entry there, which is how
+`web-cockpit` went untracked for a month.
+
+`analyzed at` is the commit whose `setup/`, git hooks, runtime pins and local-dev
+docs were read against our wiring. `.claude/tools/setup-review.sh` diffs each
+repo's `HEAD` against it; a delta blocks until it has been read and this table
+updated.
+
+Keep verdicts **generic**. dotfiles is a public repo (AC-4): say *"setup script
+gained an rc-file write"*, never what it writes or for which service.
+
+| repo | wiring here | analyzed at | verdict |
+|---|---|---|---|
+| cortex | `cortex.{rb,bashrc}` (direnv), `zshenv` | `0b27c110` | setup appends a direnv hook to the **bash** rc and installs direnv itself; both already re-expressed. Hooks use `sh` shebangs — the documented startup-file gap, no wiring possible |
+| web-safety | `web-safety.{rb,bashrc}` (nvm), `zshenv` | `ce7f1644` | setup appends a zsh-only auto-`nvm use` hook and curl-installs a runtime manager into the shared dir; both already re-expressed. Hooks are zsh — covered by the managed `zshenv` |
+| web-cockpit | none — covered by the generic mechanisms | `11c6a0c` | same shape as web-safety, pinning an older runtime-manager version; needs no wiring of its own. Hooks use `sh` shebangs — the documented gap |
+
+Onboarding a repo means adding a row here, `-` in `analyzed at`, which makes the
+next run report it as `NEVER-ANALYZED`. That is the intended first state: a new
+clone has never been read, and saying so is the point.
+
+## Re-walking the tracked repos
+
+```bash
+.claude/tools/setup-review.sh          # exit 0 = every repo analyzed and unchanged
+```
+
+The script finds deltas; it never judges them. **A diff cannot tell an rc-file
+write from a reworded paragraph, so the judgement is yours to make by reading.**
+For every repo it does not mark `OK`:
+
+1. Read the actual diff, not the file list:
+   `git -C ~/Developer/<repo> diff <baseline>..HEAD -- setup .githooks .nvmrc README.md`
+2. Judge it against what comply365 guarantees. The questions that matter: does it
+   write to an rc file, install or relocate a runtime manager, change a version
+   pin, add or change a git hook **or its shebang**, or change what a local-dev
+   session expects on `PATH`?
+3. **Irrelevant** → update that repo's row to the new commit with a one-line
+   generic verdict. No wiring, no criterion.
+4. **Relevant** → wire it (prefer widening one of the three generic mechanisms
+   over a new per-project file), add criteria to `SPEC.md`, *then* update the
+   row.
+
+Statuses other than `OK` and `DELTA`:
+
+- `NEVER-ANALYZED` — a row with `-`. Read it and record.
+- `NO-CLONE` — the repo is not in `~/Developer`. Not a failure and not a pass;
+  nothing can be read, so it is reported and skipped.
+- `BASELINE-GONE` — the recorded commit is absent from the clone (re-clone,
+  force-push, shallow fetch). Re-analyze from scratch.
+- `OK … behind <upstream>` — unchanged against your **local** `HEAD`, but the
+  clone is stale. The script never fetches, so pull and re-run before trusting a
+  pass.
+
+`package.json` is compared by `engines`, `packageManager`, `volta`, `scripts` and
+`type` only. Diffing the whole file would fire on every dependency bump, and a
+gate that always fires gets ignored.
 
 ## Status
 
@@ -68,6 +131,12 @@ cd ~/Developer/dotfiles && .claude/tools/zsh-drift.sh
 
 **Default answer: add nothing.** Walk this first.
 
+0. **Add a row to [the tracked repos table](#tracked-work-repos) with `-` as the
+   commit.** Not optional, even when every step below says "add nothing": a repo
+   needing no wiring gets no fragment, no `profiles.rb` entry and no criterion,
+   so that table is the only place it exists at all. Then confirm its own setup
+   actually ran — `git -C <repo> config --get core.hooksPath` must be set, or its
+   hooks are dead and nothing else here will notice.
 1. `grep -rE 'bashrc|zshrc|zprofile|nvm|direnv|chpwd' <repo>/setup*/setup.sh` —
    does it write to an rc file or install a runtime manager?
 2. Has `.envrc`? Covered by `comply365/cortex.bashrc` (direnv hook, every

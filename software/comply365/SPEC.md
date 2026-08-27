@@ -26,8 +26,12 @@ working because some work repos ship zsh git hooks.
 - **AC-3 [auto]** These files install nothing. The work repos' own setups own
   installing direnv (cortex's Brewfile) and node/nvm (`software/node`); dotfiles
   only wires configuration. No `brew` calls in the `.rb` files.
-- **AC-4 [auto]** dotfiles is a public repo. `comply365`, `cortex` and
-  `web-safety` may appear; GitLab repo paths and the org name may not.
+- **AC-4 [auto]** dotfiles is a public repo. Bare repo names — `comply365`,
+  `cortex`, `web-safety`, `web-cockpit`, and any repo added to the tracked repos
+  table — may appear; GitLab repo paths and the org name may not. The check is a
+  denylist on the latter, so the name list above is a convention the *writer*
+  keeps, not something the script enforces: prose about what an internal setup
+  script does is not caught mechanically. Keep verdicts in that table generic.
 
 ## nvm auto-use on cd (`web-safety.bashrc`)
 
@@ -189,6 +193,45 @@ machine that is already set up.
   `$TERMINAL_EMULATOR=JetBrains-JediTerm` — there is no usable positive signal,
   since every variable iTerm2 exports is inherited by whatever is launched from
   it, and IntelliJ sets `TERM_PROGRAM=iTerm.app` itself.
+
+## Staying current with the work repos' own setups
+
+- **AC-37 [auto]** Every repo in the tracked repos table
+  (`.claude/skills/comply365/SKILL.md`) has a recorded baseline commit, and its
+  `setup/`, `local/`, git hooks, runtime pins and local-dev docs are unchanged
+  since it — `.claude/tools/setup-review.sh` exits 0. Our fragments only
+  re-express a setup we have actually read, so an unread change means the wiring
+  is trusted on faith.
+
+  The script deliberately stops at *finding* the delta: a diff cannot tell an
+  rc-file write from a reworded paragraph, so the verdict is a reading, recorded
+  back into that table. A repo that is not cloned is reported and skipped —
+  neither a pass nor a failure, since nothing can be read.
+
+  `package.json` is compared by `engines`, `packageManager`, `volta`, `scripts`
+  and `type` alone. Diffing the whole file would fire on every dependency bump,
+  and a gate that always fires is a gate nobody reads.
+
+  Note what is deliberately **not** in the sign-off digest: `SKILL.md`. Recording
+  a routine "nothing relevant changed" verdict must not expire ten `[eyes]`
+  sign-offs. It does not need to — a delta that genuinely affects us is wired by
+  editing the `.bashrc`/`.rb` files, and *those* are in the digest, so the
+  expiry happens through the real change rather than through the bookkeeping.
+
+- **AC-38 [auto]** No tracked repo ships `.githooks/` while its
+  `core.hooksPath` is unset. Git then silently falls back to `.git/hooks`, which
+  holds nothing but `.sample` files, so **every hook in the repo is dead** — and
+  it fails open, with no error to notice. Each of these repos sets
+  `core.hooksPath` from its own `setup.sh`, so an unset value means that setup
+  has never run in the clone.
+
+  This is the one hole all the zsh work could not have covered: AC-19..23 make a
+  zsh hook *runnable* from a GUI app, which is worth nothing if git never invokes
+  it. `web-cockpit` sat in exactly that state and nothing noticed, because a
+  repo with no wiring of its own has no fragment, no profile entry and no
+  criterion pointing at it.
+
+  Checked per repo by `.claude/tools/setup-review.sh`, alongside AC-37.
 
 ## Manual criteria
 
