@@ -30,7 +30,12 @@ cd "$repo" || exit 0
 DIR=software/comply365
 SPEC="$DIR/SPEC.md"
 LEDGER=.claude/comply365-manual-signoff.json
-WATCHED=("$DIR" software/bash/prompt-command.bashrc software/bash/prompt.bashrc software/node/nvm-loader.sh software/homebrew/shellenv.sh software/watch/bashrc software/git/bin/git-hist software/bash/pager.bashrc software/iterm2/bashrc profiles.rb .claude/tools/setup-review.sh .claude/skills/comply365/SKILL.md)
+WATCHED=("$DIR" software/bash/prompt-command.bashrc software/bash/prompt.bashrc software/node/nvm-loader.sh software/homebrew/shellenv.sh software/watch/bashrc software/git/bin/git-hist software/bash/pager.bashrc software/iterm2/bashrc profiles.rb .claude/tools/setup-review.sh .claude/skills/comply365/SKILL.md .claude/hooks/comply365-spec-check.sh .claude/hooks/comply365-signoff.sh .claude/hooks/lib .claude/tools/zsh-drift.sh)
+# The verifier and the sign-off recorder are in WATCHED for the same reason the
+# fragments are: a session that changes how the batch is checked has changed the
+# batch's guarantees, and used to end without the checks running at all. They are
+# deliberately NOT in batch_digest — they are tooling, not shell behavior, so
+# editing them must not expire a human's terminal observations.
 
 # ---- gate: did this batch move at all? -------------------------------------
 base=origin/main
@@ -50,7 +55,13 @@ batch_digest() {
     | command shasum -a 256 | cut -c1-16
 }
 
-fails=() ; pending=()
+# Three buckets, not two. A manual criterion revoked by hand (the documented way
+# to re-open one whose wording you have tightened) is neither an automated
+# failure nor an untouched criterion: it needs a human to re-run it, exactly like
+# `pending`, so it must carry its STEPS. Filing it under "automated criteria
+# FAILED" and dropping the steps is the least useful thing this hook can do at
+# precisely the moment they are needed.
+fails=() ; pending=() ; revoked=()
 check() { # consumes $? from the preceding command
   local rc=$? id="$1" desc="$2"
   [ "$rc" -eq 0 ] || fails+=("$id — $desc")
@@ -358,25 +369,34 @@ LEDGER_READ
 )"
   case "$recorded" in
     "pass:$digest") ;;
-    "fail:$digest") fails+=("$id — signed off as FAILING by you; still unresolved") ;;
+    "fail:$digest") revoked+=("$id|$steps") ;;
     *)              pending+=("$id|$steps") ;;
   esac
 done < <(sed -n '/<!-- manual-checks/,/-->/p' "$SPEC" | command grep -E '^AC-')
 
 # ---- report ---------------------------------------------------------------
-if [ "${#fails[@]}" -eq 0 ] && [ "${#pending[@]}" -eq 0 ]; then
+if [ "${#fails[@]}" -eq 0 ] && [ "${#pending[@]}" -eq 0 ] && [ "${#revoked[@]}" -eq 0 ]; then
   printf '{"systemMessage":"comply365 SPEC.md: all criteria pass (manual ones signed off for the current code)."}\n'
   exit 0
 fi
 
 {
   [ "${#fails[@]}" -gt 0 ] && { printf 'comply365 SPEC.md — %d automated criteria FAILED:\n' "${#fails[@]}"; printf '  - %s\n' "${fails[@]}"; printf 'Fix these by reading the actual code in software/comply365/, not a summary.\n\n'; }
+  if [ "${#revoked[@]}" -gt 0 ]; then
+    printf '%d manual criteria were REVOKED and need re-confirming by a human.\n' "${#revoked[@]}"
+    printf 'A verdict of `fail` was recorded deliberately — usually because the criterion was\n'
+    printf 'tightened. Nothing is broken in the code; it has to be re-run. Ask the user:\n'
+    for p in "${revoked[@]}"; do printf '  - %s: %s\n' "${p%%|*}" "${p#*|}"; done
+    printf '\n'
+  fi
   if [ "${#pending[@]}" -gt 0 ]; then
     printf '%d criteria cannot be verified from a script and are NOT confirmed for the current code.\n' "${#pending[@]}"
     printf 'Ask the user to run each one and report back pass/fail. Do not claim the batch is done until they have.\n'
     for p in "${pending[@]}"; do printf '  - %s: %s\n' "${p%%|*}" "${p#*|}"; done
-    printf '\nRecord each answer with:  .claude/hooks/comply365-signoff.sh <AC-id> pass|fail\n'
+    printf '\n'
   fi
+  { [ "${#revoked[@]}" -gt 0 ] || [ "${#pending[@]}" -gt 0 ]; } && \
+    printf 'Record each answer with:  .claude/hooks/comply365-signoff.sh <AC-id> pass|fail\n'
 } > "${TMPDIR:-/tmp}/comply365-report.$$"
 
 report_digest="$(command shasum -a 256 "${TMPDIR:-/tmp}/comply365-report.$$" | cut -c1-16)"

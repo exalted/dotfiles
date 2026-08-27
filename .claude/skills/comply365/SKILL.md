@@ -245,6 +245,12 @@ intended. `SPEC.md` is deliberately outside the digest so fixing a criterion's
 wording does not force a full re-run; the tradeoff is that *tightening* a
 criterion means revoking its sign-off by hand.
 
+A revoked verdict is reported in its own section, **with the criterion's steps**,
+under "manual criteria were REVOKED" — not as an automated failure. It used to be
+filed with the `[auto]` failures and its steps dropped, which was worst exactly
+when they were needed: nothing is broken in the code, a human just has to re-run
+it. So do not go looking for a bug when you see one; go ask.
+
 **Carrying a verdict forward** across a change that provably cannot affect it is
 legitimate — but say so explicitly, name the reasoning, and offer to revoke. Do
 not do it silently.
