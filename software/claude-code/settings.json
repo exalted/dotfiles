@@ -25,7 +25,8 @@
     "chrome-devtools-mcp@chrome-devtools-plugins": true,
     "pyright-lsp@claude-plugins-official": true,
     "atlassian@claude-plugins-official": true,
-    "chrome-devtools-mcp@claude-plugins-official": true
+    "chrome-devtools-mcp@claude-plugins-official": true,
+    "slack@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "chrome-devtools-plugins": {
@@ -35,6 +36,7 @@
       }
     }
   },
+  "outputStyle": "Concise",
   "effortLevel": "xhigh",
   "tui": "fullscreen",
   "theme": "custom:dark-mine",

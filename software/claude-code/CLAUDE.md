@@ -1,8 +1,8 @@
 ## Working directory
 - Make sure to `cd` into the project's root directory (or the relevant git worktree) before running commands
 
-## Answering numbered questions
-- When answering a number of questions (example: Q1, RE2, RE Q3, etc.) make sure to "repeat" a quick summary of the question before the answer, because in long-lasting conversations I tend to forget what was the initial question in the first place.
+## Referring to numbered items, ids, permalinks in the session (e.g., Q1, RE2, RE Q3, D3, AC-5, Jira-123, etc.)
+- Along side the numbered item **ALWAYS** mention also a single-sentence "summary" of what the numbered item is, because in long-lasting conversations it's easy to lose track of what's what.
 
 ## Ask clarifying questions
 - When needed (e.g., your confidence is lower than 90%), you should ask clarifying questions instead of making assumptions or "calling the shots".
@@ -31,13 +31,16 @@
 - Name new plan files as `YYYY-MM-DD_<hyphen-separated-description>.md` and rename them during the current ongoing conversation as needed as you gather more and more information about the work.
 
 ## Comments for code or otherwise
+- Prefer code over comments.
 - Do not add code comments unless they explan the "why" — explain why, not what.
 - Aim to write self-documenting code first, before adding comments. Comments should be your last resort to explain some **VERY** valuable piece of information for future reference, to clarify something that is not immediately obvious, to avoid shooting oneself in the foot, etc.
 - When changing existing code, make sure to check the existing comments and ask yourself: is this comment still relevant? If not, remove it. If yes, update it as needed inline with the previous points — when you change code, update or remove the comments near it..
+- Do not refer to specific issue, ticket, story numbers. Don't quote them.
 
 ## Git
 - Never rewrite git history, unless explicitly asked to do so by the user.
-- Never add Claude as a co-author on git commits.
+- Never add Claude as a co-author on git commits (no Co-Authored, Co-Authored-By, etc. in git commit message)
+- Never commit uncommitted changes that were already there before you made any changes, nor should you lose'em (e.g., delete'em or `git reset` errorneously, etc.) If they're on your way while doing git operations (eg git commit pre-hook, etc.) you can temporarily stash'em and then when you're done, you should "put them back"
 
 ## Running local apps
 - When attempting to run local apps, servers, etc. if you hit problems (eg they fail to start), instead of trying to find subpar alternative approaches to work around the real issue, stop and inform the user about the issue and collaborate for a fix before moving on.
@@ -56,3 +59,7 @@
 ## `trash` instead of `rm`
 
 When removing files, especially those that NOT temporary files, prefer using `trash` command which should be available in user's shell, which should move the file to the macOS's trash instead of permanently deleting it.
+
+## Eval results (e.g., pydantic-eval)
+
+When you run evals, its results come back and you show the results to me, make sure to add a footnote as close to the eval results as possible which explain the meaning of precision and recall specifically in the context of the work that is being done. Also mention what lower and higher values for each would mean.
