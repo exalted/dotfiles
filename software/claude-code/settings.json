@@ -4,7 +4,23 @@
     "VISUAL": "zed-preview --new"
   },
   "permissions": {
-    "defaultMode": "auto"
+    "defaultMode": "auto",
+    "deny": [
+      "Bash(rm *)",
+      "Bash(/bin/rm *)",
+      "Bash(\\rm *)",
+      "Bash(rmdir *)",
+      "Bash(/bin/rmdir *)",
+      "Bash(unlink *)",
+      "Bash(/bin/unlink *)",
+      "Bash(find * -delete*)",
+      "Bash(find * -exec* rm *)",
+      "Bash(find * -exec* /bin/rm *)",
+      "Bash(xargs * rm *)",
+      "Bash(xargs * /bin/rm *)",
+      "Bash(git clean *)",
+      "Bash(shred *)"
+    ]
   },
   "worktree": {
     "baseRef": "fresh"

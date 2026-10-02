@@ -52,14 +52,19 @@
 
 ## Scratchpad and temporary files
 - If you need to create temporary files, create them in a dedicated directory within the current working directory as described above instead of the system's temp directory (e.g. /tmp/, /private/tmp/, etc.) — do not create plans, scripts, screenshots, diffs, command outputs, scratchpad, etc. outside the current working directory.
-- Keep track of temporary files in each session and at the end of the session ask the user whether to keep them around or delete them.
+- Keep track of temporary files in each session and at the end of the session ask the user whether to keep them around or delete them (deleting means `trash`, see "Deleting files" below).
 
 ## Third-party libraries and frameworks
 - Get the latest up-to-date documentation and code using context7 MCP server. use context7
 
-## `trash` instead of `rm`
+## Deleting files: `trash`, never `rm`
 
-When removing files, especially those that NOT temporary files, prefer using `trash` command which should be available in user's shell, which should move the file to the macOS's trash instead of permanently deleting it.
+- **Never** delete with `rm`: not `rm -rf`, not `command rm`, not `/bin/rm`, and not their equivalents (`rmdir`, `unlink`, `find -delete`, `xargs rm`, `git clean`, or a script written to do it instead). This includes temporary, scratch and test files — there are no exceptions.
+- Use `trash <path>` (`/usr/bin/trash`). It moves files to the macOS Trash, so every deletion stays recoverable until the user empties it.
+- Never empty the Trash or delete anything inside `~/.Trash`.
+- If `trash` is unavailable or fails, stop and ask. Do not fall back to `rm`.
+- `permissions.deny` in `settings.json` hard-blocks the direct forms. Indirect ones (`bash -c '…'`, a python or perl one-liner) match no rule, so only this rule stops those: never route a deletion around the deny list.
+- Why: a deletion that cannot be undone turns any misjudgment ("it's only a temp file", "that backup isn't needed") into permanent loss.
 
 ## Eval results (e.g., pydantic-eval)
 
