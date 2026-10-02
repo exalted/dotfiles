@@ -62,7 +62,10 @@ batch_digest() {
 # FAILED" and dropping the steps is the least useful thing this hook can do at
 # precisely the moment they are needed.
 fails=() ; pending=() ; revoked=()
-check() { # consumes $? from the preceding command
+# Consumes $? from the preceding command. Never put a `$(...)` in its arguments:
+# it runs first and overwrites $? with its own (almost always zero) status, so
+# the check can no longer fail. Read the value into a variable before the test.
+check() {
   local rc=$? id="$1" desc="$2"
   [ "$rc" -eq 0 ] || fails+=("$id — $desc")
   return 0
@@ -71,17 +74,18 @@ BASH_BIN="${BASH:-/bin/bash}"
 ENV_BIN=/usr/bin/env
 
 # ---- AC-1  structure & registration ----------------------------------------
-for f in cortex.rb web-safety.rb zsh.rb; do
+for f in cortex.rb web-safety.rb zsh.rb jira.rb; do
   [ -x "$DIR/$f" ]; check AC-1 "$DIR/$f is not executable (bin/dotfiles won't run it)"
   command grep -q "comply365/${f%.rb}" profiles.rb; check AC-1 "comply365/${f%.rb} is not registered in profiles.rb"
 done
-for f in cortex.bashrc web-safety.bashrc zshenv SPEC.md; do
+for f in cortex.bashrc web-safety.bashrc jira.bashrc zshenv SPEC.md; do
   [ ! -x "$DIR/$f" ]; check AC-1 "$DIR/$f is executable — _defined_software_names would treat it as a software entry"
 done
 
 # ---- AC-2  syntax, incl. stock ruby 2.6 for bootstrap ----------------------
 "$BASH_BIN" -n "$DIR/cortex.bashrc" 2>/dev/null; check AC-2 "cortex.bashrc fails bash -n"
 "$BASH_BIN" -n "$DIR/web-safety.bashrc" 2>/dev/null; check AC-2 "web-safety.bashrc fails bash -n"
+"$BASH_BIN" -n "$DIR/jira.bashrc" 2>/dev/null; check AC-2 "jira.bashrc fails bash -n"
 if command -v zsh >/dev/null; then
   zsh -n "$DIR/zshenv" 2>/dev/null; check AC-2 "zshenv fails zsh -n"
 fi
@@ -93,8 +97,9 @@ done
 # `^[^#]*` on every content grep: these files explain their own reasoning at
 # length, and a comment naming what they deliberately avoid is not a violation.
 ! command grep -qE '^[^#]*\bbrew\b' "$DIR"/*.rb; check AC-3 "a .rb installs via brew — the work repos' own setups own installing tools"
-# Matches a repo path without naming the org, which would reintroduce the leak.
-! command grep -rqE 'gitlab\.com[:/][A-Za-z0-9]|git@[a-z]' "$DIR"; check AC-4 "a GitLab repo path leaked into $DIR — dotfiles is public"
+# Matches a repo path or a Jira site without naming the org, which would
+# reintroduce the leak. A `<site>` placeholder does not match.
+! command grep -rqE 'gitlab\.com[:/][A-Za-z0-9]|git@[a-z]|[A-Za-z0-9-]\.atlassian\.net' "$DIR"; check AC-4 "a GitLab repo path or Atlassian site leaked into $DIR — dotfiles is public"
 
 # ---- AC-5/6/7  registration under the real load order ----------------------
 # env -i means nvm does NOT exist while web-safety.bashrc is sourced — exactly
@@ -249,22 +254,28 @@ check AC-29 "_guard_profiles warns: $guard_warnings"
 idem="$("$BASH_BIN" "$repo/.claude/hooks/lib/dotfiles-idempotency.sh" "$repo" 2>/dev/null)"
 fact() { printf '%s' "$idem" | command sed -n "s/^$1=//p"; }
 
-[ "$(fact script_failures)" = 0 ]; check AC-30 "$(fact script_failures) entry-script invocation(s) failed across two runs against a throwaway HOME"
-[ "$(fact duplicate_source_lines)" = 0 ]; check AC-30 "a second run duplicated $(fact duplicate_source_lines) source line(s) in ~/.bashrc.dotfiles"
-[ "$(fact ssh_include_lines)" = 1 ]; check AC-30 "~/.ssh/config ended up with $(fact ssh_include_lines) Include lines after two runs, expected 1"
-[ "$(fact ssh_backups)" = 1 ]; check AC-30 "two runs left $(fact ssh_backups) ssh backup file(s), expected 1 — a second backup overwrites the first, losing the original"
+f="$(fact script_failures)"
+[ "$f" = 0 ]; check AC-30 "$f entry-script invocation(s) failed across two runs against a throwaway HOME"
+f="$(fact duplicate_source_lines)"
+[ "$f" = 0 ]; check AC-30 "a second run duplicated $f source line(s) in ~/.bashrc.dotfiles"
+f="$(fact ssh_include_lines)"
+[ "$f" = 1 ]; check AC-30 "~/.ssh/config ended up with $f Include lines after two runs, expected 1"
+f="$(fact ssh_backups)"
+[ "$f" = 1 ]; check AC-30 "two runs left $f ssh backup file(s), expected 1 — a second backup overwrites the first, losing the original"
 [ "$(fact ssh_preexisting_host)" = 1 ]; check AC-31 "a Host entry kept outside this repo was lost from ~/.ssh/config"
 [ "$(fact ssh_fragment_linked)" = yes ]; check AC-31 "the managed fragment is not linked at ~/.ssh/config.d/dotfiles"
 [ "$(fact ssh_group_or_world_writable)" = no ]; check AC-31 "~/.ssh/config was left group- or world-writable — ssh refuses to use it"
-[ "$(fact ssh_fresh_mode)" = 600 ]; check AC-31 "a freshly created ~/.ssh/config got mode $(fact ssh_fresh_mode) under a permissive umask, expected 600"
+f="$(fact ssh_fresh_mode)"
+[ "$f" = 600 ]; check AC-31 "a freshly created ~/.ssh/config got mode $f under a permissive umask, expected 600"
 [ "$(fact zshenv_is_symlink)" = yes ]; check AC-31 "~/.zshenv is not a symlink to the managed file"
 [ "$(fact zshenv_backup_preserved)" = yes ]; check AC-31 "a pre-existing ~/.zshenv was clobbered instead of backed up"
 
 # AC-32: the live generated file, in the order the fragments require.
 rc="$HOME/.bashrc"
-for frag in bash/prompt-command.bashrc bash/prompt.bashrc bash/history.bashrc bash/pager.bashrc node/bashrc homebrew/bashrc watch/bashrc comply365/cortex.bashrc comply365/web-safety.bashrc; do
-  [ "$(command grep -c "software/$frag\$" "$rc" 2>/dev/null)" = 1 ]
-  check AC-32 "~/.bashrc sources software/$frag $(command grep -c "software/$frag\$" "$rc" 2>/dev/null) times, expected exactly 1 (re-run bin/dotfiles if a fragment is new)"
+for frag in bash/prompt-command.bashrc bash/prompt.bashrc bash/history.bashrc bash/pager.bashrc node/bashrc homebrew/bashrc watch/bashrc comply365/cortex.bashrc comply365/web-safety.bashrc comply365/jira.bashrc; do
+  count="$(command grep -c "software/$frag\$" "$rc" 2>/dev/null)"
+  [ "$count" = 1 ]
+  check AC-32 "~/.bashrc sources software/$frag ${count:-0} times, expected exactly 1 (re-run bin/dotfiles if a fragment is new)"
 done
 pcl="$(command grep -n 'bash/prompt-command.bashrc' "$rc" | cut -d: -f1 | head -1)"
 for after in bash/history.bashrc bash/prompt.bashrc; do
@@ -345,11 +356,52 @@ $hooks_bad"
   # Exit 1 with neither pattern present would mean the tool failed for a reason
   # this parser does not know about; surface it rather than passing silently.
   if [ -z "$review_bad" ] && [ -z "$hooks_bad" ]; then
+    review_head="$(printf '%s' "$review_out" | command sed 's/^/      /' | head -20)"
     false
     check AC-37 "setup-review.sh exited $review_rc with no recognized status; run it by hand:
-$(printf '%s' "$review_out" | command sed 's/^/      /' | head -20)"
+$review_head"
   fi
 fi
+
+# ---- AC-39  `jira` opens a story through `browse` -------------------------
+# HOME is a throwaway, so the per-machine config is whatever this writes and
+# never the real one; a stub `open` records what browse would have launched.
+jira_out="$("$ENV_BIN" -i PATH=/usr/bin:/bin "$BASH_BIN" --norc -c '
+  cd "$1" || exit 1
+  export HOME="$(mktemp -d)"; trap "rm -rf $HOME" EXIT
+  config="$HOME/.config/dotfiles/jira"
+  mkdir -p "${config%/*}"; echo work > "${config%/*}/profile"
+  . software/bash/commands.bashrc
+  . software/comply365/jira.bashrc
+  open() { printf "OPENED:%s\n" "$*"; }
+  probe() { local out rc; out="$(jira "${@:2}" 2>&1)"; rc=$?; echo "$1=[$out] rc=$rc"; }
+  rb() { echo "$1=[$(/usr/bin/ruby software/comply365/jira.rb 2>&1 | tr "\n" " ")]"; }
+
+  rb rb_missing; probe no_config 472
+  : > "$config"
+  rb rb_empty; probe empty_config 472
+  printf "https://example.invalid/browse/KEY-" > "$config"   # no trailing newline
+  rb rb_set; probe ok 472
+  probe no_args; probe full_key KEY-472; probe two_args 1 2; probe not_digits 47a
+' _ "$repo" 2>&1)"
+jfact() { printf '%s\n' "$jira_out" | command sed -n "s/^$1=//p"; }
+
+j="$(jfact ok)"
+[ "$j" = "[OPENED:https://example.invalid/browse/KEY-472] rc=0" ]; check AC-39 "jira 472 did not open <configured prefix>472 through browse: $j"
+for c in no_config empty_config; do
+  j="$(jfact $c)"
+  [[ "$j" == *.config/dotfiles/jira*"rc=1" && "$j" != *OPENED* ]]; check AC-39 "jira with $c did not fail naming the file it reads: $j"
+done
+for c in no_args full_key two_args not_digits; do
+  j="$(jfact $c)"
+  [[ "$j" == *"Usage: jira"*"rc=1" && "$j" != *OPENED* ]]; check AC-39 "jira ($c) was not a usage error: $j"
+done
+for c in rb_missing rb_empty; do
+  j="$(jfact $c)"
+  [[ "$j" == *.config/dotfiles/jira* ]]; check AC-39 "jira.rb did not warn while the per-machine Jira config was ${c#rb_}: $j"
+done
+j="$(jfact rb_set)"
+[ "$j" = "[]" ]; check AC-39 "jira.rb printed something with the per-machine Jira config in place: $j"
 
 # ---- [eyes] criteria: unconfirmed until signed off ------------------------
 # Each entry names the files its sign-off depends on; the digest of those files

@@ -15,20 +15,21 @@ working because some work repos ship zsh git hooks.
 
 ## Structure
 
-- **AC-1 [auto]** `cortex.rb`, `web-safety.rb`, `zsh.rb` are executable and each
-  registered in `profiles.rb` under `work` as `comply365/<name>`. The sourced
-  fragments (`cortex.bashrc`, `web-safety.bashrc`, `zshenv`) are **not**
-  executable — `_defined_software_names` only counts executable files, and a
+- **AC-1 [auto]** `cortex.rb`, `web-safety.rb`, `zsh.rb`, `jira.rb` are executable
+  and each registered in `profiles.rb` under `work` as `comply365/<name>`. The
+  sourced fragments (`cortex.bashrc`, `web-safety.bashrc`, `jira.bashrc`,
+  `zshenv`) are **not** executable — `_defined_software_names` only counts executable files, and a
   fragment that looks like a software entry breaks `_guard_profiles`.
-- **AC-2 [auto]** Every file parses: `bash -n` on the two `.bashrc` fragments,
+- **AC-2 [auto]** Every file parses: `bash -n` on the `.bashrc` fragments,
   `zsh -n` on `zshenv`, and `ruby -c` under **stock `/usr/bin/ruby` (2.6)** on
-  the three `.rb` files — `bin/dotfiles` bootstraps before rbenv exists.
+  every `.rb` file — `bin/dotfiles` bootstraps before rbenv exists.
 - **AC-3 [auto]** These files install nothing. The work repos' own setups own
   installing direnv (cortex's Brewfile) and node/nvm (`software/node`); dotfiles
   only wires configuration. No `brew` calls in the `.rb` files.
 - **AC-4 [auto]** dotfiles is a public repo. Bare repo names — `comply365`,
   `cortex`, `web-safety`, `web-cockpit`, and any repo added to the tracked repos
-  table — may appear; GitLab repo paths and the org name may not. The check is a
+  table — may appear; GitLab repo paths, the org name and an Atlassian site hostname
+  may not. The check is a
   denylist on the latter, so the name list above is a convention the *writer*
   keeps, not something the script enforces: prose about what an internal setup
   script does is not caught mechanically. Keep verdicts in that table generic.
@@ -198,7 +199,7 @@ machine that is already set up.
 
 - **AC-37 [auto]** Every repo in the tracked repos table
   (`.claude/skills/comply365/SKILL.md`) has a recorded baseline commit, and its
-  `setup/`, `local/`, git hooks, runtime pins and local-dev docs are unchanged
+  `setup/`, `local/`, `.envrc`, git hooks, runtime pins and local-dev docs are unchanged
   since it — `.claude/tools/setup-review.sh` exits 0. Our fragments only
   re-express a setup we have actually read, so an unread change means the wiring
   is trusted on faith.
@@ -209,8 +210,9 @@ machine that is already set up.
   neither a pass nor a failure, since nothing can be read.
 
   `package.json` is compared by `engines`, `packageManager`, `volta`, `scripts`
-  and `type` alone. Diffing the whole file would fire on every dependency bump,
-  and a gate that always fires is a gate nobody reads.
+  and `type` alone, and `pyproject.toml` by its `requires-python` line alone.
+  Diffing either whole file would fire on every dependency bump, and a gate that
+  always fires is a gate nobody reads.
 
   Note what is deliberately **not** in the sign-off digest: `SKILL.md`. Recording
   a routine "nothing relevant changed" verdict must not expire ten `[eyes]`
@@ -233,6 +235,20 @@ machine that is already set up.
 
   Checked per repo by `.claude/tools/setup-review.sh`, alongside AC-37.
 
+## Work utilities (`jira.rb`, `jira.bashrc`)
+
+Not a work repo's setup re-expressed: a command for the `work` profile only,
+kept here because it is work-specific.
+
+- **AC-39 [auto]** `jira <number>` opens `<prefix><number>` through `browse`
+  (`software/bash/commands.bashrc`), where `<prefix>` is the first line of
+  `~/.config/dotfiles/jira`, e.g. `https://<site>.atlassian.net/browse/<PROJECT>-`.
+  The site and project key live only in that per-machine file, never in this
+  public repo (AC-4). Anything but exactly one all-digit argument is a usage
+  error, and a missing or empty file is an error naming the file; neither opens
+  anything. `jira.rb` warns during the `bin/dotfiles` run while the file is
+  missing or empty, since nothing here can create it.
+
 ## Manual criteria
 
 The `[eyes]` criteria above cannot be verified from a script — they need a real
@@ -249,8 +265,8 @@ AC-18|software/bash/prompt.bashrc,software/comply365/cortex.bashrc|In the same c
 AC-23|software/comply365/zshenv,software/comply365/zsh.rb|Do NOT push to origin — nothing needs publishing. The pre-push hook has no remote-specific logic, so a local remote exercises it identically: `git init --bare ~/.cache/dotfiles/hooktest/web-safety.git` then `git -C ~/Developer/web-safety remote add hooktest ~/.cache/dotfiles/hooktest/web-safety.git`. In Sourcetree (NOT a terminal) push main to `hooktest`. The hook must print real versions — `node: vX, pnpm: Y` — rather than "command not found"; that line alone satisfies the criterion, so cancel once you see it instead of waiting for pnpm test/build. An existing branch is enough, no commit required. Afterwards: `git remote remove hooktest`, trash the bare repo, and confirm `git config --get branch.main.remote` is still `origin`.
 AC-25|software/homebrew/shellenv.sh|In EACH of iTerm2, IntelliJ's terminal and Zed's terminal: run `git hist -- .nvmrc` inside ~/Developer/cortex. It must print history with no "Oh my! That's a very old version of bash" line. Also run `type -a bash` and confirm the Homebrew path is listed first.
 AC-26|software/bash/prompt.bashrc,software/comply365/cortex.bashrc,software/comply365/web-safety.bashrc|Open a fresh tab in EACH of iTerm2, IntelliJ's terminal and Zed's terminal: no error text on open, the prompt renders with its path/git/venv segments, and blank-line spacing appears from the second prompt on.
-AC-27|software/bash/prompt.bashrc,software/iterm2/bashrc|In all three terminals, confirm the prompt's `❯` renders correctly (not `â ¯`). Include the case that used to fail: run `idea .` from an iTerm2 shell and check IntelliJ's terminal there — `printf 'PS1=%q\n' "$PS1"` must show no `133` markers in IntelliJ or Zed, and must show them in iTerm2 (where the integration is wanted).
+AC-27|software/bash/prompt.bashrc,software/iterm2/bashrc|In all three terminals, confirm the prompt's `❯` renders correctly (not `â ¯`). Include the case that used to fail: run `idea .` from an iTerm2 shell and check IntelliJ's terminal there. Then, in each terminal, `echo "$PROMPT_COMMAND" | command grep -c __iterm2_prompt_command` must print 0 in IntelliJ and Zed and 1 in iTerm2 (where the integration is wanted). Do NOT judge this from `printf '%q' "$PS1"`: the integration's own preexec restores the unwrapped PS1 before every command, so a working iTerm2 never shows `133` markers there and their absence elsewhere proves nothing.
 AC-28|software/watch/bashrc,software/git/bin/git-hist|Run `git hist` and then `watch git hist` in the same repo, side by side: the colors must match. Report fail if watch shows plain/uncolored output.
-AC-33|software/comply365/cortex.rb,software/comply365/web-safety.rb,software/comply365/zsh.rb,software/ssh/ssh.rb|ONE terminal is enough — the per-terminal sweep is AC-25/26/27, and the cd behaviors are AC-14/17/18. Run `bin/dotfiles` twice in a row: both must finish with "Okey dokey" and no error output. Then, in that same tab: (a) `command grep -c '^Include' ~/.ssh/config` prints 1; (b) `ssh -G gitlab.com | command grep -i identityfile` resolves; (c) `ls -l ~/.zshenv` is still a symlink into the repo. Finally open ONE new tab and run `echo "$PROMPT_COMMAND" | tr ';' '\n' | command grep -n .` — among OUR hooks, `__comply365_auto_nvm_use` must be the LAST one and `_direnv_hook` must appear somewhere before it, with `__prompt_blank_lines`, `__history_sync` and `__venv_ps1_update` all present, no name appearing twice, and no error output. Only "direnv before nvm, nvm last" is being asserted — that is what this repo controls. Where direnv itself lands among the middle four depends on direnv's own generated snippet (it currently prepends, which is why it appears first despite comply365 being sourced last); a future direnv that appended instead would still satisfy the invariant. A terminal with shell integration wraps that list with its own entries (iTerm2 adds `__bp_precmd_invoke_cmd` / `__iterm2_prompt_command` / `__bp_interactive_mode`, IntelliJ adds `__jetbrains_intellij_command_precmd`) — expected, not a failure; only the relative order of our own hooks is being asserted.
+AC-33|software/comply365/cortex.rb,software/comply365/web-safety.rb,software/comply365/zsh.rb,software/ssh/ssh.rb|ONE terminal is enough — the per-terminal sweep is AC-25/26/27, and the cd behaviors are AC-14/17/18. Run `bin/dotfiles` twice in a row: both must finish with "Okey dokey" and no error output. Then, in that same tab: (a) `command grep -cxF 'Include ~/.ssh/config.d/*' ~/.ssh/config` prints 1 — other tools' own `Include` lines (Colima adds one for its VM) are expected and not counted; (b) `ssh -G gitlab.com | command grep -i identityfile` resolves; (c) `ls -l ~/.zshenv` is still a symlink into the repo. Finally open ONE new tab and run `echo "$PROMPT_COMMAND" | tr ';' '\n' | command grep -n .` — among OUR hooks, `__comply365_auto_nvm_use` must be the LAST one and `_direnv_hook` must appear somewhere before it, with `__prompt_blank_lines`, `__history_sync` and `__venv_ps1_update` all present, no name appearing twice, and no error output. Only "direnv before nvm, nvm last" is being asserted — that is what this repo controls. Where direnv itself lands among the middle four depends on direnv's own generated snippet (it currently prepends, which is why it appears first despite comply365 being sourced last); a future direnv that appended instead would still satisfy the invariant. A terminal with shell integration wraps that list with its own entries (iTerm2 adds `__bp_precmd_invoke_cmd` / `__iterm2_prompt_command` / `__bp_interactive_mode`, IntelliJ adds `__jetbrains_intellij_command_precmd`) — expected, not a failure; only the relative order of our own hooks is being asserted.
 AC-35|software/bash/pager.bashrc,software/diff/bin/diff-pager,software/git/bin/git-hist|In EACH of iTerm2, IntelliJ and Zed: `cd ~/Developer/cortex && git hist -- .nvmrc`. The SHA/author/date must be visibly dimmer than the commit message, and the command must return to the prompt on its own without needing `q`.
 -->

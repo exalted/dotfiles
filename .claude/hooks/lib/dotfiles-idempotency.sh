@@ -20,7 +20,8 @@ printf 'Host jump\n  HostName example.invalid\n' > "$fake/.ssh/config"
 printf '# pre-existing zshenv\n' > "$fake/.zshenv"
 
 SCRIPTS=(software/comply365/cortex.rb software/comply365/web-safety.rb
-         software/comply365/zsh.rb software/ssh/ssh.rb)
+         software/comply365/zsh.rb software/comply365/jira.rb
+         software/ssh/ssh.rb)
 failed=0
 for _run in 1 2; do
   for s in "${SCRIPTS[@]}"; do

@@ -53,10 +53,11 @@ drift=0
 # What can change the shell contract. Deliberately NOT the whole tree: a
 # mechanism that fires on every upstream commit gets ignored, and an ignored
 # gate is worse than none. `local` is included because that is where a repo
-# keeps its local-dev environment; `package.json` is handled separately below.
+# keeps its local-dev environment; `.envrc` because direnv runs it on every `cd`.
+# `package.json` and `pyproject.toml` are handled separately below.
 WATCH_PATHS=(
   setup local .githooks .husky
-  .nvmrc .node-version .tool-versions .python-version
+  .envrc .nvmrc .node-version .tool-versions .python-version
   Brewfile Makefile README.md CLAUDE.md AGENTS.md
 )
 
@@ -89,6 +90,14 @@ print(json.dumps({k: d.get(k) for k in keys}, sort_keys=True))
 '
 }
 export PKG_KEYS
+
+# pyproject.toml churns with dependency bumps the same way; only the interpreter
+# range can change what a session expects. A line match, not a TOML parse: the
+# stdlib parser needs a newer python3 than macOS ships, and a parse that falls
+# back to the same placeholder at both ends would never report anything.
+py_pin() { # $1=repo dir  $2=rev
+  git -C "$1" show "$2:pyproject.toml" 2>/dev/null | command grep -E "^[[:space:]]*requires-python[[:space:]]*="
+}
 
 # The tracked repos table in SKILL.md is the record: column 1 the repo, column 3
 # the commit its setup was last analyzed at. Kept there rather than in a
@@ -172,8 +181,10 @@ while IFS="$(printf '\t')" read -r name base; do
   changed="$(git -C "$dir" diff --name-only "$base" "$tip" -- "${WATCH_PATHS[@]}" 2>/dev/null)"
   pkg=''
   pkg_keys_changed "$dir" "$base" "$tip" && pkg='package.json (engines/packageManager/volta/scripts/type)'
+  pyp=''
+  [ "$(py_pin "$dir" "$base")" != "$(py_pin "$dir" "$tip")" ] && pyp='pyproject.toml (requires-python)'
 
-  if [ -z "$changed" ] && [ -z "$pkg" ]; then
+  if [ -z "$changed" ] && [ -z "$pkg" ] && [ -z "$pyp" ]; then
     [ -n "$stale" ] && notes+=("$stale")
     emit OK "unchanged through $tipname"
     continue
@@ -181,7 +192,7 @@ while IFS="$(printf '\t')" read -r name base; do
 
   [ -n "$stale" ] && notes+=("$stale")
   emit DELTA "$base..$tipname touches:"
-  { [ -n "$changed" ] && printf '%s\n' "$changed"; [ -n "$pkg" ] && printf '%s\n' "$pkg"; } \
+  { [ -n "$changed" ] && printf '%s\n' "$changed"; [ -n "$pkg" ] && printf '%s\n' "$pkg"; [ -n "$pyp" ] && printf '%s\n' "$pyp"; } \
     | while IFS= read -r f; do
         [ -z "$f" ] && continue
         if [ "$PORCELAIN" = yes ]; then printf 'PATH\t%s\t%s\n' "$name" "$f"; else printf '%30s%s\n' '' "$f"; fi
@@ -204,7 +215,7 @@ Something needs attention.
 DELTA / NEVER-ANALYZED / BASELINE-GONE — the setup story has not been read at
 this commit. A diff cannot tell an rc-file write from a reworded paragraph, so:
   1. Read the actual diff, not the file list:
-       git -C ~/Developer/<repo> diff <baseline>..<tip> -- setup local .githooks .nvmrc README.md
+       git -C ~/Developer/<repo> diff <baseline>..<tip> -- setup local .githooks .envrc .nvmrc README.md
   2. Judge it: does it write to an rc file, install or relocate a runtime
      manager, change a version pin, add or change a git hook (or its shebang),
      or change what a local-dev session expects on PATH?

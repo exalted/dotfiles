@@ -46,9 +46,9 @@ gained an rc-file write"*, never what it writes or for which service.
 
 | repo | wiring here | analyzed at | verdict |
 |---|---|---|---|
-| cortex | `cortex.{rb,bashrc}` (direnv), `zshenv` | `0b27c110` | setup appends a direnv hook to the **bash** rc and installs direnv itself; both already re-expressed. Hooks use `sh` shebangs — the documented startup-file gap, no wiring possible |
-| web-safety | `web-safety.{rb,bashrc}` (nvm), `zshenv` | `ce7f1644` | setup appends a zsh-only auto-`nvm use` hook and curl-installs a runtime manager into the shared dir; both already re-expressed. Hooks are zsh — covered by the managed `zshenv` |
-| web-cockpit | none — covered by the generic mechanisms | `11c6a0c` | same shape as web-safety, pinning an older runtime-manager version; needs no wiring of its own. Hooks use `sh` shebangs — the documented gap |
+| cortex | `cortex.{rb,bashrc}` (direnv), `zshenv` | `1c536e012` | setup appends a direnv hook to the **bash** rc and installs direnv itself; both already re-expressed. Later setup also provisions a container runtime (system socket link, boot job, tool config files — no shell rc file) and bumps a toolchain it links itself; hook changes are regex-only; `.envrc` and runtime pins unchanged. Hooks use `sh` shebangs — the documented startup-file gap, which pre-push's now Homebrew-only container CLI also falls into; no wiring possible |
+| web-safety | `web-safety.{rb,bashrc}` (nvm), `zshenv` | `fa77ee7d` | setup appends a zsh-only auto-`nvm use` hook and curl-installs a runtime manager into the shared dir; both already re-expressed. Later changes are new npm/make scripts and docs only; setup, hooks and `.nvmrc` unchanged. Hooks are zsh — covered by the managed `zshenv` |
+| web-cockpit | none — covered by the generic mechanisms | `7a85752` | same shape as web-safety, pinning an older runtime-manager version; needs no wiring of its own. Later changes are one npm script and a dependency; setup, hooks and `.nvmrc` unchanged. Hooks use `sh` shebangs — the documented gap |
 
 Onboarding a repo means adding a row here, `-` in `analyzed at`, which makes the
 next run report it as `NEVER-ANALYZED`. That is the intended first state: a new
@@ -65,7 +65,7 @@ write from a reworded paragraph, so the judgement is yours to make by reading.**
 For every repo it does not mark `OK`:
 
 1. Read the actual diff, not the file list:
-   `git -C ~/Developer/<repo> diff <baseline>..HEAD -- setup .githooks .nvmrc README.md`
+   `git -C ~/Developer/<repo> diff <baseline>..HEAD -- setup local .githooks .envrc .nvmrc README.md`
 2. Judge it against what comply365 guarantees. The questions that matter: does it
    write to an rc file, install or relocate a runtime manager, change a version
    pin, add or change a git hook **or its shebang**, or change what a local-dev
@@ -88,7 +88,7 @@ Statuses other than `OK` and `DELTA`:
   pass.
 
 `package.json` is compared by `engines`, `packageManager`, `volta`, `scripts` and
-`type` only. Diffing the whole file would fire on every dependency bump, and a
+`type` only, and `pyproject.toml` by its `requires-python` line only. Diffing either whole file would fire on every dependency bump, and a
 gate that always fires gets ignored.
 
 ## Status
@@ -344,6 +344,7 @@ Read the comment above the code before "fixing" one.
 | `software/comply365/SPEC.md` | The criteria, plus the `manual-checks` block |
 | `software/comply365/{cortex,web-safety}.{rb,bashrc}` | direnv hook; auto-`nvm use` |
 | `software/comply365/{zsh.rb,zshenv}` | Homebrew + nvm for every zsh |
+| `software/comply365/jira.{rb,bashrc}` | Not a repo or a mechanism: `jira <n>` opens a story via `browse`; the site and project key live in the untracked `~/.config/dotfiles/jira` (AC-39) |
 | `.claude/hooks/comply365-spec-check.sh` | Stop-hook verifier (`[auto]`) |
 | `.claude/hooks/comply365-signoff.sh` | Records a human verdict + code digest |
 | `.claude/hooks/lib/` | Probes the verifier calls |

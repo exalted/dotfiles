@@ -28,6 +28,10 @@ Its three mechanisms are **generic despite their per-project names**:
 | `web-safety.bashrc` | auto-`nvm use` on `cd` | any repo with an `.nvmrc` |
 | `zshenv` (via `zsh.rb`) | Homebrew + nvm on PATH for **every** zsh | any repo with zsh git hooks |
 
+`jira.{rb,bashrc}` is neither a mechanism nor a work repo: it is the `work`-only
+`jira <n>` command. Its Jira site and project key live in the untracked
+`~/.config/dotfiles/jira`, never in this public repo.
+
 ### Onboarding a newly cloned work repo
 
 Default answer: **add nothing.** Walk the checklist first.
