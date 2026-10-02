@@ -22,8 +22,9 @@
 - When producing text in English, for example for code comments, use American English spelling and grammar, instead of British English (eg "color" instead of "colour")
 
 ## Memory
-- Search for existing memories also from project's own working directory (`.claude/memory/`)
+- Search for existing memories also from project's own working directory: both `.claude/memory/` and `.claude/memory.local/`
 - *IMPORTANT*: Always save memories in the project's own working directory (`.claude/memory/`) and *never* in `~/.claude/`. This keeps memories colocated with the project they belong to.
+- `.claude/memory/` is the default for new memories: shared project knowledge that may be git-committed for the whole team. Save a memory in `.claude/memory.local/` instead only when it is personal ("me only", e.g. my own access details or preferences); that folder is never committed. Each folder keeps its own `MEMORY.md` index.
 
 ## Plans
 - Search for existing plans also from project's own working directory (`.claude/plans/`)
