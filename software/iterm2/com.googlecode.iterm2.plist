@@ -28,6 +28,8 @@
 	<true/>
 	<key>AlwaysOpenWindowAtStartup</key>
 	<true/>
+	<key>ClaudeCodeWorkgroupUpsellSuppressed</key>
+	<true/>
 	<key>Custom Color Presets</key>
 	<dict>
 		<key>onedark</key>
