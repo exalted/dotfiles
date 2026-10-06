@@ -42,7 +42,8 @@
     "pyright-lsp@claude-plugins-official": true,
     "atlassian@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
-    "slack@claude-plugins-official": true
+    "slack@claude-plugins-official": true,
+    "gitlab@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "chrome-devtools-plugins": {
