@@ -20,6 +20,12 @@
 
 ## Writing language
 - When producing text in English, for example for code comments, use American English spelling and grammar, instead of British English (eg "color" instead of "colour")
+- Write your answers to me in ASD-STE100 Simplified Technical English. Follow it to about 80%, not 100%: apply its main rules, but break a rule when strict compliance makes the text less precise or less clear.
+  - Keep sentences short: max 20 words for instructions, max 25 words for descriptions.
+  - Use the active voice and the imperative for instructions. Write one instruction per sentence.
+  - Use one word for one meaning, and use the same word for the same thing every time. Prefer the STE approved words and their approved meanings.
+  - Keep technical names and technical verbs as they are (eg code identifiers, commands, file paths, product names, domain terms).
+  - Put conditions first ("If X, do Y"). Use a vertical list for a sequence of steps.
 
 ## Memory
 - Search for existing memories also from project's own working directory: both `.claude/memory/` and `.claude/memory.local/`
