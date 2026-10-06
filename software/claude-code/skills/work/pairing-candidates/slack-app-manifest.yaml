@@ -1,0 +1,14 @@
+display_information:
+  name: Pairing Candidates (read-only)
+  description: Personal read-only check of teammates' Slack presence and status, used to find a free pairing partner on Tuple.
+oauth_config:
+  scopes:
+    user:
+      - channels:read
+      - users:read
+      - users:read.email
+      - dnd:read
+settings:
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false

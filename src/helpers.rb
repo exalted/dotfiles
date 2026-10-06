@@ -102,6 +102,20 @@ def link_to_home_relative(src, dest, backup: false)
   link_relative(src, "#{ENV["HOME"]}/#{dest}", backup: backup)
 end
 
+# `link` is for files only: on a re-run, ln_sf follows the existing link to a
+# directory and puts a second link *inside* it, i.e. inside this repo. `-n`
+# replaces the link itself instead. A real directory is never replaced, because
+# what it holds may be newer than the repo.
+def link_directory(src, dest)
+  abort "#{src}: No such directory" unless File.directory? src
+  if File.exist?(dest) && !File.symlink?(dest)
+    abort "#{dest} exists and is not a link. Move what it holds into #{src}, then run again."
+  end
+
+  FileUtils.mkdir_p Pathname.new(dest).dirname
+  system '/bin/ln', '-sfn', src, dest, exception: true
+end
+
 # Ensure `path` begins with `line`, preserving whatever content it already had
 # beneath it (backing that up once first, like `link`'s backup: option). Used
 # to add an `Include` directive to a file dotfiles doesn't own outright — e.g.

@@ -1,0 +1,15 @@
+# The only people this check covers: one Slack handle per line, then an optional role.
+# Everyone else in the team channel is ignored. Text after # is ignored. You are skipped automatically.
+#
+# [pairing]     real pairing candidates: listed in "Can pair now", "Maybe" and "Not available".
+# [on request]  people you contact when needed: shown with their role on one
+#               "Also around" line, and only when they can be reached now.
+
+[pairing]
+first.dev             Developer
+second.dev            Developer
+ml.engineer           ML/AI engineer
+
+[on request]
+some.designer         Designer
+some.pm               PM

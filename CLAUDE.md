@@ -186,3 +186,16 @@ a hook inherits the user's profile. In scripts, use `"$BASH"` and
 `/usr/bin/env` rather than bare `bash`/`env`, and prefix wrapped builtins with
 `command`. Anything the bootstrap runs must also parse under stock
 `/usr/bin/ruby` (2.6) — rbenv does not exist yet at that point.
+
+## User-scoped Claude Code skills (`software/claude-code/skills/`)
+
+`claude-code.rb` links each skill directory whole into `~/.claude/skills/`:
+`common/` on every profile that installs claude-code, `<profile>/` only on that
+profile. Never link `~/.claude/skills` itself: Claude Code writes the skills it syncs from claude.ai
+into it (`synced/`), and those are not ours to track.
+
+This repo is public, and AC-4's rule applies to skills too: bare repo names may
+appear; GitLab repo paths, the org name, an Atlassian site, colleagues' names and
+internal IDs (Slack channels, …) may not. A skill that needs them reads them from
+an untracked `~/.config/dotfiles/<skill>/` and ships a placeholder
+`*.example.*` beside it — see `pairing-candidates`.
