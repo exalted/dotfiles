@@ -1,8 +1,25 @@
 #!/usr/bin/env bash
 
+# A folder needs two entries: "name/" for the folder itself and "**/name/**"
+# for files inside it that the repository ignores one by one.
+keep=(
+    CLAUDE.local.md
+    .claude/
+    '**/.claude/**'
+)
+
+for pattern in "${keep[@]}"; do
+    case $pattern in
+        '' | '!'* | '#'*)
+            echo "git-clean: keep patterns can't be empty or start with ! or #: '$pattern'" >&2
+            exit 1
+            ;;
+    esac
+done
+
 # Is this an `-X` (remove only ignored files) run? Parsed properly rather than
 # grepped: in `-eX` the X is an exclude pattern, and mistaking it for -X would
-# un-ignore .claude/ below and let a plain clean delete it.
+# un-ignore the keep list below and let a plain clean delete it.
 only_ignored() {
     local flags
     while [ $# -gt 0 ]; do
@@ -23,20 +40,13 @@ only_ignored() {
     return 1
 }
 
-args=()
+# Under -X an ignore rule would get the file removed, so un-ignore it instead.
+negate=
+only_ignored "$@" && negate='!'
 
-# Make sure to not remove local Claude Code settings and memories erroneously.
-# An --exclude pattern is an ignore rule, so it protects .claude/ only while
-# ignored files are spared. -X deletes exactly the ignored files, so there the
-# patterns have to un-ignore .claude/ instead — the directory itself too, as git
-# never looks inside an ignored directory for files to re-include.
-if [ -d ".claude/" ]; then
-    claude="/$(git rev-parse --show-prefix).claude/"
-    if only_ignored "$@"; then
-        args+=("--exclude=!${claude}" "--exclude=!${claude}**")
-    else
-        args+=("--exclude=${claude}")
-    fi
-fi
+excludes=()
+for pattern in "${keep[@]}"; do
+    excludes+=(-e "$negate$pattern")
+done
 
-git clean "${args[@]}" "$@"
+git clean "${excludes[@]}" "$@"
