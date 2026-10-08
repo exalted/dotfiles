@@ -37,6 +37,17 @@ def mas(app_id)
   system "mas install #{app_id}"
 end
 
+# Checks `loaded`, not `running`: `brew services start` only skips a service
+# whose process is alive. A scheduled (interval) one is loaded but idle between
+# runs, and starting it again fails (`launchctl bootstrap` exits 5), aborting the
+# dotfiles run. Matched rather than JSON-parsed because the brew pty wrapper (see
+# _shadow_brew_with_pty) merges stderr into stdout.
+def brew_service(formula)
+  brew formula
+  return if `brew services info #{formula} --json` =~ /"loaded":\s*true/
+  system "brew services start #{formula}"
+end
+
 def install(name, message)
   return if app_installed?(name)
   warn message

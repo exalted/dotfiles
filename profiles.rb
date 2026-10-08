@@ -22,6 +22,7 @@ PROFILES = {}
 PROFILES['personal'] = %w[
   1blocker
   apple_apps
+  asimov
   aws
   claude
   claude-code
