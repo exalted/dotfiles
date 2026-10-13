@@ -66,10 +66,10 @@ The Slack MCP cannot read presence, so the script uses its own read-only Slack *
 2. Paste `~/.claude/skills/pairing-candidates/slack-app-manifest.yaml`. It asks only for the user scopes `channels:read`, `users:read`, `users:read.email` and `dnd:read`.
 3. Select **Install to Workspace**. If the workspace needs admin approval, request it and wait.
 4. Copy the **User OAuth Token** (`xoxp-…`) from **OAuth & Permissions**.
-5. Store it in the Keychain. Run this in the prompt; it asks for the token, so it never lands in shell history:
+5. Store it in the Keychain from a regular terminal window, never from Claude Code: a `!` command gets no keyboard input and stores an empty password. The command asks for the token twice; paste it at each prompt. It never shows on screen or lands in shell history:
 
    ```bash
-   ! security add-generic-password -U -a "$USER" -s pairing-candidates-slack-token -w
+   security add-generic-password -U -a "$USER" -s pairing-candidates-slack-token -w
    ```
 
 To rotate the token, run the same command again (`-U` updates the item).

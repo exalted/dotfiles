@@ -222,10 +222,10 @@ All internal values live on this machine only, never in the public dotfiles repo
 ## One-time setup
 
 1. Create the config files above (`mkdir -p ~/.config/dotfiles/recap`).
-2. Create the GitLab token: GitLab → avatar → **Edit profile → Access → Personal access tokens → Generate token → Fine-grained token**. Name it after its job (for example "Daily recap · read-only API (Mac launch agent)"), set the longest expiry allowed, limit it to the projects in `projects.txt`, and grant only read access to the repository (commits). The scripts call only the commit list and commit diff endpoints, which such a token can read; a legacy token with only `read_api` works too. Copy the token, then store it from the clipboard. A `!` command in Claude Code gets no keyboard input, so `-w` without a value would store an empty password:
+2. Create the GitLab token: GitLab → avatar → **Edit profile → Access → Personal access tokens → Generate token → Fine-grained token**. Name it after its job (for example "Daily recap · read-only API (Mac launch agent)"), set the longest expiry allowed, limit it to the projects in `projects.txt`, and grant only read access to the repository (commits). The scripts call only the commit list and commit diff endpoints, which such a token can read; a legacy token with only `read_api` works too. Store it in the Keychain from a regular terminal window, never from Claude Code: a `!` command gets no keyboard input and stores an empty password. The command asks for the token twice; paste it at each prompt. It never shows on screen or lands in shell history:
 
    ```bash
-   security add-generic-password -U -a "$USER" -s recap-gitlab-token -w "$(pbpaste)" && pbcopy < /dev/null
+   security add-generic-password -U -a "$USER" -s recap-gitlab-token -w
    ```
 
    When it expires, the failure note says so. Create a new token and run the same command (`-U` updates the item).
