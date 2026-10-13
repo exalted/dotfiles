@@ -194,8 +194,9 @@ a hook inherits the user's profile. In scripts, use `"$BASH"` and
 profile. Never link `~/.claude/skills` itself: Claude Code writes the skills it syncs from claude.ai
 into it (`synced/`), and those are not ours to track.
 
-This repo is public, and AC-4's rule applies to skills too: bare repo names may
-appear; GitLab repo paths, the org name, an Atlassian site, colleagues' names and
-internal IDs (Slack channels, …) may not. A skill that needs them reads them from
-an untracked `~/.config/dotfiles/<skill>/` and ships a placeholder
-`*.example.*` beside it — see `pairing-candidates`.
+This repo is public, and AC-4's rule applies to skills too: bare repo names and
+public company and product names may appear; anything internal may not: GitLab
+repo paths, an Atlassian site, colleagues' names and internal IDs (Slack
+channels, …). A skill that needs them reads them from an untracked
+`~/.config/dotfiles/<skill>/` and ships a placeholder `*.example.*` beside it —
+see `pairing-candidates`.
