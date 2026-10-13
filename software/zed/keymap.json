@@ -28,5 +28,11 @@
     "bindings":{
       "alt-cmd-s":"workspace::SaveAll"
     }
+  },
+  {
+    "context":"Workspace",
+    "bindings":{
+      "ctrl-`":"workspace::NewCenterTerminal"
+    }
   }
 ]
