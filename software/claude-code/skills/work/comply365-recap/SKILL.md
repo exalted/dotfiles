@@ -15,13 +15,21 @@ The result is one Obsidian note per run, called a recap, in the configured vault
 This skill runs only unattended, from `software/claude-code/comply365-recap.sh` in the dotfiles repo, and nobody can answer a question:
 
 - Never ask one. Do not `cd`. Run every script with the exact command shown here, because the run pre-allows only those.
-- It needs no local clone: commits come from the GitLab API. The run files go into `$PWD/.claude/scratchpad.local/recap/<date>/`.
+- It needs no local clone: commits come from the GitLab API. The run files go into `~/.local/state/recap/work/<date>/` (the work dir).
 - **This skill only reads,** except for its note. Never transition or comment on a Jira issue, react to or post a Slack message, or change other notes in the vault.
 - If a step cannot continue (a setup error, a GitLab error, an expired Jira or Slack sign-in, a missing tool), write the failure note and stop. Do not work around a broken source, and do not write a recap with a source silently missing. There is only ever one failure note: a new failure updates it and keeps the day failures started. Nothing is lost, because the next successful run covers everything since the last recap:
 
   ```bash
   uv run --quiet --no-project --script ~/.claude/skills/comply365-recap/scripts/note.py --error "<what failed, and the one action that fixes it>"
   ```
+
+**Tools:** use exactly these, and load them by name with `ToolSearch` (`select:<name>,…`). The run turns off the claude.ai connectors, and only these are allowed:
+
+- Jira: `mcp__plugin_atlassian_atlassian__getAccessibleAtlassianResources`, `mcp__plugin_atlassian_atlassian__searchJiraIssuesUsingJql`, `mcp__plugin_atlassian_atlassian__getJiraIssue`
+- Slack: `mcp__plugin_slack_slack__slack_read_channel`, `mcp__plugin_slack_slack__slack_read_thread`, `mcp__plugin_slack_slack__slack_search_public`
+- GitLab diffs: `mcp__plugin_gitlab_gitlab__get_commit`
+
+If `ToolSearch` finds one of them missing, that source is down: write the failure note and stop.
 
 ## 1. Collect the commits
 
@@ -31,7 +39,7 @@ uv run --quiet --no-project --script ~/.claude/skills/comply365-recap/scripts/co
 
 It reads, through the GitLab REST API, the commits that reached `main` in the window for each project in `~/.config/dotfiles/recap/projects.txt`. It then writes `collected.json` into the work dir it prints: the window, the Jira browse URL and project key, the team channel, and per project the commits (subject, body, author, files with line counts, story keys, commit URL). Merge commits are left out.
 
-**Window:** it starts where the newest earlier recap ends (its `window_end`), however long ago: after a holiday with the Mac off, the first run covers the whole absence. Usually that is 07:45 on the previous workday, and Monday covers the weekend. It ends now. `collected.json` lists the `workdays` the window covers.
+**Window:** it starts where the newest earlier recap ends (its `window_end`), however long ago, so no commit is told twice or missed: after a holiday with the Mac off, the first run covers the whole absence. Usually that is about 07:47 on the previous workday, and Monday covers the weekend. It ends now. The very first run starts at 07:45 on the previous workday. `collected.json` lists the `workdays` the window covers.
 
 The API, not `git fetch`, is the source on purpose: GitLab refuses git access once the group's SAML SSO session expires, which it usually has by the morning, but a token keeps working.
 
@@ -46,14 +54,14 @@ Read `collected.json` in full before the next step.
 Use the Atlassian MCP. Get the `cloudId` once with `getAccessibleAtlassianResources`.
 
 1. **Delivered stories:** one `searchJiraIssuesUsingJql` for `key in (<story_keys>)` with the fields `summary`, `status`, `issuetype`, `parent`, `description`. The description and the parent epic tell you what the story is for, in the words the team uses, and which stories belong to the same feature.
-2. **Direction:** `project = <KEY> AND sprint in openSprints() AND statusCategory != Done ORDER BY rank`, plus `project = <KEY> AND created >= "<window start, yyyy-MM-dd HH:mm>"`. Fetch summaries, status and parent only, and at most 40 issues.
+2. **Direction:** `project = <KEY> AND statusCategory = "In Progress" ORDER BY updated DESC` (the project has no sprints), plus `project = <KEY> AND created >= "<window start, yyyy-MM-dd HH:mm>"`. Fetch summaries, status and parent only, and at most 40 issues.
 
 ## 3. Read Slack
 
 Use the Slack MCP, read tools only.
 
 1. `slack_read_channel` on the team channel from `collected.json`, with `oldest` = the window start as a Unix timestamp. Open threads with replies (`slack_read_thread`) only when they discuss a delivered change, a release, an incident or a plan.
-2. For each delivered story key with little context so far, `slack_search_public` for `<KEY>-<n> after:<window start date minus 7 days>`. Search at most 10 keys.
+2. For each delivered story key with little context so far, `slack_search_public` for `<KEY>-<n> after:<window start date minus 7 days>`. Search at most 10 keys, and ask for at most 5 results per search, so the answers stay small enough to read directly.
 
 On a long window (more than 3 workdays), read at most the newest 300 channel messages, and open only threads about releases, incidents, plans, or the biggest pieces of work.
 
@@ -214,11 +222,11 @@ All internal values live on this machine only, never in the public dotfiles repo
 ## One-time setup
 
 1. Create the config files above (`mkdir -p ~/.config/dotfiles/recap`).
-2. Create the GitLab token: GitLab → avatar → **Edit profile → Access tokens → Add new token**. Name it `recap`, set the longest expiry allowed, and select only `read_api`. Store it in the Keychain (it asks for the token, so the token never lands in shell history):
+2. Create the GitLab token: GitLab → avatar → **Edit profile → Access → Personal access tokens → Generate token → Fine-grained token**. Name it after its job (for example "Daily recap · read-only API (Mac launch agent)"), set the longest expiry allowed, limit it to the projects in `projects.txt`, and grant only read access to the repository (commits). The scripts call only the commit list and commit diff endpoints, which such a token can read; a legacy token with only `read_api` works too. Copy the token, then store it from the clipboard. A `!` command in Claude Code gets no keyboard input, so `-w` without a value would store an empty password:
 
    ```bash
-   security add-generic-password -U -a "$USER" -s recap-gitlab-token -w
+   security add-generic-password -U -a "$USER" -s recap-gitlab-token -w "$(pbpaste)" && pbcopy < /dev/null
    ```
 
-   When it expires, the day's note is a failure note that says so. Create a new token and run the same command (`-U` updates the item).
+   When it expires, the failure note says so. Create a new token and run the same command (`-U` updates the item).
 3. Install the schedule: run `software/claude-code/claude-code.rb` in the dotfiles repo.

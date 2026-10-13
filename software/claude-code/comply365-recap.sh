@@ -18,7 +18,7 @@ exec >>"$log" 2>&1
 echo "=== $(/bin/date '+%Y-%m-%dT%H:%M:%S%z') start"
 
 # A directory of its own, so the run loads no project's CLAUDE.md and its
-# scratchpad files land outside every repo.
+# work files (work/<date>/) land outside every repo.
 state="$HOME/.local/state/recap"
 /bin/mkdir -p "$state"
 cd "$state" || exit 1
@@ -44,6 +44,13 @@ case "$prepared" in
     ;;
 esac
 
+# Only the plugin servers, never the claude.ai connectors: a connector with the
+# same service replaces its plugin, and an unauthorized one leaves the run with no
+# Jira tools. Headless runs also start before remote servers finish connecting,
+# so the first turn waits for them.
+export ENABLE_CLAUDEAI_MCP_SERVERS=false
+export CLAUDE_CODE_MCP_STARTUP_WAIT_MS=60000
+
 # Nobody is there to answer prompts: everything not pre-allowed here is denied.
 # The skill reads GitLab, Jira and Slack and writes one Obsidian note through
 # its own script; it never needs a write tool beyond its work files.
@@ -59,7 +66,7 @@ claude -p "Run the comply365-recap skill." \
   --permission-prompts none \
   --allowedTools "Skill,ToolSearch,Read,Write,\
 Bash(uv run --quiet --no-project --script $scripts/*),\
-Bash(trash *.claude/scratchpad.local/recap/*),\
+Bash(trash *.local/state/recap/work/*),\
 mcp__plugin_gitlab_gitlab__get_commit,\
 mcp__plugin_atlassian_atlassian__getAccessibleAtlassianResources,\
 mcp__plugin_atlassian_atlassian__searchJiraIssuesUsingJql,\
@@ -67,7 +74,7 @@ mcp__plugin_atlassian_atlassian__getJiraIssue,\
 mcp__plugin_slack_slack__slack_read_channel,\
 mcp__plugin_slack_slack__slack_read_thread,\
 mcp__plugin_slack_slack__slack_search_public" \
-  || status=$?
+  < /dev/null || status=$?
 
 # The skill reports the failures it can name itself. This covers the ones it
 # cannot: claude crashing, a sign-in it never reached, a run cut short.

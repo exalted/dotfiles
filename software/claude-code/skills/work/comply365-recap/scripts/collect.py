@@ -7,7 +7,7 @@
 
 Reads the GitLab REST API, not local clones: GitLab refuses git fetch once the group's SAML SSO
 session expires, which it usually has by the morning, while API access with a token keeps working.
-Writes <cwd>/.claude/scratchpad.local/recap/<date>/collected.json and prints a summary.
+Writes ~/.local/state/recap/work/<date>/collected.json and prints a summary.
 """
 
 import json
@@ -38,9 +38,10 @@ CHANNEL_FILE = CONFIG_DIR / "channel"
 JIRA_FILE = Path.home() / ".config" / "dotfiles" / "jira"
 KEYCHAIN_SERVICE = "recap-gitlab-token"
 BRANCH = "main"
-# The scheduled run starts a couple of minutes after this, so consecutive windows touch without a gap.
+# Where the very first window starts, on the previous workday; later windows start where the last recap ended.
 WINDOW_ANCHOR = time(7, 45)
-SCRATCHPAD = Path(".claude") / "scratchpad.local"
+# Not under a .claude/ folder: Claude Code asks before every write there, and nobody answers a scheduled run.
+WORK_ROOT = Path.home() / ".local" / "state" / "recap" / "work"
 MAX_FILES_PER_COMMIT = 40
 MAX_BODY_CHARS = 2000
 PAGE_SIZE = 100
@@ -174,10 +175,12 @@ def last_recap_end(*, folder: Path, now: datetime) -> datetime | None:
 
 
 def resolve_window(*, last_end: datetime | None, now: datetime) -> Window:
-    """From the previous workday, or from where the last recap ended when runs were missed, however long ago."""
-    usual_start = datetime.combine(previous_workday(now.date()), WINDOW_ANCHOR, tzinfo=now.tzinfo)
-    if last_end is None or last_end >= usual_start:
-        return Window(start=usual_start, end=now)
+    """From where the last recap ended, however long ago, so no commit is told twice or missed.
+
+    The very first run, with no recap yet, starts at the anchor on the previous workday.
+    """
+    if last_end is None:
+        return Window(start=datetime.combine(previous_workday(now.date()), WINDOW_ANCHOR, tzinfo=now.tzinfo), end=now)
     return Window(start=last_end, end=now)
 
 
@@ -254,19 +257,18 @@ def collect_project(
                 files_not_listed=files_not_listed,
             )
         )
-    head = gitlab.get(f"{project.api_base}/repository/branches/{BRANCH}")["commit"]["short_id"]
+    # The newest commit, not the branches endpoint: a fine-grained token may read commits but not branches.
+    newest = gitlab.get(
+        f"{project.api_base}/repository/commits?{urllib.parse.urlencode({'ref_name': BRANCH})}&per_page=1"
+    )
+    head = newest[0]["short_id"] if newest else "(empty)"
     return ProjectResult(
         name=project.name, product=project.product, web_url=project.web_url, head=head, commits=tuple(commits)
     )
 
 
 def work_directory(today: date) -> Path:
-    scratchpad = Path.cwd() / SCRATCHPAD
-    scratchpad.mkdir(parents=True, exist_ok=True)
-    gitignore = scratchpad / ".gitignore"
-    if not gitignore.exists():
-        gitignore.write_text("*\n")
-    directory = scratchpad / "recap" / today.isoformat()
+    directory = WORK_ROOT / today.isoformat()
     directory.mkdir(parents=True, exist_ok=True)
     return directory
 
