@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.dotfiles.comply365-recap</string>
+	<!-- The script is the executable on purpose: macOS names a background item after
+	     its executable in the Login Items notice and settings, and /bin/sh showed up as "sh".
+	     launchd expands no variables, so the installer renders @HOME@ when copying. -->
+	<key>ProgramArguments</key>
+	<array>
+		<string>@HOME@/.claude/recap.sh</string>
+	</array>
+	<!-- At login too, so a Mac that was off at 07:47 gets its recap right after start-up.
+	     The script runs prepare.py first, which skips weekends and a day already done,
+	     so logins and restarts never write a second recap. -->
+	<key>RunAtLoad</key>
+	<true/>
+	<!-- Monday to Friday at 07:47 local, so the note is there by 08:00. The recap window
+	     ends at the run and starts where the last recap ended (collect.py), so
+	     consecutive windows touch. A time slept through runs on wake. -->
+	<key>StartCalendarInterval</key>
+	<array>
+		<dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
+		<dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
+		<dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
+		<dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
+		<dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
+	</array>
+</dict>
+</plist>

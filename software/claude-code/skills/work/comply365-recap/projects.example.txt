@@ -1,0 +1,5 @@
+# One GitLab project per line: <project URL> | <product name the recap uses for it>
+# The product name is what a non-technical reader knows the product as.
+https://gitlab.com/<group>/<backend-project>  | Product backend
+https://gitlab.com/<group>/<web-app-project>  | Product web app
+https://gitlab.com/<group>/<console-project>  | Internal support console
