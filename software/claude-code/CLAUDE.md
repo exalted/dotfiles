@@ -58,7 +58,9 @@
 
 ## Scratchpad and temporary files
 - If you need to create temporary files, create them in a dedicated directory within the current working directory as described above instead of the system's temp directory (e.g. /tmp/, /private/tmp/, etc.) — do not create plans, scripts, screenshots, diffs, command outputs, scratchpad, etc. outside the current working directory.
-- Keep track of temporary files in each session and at the end of the session ask the user whether to keep them around or delete them (deleting means `trash`, see "Deleting files" below).
+- Keep track of temporary files in each session. When you decide the work no longer needs them, delete them without asking the user (deleting means `trash`, see "Deleting files" below).
+- Trash the whole `<work-name>` directory with one `trash` call, not file by file, so the Trash holds one folder with all the temporary files of that work.
+- To continue earlier work whose `<work-name>` directory is in `~/.Trash`, move it back to `<project root>/.claude/scratchpad.local/` with `mv`; no need to ask. The Trash renames a duplicate name (e.g. `<work-name> 2`): if more than one match exists, compare dates and contents to pick the right one. If the target directory already exists, stop and ask instead of merging or overwriting.
 
 ## Third-party libraries and frameworks
 - Get the latest up-to-date documentation and code using context7 MCP server. use context7
@@ -67,7 +69,7 @@
 
 - **Never** delete with `rm`: not `rm -rf`, not `command rm`, not `/bin/rm`, and not their equivalents (`rmdir`, `unlink`, `find -delete`, `xargs rm`, `git clean`, or a script written to do it instead). This includes temporary, scratch and test files — there are no exceptions.
 - Use `trash <path>` (`/usr/bin/trash`). It moves files to the macOS Trash, so every deletion stays recoverable until the user empties it.
-- Never empty the Trash or delete anything inside `~/.Trash`.
+- Never empty the Trash or delete anything inside `~/.Trash`. Moving a scratchpad directory out of it to restore it is allowed (see "Scratchpad and temporary files").
 - If `trash` is unavailable or fails, stop and ask. Do not fall back to `rm`.
 - `permissions.deny` in `settings.json` hard-blocks the direct forms. Indirect ones (`bash -c '…'`, a python or perl one-liner) match no rule, so only this rule stops those: never route a deletion around the deny list.
 - Why: a deletion that cannot be undone turns any misjudgment ("it's only a temp file", "that backup isn't needed") into permanent loss.
