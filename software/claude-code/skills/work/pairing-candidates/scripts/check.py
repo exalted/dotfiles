@@ -8,6 +8,7 @@
 Never calls, messages, joins or changes anything in Slack or Tuple.
 """
 
+import html
 import json
 import re
 import subprocess
@@ -30,7 +31,10 @@ CHANNEL_FILE = CONFIG_DIR / "channel"
 KEYCHAIN_SERVICE = "pairing-candidates-slack-token"
 WORKDAY_START_HOUR = 9
 WORKDAY_END_HOUR = 18
-REQUIRED_SCOPES = "channels:read, users:read, users:read.email, dnd:read"
+REQUIRED_SCOPES = "channels:read, channels:history, users:read, users:read.email, dnd:read"
+# :pair: and :tuple-pear: are workspace aliases of :pear:; match every name in case Slack reports the alias.
+PAIR_REACTIONS = frozenset({"tuple", "pear", "pair", "tuple-pear"})
+MESSAGE_PREVIEW_LENGTH = 300
 EXIT_SETUP_ERROR = 2
 
 type Json = dict[str, Any]
@@ -157,9 +161,18 @@ class Verdict:
 
 
 @dataclass(frozen=True)
+class UnansweredMessage:
+    member: SlackMember
+    posted_at: datetime
+    text: str
+
+
+@dataclass(frozen=True)
 class PairingCheck:
     verdicts: tuple[Verdict, ...]
     dnd_known: bool
+    unanswered_messages: tuple[UnansweredMessage, ...]
+    history_known: bool
     missing_handles: tuple[str, ...]
     channel_name: str
 
@@ -293,6 +306,91 @@ def read_dnd_user_ids(*, slack: SlackClient, user_ids: list[str]) -> frozenset[s
     return frozenset(in_dnd)
 
 
+def read_messages_since(*, slack: SlackClient, channel_id: str, oldest: datetime) -> list[Json] | None:
+    """Return the channel's messages since `oldest`, or None when the token lacks channels:history."""
+    messages: list[Json] = []
+    cursor = ""
+    try:
+        while True:
+            page = slack.call(
+                "conversations.history",
+                channel=channel_id,
+                oldest=f"{oldest.timestamp():.6f}",
+                limit="200",
+                cursor=cursor,
+            )
+            messages.extend(page["messages"])
+            cursor = page.get("response_metadata", {}).get("next_cursor", "")
+            if not cursor:
+                return messages
+    except SetupError:
+        return None
+
+
+def start_of_their_day(*, member: SlackMember, now: datetime) -> datetime:
+    return now.astimezone(timezone(member.utc_offset)).replace(hour=0, minute=0, second=0, microsecond=0)
+
+
+def is_answered(*, message: Json, channel_messages: list[Json]) -> bool:
+    asker = message["user"]
+    if any(user != asker for user in message.get("reply_users", [])):
+        return True
+    for reaction in message.get("reactions", []):
+        is_pair_reaction = reaction["name"].split("::")[0] in PAIR_REACTIONS
+        if is_pair_reaction and any(user != asker for user in reaction.get("users", [])):
+            return True
+    mention = f"<@{asker}>"
+    return any(
+        float(later["ts"]) > float(message["ts"]) and later.get("user") != asker and mention in later.get("text", "")
+        for later in channel_messages
+    )
+
+
+SLACK_MARKUP = re.compile(r"<([^>|]+)(?:\|([^>]+))?>")
+
+
+def plain_text(*, text: str, handles: dict[str, str]) -> str:
+    def replace(match: re.Match[str]) -> str:
+        target, label = match.groups()
+        if target.startswith("@"):
+            return f"@{handles.get(target[1:], label or 'someone')}"
+        if target.startswith("!"):
+            return f"@{label or target[1:].split('^')[0]}"
+        if target.startswith("#"):
+            return f"#{label or target[1:]}"
+        return label or target
+
+    flattened = " ".join(html.unescape(SLACK_MARKUP.sub(replace, text)).split())
+    if len(flattened) <= MESSAGE_PREVIEW_LENGTH:
+        return flattened
+    return flattened[: MESSAGE_PREVIEW_LENGTH - 1] + "…"
+
+
+def find_unanswered_messages(
+    *, channel_messages: list[Json], members: list[SlackMember], handles: dict[str, str], now: datetime
+) -> tuple[UnansweredMessage, ...]:
+    members_by_id = {m.user_id: m for m in members}
+    unanswered: list[UnansweredMessage] = []
+    for message in channel_messages:
+        member = members_by_id.get(message.get("user", ""))
+        is_top_level = "subtype" not in message and message.get("thread_ts", message["ts"]) == message["ts"]
+        if member is None or not is_top_level:
+            continue
+        posted_at = datetime.fromtimestamp(float(message["ts"]), tz=now.tzinfo)
+        if posted_at < start_of_their_day(member=member, now=now):
+            continue
+        if is_answered(message=message, channel_messages=channel_messages):
+            continue
+        unanswered.append(
+            UnansweredMessage(
+                member=member,
+                posted_at=posted_at,
+                text=plain_text(text=message.get("text", ""), handles=handles),
+            )
+        )
+    return tuple(sorted(unanswered, key=lambda m: m.posted_at))
+
+
 def read_tuple_contacts() -> list[TupleContact]:
     rows = cast(list[Json], run_tuple("contacts", "list"))
     return [
@@ -366,6 +464,17 @@ def describe_around(verdict: Verdict) -> str:
     return f"{verdict.member.name} ({role})" if role else verdict.member.name
 
 
+def describe_age(*, posted_at: datetime, checked_at: datetime) -> str:
+    minutes = max(0, int((checked_at - posted_at).total_seconds() // 60))
+    hours, minutes = divmod(minutes, 60)
+    return f"{hours} h {minutes} min ago" if hours else f"{minutes} min ago"
+
+
+def describe_unanswered(*, message: UnansweredMessage, checked_at: datetime) -> str:
+    age = describe_age(posted_at=message.posted_at, checked_at=checked_at)
+    return f"  - {message.member.name} · {message.posted_at:%H:%M} ({age}): {message.text}"
+
+
 def render(*, check: PairingCheck, checked_at: datetime) -> str:
     verdicts = sorted(check.verdicts, key=lambda v: v.member.name.lower())
     pairing = [v for v in verdicts if v.roster_entry.group is RosterGroup.PAIRING]
@@ -388,6 +497,14 @@ def render(*, check: PairingCheck, checked_at: datetime) -> str:
         lines += ["", f"Not found in #{check.channel_name}, check {ROSTER_FILE}: {missing}"]
     if not check.dnd_known:
         lines += ["", "DND not checked: the Slack token lacks the dnd:read scope."]
+    if not check.history_known:
+        lines += ["", "Pair requests not checked: the Slack token lacks the channels:history scope."]
+    elif check.unanswered_messages:
+        lines += [
+            "",
+            f"Unanswered messages to judge ({len(check.unanswered_messages)}), today in #{check.channel_name}",
+        ]
+        lines += [describe_unanswered(message=m, checked_at=checked_at) for m in check.unanswered_messages]
     return "\n".join(lines)
 
 
@@ -411,6 +528,16 @@ def check_team(*, slack: SlackClient, now: datetime) -> PairingCheck:
         members = [m for m in (to_member(u) for u in users) if m is not None and m.handle.lower() in roster]
         presences = list(pool.map(fetch_presence, members))
     dnd_user_ids = read_dnd_user_ids(slack=slack, user_ids=[m.user_id for m in members])
+    channel_messages = (
+        read_messages_since(
+            slack=slack,
+            channel_id=channel_id,
+            oldest=min(start_of_their_day(member=m, now=now) for m in members),
+        )
+        if members
+        else []
+    )
+    handles = {cast(str, u["id"]): cast(str, u["name"]) for u in users}
     found_handles = {m.handle.lower() for m in members} | {str(own_identity.get("user", "")).lower()}
     missing_handles = tuple(sorted(set(roster) - found_handles))
 
@@ -439,6 +566,10 @@ def check_team(*, slack: SlackClient, now: datetime) -> PairingCheck:
     return PairingCheck(
         verdicts=tuple(verdicts),
         dnd_known=dnd_user_ids is not None,
+        unanswered_messages=find_unanswered_messages(
+            channel_messages=channel_messages or [], members=members, handles=handles, now=now
+        ),
+        history_known=channel_messages is not None,
         missing_handles=missing_handles,
         channel_name=channel_name,
     )
