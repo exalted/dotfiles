@@ -17,12 +17,17 @@ from __future__ import annotations
 
 import json
 import os
-import re
-import shlex
 import subprocess
 import sys
 from pathlib import Path
 from typing import Any
+
+from shell_commands import (
+    COMMAND_PREFIX_KEYWORDS,
+    COMMAND_SEPARATORS,
+    strip_heredoc_bodies,
+    tokenize,
+)
 
 CACHE_PATH = (
     Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache"))
@@ -47,26 +52,6 @@ for name in $(compgen -A function); do
 done
 """
 
-COMMAND_SEPARATORS = {
-    ";",
-    ";;",
-    "&",
-    "&&",
-    "|",
-    "||",
-    "|&",
-    "(",
-    ")",
-    "\n",
-    "{",
-    "}",
-    "!",
-}
-COMMAND_PREFIX_KEYWORDS = {"if", "then", "else", "elif", "while", "until", "do", "time"}
-HEREDOC_DELIMITER = re.compile(
-    r"""(?<!<)<<-?(?!<)\s*['"]?([A-Za-z_][A-Za-z0-9_]*)['"]?"""
-)
-SHELL_PUNCTUATION = ";&|()<>\n"
 FLAG_GUIDANCE = " ".join(
     [
         "Run the command again with each name prefixed by `command`.",
@@ -114,27 +99,6 @@ def load_cache() -> Wrappers:
         return json.loads(CACHE_PATH.read_text())
     except (OSError, ValueError):
         return refresh_cache()
-
-
-def strip_heredoc_bodies(command_line: str) -> str:
-    """Drop heredoc bodies: they are data, and an apostrophe in prose would break tokenizing."""
-    kept_lines = []
-    pending_delimiters = []
-    for line in command_line.split("\n"):
-        if pending_delimiters:
-            if line.strip() == pending_delimiters[0]:
-                pending_delimiters.pop(0)
-            continue
-        kept_lines.append(line)
-        pending_delimiters.extend(HEREDOC_DELIMITER.findall(line))
-    return "\n".join(kept_lines)
-
-
-def tokenize(command_line: str) -> list[str]:
-    lexer = shlex.shlex(command_line, posix=True, punctuation_chars=SHELL_PUNCTUATION)
-    lexer.whitespace = " \t\r"
-    lexer.whitespace_split = True
-    return list(lexer)
 
 
 def called_names(command_line: str) -> list[str]:

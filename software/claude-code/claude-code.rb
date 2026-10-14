@@ -26,5 +26,6 @@ end
   end
 end
 
-# Hooks that settings.json runs; see each script for what it enforces.
+# Hooks that settings.json runs, and the module they share; see each script for what it enforces.
 link_to_home_relative 'hooks/require-command-prefix.py', '.claude/hooks/require-command-prefix.py'
+link_to_home_relative 'hooks/shell_commands.py',         '.claude/hooks/shell_commands.py'
