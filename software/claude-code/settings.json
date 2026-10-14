@@ -142,5 +142,16 @@
     "commit": "",
     "pr": "",
     "sessionUrl": false
-  }
+  },
+  "deniedMcpServers": [
+    {
+      "serverName": "claude.ai Datadog"
+    },
+    {
+      "serverName": "claude.ai Datadog (2)"
+    },
+    {
+      "serverUrl": "https://mcp.datadoghq.eu/api/unstable/*"
+    }
+  ]
 }
