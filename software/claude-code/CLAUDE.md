@@ -10,6 +10,8 @@
 
 ## Running commands
 - When you/agent/LLM/model runs a well-known/built-in commands (eg grep, cat, sed, awk, date, etc.) make sure to prefix'em with `command` (eg `command date` instead of only `date`) or use `/bin/<command>` to make to run the "raw"/original version and not an alias or a "wrapped"/enhanced version. This rule doesn't apply to managed scripts or commands that the user explicitly runs.
+- A PreToolUse hook (`~/.claude/hooks/require-command-prefix.py`) enforces this rule: it denies a Bash command that calls one of the user's shell aliases or functions that hides a real command. If it denies a command, run it again with `command`.
+- When you replace a wrapper with `command <name>`, look at what the wrapper added. Keep a flag only if it is a sensible default that matches the user's preferences, for example `--stopOnError` for `trash`. Drop flags that change the output or behavior in ways you would not expect, for example `-F1` for `ls`.
 
 ## Running tests
 - Never add `-s` / `--capture=no` to a pytest run whose results you intend to read. Capturing is what attaches a failing test's output to its failure report (the `Captured stdout/stderr/log call` sections); `-s` strips those sections and scatters the output through the run, interleaved with every passing test's output.
@@ -77,7 +79,7 @@
 ## Deleting files: `trash`, never `rm`
 
 - **Never** delete with `rm`: not `rm -rf`, not `command rm`, not `/bin/rm`, and not their equivalents (`rmdir`, `unlink`, `find -delete`, `xargs rm`, `git clean`, or a script written to do it instead). This includes temporary, scratch and test files — there are no exceptions.
-- Use `trash <path>` (`/usr/bin/trash`). It moves files to the macOS Trash, so every deletion stays recoverable until the user empties it.
+- Use `command trash --stopOnError <path>` (`/usr/bin/trash`). It moves files to the macOS Trash, so every deletion stays recoverable until the user empties it.
 - Never empty the Trash or delete anything inside `~/.Trash`. Moving a scratchpad directory out of it to restore it is allowed (see "Scratchpad and temporary files").
 - If `trash` is unavailable or fails, stop and ask. Do not fall back to `rm`.
 - `permissions.deny` in `settings.json` hard-blocks the direct forms. Indirect ones (`bash -c '…'`, a python or perl one-liner) match no rule, so only this rule stops those: never route a deletion around the deny list.

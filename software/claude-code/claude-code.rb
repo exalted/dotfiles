@@ -21,3 +21,6 @@ end
     link_directory skill, "#{ENV["HOME"]}/.claude/skills/#{File.basename(skill)}"
   end
 end
+
+# Hooks that settings.json runs; see each script for what it enforces.
+link_to_home_relative 'hooks/require-command-prefix.py', '.claude/hooks/require-command-prefix.py'
