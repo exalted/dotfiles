@@ -30,7 +30,7 @@ __comply365_ensure_nvm() {
 # discover there's nothing to do.
 #
 # The answers go into globals instead of stdout, because a command substitution
-# would fork — and this runs on every directory change.
+# would fork — and this runs on every prompt.
 __comply365_find_nvmrc() {
   __comply365_nvmrc=''
   __comply365_nvmrc_version=''
