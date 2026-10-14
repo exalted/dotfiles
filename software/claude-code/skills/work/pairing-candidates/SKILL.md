@@ -1,6 +1,7 @@
 ---
 name: pairing-candidates
 description: Read-only check of which teammates (devs, ML/AI engineers) are free to pair on Tuple right now, combining Tuple presence (online / busy in a call / offline) with Slack presence, status, DND and local time, and flags teammates whose request for a pair in the team channel is still unanswered. Use when the user asks who they can pair with, who is available or free for pairing, who is online on Tuple, or wants a pairing partner. Never calls, messages or joins anyone.
+model: haiku
 ---
 
 # Pairing candidates
@@ -25,7 +26,7 @@ The script reads:
 
 ## 2. Handle errors
 
-- **Exit 2, `SETUP ERROR`:** stop. Show the message and point the user to **One-time setup** below. For a `missing_scope` error, name the missing scope. Do not fall back to the Slack MCP or to guessing.
+- **Exit 2, `SETUP ERROR`:** stop. Show the message and point the user to **One-time setup** in `~/.claude/skills/pairing-candidates/SETUP.md`. For a `missing_scope` error, name the missing scope. Do not fall back to the Slack MCP or to guessing.
 - **`tuple ... failed`:** the Tuple app is probably not running or not signed in. Ask the user to open Tuple, then run the check again.
 - **Exit 1, `ERROR`:** a network or Slack API problem. Show it and stop.
 
@@ -44,7 +45,7 @@ The script already keeps the output short. The three sections cover `[pairing]` 
 - **Maybe** (shown only when not empty): Tuple online, but Slack away, a meeting/huddle/focus/lunch status, scheduled DND, or outside working hours. Each line names the signal.
 - **Not available:** one line per reason, names only. Tuple calls show as groups (`A + B`), so you can see who pairs with whom. `someone` is a call participant who is not in the user's Tuple contacts.
 - **Also around (on request):** one line with the `[on request]` people who can be reached now, with their role. Not shown when nobody qualifies.
-- **Pair requests not checked:** the token lacks `channels:history`. Keep the line and point the user to **Add a scope** below.
+- **Pair requests not checked:** the token lacks `channels:history`. Keep the line and point the user to **Add a scope** in `~/.claude/skills/pairing-candidates/SETUP.md`.
 - **Not found in #<channel>:** a roster handle that matches nobody (a typo, a renamed handle, or someone who left the channel). If it shows, tell the user to fix `roster.txt`.
 
 ## Configuration
@@ -53,38 +54,3 @@ The script already keeps the output short. The three sections cover `[pairing]` 
 - **Team channel:** its ID (`C…`) is the only line of `~/.config/dotfiles/pairing-candidates/channel`.
 - **Working hours, Keychain service name:** constants at the top of `scripts/check.py`.
 - **Status keywords:** `OUT_OF_OFFICE_STATUS` (blocks) and `OCCUPIED_STATUS` (Maybe) in `scripts/check.py`.
-
-## One-time setup
-
-The roster names real colleagues and the channel ID is internal, so both live on this machine only, never in the public dotfiles repo this skill is tracked in:
-
-```bash
-mkdir -p ~/.config/dotfiles/pairing-candidates
-cp ~/.claude/skills/pairing-candidates/roster.example.txt ~/.config/dotfiles/pairing-candidates/roster.txt
-echo C0123456789 > ~/.config/dotfiles/pairing-candidates/channel
-```
-
-Then replace the example handles, and the example channel ID with the team channel's ID (Slack: channel details → About, at the bottom).
-
-The Slack MCP cannot read presence, so the script uses its own read-only Slack **user** token.
-
-1. Open https://api.slack.com/apps and select **Create New App → From a manifest**. Choose the Comply365 workspace.
-2. Paste `~/.claude/skills/pairing-candidates/slack-app-manifest.yaml`. It asks only for the user scopes `channels:read`, `channels:history`, `users:read`, `users:read.email` and `dnd:read`.
-3. Select **Install to Workspace**. If the workspace needs admin approval, request it and wait.
-4. Copy the **User OAuth Token** (`xoxp-…`) from **OAuth & Permissions**.
-5. Store it in the Keychain from a regular terminal window, never from Claude Code: a `!` command gets no keyboard input and stores an empty password. The command asks for the token twice; paste it at each prompt. It never shows on screen or lands in shell history:
-
-   ```bash
-   security add-generic-password -U -a "$USER" -s pairing-candidates-slack-token -w
-   ```
-
-To rotate the token, run the same command again (`-U` updates the item).
-
-### Add a scope
-
-If the script reports a missing scope, add it to the existing app:
-
-1. Open https://api.slack.com/apps and select the **Pairing Candidates (read-only)** app.
-2. In **OAuth & Permissions → User Token Scopes**, add the scope.
-3. Select **Reinstall to Workspace**.
-4. Copy the new **User OAuth Token** and store it with the Keychain command above.
