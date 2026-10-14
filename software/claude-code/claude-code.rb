@@ -8,6 +8,10 @@ link_to_home_relative 'settings.json',         '.claude/settings.json'
 link_to_home_relative 'statusline-command.sh', '.claude/statusline-command.sh'
 link_to_home_relative 'themes/dark-mine.json', '.claude/themes/dark-mine.json'
 
+# Weekly unattended `/claude-code-levers refresh`; see skills/common/claude-code-levers.
+link_to_home_relative 'claude-code-levers-refresh.sh', '.claude/claude-code-levers-refresh.sh'
+launch_agent_relative 'com.dotfiles.claude-code-levers-refresh.plist'
+
 # Weekday unattended recap; see skills/work/comply365-recap.
 if _resolve_profile == 'work'
   link_to_home_relative 'comply365-recap.sh', '.claude/recap.sh'

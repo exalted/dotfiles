@@ -225,3 +225,30 @@ def bash_source_relative(name = nil)
     profile_specific(File.absolute_path("#{Pathname.new(Kernel.caller_locations.last.path).dirname}/#{name}"))
   )
 end
+
+# Install `src` as a per-user launch agent and (re)load it. The plist is rendered
+# into place, not linked: launchd does not reliably load a symlinked plist (brew
+# services copies for the same reason), and launchd expands no variables, so the
+# repo file stays generic with @HOME@ where the user's home goes. It is reloaded
+# only when the rendered content changed or it is not loaded, so a routine run
+# never restarts a job that is mid-run.
+def launch_agent(src)
+  abort "#{src}: No such file" unless File.file? src
+
+  label = File.basename(src, '.plist')
+  dest = "#{ENV["HOME"]}/Library/LaunchAgents/#{File.basename(src)}"
+  service = "gui/#{Process.uid}/#{label}"
+  rendered = File.read(src).gsub('@HOME@', ENV["HOME"])
+
+  loaded = Kernel.system('/bin/launchctl', 'print', service, out: File::NULL, err: File::NULL)
+  return if loaded && File.file?(dest) && File.read(dest) == rendered
+
+  system '/bin/launchctl', 'bootout', service if loaded
+  FileUtils.mkdir_p Pathname.new(dest).dirname
+  File.write dest, rendered
+  system '/bin/launchctl', 'bootstrap', "gui/#{Process.uid}", dest
+end
+
+def launch_agent_relative(src)
+  launch_agent(profile_specific(File.absolute_path("#{Pathname.new(Kernel.caller_locations.last.path).dirname}/#{src}")))
+end

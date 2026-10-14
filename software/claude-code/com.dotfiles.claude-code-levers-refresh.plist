@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.dotfiles.claude-code-levers-refresh</string>
+	<!-- The script is the executable on purpose: macOS names a background item after
+	     its executable in the Login Items notice and settings, and /bin/sh showed up as "sh".
+	     launchd expands no variables, so the installer renders @HOME@ when copying. -->
+	<key>ProgramArguments</key>
+	<array>
+		<string>@HOME@/.claude/claude-code-levers-refresh.sh</string>
+	</array>
+	<!-- Weekly, Monday 09:17 local. Off the hour so it does not pile onto the
+	     API with every other "9 o'clock" job. A time slept through runs on wake. -->
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Weekday</key>
+		<integer>1</integer>
+		<key>Hour</key>
+		<integer>9</integer>
+		<key>Minute</key>
+		<integer>17</integer>
+	</dict>
+</dict>
+</plist>
