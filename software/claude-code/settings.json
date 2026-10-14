@@ -74,12 +74,17 @@
     "atlassian@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
-    "gitlab@claude-plugins-official": true
+    "gitlab@claude-plugins-official": true,
+    "obsidian-notes@anthropic-plugin-directory": true
   },
   "extraKnownMarketplaces": {},
   "outputStyle": "Concise",
   "effortLevel": "xhigh",
   "tui": "fullscreen",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
   "theme": "custom:dark-mine",
   "editorMode": "normal",
   "autoCompactEnabled": true,
@@ -87,6 +92,7 @@
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "useAutoModeDuringPlan": true,
+  "voiceEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754577304660
   }
