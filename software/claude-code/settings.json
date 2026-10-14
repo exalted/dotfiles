@@ -4,7 +4,6 @@
     "VISUAL": "zed-preview --new"
   },
   "permissions": {
-    "defaultMode": "auto",
     "deny": [
       "Bash(rm *)",
       "Bash(/bin/rm *)",
@@ -21,6 +20,7 @@
       "Bash(git clean *)",
       "Bash(shred *)"
     ],
+    "defaultMode": "auto",
     "ask": [
       "Bash(git push *--force*)",
       "Bash(git push -f*)",
@@ -54,13 +54,6 @@
     "anthropic-skills:skill-creator": "off",
     "cowork-plugin-management:cowork-plugin-customizer": "off",
     "cowork-plugin-management:create-cowork-plugin": "off"
-  },
-  "worktree": {
-    "baseRef": "fresh"
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "bash ~/.claude/statusline-command.sh"
   },
   "hooks": {
     "SessionStart": [
@@ -106,6 +99,13 @@
         ]
       }
     ]
+  },
+  "worktree": {
+    "baseRef": "fresh"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
     "context7@claude-plugins-official": true,
