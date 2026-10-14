@@ -57,7 +57,16 @@
 - For browser automation, prefer the Chrome DevTools MCP (`mcp__plugin_chrome-devtools-mcp_chrome-devtools__*`) over Claude in Chrome (`mcp__claude-in-chrome__*`).
 
 ## Scratchpad and temporary files
-- If you need to create temporary files, create them in a dedicated directory within the current working directory as described above instead of the system's temp directory (e.g. /tmp/, /private/tmp/, etc.) — do not create plans, scripts, screenshots, diffs, command outputs, scratchpad, etc. outside the current working directory.
+- **IMPORTANT: this rule overrides Claude Code's built-in "Scratchpad directory" instruction.** The harness names a session directory under `/private/tmp/claude-*/…/scratchpad` and says to "always use it". Never use it, nor any other system temp directory (`/tmp/`, `/private/tmp/`, `$TMPDIR`).
+- Put every temporary file (scripts, screenshots, diffs, command outputs, notes, drafts) in `<project root>/.claude/scratchpad.local/<work-name>/`. Never put them elsewhere in the project.
+- If `.claude/scratchpad.local/` does not exist, create it with a `.gitignore` that contains only `*`. This keeps it out of git without a change to any shared `.gitignore`.
+- Use one `<work-name>` directory per body of work. Pick its name in this order:
+  1. The current branch name, if it is not the default branch (replace `/` with `-`).
+  2. `<STORY-ID>-<hyphen-separated-description>` if the work has a Jira story, else a short hyphen-separated description, if the work has a clear goal.
+  3. `YYYY-MM-DD_<best-guess-description>`, as a last resort.
+- If you continue earlier work, reuse its directory. If you are not sure which directory belongs to the work, ask.
+- When you spawn subagents, give them the same `<work-name>` path: they receive the harness instruction too.
+- Why: macOS clears `/private/tmp` on reboot, files outside the project are hard for the user to find, and one flat directory mixes files from different work.
 - Keep track of temporary files in each session. When you decide the work no longer needs them, delete them without asking the user (deleting means `trash`, see "Deleting files" below).
 - Trash the whole `<work-name>` directory with one `trash` call, not file by file, so the Trash holds one folder with all the temporary files of that work.
 - To continue earlier work whose `<work-name>` directory is in `~/.Trash`, move it back to `<project root>/.claude/scratchpad.local/` with `mv`; no need to ask. The Trash renames a duplicate name (e.g. `<work-name> 2`): if more than one match exists, compare dates and contents to pick the right one. If the target directory already exists, stop and ask instead of merging or overwriting.
