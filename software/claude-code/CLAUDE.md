@@ -13,13 +13,6 @@
 - A PreToolUse hook (`~/.claude/hooks/require-command-prefix.py`) enforces this rule: it denies a Bash command that calls one of the user's shell aliases or functions that hides a real command. If it denies a command, run it again with `command`.
 - When you replace a wrapper with `command <name>`, look at what the wrapper added. Keep a flag only if it is a sensible default that matches the user's preferences, for example `--stopOnError` for `trash`. Drop flags that change the output or behavior in ways you would not expect, for example `-F1` for `ls`.
 
-## Running tests
-- Never add `-s` / `--capture=no` to a pytest run whose results you intend to read. Capturing is what attaches a failing test's output to its failure report (the `Captured stdout/stderr/log call` sections); `-s` strips those sections and scatters the output through the run, interleaved with every passing test's output.
-- `-s` combined with `-n` (pytest-xdist) is worse than either alone: worker stdout is **silently discarded** — it appears neither live nor in the failure report. Verified on pytest + xdist.
-- When live output is genuinely wanted (a hanging test, a slow eval), use `--log-cli-level=INFO` for logs, or `--capture=tee-sys`, which streams output *and* keeps the failure report intact. Reserve `-s` for a single test being actively debugged, or where a script parses a passing test's stdout.
-- For parallelism, prefer an explicit small worker count (`-n 6`) over `-n auto` on a machine you are also working on. Per-worker startup dominates, so returns saturate quickly and `auto` mostly buys CPU contention.
-- Prefer a project's own `make` target or checked-in run configuration over hand-rolled pytest flags — if the target needs different flags, fix the target so everyone gets the fix.
-
 ## Writing language
 - When producing text in English, for example for code comments, use American English spelling and grammar, instead of British English (eg "color" instead of "colour")
 - Write your answers to me in ASD-STE100 Simplified Technical English. Follow it to about 80%, not 100%: apply its main rules, but break a rule when strict compliance makes the text less precise or less clear.
@@ -85,7 +78,3 @@
 - Never replace `~/.claude/skills` itself with a symlink: Claude Code writes the skills it syncs from claude.ai into that directory.
 
 The dotfiles repo is public on GitHub. Its `CLAUDE.md` says what may not go in it; read that before you change a file there.
-
-## Eval results (e.g., pydantic-eval)
-
-When you run evals, its results come back and you show the results to me, make sure to add a footnote as close to the eval results as possible which explain the meaning of precision and recall specifically in the context of the work that is being done. Also mention what lower and higher values for each would mean.
