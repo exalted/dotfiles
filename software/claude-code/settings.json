@@ -63,6 +63,16 @@
             "timeout": 30
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/guard-paths.py",
+            "timeout": 30
+          }
+        ]
       }
     ]
   },
@@ -95,5 +105,6 @@
   "voiceEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754577304660
-  }
+  },
+  "plansDirectory": ".claude/plans"
 }

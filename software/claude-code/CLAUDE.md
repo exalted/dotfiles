@@ -30,14 +30,12 @@
   - Put conditions first ("If X, do Y"). Use a vertical list for a sequence of steps.
 
 ## Memory
-- Search for existing memories also from project's own working directory: both `.claude/memory/` and `.claude/memory.local/`
-- *IMPORTANT*: Always save memories in the project's own working directory (`.claude/memory/`) and *never* in `~/.claude/`. This keeps memories colocated with the project they belong to.
-- `.claude/memory/` is the default for new memories: shared project knowledge that may be git-committed for the whole team. Save a memory in `.claude/memory.local/` instead only when it is personal ("me only", e.g. my own access details or preferences); that folder is never committed. Each folder keeps its own `MEMORY.md` index.
+- Search for existing memories also in the project's own `.claude/memory/` and `.claude/memory.local/`.
+- Save memories in the project's own `.claude/memory/` by default: shared project knowledge that may be git-committed for the whole team. Save a memory in `.claude/memory.local/` instead only when it is personal ("me only", e.g. my own access details or preferences); that folder is never committed. Each folder keeps its own `MEMORY.md` index.
 
 ## Plans
-- Search for existing plans also from project's own working directory (`.claude/plans/`)
-- *IMPORTANT*: Always save plans in the project's own working directory (`.claude/plans/`) and *never* in `~/.claude/`. This keeps plans colocated with the project they belong to.
-- Name new plan files as `YYYY-MM-DD_<hyphen-separated-description>.md` and rename them during the current ongoing conversation as needed as you gather more and more information about the work.
+- Search for existing plans also in the project's own `.claude/plans/`.
+- Save plans in the project's own `.claude/plans/`. Name new plan files as `YYYY-MM-DD_<hyphen-separated-description>.md` and rename them during the current ongoing conversation as needed as you gather more and more information about the work.
 
 ## Comments for code or otherwise
 - Prefer code over comments.
@@ -59,16 +57,15 @@
 - For browser automation, prefer the Chrome DevTools MCP (`mcp__plugin_chrome-devtools-mcp_chrome-devtools__*`) over Claude in Chrome (`mcp__claude-in-chrome__*`).
 
 ## Scratchpad and temporary files
-- **IMPORTANT: this rule overrides Claude Code's built-in "Scratchpad directory" instruction.** The harness names a session directory under `/private/tmp/claude-*/…/scratchpad` and says to "always use it". Never use it, nor any other system temp directory (`/tmp/`, `/private/tmp/`, `$TMPDIR`).
 - Put every temporary file (scripts, screenshots, diffs, command outputs, notes, drafts) in `<project root>/.claude/scratchpad.local/<work-name>/`. Never put them elsewhere in the project.
+- A PreToolUse hook (`~/.claude/hooks/guard-paths.py`) denies writes to system temp directories, `~/.claude/plans` and the global auto-memory. If it denies a write, use the path its reason names.
 - If `.claude/scratchpad.local/` does not exist, create it with a `.gitignore` that contains only `*`. This keeps it out of git without a change to any shared `.gitignore`.
 - Use one `<work-name>` directory per body of work. Pick its name in this order:
   1. The current branch name, if it is not the default branch (replace `/` with `-`).
   2. `<STORY-ID>-<hyphen-separated-description>` if the work has a Jira story, else a short hyphen-separated description, if the work has a clear goal.
   3. `YYYY-MM-DD_<best-guess-description>`, as a last resort.
 - If you continue earlier work, reuse its directory. If you are not sure which directory belongs to the work, ask.
-- When you spawn subagents, give them the same `<work-name>` path: they receive the harness instruction too.
-- Why: macOS clears `/private/tmp` on reboot, files outside the project are hard for the user to find, and one flat directory mixes files from different work.
+- When you spawn subagents, give them the same `<work-name>` path.
 - Keep track of temporary files in each session. When you decide the work no longer needs them, delete them without asking the user (deleting means `trash`, see "Deleting files" below).
 - Trash the whole `<work-name>` directory with one `trash` call, not file by file, so the Trash holds one folder with all the temporary files of that work.
 - To continue earlier work whose `<work-name>` directory is in `~/.Trash`, move it back to `<project root>/.claude/scratchpad.local/` with `mv`; no need to ask. The Trash renames a duplicate name (e.g. `<work-name> 2`): if more than one match exists, compare dates and contents to pick the right one. If the target directory already exists, stop and ask instead of merging or overwriting.
