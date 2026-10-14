@@ -137,5 +137,10 @@
   "feedbackSurveyState": {
     "lastShownTime": 1754577304660
   },
-  "plansDirectory": ".claude/plans"
+  "plansDirectory": ".claude/plans",
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  }
 }

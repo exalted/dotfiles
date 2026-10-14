@@ -46,7 +46,6 @@
 
 ## Git
 - Never rewrite git history, unless explicitly asked to do so by the user.
-- Never add Claude as a co-author on git commits (no Co-Authored, Co-Authored-By, etc. in git commit message)
 - Never commit uncommitted changes that were already there before you made any changes, nor should you lose'em (e.g., delete'em or `git reset` errorneously, etc.) If they're on your way while doing git operations (eg git commit pre-hook, etc.) you can temporarily stash'em and then when you're done, you should "put them back"
 
 ## Running local apps
