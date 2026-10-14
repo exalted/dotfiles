@@ -79,7 +79,7 @@
 - Use `command trash --stopOnError <path>` (`/usr/bin/trash`). It moves files to the macOS Trash, so every deletion stays recoverable until the user empties it.
 - Never empty the Trash or delete anything inside `~/.Trash`. Moving a scratchpad directory out of it to restore it is allowed (see "Scratchpad and temporary files").
 - If `trash` is unavailable or fails, stop and ask. Do not fall back to `rm`.
-- `permissions.deny` in `settings.json` hard-blocks the direct forms. Indirect ones (`bash -c '…'`, a python or perl one-liner) match no rule, so only this rule stops those: never route a deletion around the deny list.
+- `permissions.deny` in `settings.json` and a PreToolUse hook (`~/.claude/hooks/deny-deletions.py`) block deletions, including nested ones. Never route a deletion around them.
 - Why: a deletion that cannot be undone turns any misjudgment ("it's only a temp file", "that backup isn't needed") into permanent loss.
 
 ## User-level skills live in dotfiles
