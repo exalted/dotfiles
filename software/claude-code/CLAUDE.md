@@ -87,16 +87,7 @@
 - Create or edit a user-level skill **in the dotfiles repo**, never as a plain directory in `~/.claude/skills/`. Then link it: `ln -s ~/Developer/dotfiles/software/claude-code/skills/<group>/<name> ~/.claude/skills/<name>` (the dotfiles installer creates the same link on its next run).
 - Never replace `~/.claude/skills` itself with a symlink: Claude Code writes the skills it syncs from claude.ai into that directory.
 
-### The dotfiles repo is public on GitHub
-
-Before you add or change any file there (skills, scripts, `CLAUDE.md`, settings), check it contains nothing exploitable or personal:
-
-- no secrets, tokens, passwords or API keys;
-- no personal data: names combined with contact details, email addresses, phone numbers, user or account IDs;
-- no organization-internal identifiers: tenant, client or application IDs, internal hostnames, URLs, IP addresses, Jira sites or project keys, Slack channel links;
-- no description of an organization's security setup, such as which permissions are or are not granted.
-
-Write instructions generically. Put organization-specific values in untracked config (for example `~/.config/dotfiles/`), as the repo already does for Jira.
+The dotfiles repo is public on GitHub. Its `CLAUDE.md` says what may not go in it; read that before you change a file there.
 
 ## Eval results (e.g., pydantic-eval)
 

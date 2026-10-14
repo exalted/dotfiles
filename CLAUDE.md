@@ -9,6 +9,23 @@ That last point drives most of the design: anything appended to `~/.bashrc` from
 outside this repo is erased on the next run. The only durable place for shell
 config is a `software/<tool>/bashrc` fragment inside this repo.
 
+## This repo is public
+
+It is on GitHub. Before you add or change any file (skills, scripts, `CLAUDE.md`,
+settings), check that it holds none of these:
+
+- secrets, tokens, passwords or API keys;
+- personal data: names combined with contact details, email addresses, phone
+  numbers, user or account IDs;
+- organization-internal identifiers: tenant, client or application IDs, internal
+  hostnames, URLs, IP addresses, Jira sites or project keys, GitLab repo paths,
+  Slack channel links;
+- a description of an organization's security setup, such as which permissions
+  are or are not granted.
+
+Write instructions generically. Put organization-specific values in untracked
+config under `~/.config/dotfiles/`, as `jira` and `pairing-candidates` do.
+
 ## Work projects (`software/comply365/`)
 
 Work repos in `~/Developer` expect shell behavior their own `setup.sh` installs
