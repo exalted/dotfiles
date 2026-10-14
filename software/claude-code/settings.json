@@ -20,6 +20,27 @@
       "Bash(xargs * /bin/rm *)",
       "Bash(git clean *)",
       "Bash(shred *)"
+    ],
+    "ask": [
+      "Bash(git push *--force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * -f)",
+      "Bash(git push * -f *)",
+      "Bash(git push * +*)",
+      "Bash(git rebase *)",
+      "Bash(git reset *--hard*)",
+      "Bash(git commit *--amend*)",
+      "Bash(git -C * push *--force*)",
+      "Bash(git -C * push -f*)",
+      "Bash(git -C * push * -f)",
+      "Bash(git -C * push * -f *)",
+      "Bash(git -C * push * +*)",
+      "Bash(git -C * rebase *)",
+      "Bash(git -C * reset *--hard*)",
+      "Bash(git -C * commit *--amend*)",
+      "Bash(git filter-branch *)",
+      "Bash(git filter-repo *)",
+      "Bash(git reflog expire *)"
     ]
   },
   "skillOverrides": {
