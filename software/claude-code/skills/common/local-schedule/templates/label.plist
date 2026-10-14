@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string><label></string>
+	<!-- The script is the executable on purpose: macOS names a background item after
+	     its executable in the Login Items notice and settings; /bin/sh shows up as "sh".
+	     launchd expands no variables, so the installer renders @HOME@ when copying. -->
+	<key>ProgramArguments</key>
+	<array>
+		<string>@HOME@/.claude/<job>.sh</string>
+	</array>
+	<!-- Pick a minute that is not :00 or :30. A time slept through runs on wake.
+	     For "every N seconds" use <key>StartInterval</key><integer>N</integer> instead. -->
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Weekday</key>
+		<integer>1</integer>
+		<key>Hour</key>
+		<integer>9</integer>
+		<key>Minute</key>
+		<integer>17</integer>
+	</dict>
+</dict>
+</plist>
