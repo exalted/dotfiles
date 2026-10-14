@@ -69,9 +69,6 @@
 - Trash the whole `<work-name>` directory with one `trash` call, not file by file, so the Trash holds one folder with all the temporary files of that work.
 - To continue earlier work whose `<work-name>` directory is in `~/.Trash`, move it back to `<project root>/.claude/scratchpad.local/` with `mv`; no need to ask. The Trash renames a duplicate name (e.g. `<work-name> 2`): if more than one match exists, compare dates and contents to pick the right one. If the target directory already exists, stop and ask instead of merging or overwriting.
 
-## Third-party libraries and frameworks
-- Get the latest up-to-date documentation and code using context7 MCP server. use context7
-
 ## Deleting files: `trash`, never `rm`
 
 - **Never** delete with `rm`: not `rm -rf`, not `command rm`, not `/bin/rm`, and not their equivalents (`rmdir`, `unlink`, `find -delete`, `xargs rm`, `git clean`, or a script written to do it instead). This includes temporary, scratch and test files — there are no exceptions.
