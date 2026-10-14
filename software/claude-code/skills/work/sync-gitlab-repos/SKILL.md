@@ -1,6 +1,6 @@
 ---
 name: sync-gitlab-repos
-description: Bring the local GitLab checkouts under ~/Developer level with origin using fast-forward only, skipping any repo with ongoing work. Use when the user asks to update, sync, pull, refresh, or catch up their repos / local checkouts / the cwd's from GitLab, or asks for this before starting other work. Accepts an optional root path argument (default ~/Developer). Returns a finished Markdown report; show it to the user verbatim, with nothing before or after it.
+description: Bring the local GitLab checkouts under ~/Developer level with origin using fast-forward only, skipping any repo with ongoing work. Use when the user asks to update, sync, pull, refresh, or catch up their repos / local checkouts / the cwd's from GitLab, or asks for this before starting other work. Accepts an optional root path argument (default ~/Developer). Returns a finished plain-text report with an aligned table; show it to the user verbatim inside a ```text code block, with nothing before or after it.
 argument-hint: "[root]"
 model: haiku
 context: fork

@@ -21,7 +21,7 @@ root="${root%/}"
 
 git() { command git "$@"; }
 
-rows=()          # "rank<TAB>sort key<TAB>table row"
+rows=()          # "rank<TAB>sort key<TAB>emoji<TAB>status<TAB>repo<TAB>result<TAB>note"
 details=()       # bullet lines after the table
 fetch_errors=()
 offer=()         # repos on hold for ongoing work: stash-and-fast-forward candidates
@@ -30,7 +30,27 @@ total=0; updated=0; current=0; skipped=0; foreign=0; fetch_failed=0; stashed_any
 display_root="$root"
 case "$root" in "$HOME"/*) display_root="~${root#"$HOME"}" ;; esac
 
-row() { rows+=("$1"$'\t'"$2"$'\t'"$3"); }
+row() { local IFS=$'\t'; rows+=("$*"); }  # rank sort-key emoji status repo result note
+
+# Plain text, not a Markdown table: a forked skill's output reaches the terminal unrendered.
+# Only the first column holds an emoji, so padding the ASCII columns keeps them aligned.
+print_table() {  # rows on stdin, sorted
+  local rank key emoji status repo result note i emojis=() statuses=() repos=() results=() notes=()
+  local w_status=6 w_repo=4 w_result=6
+  while IFS=$'\t' read -r rank key emoji status repo result note; do
+    emojis+=("$emoji"); statuses+=("$status"); repos+=("$repo"); results+=("$result"); notes+=("$note")
+    [ "${#status}" -gt "$w_status" ] && w_status=${#status}
+    [ "${#repo}" -gt "$w_repo" ] && w_repo=${#repo}
+    [ "${#result}" -gt "$w_result" ] && w_result=${#result}
+  done
+  {
+    printf '   %-*s  %-*s  %-*s  %s\n' "$w_status" Status "$w_repo" Repo "$w_result" Result Note
+    for ((i = 0; i < ${#emojis[@]}; i++)); do
+      printf '%s %-*s  %-*s  %-*s  %s\n' "${emojis[$i]}" "$w_status" "${statuses[$i]}" \
+        "$w_repo" "${repos[$i]}" "$w_result" "${results[$i]}" "${notes[$i]}"
+    done
+  } | /usr/bin/sed 's/ *$//'
+}
 backticked() { /usr/bin/sed 's/^/`/; s/$/`/' | /usr/bin/paste -sd, - | /usr/bin/sed 's/,/, /g'; }
 remote_label() {
   [ -n "$1" ] || { echo "no origin"; return; }
@@ -71,12 +91,12 @@ plan() {  # dir kind behind note
 }
 
 hold() {  # name result note detail
-  row 3 0 "| ⏸️ on hold | \`$1\` | $2 | $3 |"
+  row 3 0 ⏸️ "on hold" "$1" "$2" "$3"
   details+=("- \`$1\`: $4"); skipped=$((skipped + 1))
 }
 
 block() {  # name result note detail
-  row 4 0 "| ⛔ blocked | \`$1\` | $2 | $3 |"
+  row 4 0 ⛔ blocked "$1" "$2" "$3"
   details+=("- \`$1\`: $4"); skipped=$((skipped + 1))
 }
 
@@ -88,11 +108,11 @@ for path in "$root"/*/; do
   url="$(git -C "$dir" remote get-url origin 2>/dev/null)" || url=""
   case "$url" in
     *gitlab.com*) ;;
-    *) row 5 0 "| 🚫 not GitLab | \`$name\` | untouched | $(remote_label "$url") |"; foreign=$((foreign + 1)); continue ;;
+    *) row 5 0 🚫 "not GitLab" "$name" untouched "$(remote_label "$url")"; foreign=$((foreign + 1)); continue ;;
   esac
 
   if ! fetch_out="$(git -C "$dir" fetch --all --prune -q 2>&1)"; then
-    row 0 0 "| ❌ fetch failed | \`$name\` | not fetched | see below |"; fetch_failed=$((fetch_failed + 1))
+    row 0 0 ❌ "fetch failed" "$name" "not fetched" "see below"; fetch_failed=$((fetch_failed + 1))
     while IFS= read -r line; do fetch_errors+=("- $line"); done \
       < <(printf '%s\n' "$fetch_out" | command grep -E 'ERROR|fatal|SSO|https?://' | /usr/bin/sort -u)
     continue
@@ -105,7 +125,7 @@ for path in "$root"/*/; do
   fi
   read -r behind ahead < <(git -C "$dir" rev-list --left-right --count '@{u}...HEAD')
   if [ "$behind" -eq 0 ]; then
-    row 2 0 "| ✅ was up-to-date | \`$name\` | nothing to pull | |"; current=$((current + 1))
+    row 2 0 ✅ "was up-to-date" "$name" "nothing to pull" ""; current=$((current + 1))
     continue
   fi
 
@@ -141,8 +161,7 @@ done
 
 if [ "$fetch_failed" -gt 0 ]; then
   printf '❌ GitLab repo sync · %s · nothing was updated\n\n' "$display_root"
-  printf '| Status | Repo | Result | Note |\n|---|---|---|---|\n'
-  printf '%s\n' ${rows[@]+"${rows[@]}"} | command grep '^0'$'\t' | /usr/bin/cut -f3-
+  printf '%s\n' ${rows[@]+"${rows[@]}"} | command grep '^0'$'\t' | /usr/bin/sort -t$'\t' -k5,5 | print_table
   printf '\nA fetch failed, so the behind and ahead counts are stale and no repo was touched.\n'
   printf 'The usual cause is an expired GitLab SAML SSO session: open the `…/-/saml/sso?token=…` URL below in the browser, sign in, and run the sync again.\n'
   [ "${#fetch_errors[@]}" -eq 0 ] || { printf '\n'; printf '%s\n' "${fetch_errors[@]}" | /usr/bin/sort -u; }
@@ -153,7 +172,7 @@ stopped=""
 for ((i = 0; i < ${#plan_dir[@]}; i++)); do
   dir="${plan_dir[$i]}"; name="${dir##*/}"; behind="${plan_behind[$i]}"; note="${plan_note[$i]}"
   if [ "$apply" -eq 0 ]; then
-    row 1 "-$behind" "| ⬇️ would update | \`$name\` | $behind commits | $note |"; updated=$((updated + 1))
+    row 1 "-$behind" ⬇️ "would update" "$name" "$behind commits" "$note"; updated=$((updated + 1))
     continue
   fi
   if [ -n "$stopped" ]; then
@@ -186,7 +205,7 @@ for ((i = 0; i < ${#plan_dir[@]}; i++)); do
     note="⚠️ ${problems[*]}"; status=3
     details+=("- \`$name\`: updated, but after the update: ${problems[*]}")
   fi
-  row 1 "-$behind" "| ⬇️ updated | \`$name\` | $behind commits | $note |"; updated=$((updated + 1))
+  row 1 "-$behind" ⬇️ updated "$name" "$behind commits" "$note"; updated=$((updated + 1))
 done
 
 stash_total=0
@@ -202,8 +221,7 @@ if [ "$apply" -eq 1 ]; then
 else
   printf '🔍 GitLab repo check, nothing changed · %s · %s repos\n\n' "$display_root" "$total"
 fi
-printf '| Status | Repo | Result | Note |\n|---|---|---|---|\n'
-printf '%s\n' ${rows[@]+"${rows[@]}"} | /usr/bin/sort -t$'\t' -k1,1n -k2,2n -k3,3 | /usr/bin/cut -f3-
+printf '%s\n' ${rows[@]+"${rows[@]}"} | /usr/bin/sort -t$'\t' -k1,1n -k2,2n -k5,5 | print_table
 printf '\n📊 %s %s · %s up to date · %s skipped · %s non-GitLab\n' \
   "$updated" "$([ "$apply" -eq 1 ] && echo updated || echo 'would update')" "$current" "$skipped" "$foreign"
 if [ "$stashed_any" -eq 1 ]; then
