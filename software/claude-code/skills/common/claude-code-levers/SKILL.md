@@ -33,7 +33,7 @@ Run when invoked as `/claude-code-levers refresh`, or when `last_verified` in `r
 1. Read `references/levers.md`.
 2. Mirror the docs: run `scripts/sync-docs.sh` from this skill's directory. It downloads every page listed in `https://code.claude.com/docs/llms.txt` as Markdown into `<dotfiles>/.claude/scratchpad.local/claude-code-levers/docs/`, where `<dotfiles>` is the repository this skill is checked out in, and prints that path. If the command is denied (the scheduled job has synced already), use the mirror as it is. A doc URL maps to a mirror file by its path after `/docs/`: `https://code.claude.com/docs/en/hooks.md` is `en/hooks.md`.
 3. Spawn one agent with the full table and the mirror path: `claude-code-guide` if it is listed, else `general-purpose`. Bound its work:
-   - Read pages from the mirror with Read and Grep. Do not use WebFetch while the mirror exists.
+   - Read pages from the mirror with the Read and Grep tools, not with `grep` in Bash, which a headless run denies. Do not use WebFetch while the mirror exists.
    - Read long pages by section. The hooks, settings, MCP, CLI and environment references are over 100k characters: Grep the headings (`^#{1,3} `) first, then Read only the section the row needs, with an offset and a limit. Never read such a page whole.
    - Verify each row against its page and report it as confirmed, changed (with the correction), superseded (by what), or gone. Rows marked † count as unread; read them.
    - For new levers, read `llms.txt` in the mirror and open only pages whose title names a mechanism you configure: settings, hooks, skills, agents, modes, tools, integrations. Skip installation, authentication, billing, terminal and UI how-tos, troubleshooting, enterprise deployment, and reference tables.
@@ -45,4 +45,4 @@ Run when invoked as `/claude-code-levers refresh`, or when `last_verified` in `r
    - Move superseded or removed levers to the **Retired** section with today's date and the successor. Drop a Retired row at the next refresh after the one that added it.
    - Set `last_verified` to today.
 5. Keep the file generic. It lives in a public repo: no personal data, no organization identifiers.
-6. Leave the changes uncommitted. End with a short summary: rows changed, added, retired, and anything the agent could not verify. The scheduled job stores this summary as the body of the map's commit message, so it has the same public-repo rule as the file, and it must explain the changes well enough that the commit makes sense on its own.
+6. Leave the changes uncommitted. Print one thing only: a short summary of rows changed, added, retired, and anything the agent could not verify, with no preamble about what you did or did not commit. The scheduled job stores that output verbatim as the body of the map's commit message, so it has the same public-repo rule as the file, and it must explain the changes well enough that the commit makes sense on its own.
