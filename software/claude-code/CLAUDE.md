@@ -85,6 +85,23 @@
 - `permissions.deny` in `settings.json` hard-blocks the direct forms. Indirect ones (`bash -c '…'`, a python or perl one-liner) match no rule, so only this rule stops those: never route a deletion around the deny list.
 - Why: a deletion that cannot be undone turns any misjudgment ("it's only a temp file", "that backup isn't needed") into permanent loss.
 
+## User-level skills live in dotfiles
+
+- `~/.claude/skills/<name>` entries are symlinks into the dotfiles repo: `~/Developer/dotfiles/software/claude-code/skills/<group>/<name>/`. The group is `common` (every machine) or `work` (work profile only).
+- Create or edit a user-level skill **in the dotfiles repo**, never as a plain directory in `~/.claude/skills/`. Then link it: `ln -s ~/Developer/dotfiles/software/claude-code/skills/<group>/<name> ~/.claude/skills/<name>` (the dotfiles installer creates the same link on its next run).
+- Never replace `~/.claude/skills` itself with a symlink: Claude Code writes the skills it syncs from claude.ai into that directory.
+
+### The dotfiles repo is public on GitHub
+
+Before you add or change any file there (skills, scripts, `CLAUDE.md`, settings), check it contains nothing exploitable or personal:
+
+- no secrets, tokens, passwords or API keys;
+- no personal data: names combined with contact details, email addresses, phone numbers, user or account IDs;
+- no organization-internal identifiers: tenant, client or application IDs, internal hostnames, URLs, IP addresses, Jira sites or project keys, Slack channel links;
+- no description of an organization's security setup, such as which permissions are or are not granted.
+
+Write instructions generically. Put organization-specific values in untracked config (for example `~/.config/dotfiles/`), as the repo already does for Jira.
+
 ## Eval results (e.g., pydantic-eval)
 
 When you run evals, its results come back and you show the results to me, make sure to add a footnote as close to the eval results as possible which explain the meaning of precision and recall specifically in the context of the work that is being done. Also mention what lower and higher values for each would mean.
