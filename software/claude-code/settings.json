@@ -3,6 +3,11 @@
   "env": {
     "VISUAL": "zed-preview --new"
   },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "permissions": {
     "deny": [
       "Bash(rm *)",
@@ -20,7 +25,6 @@
       "Bash(git clean *)",
       "Bash(shred *)"
     ],
-    "defaultMode": "auto",
     "ask": [
       "Bash(git push *--force*)",
       "Bash(git push -f*)",
@@ -41,7 +45,8 @@
       "Bash(git filter-branch *)",
       "Bash(git filter-repo *)",
       "Bash(git reflog expire *)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
   "skillOverrides": {
     "anthropic-skills:docs": "off",
@@ -55,6 +60,17 @@
     "cowork-plugin-management:cowork-plugin-customizer": "off",
     "cowork-plugin-management:create-cowork-plugin": "off"
   },
+  "deniedMcpServers": [
+    {
+      "serverName": "claude.ai Datadog"
+    },
+    {
+      "serverName": "claude.ai Datadog (2)"
+    },
+    {
+      "serverUrl": "https://mcp.datadoghq.eu/api/unstable/*"
+    }
+  ],
   "hooks": {
     "SessionStart": [
       {
@@ -153,6 +169,7 @@
   "extraKnownMarketplaces": {},
   "outputStyle": "Concise",
   "effortLevel": "xhigh",
+  "plansDirectory": ".claude/plans",
   "tui": "fullscreen",
   "voice": {
     "enabled": true,
@@ -168,22 +185,5 @@
   "voiceEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754577304660
-  },
-  "plansDirectory": ".claude/plans",
-  "attribution": {
-    "commit": "",
-    "pr": "",
-    "sessionUrl": false
-  },
-  "deniedMcpServers": [
-    {
-      "serverName": "claude.ai Datadog"
-    },
-    {
-      "serverName": "claude.ai Datadog (2)"
-    },
-    {
-      "serverUrl": "https://mcp.datadoghq.eu/api/unstable/*"
-    }
-  ]
+  }
 }

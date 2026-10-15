@@ -1189,7 +1189,7 @@
 			</array>
 			<key>Keyboard Map</key>
 			<dict>
-				<key>0x64-0x80000-0x2</key>
+				<key>0x64-0x80000-0x2-0x1</key>
 				<dict>
 					<key>Action</key>
 					<integer>10</integer>

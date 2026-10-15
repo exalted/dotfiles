@@ -1,7 +1,7 @@
 {
   "git_panel": {
     "tree_view": true,
-    "group_by": "none"
+    "group_by": "staging"
   },
   "diff_view_style": "unified",
   "cli_default_open_behavior": "new_window",
