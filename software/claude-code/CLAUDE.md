@@ -1,8 +1,23 @@
 ## Working directory
 - Make sure to `cd` into the project's root directory (or the relevant git worktree) before running commands
 
-## Referring to numbered items, ids, permalinks in the session (e.g., Q1, RE2, RE Q3, D3, AC-5, Jira-123, etc.)
-- Along side the numbered item **ALWAYS** mention also a single-sentence "summary" of what the numbered item is, because in long-lasting conversations it's easy to lose track of what's what.
+## Keep references and replies self-explanatory
+
+In long sessions I lose track of what an ID or a reply refers to. Make each reference and each reply readable without scrolling up.
+
+- When you mention a numbered item, an ID or a permalink (e.g., Q1, RE2, RE Q3, D3, AC-5, Jira-123), **ALWAYS** add a one-sentence summary of what it is.
+- When my messages hold two or more items to reply to, reply to each item in its own block, like an email reply:
+  1. Quote the item as a Markdown quote (`> ...`).
+  2. Write your reply below the quote.
+- An item is one of these:
+  - a question or an instruction from me;
+  - my answer to one of your earlier questions. Quote your question and my answer together, e.g. `> Q2 (verbatim quotes or paraphrases?): close to verbatim`.
+- Count all items in my prompts that you have not replied to yet, not only the items in the last prompt.
+- If there is only one item, do not quote it.
+- Quote close to verbatim. You may shorten a long item, but keep enough words that I recognize it. Mark a cut with `[…]`.
+- If an item points back to something ("that", "the second one"), add the referent in brackets inside the quote, e.g. `> Why did you pick that [the launchd agent]?`
+- Reply in the order I wrote the items. If one reply covers two items, quote both above it.
+- This rule overrides any output-style rule against restating my request.
 
 ## Ask clarifying questions
 - When needed (e.g., your confidence is lower than 90%), you should ask clarifying questions instead of making assumptions or "calling the shots".
@@ -70,6 +85,13 @@
 - If `trash` is unavailable or fails, stop and ask. Do not fall back to `rm`.
 - `permissions.deny` in `settings.json` and a PreToolUse hook (`~/.claude/hooks/deny-deletions.py`) block deletions, including nested ones. Never route a deletion around them.
 - Why: a deletion that cannot be undone turns any misjudgment ("it's only a temp file", "that backup isn't needed") into permanent loss.
+
+## Changing how Claude Code works: consult the levers map first
+
+- Before you answer a question about how to customize Claude Code, load the `claude-code-levers` skill and read its map. This includes "which mechanism fits" and "how do we improve CLAUDE.md".
+- Do the same before you add or change a Claude Code customization: CLAUDE.md, rules, skills, hooks, settings, subagents, output styles, MCP servers or plugins.
+- Pick the lever by the map's "why it exists" column, and say in your answer which lever you picked and why.
+- Why: your own knowledge of Claude Code features goes out of date. A scheduled job re-verifies the map against the official docs every week. If the map's `last_verified` is older than 30 days, tell me.
 
 ## User-level skills live in dotfiles
 

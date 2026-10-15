@@ -1,6 +1,6 @@
 ---
 name: claude-code-levers
-description: Map of Claude Code's customization levers (CLAUDE.md, rules, settings, hooks, skills, subagents, MCP, plugins, output styles, permission modes, headless mode, SDK, ...) with the one reason each exists. Use when the user asks how to customize, extend, configure, or automate Claude Code, which mechanism fits a need (for example hook vs CLAUDE.md vs skill vs subagent), or what levers exist. Run with `refresh` to re-verify the map against the official docs, add new levers, and retire superseded ones.
+description: Map of Claude Code's customization levers (CLAUDE.md, rules, settings, hooks, skills, subagents, MCP, plugins, output styles, permission modes, headless mode, SDK, ...) with the one reason each exists. Use when the user asks how to customize, extend, configure, or automate Claude Code, which mechanism fits a need (for example hook vs CLAUDE.md vs skill vs subagent), or what levers exist. Also use before adding or changing any customization (CLAUDE.md, rules, skills, hooks, settings, subagents, output styles), even when the user did not ask which lever to use. Run with `refresh` to re-verify the map against the official docs, add new levers, and retire superseded ones.
 argument-hint: "[refresh]"
 ---
 
