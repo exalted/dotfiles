@@ -35,6 +35,8 @@ map_was_clean=1
 # the mode, everything else is denied unless pre-allowed here. Read and Grep,
 # which the agent uses on the mirror, need no permission. The sync script is
 # listed by every path the skill may spell it with.
+# Nobody is there to pick up side tasks: keep the todo hooks silent (see skills/common/todo).
+export CLAUDE_TODO_HOOKS=0
 status=0
 summary="$scratch/run-summary.txt"
 claude -p "/claude-code-levers refresh" \

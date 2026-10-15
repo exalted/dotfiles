@@ -65,6 +65,38 @@
             "timeout": 30
           }
         ]
+      },
+      {
+        "matcher": "startup|resume|clear|compact|fork",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/skills/todo/scripts/todo.py session-start",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/skills/todo/scripts/todo.py stop",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/skills/todo/scripts/todo.py session-end",
+            "timeout": 2
+          }
+        ]
       }
     ],
     "PreToolUse": [

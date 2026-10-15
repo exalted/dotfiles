@@ -78,6 +78,8 @@ export CLAUDE_CODE_MCP_STARTUP_WAIT_MS=60000
 # the alarm stops a hung one at 30 instead of leaving it to run on. SIGALRM
 # survives the exec, and perl is the macOS stock way to get it: there is no timeout(1).
 limit_minutes=30
+# Nobody is there to pick up side tasks: keep the todo hooks silent (see skills/common/todo).
+export CLAUDE_TODO_HOOKS=0
 status=0
 /usr/bin/caffeinate -i \
   /usr/bin/perl -e 'alarm shift; exec @ARGV or die "exec $ARGV[0]: $!\n"' "$((limit_minutes * 60))" \
