@@ -18,7 +18,8 @@
 	<true/>
 	<!-- Monday to Friday at 07:47 local, so the note is there by 08:00. The recap window
 	     ends at the run and starts where the last recap ended (collect.py), so
-	     consecutive windows touch. A time slept through runs on wake. -->
+	     consecutive windows touch. A time slept through runs on the next wake, even a
+	     two-second DarkWake with the lid closed, so recap.sh waits for a full wake. -->
 	<key>StartCalendarInterval</key>
 	<array>
 		<dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>

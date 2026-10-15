@@ -11,7 +11,8 @@
 	<array>
 		<string>@HOME@/.claude/<job>.sh</string>
 	</array>
-	<!-- Pick a minute that is not :00 or :30. A time slept through runs on wake.
+	<!-- Pick a minute that is not :00 or :30. A time slept through runs on wake,
+	     a lid-closed DarkWake included (see SKILL.md).
 	     For "every N seconds" use <key>StartInterval</key><integer>N</integer> instead. -->
 	<key>StartCalendarInterval</key>
 	<dict>

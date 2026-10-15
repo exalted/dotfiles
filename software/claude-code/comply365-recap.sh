@@ -17,6 +17,20 @@ exec >>"$log" 2>&1
 
 echo "=== $(/bin/date '+%Y-%m-%dT%H:%M:%S%z') start"
 
+# launchd counts a DarkWake as a wake: with the lid closed, the Mac wakes for
+# about two seconds every quarter hour, starts the job, and sleeps again. The run
+# then crawls for hours, two seconds at a time, inside a closed Mac, maybe in a
+# bag. Only a full wake has the Graphics capability. A sleeping Mac freezes this
+# loop too, so the wait costs nothing.
+fully_awake() {
+  /usr/bin/pmset -g systemstate | /usr/bin/grep -q Graphics
+}
+if ! fully_awake; then
+  echo "waiting for a full wake"
+  until fully_awake; do /bin/sleep 60; done
+  echo "=== $(/bin/date '+%Y-%m-%dT%H:%M:%S%z') fully awake"
+fi
+
 # A directory of its own, so the run loads no project's CLAUDE.md and its
 # work files (work/<date>/) land outside every repo.
 state="$HOME/.local/state/recap"
@@ -58,8 +72,16 @@ export CLAUDE_CODE_MCP_STARTUP_WAIT_MS=60000
 # names it and Claude starts it through the Skill tool. It runs on the most
 # capable model, at the effort level meant for long, multi-step agent work:
 # one run a day, so quality is worth more than its cost.
+#
+# caffeinate -i holds off idle sleep for this run only; it cannot keep a closed
+# lid on battery awake, and should not. An awake run takes about ten minutes, so
+# the alarm stops a hung one at 30 instead of leaving it to run on. SIGALRM
+# survives the exec, and perl is the macOS stock way to get it: there is no timeout(1).
+limit_minutes=30
 status=0
-claude -p "Run the comply365-recap skill." \
+/usr/bin/caffeinate -i \
+  /usr/bin/perl -e 'alarm shift; exec @ARGV or die "exec $ARGV[0]: $!\n"' "$((limit_minutes * 60))" \
+  claude -p "Run the comply365-recap skill." \
   --model fable \
   --effort xhigh \
   --permission-mode acceptEdits \
@@ -78,7 +100,10 @@ mcp__plugin_slack_slack__slack_search_public" \
 
 # The skill reports the failures it can name itself. This covers the ones it
 # cannot: claude crashing, a sign-in it never reached, a run cut short.
-if [ "$status" -ne 0 ]; then
+if [ "$status" -eq 142 ]; then
+  uv run --quiet --no-project --script "$note" \
+    --error "The scheduled run stopped at its $limit_minutes-minute limit. See ~/Library/Logs/recap.log"
+elif [ "$status" -ne 0 ]; then
   uv run --quiet --no-project --script "$note" \
     --error "The scheduled run stopped: claude exited with $status. See ~/Library/Logs/recap.log"
 fi
