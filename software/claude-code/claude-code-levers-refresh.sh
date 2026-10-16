@@ -34,7 +34,8 @@ map_was_clean=1
 # Nobody is there to answer prompts: edits inside the checkout are accepted by
 # the mode, everything else is denied unless pre-allowed here. Read and Grep,
 # which the agent uses on the mirror, need no permission. The sync script is
-# listed by every path the skill may spell it with.
+# listed by every path the skill may spell it with, as is the single-page fetch
+# the skill uses for a page the mirror lacks.
 # Nobody is there to pick up side tasks: keep the todo hooks silent (see skills/common/todo).
 export CLAUDE_TODO_HOOKS=0
 status=0
@@ -42,7 +43,7 @@ summary="$scratch/run-summary.txt"
 claude -p "/claude-code-levers refresh" \
   --permission-mode acceptEdits \
   --permission-prompts none \
-  --allowedTools "Agent,Skill,WebFetch,WebSearch,Bash(git status:*),Bash(git diff:*),Bash($skill/scripts/sync-docs.sh:*),Bash($HOME/.claude/skills/claude-code-levers/scripts/sync-docs.sh:*),Bash(~/.claude/skills/claude-code-levers/scripts/sync-docs.sh:*)" \
+  --allowedTools "Agent,Skill,WebFetch,WebSearch,Bash(git status:*),Bash(git diff:*),Bash($skill/scripts/sync-docs.sh:*),Bash($HOME/.claude/skills/claude-code-levers/scripts/sync-docs.sh:*),Bash(~/.claude/skills/claude-code-levers/scripts/sync-docs.sh:*),Bash($skill/scripts/fetch-page.sh:*),Bash($HOME/.claude/skills/claude-code-levers/scripts/fetch-page.sh:*),Bash(~/.claude/skills/claude-code-levers/scripts/fetch-page.sh:*)" \
   > "$summary" || status=$?
 /bin/cat "$summary"
 
