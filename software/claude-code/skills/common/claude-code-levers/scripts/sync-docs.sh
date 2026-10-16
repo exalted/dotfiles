@@ -11,15 +11,22 @@
 # llms.txt, the English part of the sitemap, and every docs link found in the
 # pages already mirrored, followed until no new page turns up.
 #
+# The blog at claude.dev is mirrored too, under blog/: its sitemap lists every
+# post, its feed carries dates and summaries, and each post is served as
+# Markdown at its URL plus ".md". Posts are signals for the refresh, never a
+# source for the map; see SKILL.md.
+#
 # Usage: sync-docs.sh [mirror-dir]
 # Default mirror: <dotfiles>/.claude/scratchpad.local/claude-code-levers/docs,
 # the scratchpad of the repository this skill is checked out in. A doc URL maps
 # to a mirror file by its path after "/docs/": .../docs/en/hooks.md is en/hooks.md.
-# Files of pages that left the index are not removed; .pages in the mirror is
-# the authoritative page list, .failed the pages that could not be fetched.
+# A post maps to blog/<slug>.md. Files of pages that left an index are not
+# removed; .pages and blog/.posts in the mirror are the authoritative lists,
+# .failed and blog/.failed what could not be fetched.
 set -eu
 
 site='https://code.claude.com/docs'
+blog='https://claude.dev'
 skill="$(cd "$(/usr/bin/dirname "$(/usr/bin/readlink -f "$0")")/.." && pwd)"
 dotfiles="$(cd "$skill/../../../../.." && pwd)"
 scratchpad="$dotfiles/.claude/scratchpad.local"
@@ -74,7 +81,25 @@ done
 /usr/bin/sort -u "$mirror/.failed" -o "$mirror/.failed"
 /usr/bin/comm -23 "$mirror/.pages" "$mirror/.failed" | /usr/bin/sort -u -o "$mirror/.pages"
 
+# Blog posts: slugs from the sitemap and the feed, saved as blog/<slug>.md.
+# A blog failure must not fail the docs sync, so this part never exits early.
+/bin/mkdir -p "$mirror/blog"
+: > "$mirror/blog/.failed"
+{
+  /usr/bin/curl -sSf -m 60 --retry 2 "$blog/rss.xml" -o "$mirror/blog/rss.xml" || echo "blog feed failed"
+  /usr/bin/curl -sSf -m 60 --retry 2 "$blog/sitemap.xml" -o "$mirror/blog/sitemap.xml" || echo "blog sitemap failed"
+  /bin/cat "$mirror/blog/rss.xml" "$mirror/blog/sitemap.xml" 2>/dev/null \
+    | /usr/bin/grep -oE "$blog/blog/[A-Za-z0-9_-]+" | /usr/bin/sed -E "s#^$blog/blog/##" | /usr/bin/sort -u > "$mirror/blog/.posts"
+  /usr/bin/xargs -P 8 -I{} /bin/sh -c '
+    slug=$1; mirror=$2; blog=$3
+    [ -f "$mirror/blog/$slug.md" ] && exit 0
+    /usr/bin/curl -sSf -m 60 --retry 2 "$blog/blog/$slug.md" -o "$mirror/blog/$slug.md" || echo "$slug" >> "$mirror/blog/.failed"
+  ' _ {} "$mirror" "$blog" < "$mirror/blog/.posts"
+} || true
+
 /bin/date '+%Y-%m-%dT%H:%M:%S%z' > "$mirror/.synced"
 echo "mirror: $mirror"
 echo "pages: $(/usr/bin/wc -l < "$mirror/.pages" | /usr/bin/tr -d ' ') (llms.txt $(/usr/bin/wc -l < "$mirror/.pages-llms" | /usr/bin/tr -d ' '), sitemap $(/usr/bin/wc -l < "$mirror/.pages-sitemap" | /usr/bin/tr -d ' '), link rounds $round) failed: $(/usr/bin/wc -l < "$mirror/.failed" | /usr/bin/tr -d ' ')"
 [ ! -s "$mirror/.failed" ] || { echo "failed pages:"; /bin/cat "$mirror/.failed"; }
+echo "posts: $(/usr/bin/wc -l < "$mirror/blog/.posts" | /usr/bin/tr -d ' ') failed: $(/usr/bin/wc -l < "$mirror/blog/.failed" | /usr/bin/tr -d ' ')"
+[ ! -s "$mirror/blog/.failed" ] || { echo "failed posts:"; /bin/cat "$mirror/blog/.failed"; }
