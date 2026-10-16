@@ -167,13 +167,15 @@
     "obsidian-notes@anthropic-plugin-directory": true
   },
   "extraKnownMarketplaces": {},
-  "pluginConfigs": {
-    "cc-plugin-agents-md@builtin": {
-      "options": { "instructionFiles": "claude-md-and-agents-md" }
-    }
-  },
   "outputStyle": "Concise",
   "effortLevel": "xhigh",
+  "pluginConfigs": {
+    "cc-plugin-agents-md@builtin": {
+      "options": {
+        "instructionFiles": "claude-md-and-agents-md"
+      }
+    }
+  },
   "plansDirectory": ".claude/plans",
   "tui": "fullscreen",
   "voice": {
