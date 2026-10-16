@@ -5,6 +5,7 @@ model=$(echo "$input" | jq -r '.model.display_name // "?"')
 effort=$(echo "$input" | jq -r '.effort.level // "?"')
 pct=$(echo "$input" | jq -r '(.rate_limits.five_hour.used_percentage // 0) | round')
 resets_at=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
+session_id=$(echo "$input" | jq -r '.session_id // empty')
 
 # Format the reset time in 24h, local timezone (uses the system date, not any
 # interactive-shell override, since this runs non-interactively).
@@ -30,3 +31,9 @@ status="${pct}%${resets}"
 # Left-aligned (Claude Code's default). Emoji stays uncolored (no background
 # bleed); only the status text gets $color.
 printf "\e[37m%s%s ${color}%s\e[0m" "$prefix" "$emoji" "$status"
+
+# Session id last, dimmed and unlabeled, so a double-click in the terminal
+# selects exactly the id.
+if [ -n "$session_id" ]; then
+  printf " \e[37m|\e[0m \e[2m%s\e[0m" "$session_id"
+fi
