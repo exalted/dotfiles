@@ -71,7 +71,7 @@ done, or dropped, when the work it belongs to ends.
 | "Update the README once the flag name is confirmed" | "Edit prompt.bashrc", "run the tests", "report back" |
 | "Decide: keep or drop the per-prompt PS1 rebuild, user has not answered" | "Ask the user about PS1" while the question is on screen |
 | "Re-run the manual criteria after the shell change" | one line per criterion |
-| "After the review, adjust the branch or open the merge request" | "Trash the scratchpad after the merge", "Decide whether to commit the plan file" |
+| "After the review, adjust the branch and merge it" | "Trash the scratchpad after the merge", "Decide whether to commit the plan file" |
 
 Record a decision you deferred or a question the user did not answer as soon as it
 arises, as `by claude`. Remove your own lines when done, without asking. Remove a user's
