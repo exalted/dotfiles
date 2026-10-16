@@ -49,6 +49,10 @@ claude -p "/claude-code-levers refresh" \
 # Commit the map alone, by pathspec, so whatever else is staged or modified in
 # the checkout stays exactly as it was. The run's summary becomes the commit
 # body: it says why each row changed, which the diff alone would not.
+#
+# Then push, but only when that commit is the sole unpushed one on main: this
+# machine is the one that refreshes the map, and the other machines take it from
+# origin. Any other unpushed commit is the user's, and only the user pushes it.
 if [ "$status" -eq 0 ] && [ "$map_was_clean" -eq 1 ] && ! command git diff --quiet -- "$map"; then
   message="$scratch/commit-message.txt"
   {
@@ -57,6 +61,15 @@ if [ "$status" -eq 0 ] && [ "$map_was_clean" -eq 1 ] && ! command git diff --qui
     /bin/cat "$summary"
   } > "$message"
   command git commit --quiet -F "$message" -- "$map" && echo "committed $(command git rev-parse --short HEAD)"
+
+  command git fetch --quiet origin main || echo "fetch failed; push skipped"
+  if [ "$(command git rev-parse --abbrev-ref HEAD)" != main ]; then
+    echo "not on main; push skipped"
+  elif [ "$(command git rev-parse HEAD~1)" != "$(command git rev-parse origin/main)" ]; then
+    echo "main holds other unpushed commits, or origin moved on; push skipped"
+  else
+    command git push --quiet origin main && echo "pushed to origin/main"
+  fi
 elif [ "$map_was_clean" -eq 0 ]; then
   echo "the map had uncommitted changes before the run; result left uncommitted"
 fi

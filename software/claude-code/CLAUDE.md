@@ -91,7 +91,7 @@ In long sessions I lose track of what an ID or a reply refers to. Make each refe
 - Before you answer a question about how to customize Claude Code, load the `claude-code-levers` skill and read its map. This includes "which mechanism fits" and "how do we improve CLAUDE.md".
 - Do the same before you add or change a Claude Code customization: CLAUDE.md, rules, skills, hooks, settings, subagents, output styles, MCP servers or plugins.
 - Pick the lever by the map's "why it exists" column, and say in your answer which lever you picked and why.
-- Why: your own knowledge of Claude Code features goes out of date. A scheduled job re-verifies the map against the official docs every week. If the map's `last_verified` is older than 30 days, tell me.
+- Why: your own knowledge of Claude Code features goes out of date. A scheduled job on one machine (the `work` profile) re-verifies the map against the official docs every week and pushes it; every other machine takes the map from Git. If the map's `last_verified` is older than 30 days, tell me.
 
 ## User-level skills live in dotfiles
 

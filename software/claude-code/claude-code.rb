@@ -9,8 +9,18 @@ link_to_home_relative 'statusline-command.sh', '.claude/statusline-command.sh'
 link_to_home_relative 'themes/dark-mine.json', '.claude/themes/dark-mine.json'
 
 # Weekly unattended `/claude-code-levers refresh`; see skills/common/claude-code-levers.
-link_to_home_relative 'claude-code-levers-refresh.sh', '.claude/claude-code-levers-refresh.sh'
-launch_agent_relative 'com.dotfiles.claude-code-levers-refresh.plist'
+# One machine refreshes the map and pushes it; every other machine takes the map
+# from Git, so it drops the job and the local leftovers of earlier runs: the docs
+# mirror the refresh reads, and its log.
+if _resolve_profile == 'work'
+  link_to_home_relative 'claude-code-levers-refresh.sh', '.claude/claude-code-levers-refresh.sh'
+  launch_agent_relative 'com.dotfiles.claude-code-levers-refresh.plist'
+else
+  launch_agent_remove_relative 'com.dotfiles.claude-code-levers-refresh.plist'
+  trash "#{ENV["HOME"]}/.claude/claude-code-levers-refresh.sh"
+  trash "#{ENV["HOME"]}/Library/Logs/claude-code-levers-refresh.log"
+  trash File.expand_path("#{__dir__}/../../.claude/scratchpad.local/claude-code-levers")
+end
 
 # Weekday unattended recap; see skills/work/comply365-recap.
 if _resolve_profile == 'work'

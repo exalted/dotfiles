@@ -28,7 +28,7 @@ Say "lever", not "extension point", so these do not blur.
 
 ## `refresh`: challenge the map
 
-Run when invoked as `/claude-code-levers refresh`, or when `last_verified` in `references/levers.md` is older than 30 days and the user agrees. The run is non-interactive: ask no questions, commit nothing. (The scheduled job commits the map by itself, after the run.)
+Run when invoked as `/claude-code-levers refresh`, or when `last_verified` in `references/levers.md` is older than 30 days and the user agrees. The run is non-interactive: ask no questions, commit nothing. (The scheduled job, installed on the `work` profile only, commits and pushes the map by itself after the run. Every other machine takes the map from Git and keeps no refresh job, docs mirror or log.)
 
 1. Read `references/levers.md`.
 2. Mirror the docs: run `scripts/sync-docs.sh` from this skill's directory. It downloads every page listed in `https://code.claude.com/docs/llms.txt` as Markdown into `<dotfiles>/.claude/scratchpad.local/claude-code-levers/docs/`, where `<dotfiles>` is the repository this skill is checked out in, and prints that path. If the command is denied (the scheduled job has synced already), use the mirror as it is. A doc URL maps to a mirror file by its path after `/docs/`: `https://code.claude.com/docs/en/hooks.md` is `en/hooks.md`.

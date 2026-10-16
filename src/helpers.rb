@@ -252,3 +252,26 @@ end
 def launch_agent_relative(src)
   launch_agent(profile_specific(File.absolute_path("#{Pathname.new(Kernel.caller_locations.last.path).dirname}/#{src}")))
 end
+
+def launch_agent_remove_relative(src)
+  launch_agent_remove(File.absolute_path("#{Pathname.new(Kernel.caller_locations.last.path).dirname}/#{src}"))
+end
+
+# The counterpart of `launch_agent`, for a job that must run on one profile only:
+# every other machine unloads the job and trashes its rendered plist, so a plist
+# installed before the job was gated does not keep firing there.
+def launch_agent_remove(src)
+  label = File.basename(src, '.plist')
+  dest = "#{ENV["HOME"]}/Library/LaunchAgents/#{File.basename(src)}"
+  service = "gui/#{Process.uid}/#{label}"
+
+  system '/bin/launchctl', 'bootout', service if Kernel.system('/bin/launchctl', 'print', service, out: File::NULL, err: File::NULL)
+  trash dest
+end
+
+# Deletions go to the Trash, never `rm`, so a wrong path stays recoverable.
+# Silent when `path` does not exist, so a routine run stays idempotent.
+def trash(path)
+  return unless File.exist?(path) || File.symlink?(path)
+  system '/usr/bin/trash', '--stopOnError', path, exception: true
+end
