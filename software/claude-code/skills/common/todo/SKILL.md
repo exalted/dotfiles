@@ -1,6 +1,6 @@
 ---
 name: todo
-description: Side tasks for the body of work in progress, and ideas for the project. Use for `/todo`, and whenever the user says things like "remind me later to X", "also do Y after this", "note that as an idea", "one day we should Z", asks "anything else we should be doing?", "any open questions?", "what is not settled yet?", or wraps up with "that's it for today". Also use on your own when you notice follow-up work you cannot do inside the current request, or a decision or question the user left open. A judge classifies each item as do-now, session task, or idea, and the user decides when the judge disagrees with them. Never records anything outside a git repository.
+description: Side tasks for the body of work in progress, and ideas for the project. Use for `/todo`, and whenever the user says things like "remind me later to X", "also do Y after this", "note that as an idea", "one day we should Z", asks "anything else we should be doing?", "any open questions?", "what is not settled yet?", or wraps up with "that's it for today". Also use it on your own, without being asked, the moment a reply defers work ("next week", "after the release", "once X answers"), work is blocked or handed to someone, you list follow-ups for the user, a decision or question is left open, or the user is about to stop; a plan file or handoff note does not replace recording it. A judge classifies each item as do-now, session task, or idea, and the user decides when the judge disagrees with them. Never records anything outside a git repository.
 argument-hint: "[<text> | idea <text> | done|drop <n> | all | wrap-up]"
 ---
 
@@ -27,7 +27,7 @@ classified before anything is written. Say the route in one line, then act.
 |---|---|---|
 | Do now | Small, inside the current request's files and scope, no change of plan. | `add --by …`, do it, report, `list` then `remove <n>`, return to the work in progress. |
 | Session task | Belongs to the body of work in progress and fits this session, but not now. | `add`. Offer it at the next resolution. |
-| Idea | Unrelated, bigger scope, needs its own session, or "one day" wording. | Condense to 1 to 3 sentences that will remind the user what it was about. Show them. On a yes, or a reworded yes, run `idea --text "…"`. |
+| Idea | Unrelated, bigger scope, needs its own session, "one day" wording, or waits weeks on an event outside the session (a release, a month of production data). | Condense to 1 to 3 sentences that will remind the user what it was about. For a follow-up that waits on an event, also name the trigger, what to look at and what it should tell, so it can be acted on cold. Show them. On a yes, or a reworded yes, run `idea --text "…"`. |
 
 Hint words steer the judge: "idea", "one day" lean idea; "now", "while you are in there"
 lean do now; "after this", "before we push" lean session task. When the judge disagrees
@@ -54,13 +54,24 @@ todo.py add --by user|claude --text "<task>" --while "<what the session was doin
 You add tasks for yourself, with one line of notice ("Noted a task for later: …") and no
 confirmation. Threshold: a unit of work with a purpose, a start and an end, that outlives
 the current request. Ask both: would the user want to see this in a listing tomorrow, and
-would it be lost if the session ended now? Both yes, or no line.
+would it be lost if the session ended now? Both yes, or no line. A plan file, handoff note,
+ticket comment or chat message does not count as kept: none of them is listed when the next
+session starts.
+
+Check at these moments, and record in the same turn: a reply of yours says "later", "next
+week", "after the release" or "once X answers"; work is blocked or handed to someone; you
+list follow-ups or open questions for the user; the user signals they are about to stop.
+
+Never record cleanup of any kind: trashing scratchpad or temporary files, keeping,
+committing or removing plan files, restoring local data, stopping local services. Each is
+done, or dropped, when the work it belongs to ends.
 
 | Add | Do not add |
 |---|---|
 | "Update the README once the flag name is confirmed" | "Edit prompt.bashrc", "run the tests", "report back" |
 | "Decide: keep or drop the per-prompt PS1 rebuild, user has not answered" | "Ask the user about PS1" while the question is on screen |
 | "Re-run the manual criteria after the shell change" | one line per criterion |
+| "After the review, adjust the branch or open the merge request" | "Trash the scratchpad after the merge", "Decide whether to commit the plan file" |
 
 Record a decision you deferred or a question the user did not answer as soon as it
 arises, as `by claude`. Remove your own lines when done, without asking. Remove a user's
