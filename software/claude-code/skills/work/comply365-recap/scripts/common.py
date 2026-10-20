@@ -7,7 +7,7 @@ import json
 import re
 import subprocess
 import sys
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from typing import NoReturn
 
@@ -20,6 +20,8 @@ RECAP_SUFFIX = "Recap"
 FAILED_SUFFIX = "Recap failed"
 CATCH_UP_SUFFIX = "Catch-up"
 CATCH_UP_THRESHOLD = 3
+# The weekday StartCalendarInterval of the launch agent (com.dotfiles.comply365-recap.plist): change both together.
+RUN_TIME = time(19, 0)
 # Fixed English month names: %b follows the locale, and note names must not change with it.
 MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 NOTE_DATE = re.compile(r"(\d{4}-\d{2}-\d{2}) \([^)]+\) ")
@@ -49,15 +51,28 @@ def previous_workday(day: date) -> date:
     return day
 
 
+def last_run_slot(moment: datetime) -> datetime:
+    """The newest weekday run time at or before `moment`: the recap a start at `moment` is due for."""
+    day = moment.date() if moment.time() >= RUN_TIME else moment.date() - timedelta(days=1)
+    while day.weekday() >= 5:
+        day -= timedelta(days=1)
+    return datetime.combine(day, RUN_TIME, tzinfo=moment.tzinfo)
+
+
 def covered_workdays(*, start: datetime, end: datetime) -> tuple[date, ...]:
-    """The workdays a recap is about: a Monday run covers Friday, a catch-up run several days."""
+    """The workdays whose run time falls in the window: Monday's recap holds the weekend, a late one several days."""
     days = []
-    day = start.date()
-    while day < end.date():
-        if day.weekday() < 5:
-            days.append(day)
-        day += timedelta(days=1)
-    return tuple(days) or (start.date(),)
+    slot = last_run_slot(end)
+    while slot > start:
+        days.append(slot.date())
+        slot = last_run_slot(slot - timedelta(minutes=1))
+    if not days:
+        # A window with no run time in it would otherwise take, and overwrite, the name of the recap before it.
+        day = last_run_slot(end).date() + timedelta(days=1)
+        while day.weekday() >= 5:
+            day += timedelta(days=1)
+        days.append(day)
+    return tuple(reversed(days))
 
 
 def short_day(day: date) -> str:

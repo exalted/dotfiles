@@ -1,6 +1,6 @@
 ---
 name: comply365-recap
-description: Scheduled job only, started by the recap launch agent on weekdays at 07:47 and after login. Writes an unread Obsidian note that explains, in plain language, the work delivered to main across the team's GitLab projects since the last recap, tied together across projects and matched with Jira stories and team Slack threads. Do not invoke it in an interactive session.
+description: Scheduled job only, started by the recap launch agent on weekdays at 19:00, and on wake or login after a missed run. Writes an unread Obsidian note that explains, in plain language, the work delivered to main across the team's GitLab projects since the last recap, tied together across projects and matched with Jira stories and team Slack threads. Do not invoke it in an interactive session.
 user-invocable: false
 ---
 
@@ -39,9 +39,9 @@ uv run --quiet --no-project --script ~/.claude/skills/comply365-recap/scripts/co
 
 It reads, through the GitLab REST API, the commits that reached `main` in the window for each project in `~/.config/dotfiles/recap/projects.txt`. It then writes `collected.json` into the work dir it prints: the window, the Jira browse URL and project key, the team channel, and per project the commits (subject, body, author, files with line counts, story keys, commit URL). Merge commits are left out.
 
-**Window:** it starts where the newest earlier recap ends (its `window_end`), however long ago, so no commit is told twice or missed: after a holiday with the Mac off, the first run covers the whole absence. Usually that is about 07:47 on the previous workday, and Monday covers the weekend. It ends now. The very first run starts at 07:45 on the previous workday. `collected.json` lists the `workdays` the window covers.
+**Window:** it starts where the newest earlier recap ends (its `window_end`), however long ago, so no commit is told twice or missed: after a holiday with the Mac off, the first run covers the whole absence. Usually that is about 19:00 on the previous workday, and Monday covers the weekend. It ends now: a run that catches up a missed 19:00 the next morning covers up to that morning, and the next 19:00 run starts there. The very first run starts at 19:00 on the workday before the one it is due for. `collected.json` lists the `workdays` the window covers: the weekdays whose 19:00 falls in it.
 
-The API, not `git fetch`, is the source on purpose: GitLab refuses git access once the group's SAML SSO session expires, which it usually has by the morning, but a token keeps working.
+The API, not `git fetch`, is the source on purpose: GitLab refuses git access once the group's SAML SSO session expires, which it often has by the time the job runs, but a token keeps working.
 
 - **Exit 2, `SETUP ERROR`:** write the failure note with the message and stop. A refused token (401/403) is one: it expired or was revoked.
 - **Exit 3, `GITLAB ERROR`:** GitLab is unreachable or answered with an error. Write the failure note and stop.
@@ -118,7 +118,7 @@ Write `<work dir>/recap.json`:
 - `fixed`: something that was wrong now works as it should.
 - `under_the_hood`: changes users do not see: infrastructure, tooling, tests, refactors, security hardening, data migrations, model changes. Say why each one matters.
 
-**Writing:** the user reads the top of the note over coffee and should get the day at a glance. Write the headline, summaries and titles the way a teammate would tell them in the hallway: warm, plain and concrete. Everything technical goes into `details`.
+**Writing:** the user reads the top of the note at the end of the day, or the next morning, and should get the day at a glance. Write the headline, summaries and titles the way a teammate would tell them in the hallway: warm, plain and concrete. Everything technical goes into `details`.
 
 - Say what someone can now do, see or stop worrying about, and who that someone is (analysts, airlines, support staff, the team). Not what the code does.
 - Use everyday words. Keep the product's own terms the team uses (operational area, investigation, Cockpit), but no engineering words: no endpoint, flag, scope, mapping, migration, allowlist, refactor, enforce, ensure, leverage, functionality.
@@ -150,7 +150,7 @@ Write `<work dir>/recap.json`:
 uv run --quiet --no-project --script ~/.claude/skills/comply365-recap/scripts/note.py --work-dir <work dir>
 ```
 
-It writes `<vault folder>/<YYYY-MM-DD> (<Mon> <D>) Recap.md` and prints its path. The note is named after the workdays it covers, not the day it was written: Tuesday's run writes `2026-10-12 (Oct 12) Recap.md`, a Monday run is named after Friday, and a long window gets a range (`2026-10-01 (Oct 1–14) Recap.md`). A rerun on the same morning replaces that note, which resets it to unread. A successful run also moves the failure note to the Trash. It creates the folder's Base on the first run and never changes it afterwards.
+It writes `<vault folder>/<YYYY-MM-DD> (<Mon> <D>) Recap.md` and prints its path. The note is named after the workdays whose 19:00 its window holds, not the moment it was written: Tuesday's 19:00 run writes `2026-10-13 (Oct 13) Recap.md`, a Wednesday-morning catch-up of a missed Tuesday 19:00 writes the same name, a Monday run is named after Monday (the weekend is in it), and a long window gets a range (`2026-10-01 (Oct 1–14) Recap.md`). A successful run also moves the failure note to the Trash. It creates the folder's Base on the first run and never changes it afterwards.
 
 **Exit 4, `INVALID`:** fix `recap.json` as listed (usually a commit missing from every item) and run it again. Do not edit the note by hand: the format lives in `note.py`.
 
@@ -196,13 +196,13 @@ Move the work dir to the Trash (`trash <work dir>`) and print the note paths. Af
 
 - **Properties:** only `read` (checkbox, `false` when written), `headline` (the Base shows it), and `window_end` (where the next run starts). Everything else is in the file name or the text.
 - **Body:** the headline and the summary, links to each kind section, then one section per kind. Each item has its title, the products it touches, Jira and Slack links, its plain summary, and a folded `> [!info]- Technical details` callout with the details, the diagram and the commit table across all its projects. Then **Coming up**, the sources per project, and a `Related:` line to the previous recap and the Base.
-- **Catch-up note:** `<YYYY-MM-DD> (<range>) Catch-up.md`, with the themes, links to every recap it covers, and the property `covers` (their names). When the user ticks it read, the next start (07:47, wake or login) marks those recaps read too and removes `covers` (`scripts/prepare.py`), so a recap unticked later stays unread. An unread catch-up note that covers fewer than 3 unread recaps goes to the Trash.
+- **Catch-up note:** `<YYYY-MM-DD> (<range>) Catch-up.md`, with the themes, links to every recap it covers, and the property `covers` (their names). When the user ticks it read, the next start (19:00, wake or login) marks those recaps read too and removes `covers` (`scripts/prepare.py`), so a recap unticked later stays unread. An unread catch-up note that covers fewer than 3 unread recaps goes to the Trash.
 - **Failure note:** `<YYYY-MM-DD> (<Mon> <D>) Recap failed.md`, only one, named after the first workday that failed, headline "Recaps missing since <that day>", with the latest error. Unread again after each failure.
 - **Base:** `<folder>/<folder>.base`, over every note in the folder. **Unread** shows a catch-up note first, then a failure note, then the recaps, newest first (a formula on the file name); **All** shows every note, newest first. The user can change its views in Obsidian; the skill never overwrites it.
 
 ## Schedule
 
-`software/claude-code/comply365-recap.sh` (installed as `~/.claude/recap.sh`) is the launch agent `com.dotfiles.comply365-recap`, work profile only. It starts at 07:47 Monday to Friday, on wake when the Mac slept through 07:47, and at every login. Each start first runs `scripts/prepare.py`, which applies catch-up read ticks and then stops the start on a weekend or when today's recap is already written, so restarts never write a second recap. Otherwise it runs `claude -p` on the most capable model (`--model fable --effort xhigh`) with a prompt that invokes this skill, from `~/.local/state/recap`, with exactly the tools above pre-allowed. If `claude` itself fails, it writes the failure note, which points to `~/Library/Logs/recap.log`. It writes files only; it never drives the Obsidian app.
+`software/claude-code/comply365-recap.sh` (installed as `~/.claude/recap.sh`) is the launch agent `com.dotfiles.comply365-recap`, work profile only. It starts at 19:00 Monday to Friday, on wake when the Mac slept through 19:00, and at every login. Each start first runs `scripts/prepare.py`, which applies catch-up read ticks and then stops the start when a recap already reaches the newest weekday 19:00. So a login before 19:00 does nothing, a start after a missed 19:00 catches up at once (on a Saturday too, for a missed Friday), and restarts never write a second recap. Otherwise it runs `claude -p` on the most capable model (`--model fable --effort xhigh`) with a prompt that invokes this skill, from `~/.local/state/recap`, with exactly the tools above pre-allowed. If `claude` itself fails, it writes the failure note, which points to `~/Library/Logs/recap.log`. It writes files only; it never drives the Obsidian app.
 
 - Run it now: `/bin/launchctl kickstart "gui/$(id -u)/com.dotfiles.comply365-recap"`.
 - Mac off or asleep for days: the first start afterwards covers the whole gap in one recap.
@@ -217,7 +217,7 @@ All internal values live on this machine only, never in the public dotfiles repo
 - `~/.config/dotfiles/recap/vault-folder`: the absolute path of the vault folder for the notes. It must be inside an Obsidian vault.
 - `~/.config/dotfiles/jira`: the Jira browse URL prefix `https://<site>/browse/<KEY>-`, shared with the `jira` command. Its key is the project the commits are matched with.
 - Keychain item `recap-gitlab-token`: a GitLab personal access token with only the `read_api` scope.
-- `WINDOW_ANCHOR` in `scripts/collect.py`: the usual window boundary (07:45). `CATCH_UP_THRESHOLD` in `scripts/common.py`: the unread recaps that make a catch-up note (3).
+- `RUN_TIME` in `scripts/common.py`: the daily run time (19:00). It must match `StartCalendarInterval` in `com.dotfiles.comply365-recap.plist`. `CATCH_UP_THRESHOLD` in `scripts/common.py`: the unread recaps that make a catch-up note (3).
 
 ## One-time setup
 

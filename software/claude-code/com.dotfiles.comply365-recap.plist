@@ -11,22 +11,23 @@
 	<array>
 		<string>@HOME@/.claude/recap.sh</string>
 	</array>
-	<!-- At login too, so a Mac that was off at 07:47 gets its recap right after start-up.
-	     The script runs prepare.py first, which skips weekends and a day already done,
+	<!-- At login too, so a Mac that was off at 19:00 gets its recap right after start-up.
+	     The script runs prepare.py first, which stops unless a run time passed with no recap,
 	     so logins and restarts never write a second recap. -->
 	<key>RunAtLoad</key>
 	<true/>
-	<!-- Monday to Friday at 07:47 local, so the note is there by 08:00. The recap window
-	     ends at the run and starts where the last recap ended (collect.py), so
-	     consecutive windows touch. A time slept through runs on the next wake, even a
-	     two-second DarkWake with the lid closed, so recap.sh waits for a full wake. -->
+	<!-- Monday to Friday at 19:00 local, at the end of the workday; RUN_TIME in
+	     scripts/common.py must match. The recap window ends at the run and starts where
+	     the last recap ended (collect.py), so consecutive windows touch. A time slept
+	     through runs on the next wake, even a two-second DarkWake with the lid closed,
+	     so recap.sh waits for a full wake. -->
 	<key>StartCalendarInterval</key>
 	<array>
-		<dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
-		<dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
-		<dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
-		<dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
-		<dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>47</integer></dict>
+		<dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>19</integer><key>Minute</key><integer>0</integer></dict>
+		<dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>19</integer><key>Minute</key><integer>0</integer></dict>
+		<dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>19</integer><key>Minute</key><integer>0</integer></dict>
+		<dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>19</integer><key>Minute</key><integer>0</integer></dict>
+		<dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>19</integer><key>Minute</key><integer>0</integer></dict>
 	</array>
 </dict>
 </plist>

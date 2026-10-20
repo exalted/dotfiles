@@ -30,9 +30,9 @@ from common import (
     FAILED_SUFFIX,
     RECAP_SUFFIX,
     covered_workdays,
+    last_run_slot,
     note_name,
     notes,
-    previous_workday,
     read_folder,
     read_properties,
     short_day,
@@ -311,7 +311,7 @@ def write_failure(*, folder: Path, error: str, now: datetime) -> Path:
         for extra in existing[1:]:
             trash(extra)
     else:
-        day = previous_workday(now.date())
+        day = last_run_slot(now).date()
         note = folder / f"{note_name(first=day, last=day, suffix=FAILED_SUFFIX)}.md"
     headline = f"Recaps missing since {short_day(date.fromisoformat(note.name[:10]))}"
     note.write_text(
@@ -322,7 +322,7 @@ def write_failure(*, folder: Path, error: str, now: datetime) -> Path:
                 f"> [!warning] Latest error ({now:%a %-d %b %H:%M})\n{quoted(error.strip())}",
                 (
                     "Nothing is lost: once the cause is fixed, the next run covers everything since the last "
-                    "recap and moves this note to the Trash. It runs at 07:47 on weekdays and after you log in. "
+                    "recap and moves this note to the Trash. It runs at 19:00 on weekdays, and on wake or login after a missed run. "
                     "To run it now: `launchctl kickstart gui/$(id -u)/com.dotfiles.comply365-recap`. "
                     "Run log: `~/Library/Logs/recap.log`."
                 ),
@@ -364,7 +364,7 @@ def write_catch_up(*, folder: Path, work_dir: Path, browse_url: str) -> Path:
 
     first = date.fromisoformat(recaps[0].name[:10])
     last_end = datetime.fromisoformat(str(read_properties(recaps[-1])["window_end"]))
-    last = max(first, previous_workday(last_end.date()))
+    last = max(first, last_run_slot(last_end).date())
     name = note_name(first=first, last=last, suffix=CATCH_UP_SUFFIX)
     properties: Json = {
         "read": False,
@@ -378,7 +378,7 @@ def write_catch_up(*, folder: Path, work_dir: Path, browse_url: str) -> Path:
         catch_up["summary"].strip(),
         (
             f"> [!tip] {len(recaps)} recaps in one page\n"
-            "> Tick **read** on this note, and the next run (at 07:47, or when you log in) "
+            "> Tick **read** on this note, and the next start (at 19:00, on wake or when you log in) "
             "marks every recap below as read."
         ),
         render_entries(

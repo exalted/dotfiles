@@ -40,9 +40,9 @@ cd "$state" || exit 1
 scripts='~/.claude/skills/comply365-recap/scripts'
 note="$HOME/.claude/skills/comply365-recap/scripts/note.py"
 
-# Runs at 07:47, on wake after a missed 07:47, and at every login. prepare.py
-# applies read ticks from catch-up notes, then says whether a recap is due, so
-# only the first of those starts on a weekday ends up calling Claude.
+# Runs at 19:00 on weekdays, on wake after a missed 19:00, and at every login.
+# prepare.py applies read ticks from catch-up notes, then says whether a recap is
+# due, so only the first start after each 19:00 ends up calling Claude.
 prepared=0
 uv run --quiet --no-project --script "$HOME/.claude/skills/comply365-recap/scripts/prepare.py" || prepared=$?
 case "$prepared" in

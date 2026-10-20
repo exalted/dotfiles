@@ -6,7 +6,7 @@
 """Collect the commits that reached each recap project's main branch during the recap window.
 
 Reads the GitLab REST API, not local clones: GitLab refuses git fetch once the group's SAML SSO
-session expires, which it usually has by the morning, while API access with a token keeps working.
+session expires, which it often has by the time the job runs, while API access with a token keeps working.
 Writes ~/.local/state/recap/work/<date>/collected.json and prints a summary.
 """
 
@@ -18,14 +18,16 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass
-from datetime import date, datetime, time
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any, NoReturn
 
 from common import (
     CONFIG_DIR,
     RECAP_SUFFIX,
+    RUN_TIME,
     covered_workdays,
+    last_run_slot,
     notes,
     previous_workday,
     read_folder,
@@ -38,8 +40,6 @@ CHANNEL_FILE = CONFIG_DIR / "channel"
 JIRA_FILE = Path.home() / ".config" / "dotfiles" / "jira"
 KEYCHAIN_SERVICE = "recap-gitlab-token"
 BRANCH = "main"
-# Where the very first window starts, on the previous workday; later windows start where the last recap ended.
-WINDOW_ANCHOR = time(7, 45)
 # Not under a .claude/ folder: Claude Code asks before every write there, and nobody answers a scheduled run.
 WORK_ROOT = Path.home() / ".local" / "state" / "recap" / "work"
 MAX_FILES_PER_COMMIT = 40
@@ -160,7 +160,7 @@ def read_token() -> str:
 
 
 def last_recap_end(*, folder: Path, now: datetime) -> datetime | None:
-    """The window end of the newest recap written before today; a rerun today replaces today's note.
+    """The window end of the newest recap.
 
     Notes are named after the days they cover, not the day they were written, so this reads `window_end`.
     """
@@ -168,19 +168,18 @@ def last_recap_end(*, folder: Path, now: datetime) -> datetime | None:
     for recap in notes(folder=folder, suffix=RECAP_SUFFIX):
         window_end = read_properties(recap).get("window_end")
         if isinstance(window_end, str):
-            written = datetime.fromisoformat(window_end).replace(tzinfo=now.tzinfo)
-            if written.date() < now.date():
-                ends.append(written)
+            ends.append(datetime.fromisoformat(window_end).replace(tzinfo=now.tzinfo))
     return max(ends, default=None)
 
 
 def resolve_window(*, last_end: datetime | None, now: datetime) -> Window:
     """From where the last recap ended, however long ago, so no commit is told twice or missed.
 
-    The very first run, with no recap yet, starts at the anchor on the previous workday.
+    The very first run, with no recap yet, starts at the run time one workday before the one it is due for.
     """
     if last_end is None:
-        return Window(start=datetime.combine(previous_workday(now.date()), WINDOW_ANCHOR, tzinfo=now.tzinfo), end=now)
+        day = previous_workday(last_run_slot(now).date())
+        return Window(start=datetime.combine(day, RUN_TIME, tzinfo=now.tzinfo), end=now)
     return Window(start=last_end, end=now)
 
 

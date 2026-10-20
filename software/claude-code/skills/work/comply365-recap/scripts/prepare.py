@@ -9,11 +9,14 @@ Tidying, done on every start so a tick takes effect at the next login or wake, n
 - A catch-up note the user marked read marks every recap it covers as read, once.
 - An unread catch-up note that covers fewer than the threshold of unread recaps is stale and goes to the Trash.
 
-Exit 0: a run is due. Exit 3: nothing to do (a weekend, or today's recap is already written). Exit 2: setup error.
+A run is due when no recap reaches the newest weekday run time yet. So a login or wake before the run time does
+nothing, and one after a missed run time catches up at once, weekends included.
+
+Exit 0: a run is due. Exit 3: nothing to do (the recap for the newest run time is already written). Exit 2: setup error.
 """
 
 import sys
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 
 from common import (
@@ -21,6 +24,7 @@ from common import (
     CATCH_UP_THRESHOLD,
     RECAP_SUFFIX,
     is_read,
+    last_run_slot,
     notes,
     read_folder,
     read_properties,
@@ -58,10 +62,10 @@ def drop_stale_catch_ups(folder: Path) -> int:
     return len(stale)
 
 
-def written_today(*, folder: Path, today: date) -> bool:
+def written_since(*, folder: Path, slot: datetime) -> bool:
     for recap in notes(folder=folder, suffix=RECAP_SUFFIX):
         window_end = read_properties(recap).get("window_end")
-        if isinstance(window_end, str) and datetime.fromisoformat(window_end).date() == today:
+        if isinstance(window_end, str) and datetime.fromisoformat(window_end) >= slot:
             return True
     return False
 
@@ -71,14 +75,12 @@ def main() -> None:
     print(f"marked read through a catch-up: {propagate_catch_up_reads(folder)}")
     print(f"stale catch-up notes trashed: {drop_stale_catch_ups(folder)}")
 
-    today = datetime.now().astimezone().date()
-    if today.weekday() >= 5:
-        print("not due: weekend")
+    # Naive local time, like the window_end the notes store.
+    slot = last_run_slot(datetime.now())
+    if written_since(folder=folder, slot=slot):
+        print(f"not due: the recap for {slot:%a %Y-%m-%d %H:%M} is already written")
         sys.exit(EXIT_NOT_DUE)
-    if written_today(folder=folder, today=today):
-        print("not due: today's recap is already written")
-        sys.exit(EXIT_NOT_DUE)
-    print("due")
+    print(f"due: the recap for {slot:%a %Y-%m-%d %H:%M}")
 
 
 if __name__ == "__main__":
