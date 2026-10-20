@@ -52,3 +52,7 @@ if [ -n "$session_id" ] || [ -n "$branch" ]; then
   [ -n "$session_id" ] && [ -n "$branch" ] && printf "\e[37m@\e[0m"
   [ -n "$branch" ] && printf "\e[37m%s\e[0m" "$branch"
 fi
+
+# Claude Code drops the whole status line when this script exits non-zero, and
+# the `[ -n "$branch" ] && ...` above fails outside a git repo.
+exit 0
