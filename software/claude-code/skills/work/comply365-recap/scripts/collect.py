@@ -24,15 +24,10 @@ from typing import Any, NoReturn
 
 from common import (
     CONFIG_DIR,
-    RECAP_SUFFIX,
-    RUN_TIME,
     covered_workdays,
-    last_run_slot,
-    notes,
-    previous_workday,
     read_folder,
-    read_properties,
     setup_error,
+    window_start,
 )
 
 PROJECTS_FILE = CONFIG_DIR / "projects.txt"
@@ -159,30 +154,6 @@ def read_token() -> str:
     return lookup.stdout.strip()
 
 
-def last_recap_end(*, folder: Path, now: datetime) -> datetime | None:
-    """The window end of the newest recap.
-
-    Notes are named after the days they cover, not the day they were written, so this reads `window_end`.
-    """
-    ends = []
-    for recap in notes(folder=folder, suffix=RECAP_SUFFIX):
-        window_end = read_properties(recap).get("window_end")
-        if isinstance(window_end, str):
-            ends.append(datetime.fromisoformat(window_end).replace(tzinfo=now.tzinfo))
-    return max(ends, default=None)
-
-
-def resolve_window(*, last_end: datetime | None, now: datetime) -> Window:
-    """From where the last recap ended, however long ago, so no commit is told twice or missed.
-
-    The very first run, with no recap yet, starts at the run time one workday before the one it is due for.
-    """
-    if last_end is None:
-        day = previous_workday(last_run_slot(now).date())
-        return Window(start=datetime.combine(day, RUN_TIME, tzinfo=now.tzinfo), end=now)
-    return Window(start=last_end, end=now)
-
-
 class GitLab:
     def __init__(self, token: str) -> None:
         self.token = token
@@ -278,7 +249,7 @@ def main() -> None:
     channel = read_channel()
     gitlab = GitLab(read_token())
     now = datetime.now().astimezone()
-    window = resolve_window(last_end=last_recap_end(folder=read_folder(), now=now), now=now)
+    window = Window(start=window_start(folder=read_folder(), now=now), end=now)
     workdays = covered_workdays(start=window.start, end=window.end)
 
     key_pattern = re.compile(rf"\b{jira.project_key}-\d+\b")

@@ -9,15 +9,18 @@ The note format lives here, not in the prompt, so every note has the same proper
 Each note starts with `read: false`; the folder's Base lists unread notes and lets the user tick them.
 
 Modes:
+  --started        write the in-progress note, under the name the recap will get
   --work-dir DIR   write the recap from DIR/collected.json and DIR/recap.json (exit 4 when invalid)
   --unread         print, as JSON, the unread recaps and whether a catch-up note is due
   --catch-up DIR   write the catch-up note from DIR/catch-up.json over the unread recaps (exit 4 when invalid)
   --error TEXT     write or update the single failure note
+  --finish         after a run: announce the recap, or turn a leftover in-progress note into a failure (exit 1)
 """
 
 import argparse
 import json
 import re
+import subprocess
 import sys
 import urllib.parse
 from datetime import date, datetime
@@ -29,20 +32,26 @@ from common import (
     CATCH_UP_THRESHOLD,
     FAILED_SUFFIX,
     RECAP_SUFFIX,
+    STARTED,
     covered_workdays,
+    in_progress_recaps,
+    is_in_progress,
     last_run_slot,
     note_name,
     notes,
     read_folder,
     read_properties,
+    setup_error,
     short_day,
     trash,
     unread_catch_ups,
     unread_recaps,
+    window_start,
 )
 
 ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?")
 EXIT_INVALID = 4
+EXIT_FAILED = 1
 KINDS = {
     "new": "New",
     "improved": "Improved",
@@ -286,6 +295,30 @@ def render_recap(*, recap: Json, collected: Json, folder: Path, days: tuple[date
     return document(properties=properties, blocks=body)
 
 
+def write_started(*, folder: Path, now: datetime) -> Path:
+    """A placeholder under the recap's own name, so the recap fills in the note the user already sees."""
+    # A run cut off by a shutdown never replaced its placeholder.
+    for stale in in_progress_recaps(folder):
+        trash(stale)
+    days = covered_workdays(start=window_start(folder=folder, now=now), end=now)
+    note = folder / f"{note_name(first=days[0], last=days[-1], suffix=RECAP_SUFFIX)}.md"
+    if note.exists():
+        setup_error(f"{note} exists already; a recap run is not due.")
+    headline = f"Recap in progress, started {now:%H:%M}"
+    note.write_text(
+        document(
+            properties={"read": False, "headline": headline, STARTED: f"{now:%Y-%m-%dT%H:%M}"},
+            blocks=[
+                f"# {headline}",
+                f"Started {now:%a %-d %b %H:%M}. The recap replaces this text when it is ready, "
+                "usually within ten minutes.",
+                related_line(folder=folder, day=days[0]),
+            ],
+        )
+    )
+    return note
+
+
 def write_recap(*, folder: Path, work_dir: Path) -> Path:
     collected = json.loads((work_dir / "collected.json").read_text())
     recap = json.loads((work_dir / "recap.json").read_text())
@@ -297,6 +330,9 @@ def write_recap(*, folder: Path, work_dir: Path) -> Path:
     )
     note = folder / f"{note_name(first=days[0], last=days[-1], suffix=RECAP_SUFFIX)}.md"
     note.write_text(render_recap(recap=recap, collected=collected, folder=folder, days=days))
+    # The window ends later than the placeholder's did, so a run time passed meanwhile gives the recap another name.
+    for placeholder in in_progress_recaps(folder):
+        trash(placeholder)
     # A successful recap starts where the last one ended, so it covers whatever the failed runs missed.
     for failed in notes(folder=folder, suffix=FAILED_SUFFIX):
         trash(failed)
@@ -304,33 +340,92 @@ def write_recap(*, folder: Path, work_dir: Path) -> Path:
 
 
 def write_failure(*, folder: Path, error: str, now: datetime) -> Path:
-    """One failure note, however many runs fail in a row: it keeps its name, the first workday without a recap."""
+    """One failure note, however many runs fail in a row: it keeps its name, the first workday without a recap.
+
+    The in-progress note of the failed run becomes that note, or goes to the Trash when it exists already.
+    """
+    placeholders = in_progress_recaps(folder)
+    started = datetime.fromisoformat(str(read_properties(placeholders[-1])[STARTED])) if placeholders else None
     existing = notes(folder=folder, suffix=FAILED_SUFFIX)
     if existing:
         note = existing[0]
         for extra in existing[1:]:
             trash(extra)
     else:
-        day = last_run_slot(now).date()
+        day = note_date_of(placeholders[-1]) if placeholders else last_run_slot(now).date()
         note = folder / f"{note_name(first=day, last=day, suffix=FAILED_SUFFIX)}.md"
-    headline = f"Recaps missing since {short_day(date.fromisoformat(note.name[:10]))}"
+    for placeholder in placeholders:
+        if note.exists():
+            trash(placeholder)
+        else:
+            placeholder.rename(note)
+    headline = f"Recaps missing since {short_day(note_date_of(note))}"
+    if started is None:
+        run = f"Latest error ({now:%a %-d %b %H:%M})"
+    else:
+        failed = f"{now:%H:%M}" if started.date() == now.date() else f"{now:%a %-d %b %H:%M}"
+        run = f"Latest run: started {started:%a %-d %b %H:%M}, failed {failed}"
     note.write_text(
         document(
             properties={"read": False, "headline": headline},
             blocks=[
                 f"# {headline}",
-                f"> [!warning] Latest error ({now:%a %-d %b %H:%M})\n{quoted(error.strip())}",
+                f"> [!warning] {run}\n{quoted(error.strip())}",
                 (
                     "Nothing is lost: once the cause is fixed, the next run covers everything since the last "
                     "recap and moves this note to the Trash. It runs at 19:00 on weekdays, and on wake or login after a missed run. "
                     "To run it now: `launchctl kickstart gui/$(id -u)/com.dotfiles.comply365-recap`. "
                     "Run log: `~/Library/Logs/recap.log`."
                 ),
-                related_line(folder=folder, day=date.fromisoformat(note.name[:10])),
+                related_line(folder=folder, day=note_date_of(note)),
             ],
         )
     )
     return note
+
+
+def note_date_of(note: Path) -> date:
+    return date.fromisoformat(note.name[:10])
+
+
+def notify(*, title: str, subtitle: str, message: str) -> None:
+    # Passed as arguments, not spliced into the script, so quotes in a headline cannot break the AppleScript.
+    subprocess.run(
+        [
+            "/usr/bin/osascript",
+            "-e",
+            "on run argv",
+            "-e",
+            "display notification (item 3 of argv) with title (item 1 of argv) subtitle (item 2 of argv)",
+            "-e",
+            "end run",
+            title,
+            subtitle,
+            message,
+        ],
+        check=False,
+    )
+
+
+def finish(*, folder: Path, now: datetime) -> int:
+    """After claude exited 0. A run can also end well without writing a recap, and that must not pass silently."""
+    recaps = [path for path in notes(folder=folder, suffix=RECAP_SUFFIX) if not is_in_progress(read_properties(path))]
+    if in_progress_recaps(folder) or not recaps:
+        print(
+            write_failure(
+                folder=folder,
+                error="The run ended without writing the recap. See ~/Library/Logs/recap.log",
+                now=now,
+            )
+        )
+        return EXIT_FAILED
+    if notes(folder=folder, suffix=FAILED_SUFFIX):
+        print("no recap: the run wrote the failure note")
+        return EXIT_FAILED
+    recap = recaps[-1]
+    notify(title="Recap ready", subtitle=recap.stem, message=str(read_properties(recap).get("headline", "")))
+    print(f"notified: {recap}")
+    return 0
 
 
 def unread_report(folder: Path) -> Json:
@@ -445,19 +540,26 @@ def ensure_base(folder: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--started", action="store_true")
     mode.add_argument("--work-dir", type=Path)
     mode.add_argument("--unread", action="store_true")
     mode.add_argument("--catch-up", type=Path, metavar="WORK_DIR")
     mode.add_argument("--error")
+    mode.add_argument("--finish", action="store_true")
     arguments = parser.parse_args()
 
     folder = read_folder()
     ensure_base(folder)
+    now = datetime.now().astimezone()
 
-    if arguments.unread:
+    if arguments.started:
+        print(write_started(folder=folder, now=now))
+    elif arguments.finish:
+        sys.exit(finish(folder=folder, now=now))
+    elif arguments.unread:
         print(json.dumps(unread_report(folder), indent=2))
     elif arguments.error:
-        print(write_failure(folder=folder, error=arguments.error, now=datetime.now().astimezone()))
+        print(write_failure(folder=folder, error=arguments.error, now=now))
     elif arguments.catch_up:
         collected = json.loads((arguments.catch_up / "collected.json").read_text())
         print(write_catch_up(folder=folder, work_dir=arguments.catch_up, browse_url=collected["jira"]["browse_url"]))

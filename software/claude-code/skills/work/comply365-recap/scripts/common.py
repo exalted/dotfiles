@@ -20,6 +20,8 @@ RECAP_SUFFIX = "Recap"
 FAILED_SUFFIX = "Recap failed"
 CATCH_UP_SUFFIX = "Catch-up"
 CATCH_UP_THRESHOLD = 3
+# Only the placeholder a run writes at its start has this property; the finished recap replaces it.
+STARTED = "started"
 # The weekday StartCalendarInterval of the launch agent (com.dotfiles.comply365-recap.plist): change both together.
 RUN_TIME = time(19, 0)
 # Fixed English month names: %b follows the locale, and note names must not change with it.
@@ -73,6 +75,23 @@ def covered_workdays(*, start: datetime, end: datetime) -> tuple[date, ...]:
             day += timedelta(days=1)
         days.append(day)
     return tuple(reversed(days))
+
+
+def window_start(*, folder: Path, now: datetime) -> datetime:
+    """Where the last recap ended, however long ago, so no commit is told twice or missed.
+
+    Notes are named after the days they cover, not the day they were written, so this reads `window_end`.
+    The very first run, with no recap yet, starts at the run time one workday before the one it is due for.
+    """
+    ends = []
+    for recap in notes(folder=folder, suffix=RECAP_SUFFIX):
+        window_end = read_properties(recap).get("window_end")
+        if isinstance(window_end, str):
+            ends.append(datetime.fromisoformat(window_end).replace(tzinfo=now.tzinfo))
+    if ends:
+        return max(ends)
+    day = previous_workday(last_run_slot(now).date())
+    return datetime.combine(day, RUN_TIME, tzinfo=now.tzinfo)
 
 
 def short_day(day: date) -> str:
@@ -144,8 +163,20 @@ def is_read(properties: Properties) -> bool:
     return properties.get("read") == "true"
 
 
+def is_in_progress(properties: Properties) -> bool:
+    return STARTED in properties
+
+
+def in_progress_recaps(folder: Path) -> list[Path]:
+    return [path for path in notes(folder=folder, suffix=RECAP_SUFFIX) if is_in_progress(read_properties(path))]
+
+
 def unread_recaps(folder: Path) -> list[Path]:
-    return [path for path in notes(folder=folder, suffix=RECAP_SUFFIX) if not is_read(read_properties(path))]
+    return [
+        path
+        for path in notes(folder=folder, suffix=RECAP_SUFFIX)
+        if not is_read(properties := read_properties(path)) and not is_in_progress(properties)
+    ]
 
 
 def unread_catch_ups(folder: Path) -> list[Path]:

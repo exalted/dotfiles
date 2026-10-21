@@ -58,6 +58,8 @@ case "$prepared" in
     ;;
 esac
 
+# The note shows up at once, and the recap replaces its text when it is ready.
+uv run --quiet --no-project --script "$note" --started
 # Only the plugin servers, never the claude.ai connectors: a connector with the
 # same service replaces its plugin, and an unauthorized one leaves the run with no
 # Jira tools. Headless runs also start before remote servers finish connecting,
@@ -101,13 +103,16 @@ mcp__plugin_slack_slack__slack_search_public" \
   < /dev/null || status=$?
 
 # The skill reports the failures it can name itself. This covers the ones it
-# cannot: claude crashing, a sign-in it never reached, a run cut short.
+# cannot: claude crashing, a sign-in it never reached, a run cut short, a run
+# that ends well but leaves the in-progress note behind.
 if [ "$status" -eq 142 ]; then
   uv run --quiet --no-project --script "$note" \
     --error "The scheduled run stopped at its $limit_minutes-minute limit. See ~/Library/Logs/recap.log"
 elif [ "$status" -ne 0 ]; then
   uv run --quiet --no-project --script "$note" \
     --error "The scheduled run stopped: claude exited with $status. See ~/Library/Logs/recap.log"
+else
+  uv run --quiet --no-project --script "$note" --finish || status=$?
 fi
 
 echo "=== $(/bin/date '+%Y-%m-%dT%H:%M:%S%z') end exit=$status"
