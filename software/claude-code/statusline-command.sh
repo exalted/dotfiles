@@ -26,23 +26,41 @@ if [ -n "$resets_at" ]; then
   resets=" (resets $(/bin/date -r "$resets_at" +%H:%M))"
 fi
 
-# Pick color + emoji by usage threshold.
 if [ "$pct" -lt 20 ]; then
-  emoji="🟢"; color="\e[32m"               # green text
+  fg="32"; bg="42"                       # green
 elif [ "$pct" -lt 50 ]; then
-  emoji="🟡"; color="\e[33m"               # yellow text
+  fg="33"; bg="43"                       # yellow
 elif [ "$pct" -lt 80 ]; then
-  emoji="🟠"; color="\e[30;48;5;208m"      # black on orange bg
+  fg="38;5;208"; bg="48;5;208"           # orange
 else
-  emoji="🔴"; color="\e[30;41m"            # black on red bg
+  fg="31"; bg="41"                       # red
 fi
 
-prefix="${model} (${effort}) "
-status="${pct}%${resets}"
+bar_width=10
+filled=$(( (pct * bar_width + 50) / 100 ))
+[ "$filled" -gt "$bar_width" ] && filled=$bar_width
+[ "$filled" -lt 0 ] && filled=0
 
-# Left-aligned (Claude Code's default). Emoji stays uncolored (no background
-# bleed); only the status text gets $color.
-printf "\e[37m%s%s ${color}%s\e[0m" "$prefix" "$emoji" "$status"
+# The cells are background-colored so the centered label can sit on top. Each
+# label character takes the contrast of the cell under it: black on a filled
+# cell, the threshold color on an empty one.
+label="${pct}%"
+label_start=$(( (bar_width - ${#label}) / 2 ))
+bar=""
+for ((i = 0; i < bar_width; i++)); do
+  j=$(( i - label_start ))
+  ch=" "
+  [ "$j" -ge 0 ] && [ "$j" -lt "${#label}" ] && ch="${label:j:1}"
+  if [ "$i" -lt "$filled" ]; then
+    bar+="\e[30;${bg}m${ch}"
+  else
+    bar+="\e[${fg};48;5;238m${ch}"
+  fi
+done
+
+prefix="${model} (${effort}) "
+
+printf "\e[37m%s%b\e[0m\e[37m%s\e[0m" "$prefix" "$bar" "$resets"
 
 # Session id dimmed and unlabeled, and "@" is a word boundary, so a
 # double-click in the terminal selects exactly the id.
