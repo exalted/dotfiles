@@ -2,6 +2,7 @@
 require_relative '../../src/helpers'
 
 cask 'claude-code@latest'
+bash_source_relative
 
 link_to_home_relative 'CLAUDE.md',             '.claude/CLAUDE.md'
 link_to_home_relative 'settings.json',         '.claude/settings.json'

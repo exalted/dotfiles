@@ -24,6 +24,29 @@ brew() {
   esac
 }
 
+# Upgrades a Homebrew cask at most once per 24 hours; meant to wrap a CLI that
+# the cask installs, e.g. `foo() { upgrade-cask-daily foo; command foo "$@"; }`.
+# The stamp is written before the upgrade, so a failed attempt (offline) still
+# counts and the next calls do not retry it, and a second terminal opened during
+# the upgrade does not start another one. A failure never blocks the wrapped CLI.
+upgrade-cask-daily() {
+  local cask="$1"
+  local stamp="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/upgrade-cask-daily/$cask"
+  local now last=0
+
+  [ -d "${HOMEBREW_PREFIX:-/opt/homebrew}/Caskroom/$cask" ] || return 0
+
+  printf -v now '%(%s)T' -1
+  [ -r "$stamp" ] && read -r last < "$stamp"
+  (( now - last >= 24 * 60 * 60 )) || return 0
+
+  command mkdir -p "${stamp%/*}" && printf '%s\n' "$now" > "$stamp"
+  >&2 echo "upgrade-cask-daily: upgrading $cask (at most once per 24 hours)…"
+  command brew upgrade --cask "$cask" \
+    || >&2 echo "upgrade-cask-daily: could not upgrade $cask; running the installed version, next attempt in 24 hours"
+  return 0
+}
+
 spider() {
   wget \
     --force-directories \
