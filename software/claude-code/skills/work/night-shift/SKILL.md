@@ -1,6 +1,6 @@
 ---
 name: night-shift
-description: Govern the unattended night shift, which works top Jira backlog stories overnight in git worktrees and leaves branches and an Obsidian note to review in the morning. Use for /night-shift, and when the user asks to pause or resume it, change how many stories it takes, change its quota limits, skip or retry a story, clean up after reviewing a branch, run it now, see its status, or turn the weekly security analysis or codex on or off.
+description: Govern the unattended night shift, which works top Jira backlog stories overnight, one at a time, on a branch per story in the user's own checkout, and leaves those branches and an Obsidian note to review in the morning. Use for /night-shift, and when the user asks to pause or resume it, change how many stories it takes, change its quota limits, skip or retry a story, clean up after reviewing a branch, run it now, see its status, or turn the weekly security analysis or codex on or off.
 argument-hint: "[status | pause | resume | stories <n> | set <knob> <value> | skip <KEY> | retry <KEY> | cleanup <KEY> [--force] | run-now [--dry] | security on|off | codex on|off | setup]"
 ---
 
@@ -8,7 +8,7 @@ argument-hint: "[status | pause | resume | stories <n> | set <knob> <value> | sk
 
 The night shift is a launch agent (`com.dotfiles.night-shift`, Monday to Friday at 00:37) that runs
 `scripts/night_shift.py nightly`. It picks the top unassigned, unblocked backlog stories, works each one on a
-`night/<KEY>` branch in a git worktree of the right repository, checks the result with the repository's own
+`night/<KEY>` branch from `origin/main` in the user's own checkout of the right repository, checks the result with the repository's own
 gate, has codex review it, and writes a note to the Obsidian folder. A second agent
 (`com.dotfiles.night-shift-security`, Saturday at 00:37) runs the weekly security analysis when it is on.
 
@@ -38,6 +38,20 @@ uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/night_
 | run it now, test it | `run-now` (`--dry` picks stories and writes the note, works nothing) |
 
 Say what changed in one line. For `status`, explain the quota line in plain words.
+
+## The user's checkout, at night
+
+The night shift works in the user's own checkouts under `~/Developer/`, one story at a time. Before a story,
+it records the checkout's branch, HEAD, status and stash list, sets the user's uncommitted work aside with
+`git stash` (also kept under `refs/night-shift/backup/`), and creates `night/<KEY>` from `origin/main`. After
+the story, whatever happens, it saves anything left uncommitted to the archive, switches back, restores the
+user's work exactly (staged stays staged), re-runs the repository's setup, and checks that branch, HEAD,
+status and stash list match the record. A mismatch goes to the top of the note. A crashed run is released
+at the next start. A manual run leaves a checkout alone when a file in it changed in the last 10 minutes.
+
+Each story's branch must stand on its own: the gate runs with nothing but `origin/main` plus the story, and
+the driver checks the branch is based on current `origin/main`, shares no commit with another `night/*`
+branch, and merges into main without a conflict. Otherwise the story is partial.
 
 ## After the work session
 
@@ -70,7 +84,7 @@ included. A story that a crashed run left behind waits for `retry KEY`.
 
 Off until `set security true`. Each Saturday at 00:37 it takes the next repository from `security_rotation`
 in `config.toml` and the next of its `security_areas`, scans that area with the Claude Security plugin at
-medium effort in its own worktree (`night/SEC-<date>`), picks the most severe new finding, has the plugin
+medium effort on its own branch (`night/SEC-<date>`), picks the most severe new finding, has the plugin
 draft a patch, has codex challenge it, applies it on that branch and runs the repository's gate.
 
 It may run all weekend: it waits out each usage-limit reset and resumes, up to `security_max_waits` times,
@@ -78,7 +92,7 @@ until `security_deadline` (Sunday 18:00). It has its own `security_allowance_usd
 still binds, and a weekly limit ends it. No day session refreshes the usage snapshot on a weekend, so it
 accepts one up to `security_snapshot_max_age_hours` old.
 
-The plugin removes its own scratch and run directories inside its report directory in that worktree. Where
+The plugin removes its own scratch and run directories inside its report directory in that checkout. Where
 its recipe would run `git clean`, the session moves the untracked files to the Trash instead
 (`scripts/trash_untracked.py`, which refuses any path outside the plugin's scratch area).
 
@@ -87,12 +101,12 @@ its recipe would run `git clean`, the session moves the untracked files to the T
 Check each item and tell the user only what is missing:
 
 1. `~/.config/dotfiles/night-shift/config.toml` exists. Start from `config.example.toml` in this skill.
-   It holds the repositories (path, setup, verify, files to copy into a worktree, security areas) and
+   It holds the repositories (path, setup, verify, security areas) and
    the people whose word counts, with their roles. Jira, Confluence, Slack and GitLab are read through the
    user's own plugin MCP sign-ins; no API tokens are stored.
-2. Each file listed under `copy` exists. Env files are checked before they are copied: every host must be
-   local, alpha, or match `env_allowed_hosts`, and none may match `env_forbidden_hosts` (production); keys in
-   `env_drop_keys` are left out of the copy. Night processes read an AWS config with only the profiles of
+2. Each checkout's `.env` is checked before a run: every host must be local, alpha, or match
+   `env_allowed_hosts`, and none may match `env_forbidden_hosts` (production); otherwise the night shift
+   leaves that repository alone. Night processes read an AWS config with only the profiles of
    `aws_allowed_accounts`, so production profiles do not exist for them.
 3. For the security analysis: `~/.config/dotfiles/night-shift/security-request.txt` in the user's own words.
    It must say they accept that the scan may take long and use many tokens (the plugin refuses otherwise),

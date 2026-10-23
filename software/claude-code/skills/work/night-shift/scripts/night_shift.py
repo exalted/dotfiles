@@ -7,11 +7,11 @@
 
   night_shift.py nightly [--now] [--dry]     the nightly run (the launch agent starts it; --now for a manual run)
   night_shift.py security [--now]            the weekly deep security analysis (off until `set security true`)
-  night_shift.py status                      knobs, quota, last runs, open worktrees
+  night_shift.py status                      knobs, quota, last runs, story branches
   night_shift.py pause | resume
   night_shift.py set <knob> <value>          e.g. set stories 2, set seven_day_max_percent 50, set codex false
   night_shift.py skip <KEY> | retry <KEY>
-  night_shift.py cleanup <KEY> [--force]     after review: worktrees to the Trash, branch removed if merged
+  night_shift.py cleanup <KEY> [--force]     after review: the story's branch removed once main has it
   night_shift.py run-now [--dry]             start the nightly run through the launch agent now
   night_shift.py fail "<message>"            the wrapper's last resort: write a failure note
 
@@ -40,7 +40,6 @@ from common import (
     DEFAULT_KNOBS,
     RUN_NOW_FILE,
     RUNS_DIR,
-    SCRIPTS_DIR,
     SECURITY_REQUEST_FILE,
     STATE_DIR,
     USAGE_SEEN_WITHOUT,
@@ -219,16 +218,12 @@ class Codex:
 
 # ---------- helpers ----------
 
-def env_guard(config: Config) -> Json:
-    return {"env_allowed_hosts": config.env_allowed_hosts, "env_forbidden_hosts": config.env_forbidden_hosts, "env_drop_keys": config.env_drop_keys}
-
-
 def browse_url(config: Config) -> str:
     return f"{config.jira_site}/browse/"
 
 
 def session_settings(template: Path, *, writable: list[Path], target: Path) -> Path:
-    """The night rules plus this session's own write paths: a worktree's git data lives in the main checkout's .git.
+    """The night rules plus this session's own write paths (its run directory; the checkout is the working directory).
 
     With a Docker engine running, sandboxed commands may reach its socket and connect to localhost ports, so
     testcontainers-based suites run. The repository's local stack stays denied by rule (see SKILL.md).
@@ -303,9 +298,17 @@ def new_run_dir(name: str) -> Path:
             path = RUNS_DIR / f"{name}-{os.getpid()}-{time.time_ns() % 10_000}"
 
 
-def reconcile(current_run: Path) -> list[str]:
-    """Stories a crashed or killed run left half-done: reported once as interrupted, never silently retried or deleted."""
+def reconcile(current_run: Path, config: Config) -> list[str]:
+    """Stories a crashed or killed run left half-done: the user's checkout is released first, then the story is
+    reported once as interrupted, never silently retried or deleted."""
     found = []
+    for frame_file in sorted(RUNS_DIR.glob("*/*/frame-*.json")):
+        frame = read_json(frame_file, {}) or {}
+        if frame.get("released") or frame.get("repo") not in config.repos:
+            continue
+        result = workspace.release_frame(frame_file, repo=config.repos[frame["repo"]], log_dir=frame_file.parent / "logs")
+        state = "restored" if result["ok"] else "NEEDS ATTENTION: " + "; ".join(result["problems"])
+        found.append(f"{frame['repo']} checkout left on {frame['branch']} by run {frame_file.parent.parent.name}: {state}")
     for phase_file in sorted(RUNS_DIR.glob("*/*/phase.json")):
         if phase_file.parent.parent == current_run:
             continue
@@ -313,7 +316,7 @@ def reconcile(current_run: Path) -> list[str]:
         if phase.get("phase") in ("reported", "reconciled"):
             continue
         key = phase_file.parent.name
-        found.append(f"{key} (run {phase_file.parent.parent.name}) stopped during {phase.get('phase')}; worktrees kept as they were. `/night-shift retry {key}` to try again")
+        found.append(f"{key} (run {phase_file.parent.parent.name}) stopped during {phase.get('phase')}; its branch was kept as it was. `/night-shift retry {key}` to try again")
         update_issue(key, status="interrupted", final=True)
         set_phase(phase_file.parent, "reconciled")
     return found
@@ -433,7 +436,7 @@ def nightly(args: argparse.Namespace) -> None:
         log(f"started at {now:%H:%M}, outside the night window (until {k['last_start']}): nothing to do")
         return
     with run_lock("nightly"):
-        night["interrupted"] = reconcile(run_dir)
+        night["interrupted"] = reconcile(run_dir, config)
         workspace.night_aws_config(config.aws_allowed_accounts)
         workspace.night_docker_config()
         verdict = quota.check(cap=k["caps_usd"]["pick"], knobs=k, morning=morning)
@@ -495,6 +498,8 @@ def nightly(args: argparse.Namespace) -> None:
                 continue
             outcome = work_story(config, k, story, index, run_dir, codex, deadline, morning)
             night["stories"].append(outcome)
+            for problem in outcome.get("release_problems", []):
+                night["warnings"].insert(0, f"Your checkout after {story['key']} needs attention: {problem}")
             if outcome["status"] in STOP_NIGHT:
                 night["warnings"].append(f"Stopped after {story['key']}: {outcome.get('reason')}")
                 break
@@ -531,8 +536,9 @@ def brief_text(story: Json, prepared: list[workspace.Prepared], issue_dir: Path,
     lines = [
         f"# {story['key']}: {story.get('summary', '')}",
         "",
-        f"- Primary worktree (your working directory): {primary.path} on branch {primary.branch}",
-        *[f"- Also: {item.repo} worktree {item.path} on branch {item.branch}" for item in others],
+        f"- Checkout (your working directory): {primary.path}, on branch {primary.branch} from origin/main",
+        *[f"- Also: {item.repo} checkout {item.path}, on branch {item.branch}" for item in others],
+        "- The user's own work in these checkouts is set aside for the night and is not yours to see or touch.",
         f"- Run directory (result.json, progress.md): {issue_dir}",
         f"- Dossier (read it before touching code): {story['dossier']}",
         f"- Implementer: {implementer}",
@@ -548,24 +554,50 @@ def brief_text(story: Json, prepared: list[workspace.Prepared], issue_dir: Path,
 
 
 def work_story(config: Config, k: Json, story: Json, index: int, run_dir: Path, codex: Codex, deadline: datetime, morning: datetime) -> Json:
+    """One story in the user's own checkouts: enter, work, review, fix, verify, check independence, release.
+
+    The release runs whatever happens before it, so the user always gets their checkout back as it was.
+    """
     key = story["key"]
     issue_dir = run_dir / key
     issue_dir.mkdir(parents=True, exist_ok=True)
     outcome: Json = {"key": key, "summary": story.get("summary", ""), "repos": [], "status": "", "progress": []}
     update_issue(key, status="started", final=False, run=run_dir.name)
     set_phase(issue_dir, "preparing")
+    manual = bool(sessions.RUN_GATE)
     prepared: list[workspace.Prepared] = []
     try:
-        for name in story["repos"]:
-            prepared.append(workspace.prepare(config.repos[name], key, log_dir=issue_dir / "logs", deadline=deadline, **env_guard(config)))
-    except workspace.SetupProblem as problem:
-        outcome.update(status="setup_failed", reason=str(problem))
-        update_issue(key, status="setup_failed", final=False)
-        set_phase(issue_dir, "reported")
+        try:
+            for name in story["repos"]:
+                repo = config.repos[name]
+                workspace.preflight(repo, manual=manual, env_allowed_hosts=config.env_allowed_hosts, env_forbidden_hosts=config.env_forbidden_hosts)
+                prepared.append(workspace.enter(repo, key, log_dir=issue_dir / "logs", deadline=deadline, frame_file=issue_dir / f"frame-{name}.json"))
+        except workspace.SetupProblem as problem:
+            outcome.update(status="setup_failed", reason=str(problem))
+            update_issue(key, status="setup_failed", final=False)
+            return outcome
+        progress(issue_dir, f"on {key}'s branch: {', '.join(item.branch + ' in ' + item.repo for item in prepared)}")
+        _work(config, k, story, index, run_dir, issue_dir, codex, deadline, morning, prepared, outcome)
         return outcome
-    progress(issue_dir, f"worktree ready: {', '.join(item.branch + ' in ' + item.repo for item in prepared)}")
+    finally:
+        releases = {}
+        for item in reversed(prepared):
+            releases[item.repo] = workspace.release(item, repo=config.repos[item.repo], log_dir=issue_dir / "logs", deadline=None)
+        outcome["release"] = releases
+        bad = [f"{repo}: {'; '.join(result['problems'])}" for repo, result in releases.items() if not result["ok"]]
+        if bad:
+            outcome["release_problems"] = bad
+        if prepared:
+            progress(issue_dir, "your checkout restored" if not bad else "checkout restore NEEDS ATTENTION, see the note")
+        outcome["progress"] = (issue_dir / "progress.md").read_text().splitlines() if (issue_dir / "progress.md").exists() else []
+        set_phase(issue_dir, "reported")
+
+
+def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue_dir: Path, codex: Codex, deadline: datetime, morning: datetime,
+          prepared: list[workspace.Prepared], outcome: Json) -> None:
+    key = story["key"]
     set_phase(issue_dir, "working")
-    verdict = quota.check(cap=k["caps_usd"]["work"], knobs=k, morning=morning)
+    verdict = quota.check(cap=k["caps_usd"]["work"], knobs=k, morning=morning, **sessions.RUN_GATE)
     seven = verdict.seven_day_percent or 0
     implementer = "codex-first" if codex.ready() and (index % 2 == 1 or seven > 40) else "claude"
     if not verdict.allowed and k.get("codex_fallback") and codex.ready():
@@ -578,8 +610,7 @@ def work_story(config: Config, k: Json, story: Json, index: int, run_dir: Path, 
         result = codex_only(codex, story, prepared, issue_dir)
         outcome.update(status=result["status"], reason=result.get("reason", ""))
     else:
-        writable = [config.repos[item.repo].path / ".git" for item in prepared] + [issue_dir]
-        settings = session_settings(WORK_SETTINGS, writable=writable, target=issue_dir / "settings.json")
+        settings = session_settings(WORK_SETTINGS, writable=[issue_dir], target=issue_dir / "settings.json")
         session = sessions.run(
             sessions.Spec(
                 kind="work",
@@ -629,19 +660,21 @@ def work_story(config: Config, k: Json, story: Json, index: int, run_dir: Path, 
     for item in prepared:
         commits = workspace.commits_since(item.path, item.base_sha)
         verify = workspace.verify(config.repos[item.repo], item, key=key, log_dir=issue_dir / "logs", deadline=deadline) if commits else None
+        independence = workspace.independence_problems(item.path, key) if commits else []
         if verify:
             progress(issue_dir, f"{item.repo} gate {'passed' if verify['passed'] else 'FAILED'} on {verify['final_sha'][:8]}")
-        outcome["repos"].append({"repo": item.repo, "branch": item.branch, "worktree": str(item.path), "commits": commits, "verify": verify})
+        if independence:
+            progress(issue_dir, f"{item.repo} branch not standalone: {'; '.join(independence)}")
+        outcome["repos"].append({"repo": item.repo, "branch": item.branch, "checkout": str(item.path), "commits": commits, "verify": verify, "independence": independence})
     write_json(issue_dir / "verify.json", outcome["repos"])
     changed = [repo for repo in outcome["repos"] if repo["commits"]]
     if outcome["status"] == "solved" and not changed:
         outcome["status"], outcome["reason"] = "partial", "the model said solved, but no commit landed on the branch"
     elif outcome["status"] == "solved" and not all(repo["verify"]["passed"] for repo in changed):
         outcome["status"], outcome["reason"] = "partial", "the model said solved, but the repository gate failed on the branch tip"
-    outcome["progress"] = (issue_dir / "progress.md").read_text().splitlines() if (issue_dir / "progress.md").exists() else []
+    elif outcome["status"] == "solved" and any(repo["independence"] for repo in changed):
+        outcome["status"], outcome["reason"] = "partial", "the branch does not stand alone: " + "; ".join(p for repo in changed for p in repo["independence"])
     update_issue(key, status=outcome["status"], final=outcome["status"] in FINAL, branch=primary.branch, repos=story["repos"])
-    set_phase(issue_dir, "reported")
-    return outcome
 
 
 def needs_fix(review: Json | None) -> bool:
@@ -724,7 +757,7 @@ def codex_only(codex: Codex, story: Json, prepared: list[workspace.Prepared], is
         "for another agent; where they name a tool you do not have, do the same thing by hand.\n\n"
         f"{skill}\n\n## The story brief\n{(issue_dir / 'brief.md').read_text()}\n"
     )
-    add_dirs = [item.path for item in prepared[1:]] + [issue_dir] + [Path(primary.path.parents[2]) / ".git"]
+    add_dirs = [item.path for item in prepared[1:]] + [issue_dir]
     result = codex.run("implement", cd=primary.path, prompt=prompt, name=f"implement-{story['key']}", add_dirs=add_dirs)
     progress(issue_dir, f"codex implemented alone: {result.get('status')}")
     data = read_json(issue_dir / "result.json", {}) or {}
@@ -789,7 +822,7 @@ def security(args: argparse.Namespace) -> None:
         log(f"note: {note.security_note(folder=config.vault_folder, report=report)}")
 
     with run_lock("security"):
-        report["warnings"] += [f"interrupted earlier: {item}" for item in reconcile(run_dir)]
+        report["warnings"] += [f"interrupted earlier: {item}" for item in reconcile(run_dir, config)]
         workspace.night_aws_config(config.aws_allowed_accounts)
         workspace.night_docker_config()
         ledger = quota.load_ledger()
@@ -811,12 +844,24 @@ def security(args: argparse.Namespace) -> None:
         journal.mkdir()
         set_phase(journal, "preparing")
         try:
-            prepared = workspace.prepare(repo, key, log_dir=run_dir / "logs", deadline=deadline, **env_guard(config))
+            workspace.preflight(repo, manual=bool(args.now), env_allowed_hosts=config.env_allowed_hosts, env_forbidden_hosts=config.env_forbidden_hosts)
+            prepared = workspace.enter(repo, key, log_dir=run_dir / "logs", deadline=deadline, frame_file=journal / f"frame-{name}.json")
         except workspace.SetupProblem as problem:
             set_phase(journal, "reported")
             return finish("failed", f"Setup failed: {problem}")
+        try:
+            _security_in_checkout(config, k, repo, name, area, key, prepared, journal, run_dir, report, finish, now, deadline, morning, ledger, turn, area_index)
+        finally:
+            released = workspace.release(prepared, repo=repo, log_dir=run_dir / "logs")
+            if not released["ok"]:
+                report["warnings"].insert(0, "Your checkout was not restored exactly: " + "; ".join(released["problems"]))
+
+
+def _security_in_checkout(config: Config, k: Json, repo, name: str, area: str, key: str, prepared, journal: Path, run_dir: Path,
+                          report: Json, finish, now: datetime, deadline: datetime, morning: datetime, ledger: Json, turn: int, area_index: int) -> None:
+    if True:
         set_phase(journal, "scanning")
-        report.update(commit=prepared.base_sha[:12], branch=prepared.branch, worktree=str(prepared.path))
+        report.update(commit=prepared.base_sha[:12], branch=prepared.branch, checkout=str(prepared.path))
         settings = session_settings(SECURITY_SETTINGS, writable=[repo.path / ".git", run_dir], target=run_dir / "settings.json")
         request = SECURITY_REQUEST_FILE.read_text().replace("{area}", area).replace("{repo}", name)
         started = time.time()
@@ -953,10 +998,10 @@ def cleanup(args: argparse.Namespace) -> None:
     config = load_config()
     if not valid_key(args.key):
         sys.exit(f"invalid key {args.key}")
-    # Never while a run is going: it may be working in that very worktree.
+    # Never while a run is going: it may be working on that very branch.
     with run_lock("cleanup"):
         for repo in config.repos.values():
-            if workspace.worktree_path(repo, args.key).exists() or workspace.git(repo.path, "branch", "--list", workspace.branch_name(args.key)):
+            if workspace.git(repo.path, "branch", "--list", workspace.branch_name(args.key)):
                 print(workspace.cleanup(repo, args.key, force=args.force))
 
 

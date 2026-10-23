@@ -109,7 +109,7 @@ def _story(story: Json, browse: str) -> list[str]:
                 lines += ["", f"> [!failure]- `{command['command']}`", "> ```", *[f"> {tail}" for tail in command["tail"].splitlines()[-15:]], "> ```"]
         if verify.get("archived_uncommitted"):
             lines += ["", f"Uncommitted files were left; saved to `{verify['archived_uncommitted']}`."]
-        lines += ["", "```sh", f"cd {repo['worktree']}", "git log --oneline origin/main..", "git diff origin/main...", "```"]
+        lines += ["", "```sh", f"git -C {repo['checkout']} log --oneline origin/main..{repo['branch']}", f"git -C {repo['checkout']} switch {repo['branch']}", "```"]
     review = story.get("review")
     if review:
         lines += ["", f"**Independent review (codex)**: {review.get('verdict', '?')}. {review.get('summary', '')}"]
@@ -164,7 +164,7 @@ def security_note(*, folder: Path, report: Json) -> Path:
     if report.get("challenge"):
         body += ["## Independent challenge (codex)", "", report["challenge"], ""]
     if report.get("branch"):
-        body += ["```sh", f"cd {report['worktree']}", "git show --stat HEAD", "```", ""]
+        body += ["```sh", f"git -C {report['checkout']} show --stat {report['branch']}", "```", ""]
     if report.get("not_examined"):
         body += ["## Not examined", "", report["not_examined"], ""]
     for warning in report.get("warnings", []):

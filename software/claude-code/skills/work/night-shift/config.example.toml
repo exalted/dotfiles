@@ -15,14 +15,12 @@ jira_board_column_status = "<status of the board's to-do column>"
 # Optional: by default the recap's team channel.
 # slack_channels = ["<channel id>"]
 
-# A worktree's env file may point at local services or a non-production environment only. Hosts that are
+# The checkout's .env may point at local services or a non-production environment only. Hosts that are
 # localhost or contain "alpha" pass; list other non-production hosts here as full-match regular expressions.
-# Any other host stops the story before the file is copied.
+# Any other host keeps the night shift out of that repository.
 env_allowed_hosts = ['.*\.amazonaws\.com', '.*\.openai\.azure\.com', '.*\.<non-production domain>']
 # Hosts that are production, refused even when another rule would allow them.
 env_forbidden_hosts = ['.*\.<production domain>']
-# Keys never copied into a night worktree, such as a personal Git token used only by a pre-push hook.
-env_drop_keys = ["GITLAB_TOKEN"]
 # Night processes see only the AWS profiles of these accounts (non-production); production profiles do not exist for them.
 aws_allowed_accounts = ["<non-production account id>"]
 
@@ -56,13 +54,10 @@ verify = [
   ["uv", "run", "ruff", "format", "--check"],
   ["uv", "run", "pyright"],
 ]
-# [source, target in the worktree]
-copy = [["~/Developer/<backend>/.env.night", ".env"], ["~/Developer/<backend>/CLAUDE.local.md", "CLAUDE.local.md"]]
 security_areas = ["src/<api layer>", "src/<auth>"]
 
 [repos.webapp]
 path = "~/Developer/<webapp>"
 setup = [["pnpm", "install", "--frozen-lockfile"]]
 verify = [["pnpm", "run", "lint"], ["pnpm", "run", "type-check"], ["pnpm", "run", "test", "--run"]]
-copy = [["~/Developer/<webapp>/.env.night", ".env"]]
 security_areas = ["src/<request handling>"]

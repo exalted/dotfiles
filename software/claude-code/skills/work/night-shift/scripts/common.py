@@ -120,7 +120,6 @@ class Repo:
     path: Path
     setup: list[list[str]]
     verify: list[Json]
-    copy: list[tuple[Path, str]]
     security_areas: list[str]
 
 
@@ -137,7 +136,6 @@ class Config:
     jira_board_column_status: str = ""
     env_allowed_hosts: list[str] = field(default_factory=list)
     env_forbidden_hosts: list[str] = field(default_factory=list)
-    env_drop_keys: list[str] = field(default_factory=list)
     aws_allowed_accounts: list[str] = field(default_factory=list)
     security_rotation: list[str] = field(default_factory=list)
 
@@ -181,7 +179,6 @@ def load_config() -> Config:
             path=path,
             setup=[list(command) for command in entry.get("setup", [])],
             verify=[item if isinstance(item, dict) else {"command": list(item)} for item in entry.get("verify", [])],
-            copy=[(Path(source).expanduser(), target) for source, target in entry.get("copy", [])],
             security_areas=list(entry.get("security_areas", [])),
         )
     if not repos:
@@ -200,7 +197,6 @@ def load_config() -> Config:
         jira_board_column_status=str(raw.get("jira_board_column_status", "")),
         env_allowed_hosts=[str(pattern) for pattern in raw.get("env_allowed_hosts", [])],
         env_forbidden_hosts=[str(pattern) for pattern in raw.get("env_forbidden_hosts", [])],
-        env_drop_keys=[str(key) for key in raw.get("env_drop_keys", [])],
         aws_allowed_accounts=[str(account) for account in raw.get("aws_allowed_accounts", [])],
         security_rotation=[str(name) for name in raw.get("security_rotation", []) if name in repos],
     )

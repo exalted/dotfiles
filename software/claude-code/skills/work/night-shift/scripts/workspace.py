@@ -1,25 +1,34 @@
-"""Git worktrees for the night shift: create, set up, verify, commit the wrapper's own files, clean up.
+"""The night shift works in the user's own checkout, one story at a time, on a plain branch per story.
 
-Every git call the driver makes runs with core.hooksPath=/dev/null: the driver's own commits and checkouts
-must not run repository hooks. The model's commits inside a worktree do run them, as in the user's day work.
-Nothing here deletes a file: cleanup moves a worktree to the macOS Trash and keeps unmerged branches.
+The user's state comes first. Before a story starts, `enter()` records the checkout's branch, HEAD, status and
+stash list, sets the user's uncommitted work aside with `git stash` (kept twice: in the stash list and under
+a private backup ref), and switches to `night/<KEY>` from `origin/main`. `release()` always runs afterwards:
+it saves whatever the story left uncommitted, returns to the user's branch, puts their work back exactly
+(staged stays staged), and compares the result with the record. The frame is written to disk, so a crashed
+run is released at the next start.
+
+The driver's own git calls run with core.hooksPath=/dev/null; the model's commits run the repository's hooks,
+as in the user's day work. Nothing here deletes a file: leftovers are saved first, then moved to the Trash.
 """
 
+import json
 import os
 import re
 import shutil
 import subprocess
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
 
 import supervise
 from common import ARCHIVE_DIR, NIGHT_AWS_CONFIG, NIGHT_DOCKER_CONFIG, Json, Repo, log
 
-EXCLUDE_LINE = ".claude/worktrees/"
 SETUP_MINUTES = 15
 VERIFY_MINUTES = 30
 TAIL = 3000
+# A file the user changed this recently means they are working in the checkout: a manual run leaves it alone.
+ACTIVE_MINUTES = 10
+BACKUP_REF = "refs/night-shift/backup"
 
 
 class SetupProblem(Exception):
@@ -35,8 +44,8 @@ SAFE_HOST = re.compile(r"(^|\.)(localhost|alpha)(\.|$)|^127\.|\.local$|\.example
 def production_hosts(env_file: Path, allowed: list[str], forbidden: list[str] = ()) -> list[str]:
     """Every host in an env file that is not local, not alpha, and not on the user's allowlist.
 
-    The night shift must never reach production: a worktree's env file may point at local services or at
-    alpha only. Anything else stops the story before the file is copied, so a guess never reaches a run.
+    The night shift must never reach production: the checkout's env file may point at local services or at
+    alpha only. Anything else keeps the night shift out of that repository.
     """
     found = set()
     for line in env_file.read_text().splitlines():
@@ -88,8 +97,6 @@ def night_docker_config() -> Path:
     Images the suites use must already be on the machine (day work keeps them there); a missing private image
     then fails fast instead. Contexts stay shared, so the same engine answers.
     """
-    import json
-
     source = Path.home() / ".docker" / "config.json"
     config = json.loads(source.read_text()) if source.exists() else {}
     for key in ("credsStore", "credHelpers", "auths"):
@@ -100,12 +107,6 @@ def night_docker_config() -> Path:
     if not contexts.exists() and (Path.home() / ".docker" / "contexts").exists():
         contexts.symlink_to(Path.home() / ".docker" / "contexts")
     return NIGHT_DOCKER_CONFIG
-
-
-def copy_env(source: Path, destination: Path, drop_keys: list[str]) -> None:
-    """Copy an env file without the keys the night has no business holding, such as a personal Git token."""
-    kept = [line for line in source.read_text().splitlines() if line.split("=", 1)[0].strip().removeprefix("export ") not in drop_keys]
-    destination.write_text("\n".join(kept) + "\n")
 
 
 def docker_socket() -> str | None:
@@ -120,22 +121,22 @@ def docker_socket() -> str | None:
     return host.removeprefix("unix://") if alive.returncode == 0 and host.startswith("unix://") else None
 
 
-def tool_env(worktree: Path) -> dict[str, str]:
+def tool_env(checkout: Path) -> dict[str, str]:
     """The Node version the repository pins in .nvmrc, as the user's shell hook selects it by day.
 
     launchd's PATH has Homebrew's Node only, which may be a different major version than the repository's.
     """
-    aws = {"AWS_CONFIG_FILE": str(NIGHT_AWS_CONFIG)} if NIGHT_AWS_CONFIG.exists() else {}
+    env = {"AWS_CONFIG_FILE": str(NIGHT_AWS_CONFIG)} if NIGHT_AWS_CONFIG.exists() else {}
     if (NIGHT_DOCKER_CONFIG / "config.json").exists():
-        aws["DOCKER_CONFIG"] = str(NIGHT_DOCKER_CONFIG)
-    nvmrc = worktree / ".nvmrc"
+        env["DOCKER_CONFIG"] = str(NIGHT_DOCKER_CONFIG)
+    nvmrc = checkout / ".nvmrc"
     if not nvmrc.is_file():
-        return aws
+        return env
     version = nvmrc.read_text().strip().lstrip("v")
     node_bin = Path.home() / ".nvm" / "versions" / "node" / f"v{version}" / "bin"
     if not node_bin.is_dir():
-        raise SetupProblem(f"{worktree.name}: .nvmrc asks for Node {version}, which nvm has not installed (nvm install {version})")
-    return {**aws, "PATH": f"{node_bin}:{os.environ.get('PATH', '')}"}
+        raise SetupProblem(f"{checkout.name}: .nvmrc asks for Node {version}, which nvm has not installed (nvm install {version})")
+    return {**env, "PATH": f"{node_bin}:{os.environ.get('PATH', '')}"}
 
 
 def git(cwd: Path, *args: str, check: bool = True, timeout: int = 300) -> str:
@@ -145,8 +146,9 @@ def git(cwd: Path, *args: str, check: bool = True, timeout: int = 300) -> str:
     return result.stdout.strip()
 
 
-def worktree_path(repo: Repo, key: str) -> Path:
-    return repo.path / ".claude" / "worktrees" / f"night-{key}"
+def _git_bytes(cwd: Path, *args: str) -> bytes:
+    """Raw output, untouched: a patch that loses its trailing newline no longer applies."""
+    return subprocess.run(["git", "-c", "core.hooksPath=/dev/null", "-C", str(cwd), *args], capture_output=True, check=True, timeout=300).stdout
 
 
 def branch_name(key: str) -> str:
@@ -162,82 +164,176 @@ def fetch(repo: Repo) -> str | None:
         return f"{repo.name}: fetch failed, origin/main may be stale ({str(error)[:200]})"
 
 
-def exclude_worktrees(repo: Repo) -> None:
-    """Keep worktrees out of `git status` in the main checkout through the clone's own, untracked exclude file."""
-    exclude = repo.path / ".git" / "info" / "exclude"
-    exclude.parent.mkdir(parents=True, exist_ok=True)
-    lines = exclude.read_text().splitlines() if exclude.exists() else []
-    if EXCLUDE_LINE not in lines:
-        exclude.write_text("\n".join([*lines, EXCLUDE_LINE]) + "\n")
+def seconds_until(deadline: datetime) -> float:
+    return (deadline - datetime.now()).total_seconds()
 
 
-@dataclass(frozen=True)
+# ---------- the user's state ----------
+
+@dataclass
+class UserState:
+    branch: str | None
+    head: str
+    status: str
+    stash_list: str
+    stash_sha: str | None = None
+    backup_ref: str | None = None
+
+
+def _state(path: Path) -> UserState:
+    branch = git(path, "branch", "--show-current") or None
+    return UserState(
+        branch=branch,
+        head=git(path, "rev-parse", "HEAD"),
+        status=git(path, "status", "--porcelain=v1", "--untracked-files=all"),
+        stash_list=git(path, "stash", "list", "--format=%H"),
+    )
+
+
+def _git_dir_marker(path: Path, name: str) -> bool:
+    return (Path(git(path, "rev-parse", "--absolute-git-dir")) / name).exists()
+
+
+def preflight(repo: Repo, *, manual: bool, env_allowed_hosts: list[str], env_forbidden_hosts: list[str]) -> None:
+    """Reasons to leave a repository alone tonight. Every one is reported in the note."""
+    path = repo.path
+    for marker, what in (("rebase-merge", "a rebase"), ("rebase-apply", "a rebase or am"), ("MERGE_HEAD", "a merge"), ("CHERRY_PICK_HEAD", "a cherry-pick"), ("REVERT_HEAD", "a revert"), ("index.lock", "another git process")):
+        if _git_dir_marker(path, marker):
+            raise SetupProblem(f"{repo.name}: {what} is in progress in your checkout; the night shift left it alone")
+    env_file = path / ".env"
+    if env_file.exists() and (hosts := production_hosts(env_file, env_allowed_hosts, env_forbidden_hosts)):
+        raise SetupProblem(f"{repo.name}: .env names hosts that are not local or alpha: {', '.join(hosts)}")
+    if manual:
+        cutoff = datetime.now().timestamp() - ACTIVE_MINUTES * 60
+        for line in git(path, "status", "--porcelain=v1", "--untracked-files=all").splitlines():
+            changed = path / line[3:].split(" -> ")[-1]
+            if changed.exists() and changed.stat().st_mtime > cutoff:
+                raise SetupProblem(f"{repo.name}: you changed {line[3:]} in the last {ACTIVE_MINUTES} minutes; a manual run does not take over a checkout in use")
+
+
+# ---------- the frame around one story ----------
+
+@dataclass
 class Prepared:
     repo: str
     path: Path
     branch: str
     base_sha: str
     reused: bool
+    user: UserState = field(default_factory=lambda: UserState(None, "", "", ""))
+    frame_file: Path | None = None
 
 
-def seconds_until(deadline: datetime) -> float:
-    return (deadline - datetime.now()).total_seconds()
-
-
-def prepare(repo: Repo, key: str, *, log_dir: Path, deadline: datetime, env_allowed_hosts: list[str], env_forbidden_hosts: list[str] = (), env_drop_keys: list[str] = ()) -> Prepared:
-    for source, target in repo.copy:
-        if Path(target).name.startswith(".env") and source.exists():
-            if hosts := production_hosts(source, env_allowed_hosts, env_forbidden_hosts):
-                raise SetupProblem(
-                    f"{repo.name}: {source} names hosts that are not local or alpha: {', '.join(hosts)}. "
-                    "If they are not production, add them to env_allowed_hosts in config.toml; nothing was copied."
-                )
-    exclude_worktrees(repo)
-    path = worktree_path(repo, key)
-    branch = branch_name(key)
-    reused = path.exists()
-    if not reused:
-        exists = git(repo.path, "branch", "--list", branch)
-        if exists:
-            git(repo.path, "worktree", "add", str(path), branch)
-        else:
-            git(repo.path, "worktree", "add", "-b", branch, str(path), "origin/main")
-    base_sha = git(path, "merge-base", "HEAD", "origin/main")
-    for source, target in repo.copy:
-        if not source.exists():
-            raise SetupProblem(f"{repo.name}: {source} is missing (listed under copy in config.toml)")
-        destination = path / target
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        if Path(target).name.startswith(".env"):
-            copy_env(source, destination, list(env_drop_keys))
-        else:
-            shutil.copy2(source, destination)
+def _run_setup(repo: Repo, path: Path, *, log_dir: Path, deadline: datetime, label: str) -> None:
+    """The repository's own setup commands (dependencies, generated binaries) for the branch now checked out."""
     env = tool_env(path)
     for index, command in enumerate(repo.setup):
         if seconds_until(deadline) < 60:
             raise SetupProblem(f"{repo.name}: no time left before the deadline for setup")
-        outcome = supervise.run(command, cwd=path, seconds=min(SETUP_MINUTES * 60, seconds_until(deadline)), env=env, log_dir=log_dir, name=f"setup-{repo.name}-{index}")
+        outcome = supervise.run(command, cwd=path, seconds=min(SETUP_MINUTES * 60, seconds_until(deadline)), env=env, log_dir=log_dir, name=f"setup-{label}-{repo.name}-{index}")
         if outcome.timed_out or outcome.returncode != 0:
             raise SetupProblem(f"{repo.name}: setup `{' '.join(command)}` failed: {(outcome.stderr or outcome.stdout)[-400:]}")
-    return Prepared(repo.name, path, branch, base_sha, reused)
+
+
+def enter(repo: Repo, key: str, *, log_dir: Path, deadline: datetime, frame_file: Path) -> Prepared:
+    """Set the user's work aside and switch the checkout to the story's branch."""
+    path = repo.path
+    user = _state(path)
+    branch = branch_name(key)
+    if user.branch == branch:
+        raise SetupProblem(f"{repo.name}: your checkout is already on {branch}; switch away from it first")
+    if user.status:
+        stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        git(path, "stash", "push", "--include-untracked", "--message", f"night-shift: your work, set aside for {key} at {stamp}")
+        user.stash_sha = git(path, "rev-parse", "stash@{0}")
+        user.backup_ref = f"{BACKUP_REF}/{stamp}-{key}"
+        git(path, "update-ref", user.backup_ref, user.stash_sha)
+    frame_file.parent.mkdir(parents=True, exist_ok=True)
+    frame_file.write_text(json.dumps({"repo": repo.name, "path": str(path), "branch": branch, "user": asdict(user)}, indent=2))
+    try:
+        reused = bool(git(path, "branch", "--list", branch))
+        if reused:
+            git(path, "switch", "--quiet", branch)
+        else:
+            git(path, "switch", "--quiet", "-c", branch, "origin/main")
+        _run_setup(repo, path, log_dir=log_dir, deadline=deadline, label="night")
+    except Exception:
+        release_frame(frame_file, repo=repo, log_dir=log_dir)
+        raise
+    return Prepared(repo.name, path, branch, git(path, "merge-base", "HEAD", "origin/main"), reused, user, frame_file)
+
+
+def _clear_leftovers(path: Path, key: str) -> Path | None:
+    """What the story left uncommitted: saved to the archive, then the tracked part reset and the rest trashed."""
+    archived = archive_dirty(path, key)
+    if archived:
+        git(path, "reset", "--quiet", "--hard")
+        untracked = [os.fsdecode(raw) for raw in _git_bytes(path, "ls-files", "-z", "--others", "--exclude-standard").split(b"\0") if raw]
+        for start in range(0, len(untracked), 200):
+            subprocess.run(["/usr/bin/trash", "--stopOnError", *[str(path / item) for item in untracked[start : start + 200]]], check=True)
+    return archived
+
+
+def release_frame(frame_file: Path, *, repo: Repo, log_dir: Path, deadline: datetime | None = None) -> Json:
+    """Return the checkout to the user exactly as recorded. Safe to run twice, and after a crash."""
+    frame = json.loads(frame_file.read_text())
+    if frame.get("released"):
+        return frame["released"]
+    path = Path(frame["path"])
+    user = UserState(**frame["user"])
+    key = frame["branch"].removeprefix("night/")
+    problems: list[str] = []
+    archived = None
+    current = git(path, "branch", "--show-current")
+    if current == frame["branch"]:
+        archived = _clear_leftovers(path, key)
+    if user.branch:
+        if current != user.branch:
+            git(path, "switch", "--quiet", user.branch)
+    else:
+        git(path, "switch", "--quiet", "--detach", user.head)
+    if user.stash_sha:
+        top = git(path, "rev-parse", "--verify", "--quiet", "stash@{0}", check=False)
+        if top == user.stash_sha:
+            popped = subprocess.run(["git", "-c", "core.hooksPath=/dev/null", "-C", str(path), "stash", "pop", "--index", "--quiet"], capture_output=True, text=True)
+            if popped.returncode != 0:
+                problems.append(f"your set-aside work did not apply cleanly ({popped.stderr.strip()[-200:]}); it is still in the stash and under {user.backup_ref}")
+        else:
+            problems.append(f"your set-aside work is no longer on top of the stash list; it is safe under {user.backup_ref}")
+    try:
+        _run_setup(repo, path, log_dir=log_dir, deadline=deadline or datetime.max, label="user")
+    except SetupProblem as problem:
+        problems.append(f"re-running setup for your branch failed: {problem}")
+    after = _state(path)
+    if after.branch != user.branch or after.head != user.head:
+        problems.append(f"checkout is on {after.branch or after.head[:12]}, was {user.branch or user.head[:12]}")
+    if after.status != user.status:
+        problems.append("your uncommitted files differ from before the night")
+    if after.stash_list != user.stash_list:
+        problems.append("your stash list differs from before the night")
+    result = {"ok": not problems, "problems": problems, "archived_leftovers": str(archived) if archived else None, "backup_ref": user.backup_ref}
+    frame["released"] = result
+    frame_file.write_text(json.dumps(frame, indent=2))
+    if problems:
+        log(f"{frame['repo']}: release problems: {problems}")
+    return result
+
+
+def release(prepared: Prepared, *, repo: Repo, log_dir: Path, deadline: datetime | None = None) -> Json:
+    return release_frame(prepared.frame_file, repo=repo, log_dir=log_dir, deadline=deadline)
 
 
 def head(path: Path) -> str:
     return git(path, "rev-parse", "HEAD")
 
 
-def commits_since(path: Path, base: str) -> list[str]:
-    out = git(path, "log", "--format=%h %s", f"{base}..HEAD")
+def commits_since(path: Path, base: str, ref: str = "HEAD") -> list[str]:
+    out = git(path, "log", "--format=%h %s", f"{base}..{ref}")
     return out.splitlines() if out else []
 
 
-def _git_bytes(cwd: Path, *args: str) -> bytes:
-    """Raw output, untouched: a patch that loses its trailing newline no longer applies."""
-    return subprocess.run(["git", "-c", "core.hooksPath=/dev/null", "-C", str(cwd), *args], capture_output=True, check=True, timeout=300).stdout
-
-
 def archive_dirty(path: Path, key: str) -> Path | None:
-    """Save uncommitted work beside the state, so verification runs on committed code only and nothing is lost."""
+    """Save uncommitted work beside the state, so nothing is lost before the checkout is cleared or verified."""
     status = git(path, "status", "--porcelain")
     if not status:
         return None
@@ -260,7 +356,12 @@ def archive_dirty(path: Path, key: str) -> Path | None:
 
 
 def verify(repo: Repo, prepared: Prepared, *, key: str, log_dir: Path, deadline: datetime) -> Json:
-    """Run the repository's own gate on the final commit, outside the model: Claude's "green" is confirmed or contradicted here."""
+    """Run the repository's own gate on the story's last commit, outside the model.
+
+    The checkout holds exactly origin/main plus this story's commits (the user's work is set aside), so a
+    passing gate means the branch is deployable on its own. Uncommitted leftovers are archived and stashed
+    first, so only committed code is judged.
+    """
     archived = archive_dirty(prepared.path, key)
     stashed = False
     if archived:
@@ -290,6 +391,23 @@ def verify(repo: Repo, prepared: Prepared, *, key: str, log_dir: Path, deadline:
     return {"repo": repo.name, "passed": passed and bool(results), "final_sha": final_sha, "base_sha": prepared.base_sha, "archived_uncommitted": str(archived) if archived else None, "commands": results}
 
 
+def independence_problems(path: Path, key: str) -> list[str]:
+    """A story branch must stand alone: on current origin/main, sharing no commit with another night branch,
+    and merging into main without a conflict. Checked on refs only; nothing is checked out."""
+    branch = branch_name(key)
+    problems = []
+    if git(path, "merge-base", branch, "origin/main") != git(path, "rev-parse", "origin/main"):
+        problems.append("is not based on the current origin/main")
+    own = set(git(path, "rev-list", f"origin/main..{branch}").split())
+    for other in git(path, "for-each-ref", "--format=%(refname:short)", "refs/heads/night/").split():
+        if other != branch and own & set(git(path, "rev-list", f"origin/main..{other}").split()):
+            problems.append(f"shares commits with {other}")
+    merge = subprocess.run(["git", "-C", str(path), "merge-tree", "--write-tree", "origin/main", branch], capture_output=True, text=True)
+    if merge.returncode != 0:
+        problems.append("conflicts with main")
+    return problems
+
+
 def commit_paths(path: Path, paths: list[str], message: str) -> bool:
     git(path, "add", "--", *paths)
     if not git(path, "diff", "--cached", "--name-only"):
@@ -299,21 +417,19 @@ def commit_paths(path: Path, paths: list[str], message: str) -> bool:
 
 
 def cleanup(repo: Repo, key: str, *, force: bool) -> str:
-    path = worktree_path(repo, key)
+    """After review: remove a story's branch once main holds its work; keep it under an archive name otherwise."""
     branch = branch_name(key)
+    if not git(repo.path, "branch", "--list", branch):
+        return f"{repo.name}: no branch {branch}"
+    if git(repo.path, "branch", "--show-current") == branch:
+        return f"{repo.name}: you are on {branch}; switch away from it first"
     # Merged means nothing on the branch is missing from main, local or pushed: the user merges and pushes.
     merged = not git(repo.path, "log", "--oneline", f"main..{branch}") or not git(repo.path, "log", "--oneline", f"origin/main..{branch}")
-    if not merged and not force:
-        return f"{repo.name}: {branch} has commits that are not in main; merge it first, or pass --force to keep it as an archive branch"
-    if path.exists():
-        archived = archive_dirty(path, key)
-        subprocess.run(["/usr/bin/trash", "--stopOnError", str(path)], check=True)
-        git(repo.path, "worktree", "prune")
-        if archived:
-            log(f"uncommitted files saved to {archived}")
     if merged:
         git(repo.path, "branch", "-D", branch)
-        return f"{repo.name}: worktree to the Trash, merged branch {branch} removed"
+        return f"{repo.name}: merged branch {branch} removed"
+    if not force:
+        return f"{repo.name}: {branch} has commits that are not in main; merge it first, or pass --force to keep it as an archive branch"
     archive = f"night-archive/{key}-{datetime.now():%Y%m%d}"
     git(repo.path, "branch", "-m", branch, archive)
-    return f"{repo.name}: worktree to the Trash, unmerged branch kept as {archive}"
+    return f"{repo.name}: unmerged branch kept as {archive}"
