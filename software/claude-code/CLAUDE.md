@@ -50,7 +50,11 @@ In long sessions I lose track of what an ID or a reply refers to. Make each refe
 - Do not add code comments unless they explan the "why" — explain why, not what.
 - Aim to write self-documenting code first, before adding comments. Comments should be your last resort to explain some **VERY** valuable piece of information for future reference, to clarify something that is not immediately obvious, to avoid shooting oneself in the foot, etc.
 - When changing existing code, make sure to check the existing comments and ask yourself: is this comment still relevant? If not, remove it. If yes, update it as needed inline with the previous points — when you change code, update or remove the comments near it..
-- Do not refer to specific issue, ticket, story numbers. Don't quote them.
+- Do not refer to specific issue or story numbers. Don't quote them.
+
+## Jira wording
+- In Jira, Confluence, Slack and git commit text, call a Jira work item a "story", never a "ticket".
+- A PreToolUse hook (`~/.claude/hooks/story-not-ticket.py`) enforces this rule. If it denies a call, rewrite the text with "story" and call again.
 
 ## Git
 - Never rewrite git history, unless explicitly asked to do so by the user.

@@ -55,7 +55,7 @@ You add tasks for yourself, with one line of notice ("Noted a task for later: â€
 confirmation. Threshold: a unit of work with a purpose, a start and an end, that outlives
 the current request. Ask both: would the user want to see this in a listing tomorrow, and
 would it be lost if the session ended now? Both yes, or no line. A plan file, handoff note,
-ticket comment or chat message does not count as kept: none of them is listed when the next
+Jira comment or chat message does not count as kept: none of them is listed when the next
 session starts.
 
 Check at these moments, and record in the same turn: a reply of yours says "later", "next

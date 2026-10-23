@@ -140,7 +140,7 @@ Write `<work dir>/recap.json`:
 
 **Diagrams:** add a `diagram` only when a picture explains the change faster than words. A change that crosses projects is the best case: draw the path from the user's screen to the backend and back, with the changed parts marked. Other good cases: a changed data flow, a before/after of a process, a state machine. Use Mermaid (`flowchart LR`, `sequenceDiagram`, `stateDiagram-v2`), at most about 10 nodes, with labels in plain words and product names, not project names. Most items need none. Never draw a diagram that only repeats the text.
 
-**`heading_next`** (shown as **Coming up**): two to five entries about where the products are going, in the same voice, from open-sprint stories in progress, new stories and Slack plans. Prefer themes that cross products over single tickets ("The investigation console is getting access controls", with its stories in `jira`).
+**`heading_next`** (shown as **Coming up**): two to five entries about where the products are going, in the same voice, from open-sprint stories in progress, new stories and Slack plans. Prefer themes that cross products over single stories ("The investigation console is getting access controls", with its stories in `jira`).
 
 `jira_issues` holds every key you put in any `jira` list, with its summary as `title`, so the note can show its status.
 

@@ -14,10 +14,10 @@ The reader is a competent engineer who was **not** in this session. They know th
 You have the session history, the scratchpad, the working tree and this conversation. They have this document and whatever is genuinely shared with them. That asymmetry is the whole difficulty, and it produces three rules:
 
 - **Never cite evidence the reader cannot reach.** A claim resting on a scratchpad file, an uncommitted path, a local branch, terminal scrollback, or "as we saw earlier" is unverifiable to them and therefore worthless. State the **finding** and that it was verified — not the local artifact it came from.
-- **Never write "you will not receive X."** If something matters, make it reachable: embed it in the document, attach it to the tracking ticket, or ask the user to commit it. If it does not matter, leave it out. A list of things the reader is missing is an unfinished handoff, not a caveat.
+- **Never write "you will not receive X."** If something matters, make it reachable: embed it in the document, attach it to the tracking story, or ask the user to commit it. If it does not matter, leave it out. A list of things the reader is missing is an unfinished handoff, not a caveat.
 - **Resolve local-only state rather than disclosing it.** Anything you are tempted to warn them about is a gap to close before the document is done.
 
-The same test applies to the document's own location: if it lives at a path only this machine has, saying "read `<path>`" hands them nothing. Decide how it actually reaches them (committed, attached to the ticket, or pasted) and write the handover instruction to match.
+The same test applies to the document's own location: if it lives at a path only this machine has, saying "read `<path>`" hands them nothing. Decide how it actually reaches them (committed, attached to the story, or pasted) and write the handover instruction to match.
 
 ## 1. Read the ground truth first
 
@@ -56,11 +56,11 @@ Mine the conversation for what a diff cannot show:
 
 - **Throwaway scripts that are still useful.** Audit queries, verification probes, one-off reports written to a scratchpad or temp directory during the session usually die with it, even though the next person needs exactly them. Do not point at their paths. Instead:
   - **Embed the script in the handoff**, in a fenced block, when it is short enough not to bury the prose — roughly under a screen or two. A reader who can copy it whole needs nothing else.
-  - **Attach it to the tracking ticket** when embedding would swamp the document, and say which ticket and which comment.
+  - **Attach it to the tracking story** when embedding would swamp the document, and say which story and which comment.
   - **Ask whether to commit it** to the repo when it has lasting value beyond this handoff (a reusable report, a migration verifier). Do not commit it unprompted.
   Whichever route, the handoff must contain what the script *does*, how to run it, and what a correct result looks like — so a reader can judge its output without reverse-engineering it.
 
-Rules: no invention. If you don't know something, write `Unknown —` and what it would take to find out. No secrets, tokens, credentials, or personal data in the document — reference where they live (a secret manager, the env file) instead. Host names, account identifiers and connection details are fine only if they are already in the repo or the ticket; otherwise describe how to obtain them.
+Rules: no invention. If you don't know something, write `Unknown —` and what it would take to find out. No secrets, tokens, credentials, or personal data in the document — reference where they live (a secret manager, the env file) instead. Host names, account identifiers and connection details are fine only if they are already in the repo or the story; otherwise describe how to obtain them.
 
 ## 3. Write the file
 
@@ -72,7 +72,7 @@ Structure — keep it skimmable, prose over ceremony, cut any section that has n
 # Handoff: <short title of the work>
 
 **Branch:** `<branch>` (`<pushed / N unpushed commits / no upstream>`)
-**Story/ticket:** <id or none>
+**Story:** <id or none>
 **Date:** <YYYY-MM-DD>
 
 ## Goal
@@ -92,7 +92,7 @@ Commits the reader can actually see, and whether they are pushed. Anything not y
 belongs in **What's left** as an action, not here as a caveat.
 
 ## Scripts and queries you'll need
-Embedded in full, or a pointer to the ticket comment holding them, plus what a correct
+Embedded in full, or a pointer to the story comment holding them, plus what a correct
 result looks like. Omit the section if there were none.
 
 ## Verification
@@ -116,10 +116,10 @@ Reference files as `path/to/file.py:42` so they are clickable.
 Print, in the chat, a **paste-ready opening prompt** for the teammate's fresh session — fenced, so they can copy it whole. It should name the branch, say where the handoff actually is **from the reader's side**, and state the first task. If the document is only on this machine, the prompt cannot send them to its path; either the user shares it first, or the prompt carries the essentials itself. For example:
 
 ```
-I'm picking up work on branch `<branch>`. Read the handoff attached to <ticket> first — it
+I'm picking up work on branch `<branch>`. Read the handoff attached to <story> first — it
 has the decisions, dead ends, and what's left. Then start on <first next action>.
 ```
 
-Then tell the user the shortest list of things that make the handoff land, based on the real state you read: share the document by whatever route you agreed (commit, ticket attachment, paste), push the branch if it is unpushed, and resolve any load-bearing uncommitted work. **Ask before committing or pushing** — do not push a WIP branch or commit on the user's behalf unless they say so in this session. When they do approve, follow the repo's commit-message convention.
+Then tell the user the shortest list of things that make the handoff land, based on the real state you read: share the document by whatever route you agreed (commit, story attachment, paste), push the branch if it is unpushed, and resolve any load-bearing uncommitted work. **Ask before committing or pushing** — do not push a WIP branch or commit on the user's behalf unless they say so in this session. When they do approve, follow the repo's commit-message convention.
 
 Finally, re-read your own document once as the reader: every claim checkable, no reference to anything only this machine has, and no "you will not receive" anywhere. Note anything you genuinely could not determine so the user can fill it in before sending.

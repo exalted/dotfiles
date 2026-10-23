@@ -154,6 +154,16 @@
             "timeout": 60
           }
         ]
+      },
+      {
+        "matcher": "Bash|mcp__plugin_atlassian_atlassian__(addOrEditJiraIssueComment|createJiraIssue|editJiraIssue|executeWrite|createConfluenceContent|updateConfluenceContent)|mcp__claude_ai_Atlassian_Rovo__.*|mcp__plugin_slack_slack__slack_(send_message|send_message_draft|schedule_message|create_canvas|update_canvas)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/story-not-ticket.py",
+            "timeout": 30
+          }
+        ]
       }
     ]
   },
