@@ -183,7 +183,9 @@
     "chrome-devtools-mcp@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
     "gitlab@claude-plugins-official": true,
-    "obsidian-notes@anthropic-plugin-directory": true
+    "obsidian-notes@anthropic-plugin-directory": true,
+    "claude-security@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": false
   },
   "extraKnownMarketplaces": {},
   "outputStyle": "Concise",

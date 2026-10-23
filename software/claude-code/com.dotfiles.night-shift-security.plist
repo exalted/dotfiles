@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.dotfiles.night-shift-security</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>@HOME@/.claude/night-shift.sh</string>
+		<string>security</string>
+	</array>
+	<!-- Saturday at 00:37, the night after the last workday. The driver does nothing until
+	     `/night-shift set security true`. -->
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Weekday</key>
+		<integer>6</integer>
+		<key>Hour</key>
+		<integer>0</integer>
+		<key>Minute</key>
+		<integer>37</integer>
+	</dict>
+</dict>
+</plist>

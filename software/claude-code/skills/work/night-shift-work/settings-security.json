@@ -1,0 +1,101 @@
+{
+  "autoContinueAtUsageLimit": false,
+  "enabledPlugins": {
+    "security-guidance@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/progress.py *)",
+      "Bash(uv run --quiet --no-project --script ~/.claude/skills/codex-servant/scripts/codex_exec.py *)",
+      "Workflow",
+      "Workflow(claude-security:scan)",
+      "Skill(claude-security:claude-security)",
+      "Bash(uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/trash_untracked.py *)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git -C * push *)",
+      "Bash(git worktree *)",
+      "Bash(git -C * worktree *)",
+      "Bash(git checkout main*)",
+      "Bash(git switch main*)",
+      "Bash(git branch -D *)",
+      "Bash(git branch -d *)",
+      "mcp__plugin_atlassian_atlassian__createJiraIssue",
+      "mcp__plugin_atlassian_atlassian__editJiraIssue",
+      "mcp__plugin_atlassian_atlassian__addOrEditJiraIssueComment",
+      "mcp__plugin_atlassian_atlassian__transitionJiraIssue",
+      "mcp__plugin_atlassian_atlassian__createConfluenceContent",
+      "mcp__plugin_atlassian_atlassian__updateConfluenceContent",
+      "mcp__plugin_atlassian_atlassian__executeWrite",
+      "mcp__plugin_atlassian_atlassian__executeDestructive",
+      "mcp__plugin_slack_slack__slack_send_message",
+      "mcp__plugin_slack_slack__slack_send_message_draft",
+      "mcp__plugin_slack_slack__slack_schedule_message",
+      "mcp__plugin_slack_slack__slack_add_reaction",
+      "mcp__plugin_slack_slack__slack_create_canvas",
+      "mcp__plugin_slack_slack__slack_update_canvas",
+      "mcp__plugin_slack_slack__slack_create_conversation",
+      "mcp__plugin_slack_slack__slack_create_list",
+      "mcp__plugin_slack_slack__slack_update_list",
+      "mcp__plugin_slack_slack__slack_add_list_record",
+      "mcp__plugin_slack_slack__slack_update_list_record",
+      "mcp__plugin_slack_slack__slack_get_file_upload_url",
+      "mcp__plugin_slack_slack__slack_complete_file_upload",
+      "mcp__plugin_gitlab_gitlab__add_branch",
+      "mcp__plugin_gitlab_gitlab__add_commit",
+      "mcp__plugin_gitlab_gitlab__accept_merge_request",
+      "mcp__plugin_gitlab_gitlab__save_merge_request",
+      "mcp__plugin_gitlab_gitlab__save_merge_request_review",
+      "mcp__plugin_gitlab_gitlab__save_note",
+      "mcp__plugin_gitlab_gitlab__save_pipeline",
+      "mcp__plugin_gitlab_gitlab__save_work_item",
+      "mcp__plugin_gitlab_gitlab__manage_pipeline",
+      "mcp__plugin_gitlab_gitlab__fork_repository",
+      "mcp__plugin_gitlab_gitlab__link_work_items",
+      "mcp__plugin_gitlab_gitlab__start_duo_session",
+      "mcp__plugin_gitlab_gitlab__send_duo_session_input",
+      "Bash(make local-*)",
+      "Bash(make -C * local-*)",
+      "Bash(docker compose *)",
+      "Bash(docker-compose *)",
+      "Bash(command docker compose *)",
+      "Bash(command make local-*)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "allowUnsandboxedCommands": false,
+    "failIfUnavailable": true,
+    "excludedCommands": [
+      "uv run --quiet --no-project --script ~/.claude/skills/codex-servant/scripts/codex_exec.py *"
+    ],
+    "filesystem": {
+      "allowWrite": [
+        "~/.cache",
+        "~/Library/Caches",
+        "~/.local/state/night-shift",
+        "~/.local/state/codex-servant",
+        "/tmp",
+        "/private/tmp"
+      ]
+    },
+    "network": {
+      "allowedDomains": [
+        "pypi.org",
+        "files.pythonhosted.org",
+        "registry.npmjs.org",
+        "*.openai.azure.com"
+      ],
+      "strictAllowlist": true
+    }
+  },
+  "autoMode": {
+    "environment": [
+      "$defaults",
+      "This is an unattended weekly job with nobody watching. It runs the Claude Security plugin's scan and patch jobs in one git worktree on a branch named night/SEC-<date>; the plugin's scratch clones and report live inside that worktree.",
+      "It never pushes, never changes Jira, Confluence, Slack or GitLab, never checks out or changes the main branch, and never works outside its worktrees, its run directory under ~/.local/state/night-shift, and the package caches.",
+      "Package registries for Python (uv) and Node (pnpm) are the only hosts shell commands need. The codex_exec.py helper runs the Codex CLI as a delegate inside the same worktree; it is trusted."
+    ]
+  }
+}

@@ -8,6 +8,18 @@ resets_at=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
 session_id=$(echo "$input" | jq -r '.session_id // empty')
 cwd=$(echo "$input" | jq -r '.workspace.current_dir // .cwd // empty')
 
+# The night shift's quota guard reads this snapshot (skills/work/night-shift/scripts/quota.py): the only
+# place Claude Code hands out the plan's usage windows is the status line. Headless runs never call it, so
+# day sessions keep it fresh. rate_limits arrives only after a session's first API response.
+usage_dir="$HOME/.local/state/claude-usage"
+if echo "$input" | jq -e '.rate_limits.seven_day' >/dev/null 2>&1; then
+  /bin/mkdir -p "$usage_dir"
+  echo "$input" | jq '{at: (now | floor), rate_limits}' > "$usage_dir/latest.json.$$" && /bin/mv "$usage_dir/latest.json.$$" "$usage_dir/latest.json"
+elif echo "$input" | jq -e '.model' >/dev/null 2>&1 && [ ! -f "$usage_dir/latest.json" ]; then
+  /bin/mkdir -p "$usage_dir"
+  echo "$input" | jq '{at: (now | floor), keys: (keys)}' > "$usage_dir/seen-without-rate-limits.json"
+fi
+
 # --no-optional-locks: the status line refreshes often and must never contend
 # with a git command the session itself is running.
 branch=""

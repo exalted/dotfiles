@@ -1,0 +1,68 @@
+# ~/.config/dotfiles/night-shift/config.toml: organization-specific, never in the dotfiles repo.
+
+# Optional: by default the Jira site and project come from ~/.config/dotfiles/jira, as for the recap.
+# jira_site = "https://<site>.atlassian.net"
+# jira_project = "<KEY>"
+# Candidates: the cards in this board's to-do column, in rank order. A team-managed board keeps a separate
+# backlog list in the same status; those items are never candidates. Without a board, a JQL over every
+# unassigned to-do issue in the project is used instead.
+jira_board_id = 0
+jira_board_column_status = "<status of the board's to-do column>"
+
+# Optional: by default a "Night shift" folder beside the recap's vault folder.
+# vault_folder = "~/Obsidian/<vault>/Night shift"
+
+# Optional: by default the recap's team channel.
+# slack_channels = ["<channel id>"]
+
+# A worktree's env file may point at local services or a non-production environment only. Hosts that are
+# localhost or contain "alpha" pass; list other non-production hosts here as full-match regular expressions.
+# Any other host stops the story before the file is copied.
+env_allowed_hosts = ['.*\.amazonaws\.com', '.*\.openai\.azure\.com', '.*\.<non-production domain>']
+# Hosts that are production, refused even when another rule would allow them.
+env_forbidden_hosts = ['.*\.<production domain>']
+# Keys never copied into a night worktree, such as a personal Git token used only by a pre-push hook.
+env_drop_keys = ["GITLAB_TOKEN"]
+# Night processes see only the AWS profiles of these accounts (non-production); production profiles do not exist for them.
+aws_allowed_accounts = ["<non-production account id>"]
+
+# The weekly security analysis takes the next repository in this list each week; list one more often to scan
+# it more often. Default: every repository with security_areas, in turn.
+security_rotation = ["backend", "backend", "webapp"]
+
+# Whose word decides what. Matched by work e-mail first, then by any of the names Jira and Slack show.
+[[people]]
+email = "<lead>@<company>"
+names = ["<Full Name>", "<slack handle>"]
+role = "team lead and architect: decides how it is built and where it lives"
+
+[[people]]
+email = "<senior>@<company>"
+names = ["<Full Name>", "<slack handle>"]
+role = "senior developer: decides implementation approach and code conventions"
+
+[[people]]
+email = "<pm>@<company>"
+names = ["<Full Name>", "<slack handle>"]
+role = "product: decides what the feature does and what is in or out of scope"
+
+
+[repos.backend]
+path = "~/Developer/<backend>"
+setup = [["uv", "sync", "--frozen"]]
+verify = [
+  ["uv", "run", "--env-file", ".env", "pytest", "tests", "-q", "--tb=short", "-n", "6"],
+  ["uv", "run", "ruff", "check"],
+  ["uv", "run", "ruff", "format", "--check"],
+  ["uv", "run", "pyright"],
+]
+# [source, target in the worktree]
+copy = [["~/Developer/<backend>/.env.night", ".env"], ["~/Developer/<backend>/CLAUDE.local.md", "CLAUDE.local.md"]]
+security_areas = ["src/<api layer>", "src/<auth>"]
+
+[repos.webapp]
+path = "~/Developer/<webapp>"
+setup = [["pnpm", "install", "--frozen-lockfile"]]
+verify = [["pnpm", "run", "lint"], ["pnpm", "run", "type-check"], ["pnpm", "run", "test", "--run"]]
+copy = [["~/Developer/<webapp>/.env.night", ".env"]]
+security_areas = ["src/<request handling>"]

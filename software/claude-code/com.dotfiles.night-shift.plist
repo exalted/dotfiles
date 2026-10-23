@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.dotfiles.night-shift</string>
+	<!-- The script is the executable on purpose: macOS names a background item after its executable.
+	     launchd expands no variables, so the installer renders @HOME@ when copying. -->
+	<key>ProgramArguments</key>
+	<array>
+		<string>@HOME@/.claude/night-shift.sh</string>
+	</array>
+	<!-- Monday to Friday at 00:37: the nights before workday mornings. The driver starts no story after
+	     its last_start knob (03:00) and stops everything by its deadline knob (05:00), so a time slept
+	     through and run on a late wake does nothing. `/night-shift run-now` kickstarts this agent. -->
+	<key>StartCalendarInterval</key>
+	<array>
+		<dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>37</integer></dict>
+		<dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>37</integer></dict>
+		<dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>37</integer></dict>
+		<dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>37</integer></dict>
+		<dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>37</integer></dict>
+	</array>
+</dict>
+</plist>
