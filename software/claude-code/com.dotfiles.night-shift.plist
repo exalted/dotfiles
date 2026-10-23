@@ -10,7 +10,9 @@
 	<array>
 		<string>@HOME@/.claude/night-shift.sh</string>
 	</array>
-	<!-- Monday to Friday at 00:37: the nights before workday mornings. The driver starts no story after
+	<!-- Monday to Friday at 00:37: the nights before workday mornings. Saturday and Sunday at 00:52 run only
+	     when the weekend_stories knob is above 0; 00:52 keeps clear of the security agent's 00:37 slot, which
+	     shares the run lock. The driver starts no story after
 	     its last_start knob (03:00) and stops everything by its deadline knob (05:00), so a time slept
 	     through and run on a late wake does nothing. `/night-shift run-now` kickstarts this agent. -->
 	<key>StartCalendarInterval</key>
@@ -20,6 +22,8 @@
 		<dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>37</integer></dict>
 		<dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>37</integer></dict>
 		<dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>37</integer></dict>
+		<dict><key>Weekday</key><integer>6</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>52</integer></dict>
+		<dict><key>Weekday</key><integer>0</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>52</integer></dict>
 	</array>
 </dict>
 </plist>

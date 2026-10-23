@@ -35,9 +35,11 @@ flag per issue in step 3.
 
 Go down the list in order. Skip a candidate without reading further when `previous` says:
 
-- `final: true` (solved, partial, abandoned, or skipped by the user);
+- `final: true` (solved, partial, abandoned, rejected, or skipped by the user): worked already or decided by
+  the user; a story waiting for the user's review is always final;
 - `blocked` or `not_workable`, and the issue's `updated` is not later than the recorded `jira_updated`;
-- any other status from fewer than `retry_after_days` days ago.
+- any other status from fewer than `retry_after_days` days ago, except `retry`: the user asked for another
+  attempt, so it is eligible now, and its `feedback` (if any) must shape the brief.
 
 Stop when you have `stories_wanted` workable stories, or after `examine_max` candidates examined in steps 2-4.
 

@@ -135,6 +135,10 @@ def night_note(*, folder: Path, night: Json, browse: str) -> Path:
     body.append("")
     for story in stories:
         body += _story(story, browse)
+    if night.get("awaiting"):
+        body += ["## Waiting for your review", ""]
+        body += [f"- [{item['key']}]({browse}{item['key']}) {item.get('summary', '')}: {item.get('status')} on `{item.get('branch')}` since {item.get('date', '')[:10]}" for item in night["awaiting"]]
+        body += ["", "Decide with `/night-shift merged KEY`, `/night-shift reject KEY \"why\"` or `/night-shift retry KEY \"what to change\"`.", ""]
     if night.get("skipped"):
         body += ["## Looked at, not worked", ""] + [f"- [{item['key']}]({browse}{item['key']}): {item['reason']}" for item in night["skipped"]] + [""]
     if night.get("interrupted"):

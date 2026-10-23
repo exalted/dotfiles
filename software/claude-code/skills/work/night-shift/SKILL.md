@@ -33,7 +33,10 @@ uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/night_
 | security analysis on / off | `set security true` / `set security false` |
 | codex on / off, codex fallback | `set codex true|false`, `set codex_fallback true|false` |
 | never take KEY | `skip KEY` |
-| try KEY again | `retry KEY` |
+| won't merge KEY's branch | `reject KEY "why"` (never retried; branch kept as `night-archive/KEY-<date>`) |
+| try KEY again | `retry KEY "what to change"` (the feedback goes into the next attempt's brief) |
+| merged KEY | `merged KEY` (also detected by itself once main holds the branch) |
+| stories on weekend nights | `set weekend_stories N` (0 turns weekend nights off), `set weekend_night_allowance_usd X` |
 | done reviewing KEY | `cleanup KEY` (add `--force` only when the user says to keep an unmerged branch as an archive) |
 | run it now, test it | `run-now` (`--dry` picks stories and writes the note, works nothing) |
 
@@ -59,6 +62,14 @@ Codex reviews the branch. If it asks for changes, or reports a medium or high fi
 resumes for one fix round (cap `caps_usd.fix`, at most `fix_minutes`, only with time left before the deadline)
 and answers each finding in REPORT.md. Then the repository's gate runs on the branch tip, outside the model,
 including the Docker-backed suites marked `requires = "docker"` in `config.toml` when a Docker engine answers.
+
+## Stories it already worked
+
+A story the night shift worked is never picked again on its own. With commits on its branch it waits for
+the user's review, and every morning note lists it under "Waiting for your review" until one of these:
+`merged` (also detected once `origin/main` holds all of the branch's commits), `reject` (never retried), or
+`retry` (eligible again, with the user's feedback in the next brief). Blocked or unworkable stories are
+looked at again only after they change in Jira.
 
 ## What a night session may do
 

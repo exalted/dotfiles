@@ -61,6 +61,9 @@ DEFAULT_KNOBS: Json = {
     "security_allowance_usd": 60.0,
     "security_snapshot_max_age_hours": 60,
     "security_max_waits": 12,
+    # Above 0, the nights before Saturday and Sunday run too, with this many stories and their own allowance.
+    "weekend_stories": 0,
+    "weekend_night_allowance_usd": 70.0,
     "codex": True,
     "codex_fallback": False,
     "caps_usd": {"pick": 8.0, "work": 25.0, "fix": 10.0, "report": 5.0, "scan": 30.0, "patch": 15.0},

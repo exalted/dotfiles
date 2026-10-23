@@ -10,7 +10,10 @@
   night_shift.py status                      knobs, quota, last runs, story branches
   night_shift.py pause | resume
   night_shift.py set <knob> <value>          e.g. set stories 2, set seven_day_max_percent 50, set codex false
-  night_shift.py skip <KEY> | retry <KEY>
+  night_shift.py skip <KEY>                  never take this story
+  night_shift.py reject <KEY> ["reason"]     you will not merge its branch: never retried, branch kept as night-archive/...
+  night_shift.py retry <KEY> ["feedback"]    take it again; the feedback goes into the next attempt's brief
+  night_shift.py merged <KEY>                you merged it (also detected by itself once main holds the branch)
   night_shift.py cleanup <KEY> [--force]     after review: the story's branch removed once main has it
   night_shift.py run-now [--dry]             start the nightly run through the launch agent now
   night_shift.py fail "<message>"            the wrapper's last resort: write a failure note
@@ -286,6 +289,24 @@ def update_issue(key: str, **fields: object) -> None:
         ledger["issues"][key] = {**ledger["issues"].get(key, {}), **fields, "date": datetime.now().isoformat(timespec="minutes")}
 
 
+def refresh_reviews(config: Config) -> None:
+    """A story waiting for review is merged once main holds all of its branch's commits; the user merges and pushes."""
+    with quota.transaction() as ledger:
+        for key, entry in ledger["issues"].items():
+            if entry.get("review") != "awaiting":
+                continue
+            branch = workspace.branch_name(key)
+            repos = [config.repos[name] for name in entry.get("repos", []) if name in config.repos]
+            present = [repo for repo in repos if workspace.git(repo.path, "branch", "--list", branch)]
+            if present and all(not workspace.git(repo.path, "log", "--oneline", f"origin/main..{branch}") for repo in present):
+                entry["review"] = "merged"
+
+
+def awaiting_review() -> list[Json]:
+    ledger = quota.load_ledger()
+    return [{"key": key, **entry} for key, entry in sorted(ledger["issues"].items()) if entry.get("review") == "awaiting"]
+
+
 def new_run_dir(name: str) -> Path:
     """A fresh directory for every run: a restart within the same second never reuses another run's files."""
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
@@ -435,6 +456,11 @@ def nightly(args: argparse.Namespace) -> None:
     if not manual and not (now.hour < 12 and now <= last_start):
         log(f"started at {now:%H:%M}, outside the night window (until {k['last_start']}): nothing to do")
         return
+    if not manual and morning.weekday() >= 5:
+        if int(k["weekend_stories"]) <= 0:
+            log("weekend night: weekend_stories is 0, nothing to do")
+            return
+        k = {**k, "stories": int(k["weekend_stories"]), "night_allowance_usd": float(k["weekend_night_allowance_usd"])}
     with run_lock("nightly"):
         night["interrupted"] = reconcile(run_dir, config)
         workspace.night_aws_config(config.aws_allowed_accounts)
@@ -447,6 +473,8 @@ def nightly(args: argparse.Namespace) -> None:
         for repo in config.repos.values():
             if warning := workspace.fetch(repo):
                 night["warnings"].append(warning)
+        refresh_reviews(config)
+        night["awaiting"] = awaiting_review()
         codex = Codex(bool(k["codex"]), run_dir / "logs", deadline)
         if codex.note:
             night["warnings"].append(codex.note)
@@ -547,6 +575,9 @@ def brief_text(story: Json, prepared: list[workspace.Prepared], issue_dir: Path,
         "",
         story["brief"],
     ]
+    feedback = (quota.load_ledger()["issues"].get(story["key"]) or {}).get("feedback")
+    if feedback:
+        lines += ["", "## The user's feedback on an earlier attempt (follow it)", "", feedback]
     if story.get("codex_opinion"):
         lines += ["", "## Codex's independent read of the story", "", json.dumps(story["codex_opinion"], indent=2)]
     return "\n".join(lines) + "\n"
@@ -673,7 +704,9 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
         outcome["status"], outcome["reason"] = "partial", "the model said solved, but the repository gate failed on the branch tip"
     elif outcome["status"] == "solved" and any(repo["independence"] for repo in changed):
         outcome["status"], outcome["reason"] = "partial", "the branch does not stand alone: " + "; ".join(p for repo in changed for p in repo["independence"])
-    update_issue(key, status=outcome["status"], final=outcome["status"] in FINAL, branch=primary.branch, repos=story["repos"])
+    worked = any(repo["commits"] for repo in outcome["repos"])
+    update_issue(key, status=outcome["status"], final=outcome["status"] in FINAL, branch=primary.branch, repos=story["repos"],
+                 review="awaiting" if worked else None, summary=story.get("summary", ""))
 
 
 def needs_fix(review: Json | None) -> bool:
@@ -944,15 +977,15 @@ def _security_in_checkout(config: Config, k: Json, repo, name: str, area: str, k
 
 def status(_: argparse.Namespace) -> None:
     k = knobs()
-    ledger = quota.load_ledger()
     lines = [f"knobs: {json.dumps(k)}", f"quota: {quota.describe(k, quota.morning_after(datetime.now()))}"]
     lock = STATE_DIR / "lock"
     if lock.exists() and lock.read_text().strip():
         lines.append(f"last lock holder: {lock.read_text().strip()}")
-    runs = sorted(RUNS_DIR.glob("*"))[-3:] if RUNS_DIR.exists() else []
+    runs = sorted(RUNS_DIR.glob("*"), key=lambda path: path.stat().st_mtime)[-3:] if RUNS_DIR.exists() else []
     lines.append("recent runs: " + (", ".join(run.name for run in runs) or "none"))
-    open_issues = {key: value for key, value in ledger["issues"].items() if value.get("branch")}
-    lines += [f"  {key}: {value.get('status')} on {value.get('branch')} ({value.get('date')})" for key, value in sorted(open_issues.items())]
+    waiting = [item for item in awaiting_review()]
+    lines.append(f"waiting for your review: {len(waiting)}")
+    lines += [f"  {item['key']}: {item.get('status')} on {item.get('branch')} ({item.get('date')})" for item in waiting]
     agent = subprocess.run(["/bin/launchctl", "print", f"gui/{os.getuid()}/{LAUNCH_LABEL}"], capture_output=True, text=True)
     lines.append("launch agent: " + ("loaded" if agent.returncode == 0 else "not loaded"))
     print("\n".join(lines))
@@ -980,6 +1013,37 @@ def set_knob(args: argparse.Namespace) -> None:
         value = raw
     save_knobs({name: value})
     print(f"{name} = {knobs()[name]}")
+
+
+def review(args: argparse.Namespace) -> None:
+    """The user's decision on a story the night shift worked."""
+    if not valid_key(args.key):
+        sys.exit(f"invalid key {args.key}")
+    text = " ".join(args.text).strip()
+    if args.action == "reject":
+        config = load_config()
+        entry = quota.load_ledger()["issues"].get(args.key, {})
+        kept = []
+        for name in entry.get("repos", []) or list(config.repos):
+            repo = config.repos.get(name)
+            branch = workspace.branch_name(args.key)
+            if repo and workspace.git(repo.path, "branch", "--list", branch):
+                if workspace.git(repo.path, "branch", "--show-current") == branch:
+                    sys.exit(f"{name}: you are on {branch}; switch away from it first")
+                archive = f"night-archive/{args.key}-{datetime.now():%Y%m%d}"
+                workspace.git(repo.path, "branch", "-m", branch, archive)
+                kept.append(f"{name}: {archive}")
+        update_issue(args.key, status="rejected", final=True, review="rejected", reason=text)
+        print(f"{args.key}: rejected, never retried" + (f"; branch kept as {', '.join(kept)}" if kept else ""))
+    elif args.action == "retry":
+        with quota.transaction() as ledger:
+            entry = ledger["issues"].get(args.key, {})
+            ledger["issues"][args.key] = {"status": "retry", "final": False, "review": None, "feedback": text or None,
+                                          "previous_status": entry.get("status"), "date": datetime.now().isoformat(timespec="minutes")}
+        print(f"{args.key}: eligible again" + (" with your feedback" if text else ""))
+    else:
+        update_issue(args.key, review="merged")
+        print(f"{args.key}: marked merged")
 
 
 def mark(args: argparse.Namespace) -> None:
@@ -1040,10 +1104,14 @@ def main() -> None:
     p.add_argument("knob")
     p.add_argument("value")
     p.set_defaults(handler=set_knob)
-    for action in ("skip", "retry"):
+    p = sub.add_parser("skip")
+    p.add_argument("key")
+    p.set_defaults(handler=mark, action="skip")
+    for action in ("reject", "retry", "merged"):
         p = sub.add_parser(action)
         p.add_argument("key")
-        p.set_defaults(handler=mark, action=action)
+        p.add_argument("text", nargs="*")
+        p.set_defaults(handler=review, action=action)
     p = sub.add_parser("cleanup")
     p.add_argument("key")
     p.add_argument("--force", action="store_true")
