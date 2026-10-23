@@ -151,7 +151,7 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/guard-rebase.py",
-            "timeout": 30
+            "timeout": 60
           }
         ]
       }
