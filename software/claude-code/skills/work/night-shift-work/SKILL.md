@@ -47,7 +47,7 @@ Done means every item of this list, in this order:
 1. **tests_added**: tests for the new behavior, written first and seen failing, then passing (follow the
    repository's own test-first rules where it has them).
 2. **repo_gate**: the repository's full final gate passes (its CLAUDE.md names it: tests, lint, types).
-   Docker works in the sandbox when a Docker engine runs, so testcontainers-based integration suites run too:
+   When a Docker engine runs, testcontainers-based integration suites run too:
    run the ones that cover what you changed. Suites that need live cloud credentials do not run at night; name
    them in the report as not run.
 3. **code_review**: run `/code-review` on your branch and fix every real finding.

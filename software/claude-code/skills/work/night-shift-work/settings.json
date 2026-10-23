@@ -86,42 +86,22 @@
       "Bash(docker compose *)",
       "Bash(docker-compose *)",
       "Bash(command docker compose *)",
-      "Bash(command make local-*)"
+      "Bash(command make local-*)",
+      "Bash(glab *)",
+      "Bash(command glab *)"
     ]
-  },
-  "sandbox": {
-    "enabled": true,
-    "allowUnsandboxedCommands": false,
-    "failIfUnavailable": true,
-    "excludedCommands": [
-      "uv run --quiet --no-project --script ~/.claude/skills/codex-servant/scripts/codex_exec.py *"
-    ],
-    "filesystem": {
-      "allowWrite": [
-        "~/.cache",
-        "~/Library/Caches",
-        "~/.local/state/night-shift",
-        "~/.local/state/codex-servant",
-        "/tmp",
-        "/private/tmp"
-      ]
-    },
-    "network": {
-      "allowedDomains": [
-        "pypi.org",
-        "files.pythonhosted.org",
-        "registry.npmjs.org",
-        "*.openai.azure.com"
-      ],
-      "strictAllowlist": true
-    }
   },
   "autoMode": {
     "environment": [
       "$defaults",
       "This is an unattended nightly job with nobody watching. It works one Jira story at a time in the user's own checkout, on a branch named night/<KEY> made from origin/main, and commits there. The driver set the user's own work aside before the session and restores it afterwards.",
-      "It never pushes, never changes Jira, Confluence, Slack or GitLab, never switches branches, stashes, resets or merges, and never works outside the checkout, its run directory under ~/.local/state/night-shift, and the package caches.",
-      "Package registries for Python (uv) and Node (pnpm) and the team's Azure OpenAI endpoints (used by some test suites) are the only hosts shell commands need. The codex_exec.py helper runs the Codex CLI as a delegate inside the same checkout; it is trusted."
+      "It may do what the user does by day in this project: edit files in the checkout, create scratch files, install the project's dependencies and run any of the project's commands, tests and tools. It never pushes, never starts a CI/CD pipeline or a deployment, never changes Jira, Confluence, Slack or GitLab, and never switches branches, stashes, resets or merges.",
+      "The codex_exec.py helper runs the Codex CLI as a delegate inside the same checkout; it is trusted."
+    ],
+    "hard_deny": [
+      "$defaults",
+      "Never connect to, query or change a production system: a production database, API, queue, bucket or host.",
+      "Never push to any git remote, and never trigger, retry or run a CI/CD pipeline, a release or a deployment."
     ]
   }
 }

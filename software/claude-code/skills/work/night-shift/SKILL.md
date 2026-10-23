@@ -60,6 +60,19 @@ resumes for one fix round (cap `caps_usd.fix`, at most `fix_minutes`, only with 
 and answers each finding in REPORT.md. Then the repository's gate runs on the branch tip, outside the model,
 including the Docker-backed suites marked `requires = "docker"` in `config.toml` when a Docker engine answers.
 
+## What a night session may do
+
+The same as the user by day: auto mode, no sandbox. It edits files in the checkout, creates scratch files,
+installs the project's dependencies, and runs any of the project's commands, tests and tools. It must never
+touch production or start a deployment, enforced in layers:
+
+- deny rules: every `git push` (both `git` and `command git` forms), `glab`, and the GitLab, Jira, Confluence
+  and Slack write tools;
+- auto mode `hard_deny` rules: no production system, no push or pipeline, plus the production hosts
+  (`env_forbidden_hosts`) and the allowed AWS accounts (`aws_allowed_accounts`) from `config.toml`;
+- night processes see only the AWS profiles of `aws_allowed_accounts`;
+- a checkout whose `.env` names a production host is left alone.
+
 ## The quota guard
 
 The user's rule: the night shift never leaves them without quota for day work. `scripts/quota.py` enforces it

@@ -222,19 +222,19 @@ def browse_url(config: Config) -> str:
     return f"{config.jira_site}/browse/"
 
 
-def session_settings(template: Path, *, writable: list[Path], target: Path) -> Path:
-    """The night rules plus this session's own write paths (its run directory; the checkout is the working directory).
+def session_settings(template: Path, *, target: Path, config: Config) -> Path:
+    """The night rules, plus this machine's production boundaries from the untracked config.
 
-    With a Docker engine running, sandboxed commands may reach its socket and connect to localhost ports, so
-    testcontainers-based suites run. The repository's local stack stays denied by rule (see SKILL.md).
+    The session works like the user by day: no sandbox, auto mode's classifier reviews each action. What
+    must never happen at night is named to the classifier as hard rules: production hosts and AWS accounts
+    outside the allowed ones come from config.toml, so the public template stays generic.
     """
     settings = json.loads(template.read_text())
-    allow = settings["sandbox"]["filesystem"].setdefault("allowWrite", [])
-    allow += [str(path) for path in writable]
-    if socket := workspace.docker_socket():
-        network = settings["sandbox"].setdefault("network", {})
-        network["allowUnixSockets"] = sorted({socket, "/var/run/docker.sock", *network.get("allowUnixSockets", [])})
-        network["allowLocalBinding"] = True
+    hard = settings.setdefault("autoMode", {}).setdefault("hard_deny", ["$defaults"])
+    if config.env_forbidden_hosts:
+        hard.append("These hosts are production; never connect to them in any way: " + ", ".join(config.env_forbidden_hosts) + " (regular expressions).")
+    if config.aws_allowed_accounts:
+        hard.append("Use AWS only through profiles of these accounts, never any other account: " + ", ".join(config.aws_allowed_accounts) + ".")
     write_json(target, settings)
     return target
 
@@ -450,7 +450,6 @@ def nightly(args: argparse.Namespace) -> None:
         codex = Codex(bool(k["codex"]), run_dir / "logs", deadline)
         if codex.note:
             night["warnings"].append(codex.note)
-        night["warnings"].append("Installs and the verification gate run unsandboxed on this Mac (accepted risk until the sandbox runtime is set up).")
 
         context = context_for_picker(config, k, run_dir, candidate_keys)
         pick = sessions.run(
@@ -610,7 +609,7 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
         result = codex_only(codex, story, prepared, issue_dir)
         outcome.update(status=result["status"], reason=result.get("reason", ""))
     else:
-        settings = session_settings(WORK_SETTINGS, writable=[issue_dir], target=issue_dir / "settings.json")
+        settings = session_settings(WORK_SETTINGS, target=issue_dir / "settings.json", config=config)
         session = sessions.run(
             sessions.Spec(
                 kind="work",
@@ -862,7 +861,7 @@ def _security_in_checkout(config: Config, k: Json, repo, name: str, area: str, k
     if True:
         set_phase(journal, "scanning")
         report.update(commit=prepared.base_sha[:12], branch=prepared.branch, checkout=str(prepared.path))
-        settings = session_settings(SECURITY_SETTINGS, writable=[repo.path / ".git", run_dir], target=run_dir / "settings.json")
+        settings = session_settings(SECURITY_SETTINGS, target=run_dir / "settings.json", config=config)
         request = SECURITY_REQUEST_FILE.read_text().replace("{area}", area).replace("{repo}", name)
         started = time.time()
         common_spec = dict(
