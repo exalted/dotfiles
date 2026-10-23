@@ -1,0 +1,21 @@
+{
+  "last_verified": "2026-10-22",
+  "codex_version": "0.160.0",
+  "roles": {
+    "probe":           {"model": "gpt-6-astra", "effort": "low",    "sandbox": "read-only",       "minutes": 2},
+    "opinion":         {"model": "gpt-6-astra", "effort": "medium", "sandbox": "read-only",       "minutes": 10},
+    "plan-review":     {"model": "gpt-6.1-sol", "effort": "high",   "sandbox": "read-only",       "minutes": 20},
+    "review":          {"model": "gpt-6.1-sol", "effort": "xhigh",  "sandbox": "read-only",       "minutes": 30},
+    "challenge":       {"model": "gpt-6.1-sol", "effort": "xhigh",  "sandbox": "read-only",       "minutes": 20},
+    "implement":       {"model": "gpt-6.1-sol", "effort": "high",   "sandbox": "workspace-write", "minutes": 45},
+    "implement-retry": {"model": "gpt-6.1-sol", "effort": "max",    "sandbox": "workspace-write", "minutes": 45}
+  },
+  "isolation": {
+    "flags": ["--ephemeral", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--color", "never"],
+    "disable": ["memories", "hooks", "plugins", "apps", "skill_search", "browser_use", "computer_use", "daemon_auto_start", "goals"],
+    "config": ["project_doc_max_bytes=0"]
+  },
+  "mcp": {
+    "context7": ["mcp_servers.context7.command=\"npx\"", "mcp_servers.context7.args=[\"-y\", \"@upstash/context7-mcp\"]"]
+  }
+}
