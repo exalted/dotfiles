@@ -28,6 +28,11 @@ aws_allowed_accounts = ["<non-production account id>"]
 # it more often. Default: every repository with security_areas, in turn.
 security_rotation = ["backend", "backend", "webapp"]
 
+# The driver's own commits (the independent review, a security patch) start like this, so they pass the
+# repositories' commit-msg hooks. {key} is the story key.
+commit_prefix = "[{key}]"
+no_story_prefix = "[NO-ID]"
+
 # Whose word decides what. Matched by work e-mail first, then by any of the names Jira and Slack show.
 [[people]]
 email = "<lead>@<company>"

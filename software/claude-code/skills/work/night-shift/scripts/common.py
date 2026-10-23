@@ -141,6 +141,13 @@ class Config:
     env_forbidden_hosts: list[str] = field(default_factory=list)
     aws_allowed_accounts: list[str] = field(default_factory=list)
     security_rotation: list[str] = field(default_factory=list)
+    # How the driver's own commits start, to pass the repositories' commit-msg hooks: {key} is the story key.
+    commit_prefix: str = "{key}:"
+    no_story_prefix: str = ""
+
+    def subject(self, text: str, key: str | None = None) -> str:
+        prefix = self.commit_prefix.format(key=key) if key else self.no_story_prefix
+        return f"{prefix} {text}".strip()
 
 
 def _jira_from_browse_file() -> tuple[str, str]:
@@ -202,6 +209,8 @@ def load_config() -> Config:
         env_forbidden_hosts=[str(pattern) for pattern in raw.get("env_forbidden_hosts", [])],
         aws_allowed_accounts=[str(account) for account in raw.get("aws_allowed_accounts", [])],
         security_rotation=[str(name) for name in raw.get("security_rotation", []) if name in repos],
+        commit_prefix=str(raw.get("commit_prefix", "{key}:")),
+        no_story_prefix=str(raw.get("no_story_prefix", "")),
     )
 
 

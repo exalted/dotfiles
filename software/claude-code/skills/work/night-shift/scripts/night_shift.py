@@ -675,7 +675,7 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
     # The review commits to REPORT.md, so it comes first: the gate then runs on the branch tip the user gets.
     set_phase(issue_dir, "reviewing")
     if any(workspace.commits_since(item.path, item.base_sha) for item in prepared) and codex.ready():
-        outcome["review"] = codex_review(codex, story, prepared, issue_dir)
+        outcome["review"] = codex_review(codex, story, prepared, issue_dir, config)
         if needs_fix(outcome["review"]) and claude_session is not None:
             set_phase(issue_dir, "fixing")
             fixed = fix_round(k, story, prepared, issue_dir, outcome["review"], claude_session, deadline, morning)
@@ -750,7 +750,7 @@ def fix_round(k: Json, story: Json, prepared: list[workspace.Prepared], issue_di
     return result
 
 
-def codex_review(codex: Codex, story: Json, prepared: list[workspace.Prepared], issue_dir: Path) -> Json | None:
+def codex_review(codex: Codex, story: Json, prepared: list[workspace.Prepared], issue_dir: Path, config: Config) -> Json | None:
     primary = prepared[0]
     diff = "\n".join(workspace.git(item.path, "diff", f"{item.base_sha}..HEAD") for item in prepared)[:MAX_DIFF_CHARS]
     tests = "\n".join(workspace.git(item.path, "diff", "--stat", f"{item.base_sha}..HEAD", "--", "*test*", "*spec*") for item in prepared)
@@ -775,7 +775,7 @@ def codex_review(codex: Codex, story: Json, prepared: list[workspace.Prepared], 
         lines += ["", "Not needed for the story:", *[f"- {item}" for item in review["unneeded_changes"]]]
     with (primary.path / "REPORT.md").open("a") as handle:
         handle.write("\n".join(lines) + "\n")
-    workspace.commit_paths(primary.path, ["REPORT.md"], f"Add the independent review of {story['key']}")
+    workspace.commit_paths(primary.path, ["REPORT.md"], config.subject("Add the independent review", story["key"]))
     progress(issue_dir, f"codex review: {review['verdict']}, {len(review['findings'])} findings")
     return review
 
@@ -957,7 +957,7 @@ def _security_in_checkout(config: Config, k: Json, repo, name: str, area: str, k
                 (prepared.path / "REPORT.md").write_text(
                     f"# Security fix for {finding.get('title')}\n\n```json\n{json.dumps(finding, indent=2)}\n```\n\n## Patch note\n\n{patch_note.read_text() if patch_note.exists() else ''}\n\n## Independent challenge (codex)\n\n{report['challenge']}\n"
                 )
-                workspace.commit_paths(prepared.path, ["."], f"Fix security finding: {finding.get('title')}")
+                workspace.commit_paths(prepared.path, ["."], config.subject(f"Fix security finding: {finding.get('title')}"))
                 verify = workspace.verify(repo, prepared, key=key, log_dir=run_dir / "logs", deadline=deadline)
                 closes = bool(challenge and challenge.get("closes_finding"))
                 status = "review-ready" if verify["passed"] and closes else "needs attention"
