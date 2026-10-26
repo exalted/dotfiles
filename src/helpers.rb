@@ -27,7 +27,10 @@ def brew(formula)
   system "brew install --yes --formula #{formula}"
 end
 
-def cask(token)
+# `confirm_before_quit` does nothing here: the upgrade step finds it in the text
+# of the entry scripts (Upgrade.confirm_before_quit_casks), since it must act
+# before any entry script runs.
+def cask(token, confirm_before_quit: false)
   return if Kernel.system "brew list --cask #{token} > /dev/null"
   system "brew install --yes --cask #{token}"
 end
