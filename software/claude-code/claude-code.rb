@@ -52,6 +52,6 @@ end
 link_to_home_relative 'hooks/require-command-prefix.py', '.claude/hooks/require-command-prefix.py'
 link_to_home_relative 'hooks/guard-paths.py',            '.claude/hooks/guard-paths.py'
 link_to_home_relative 'hooks/deny-deletions.py',         '.claude/hooks/deny-deletions.py'
-link_to_home_relative 'hooks/guard-rebase.py',           '.claude/hooks/guard-rebase.py'
+link_to_home_relative 'hooks/guard-git-history.py',      '.claude/hooks/guard-git-history.py'
 link_to_home_relative 'hooks/story-not-ticket.py',       '.claude/hooks/story-not-ticket.py'
 link_to_home_relative 'hooks/shell_commands.py',         '.claude/hooks/shell_commands.py'

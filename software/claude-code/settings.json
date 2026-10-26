@@ -150,7 +150,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/guard-rebase.py",
+            "command": "~/.claude/hooks/guard-git-history.py",
             "timeout": 60
           }
         ]

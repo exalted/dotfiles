@@ -58,6 +58,7 @@ In long sessions I lose track of what an ID or a reply refers to. Make each refe
 
 ## Git
 - Never rewrite git history, unless explicitly asked to do so by the user.
+- A PreToolUse hook (`~/.claude/hooks/guard-git-history.py`) enforces this rule for `rebase`, force pushes, `reset --hard` and `commit --amend`: it denies rewriting a default branch and asks before rewriting anything else. If it denies, do not retry in another form; tell the user.
 - Run `git rebase` as its own Bash command, never chained with other commands, and stop if it reports a conflict.
 - Never commit uncommitted changes that were already there before you made any changes, nor should you lose'em (e.g., delete'em or `git reset` errorneously, etc.) If they're on your way while doing git operations (eg git commit pre-hook, etc.) you can temporarily stash'em and then when you're done, you should "put them back"
 
