@@ -19,6 +19,18 @@ case "${1:-}" in
   "blame" )
     "${__dir__}"/git-blame "${@:2}"
     ;;
+  "checkout" )
+    # `checkout` silently discards changes to a file when its argument names
+    # a file instead of a branch; `switch` and `restore` each do one job.
+    cat >&2 <<'EOF'
+git checkout is blocked. Use:
+  git switch <branch>               git switch -c <new-branch>
+  git switch --detach <commit>      git switch -
+  git restore <path>                git restore --source=<commit> <path>
+To run it anyway: command git checkout ...
+EOF
+    exit 1
+    ;;
   "clean" )
     "${__dir__}"/git-clean "${@:2}"
     ;;
@@ -33,9 +45,6 @@ case "${1:-}" in
     ;;
   "remote" )
     "${__dir__}"/git-remote "${@:2}"
-    ;;
-  "restore" )
-    "${__dir__}"/git-restore "${@:2}"
     ;;
   "stash" )
     "${__dir__}"/git-stash "${@:2}"

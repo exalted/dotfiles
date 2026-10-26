@@ -30,9 +30,9 @@
     ; subcommands (standard or not). Keep this list in alphabetical order.
     br = !git-wrapper branch
     ci = !git-wrapper commit
-    co = !git-wrapper checkout
     n  = !git-wrapper new
     st = !git-wrapper status
+    sw = !git-wrapper switch
     up = !git-wrapper update
 [push]
     default = simple

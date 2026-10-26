@@ -7,7 +7,7 @@ kebab_string = `kebab #{ARGV}`
 system("#{ENV['GIT']} update-main")
 
 Kernel.system(
-  "#{ENV['GIT']} checkout -b $("\
+  "#{ENV['GIT']} switch --create $("\
   "  echo \"#{kebab_string}\" "\
   "  | cut -c 1-#{MAX_LENGTH} "\
   "  | rev "\
