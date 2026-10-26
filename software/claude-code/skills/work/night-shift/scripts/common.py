@@ -50,6 +50,8 @@ EXIT_SETUP_ERROR = 2
 DEFAULT_KNOBS: Json = {
     "paused": False,
     "stories": 1,
+    # Ready stories waiting for the user's review, that nobody has picked up, count against `stories`.
+    "hold_while_waiting": True,
     # Quota is in percent of the 7-day window. Day work keeps day_reserve_percent for each workday left before
     # the weekly reset (more if the ledger measured more); the night shift never goes above what is left, nor
     # above seven_day_ceiling_percent. One night may add at most night_points to the 7-day usage.

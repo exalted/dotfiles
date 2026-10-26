@@ -276,6 +276,54 @@ def jira_recheck(key: str, *, run_dir: Path, k: Json, deadline: datetime, mornin
     return {"workable": False, "reasons": [f"the pre-work recheck did not finish ({result.status} {result.reason})".strip()], "status": result.status}
 
 
+CLAIM_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["stories"],
+    "properties": {"stories": {"type": "array", "items": {
+        "type": "object", "additionalProperties": False, "required": ["key", "unclaimed", "why"],
+        "properties": {"key": {"type": "string"}, "unclaimed": {"type": "boolean"}, "why": {"type": "string"}},
+    }}},
+}
+CLAIM_TOOLS = ["ToolSearch", "mcp__plugin_atlassian_atlassian__getAccessibleAtlassianResources", "mcp__plugin_atlassian_atlassian__searchJiraIssuesUsingJql"]
+
+
+def ready_and_unclaimed(config: Config, *, run_dir: Path, k: Json, deadline: datetime, morning: datetime) -> tuple[list[Json], str | None]:
+    """Stories whose branch is ready for the user's review and that nobody has picked up in Jira since.
+
+    They count against the night's story count: with as many waiting as the count allows, the night holds,
+    because a new story would only add to the review pile. A story that was only looked at and skipped never
+    waits for review, so it never counts. A Jira check that does not finish counts every ready story: an idle
+    night costs nothing, a story worked twice does.
+    """
+    ready = []
+    for item in awaiting_review():
+        branch = workspace.branch_name(item["key"])
+        repos = [config.repos[name] for name in item.get("repos", []) if name in config.repos]
+        if item.get("status") == "solved" and any(
+            workspace.git(repo.path, "branch", "--list", branch) and workspace.git(repo.path, "log", "--oneline", f"origin/main..{branch}") for repo in repos
+        ):
+            ready.append(item)
+    if not ready:
+        return [], None
+    keys = ", ".join(item["key"] for item in ready)
+    prompt = (
+        f"Search Jira with searchJiraIssuesUsingJql for: key in ({keys}), fields assignee and status. For each story, unclaimed "
+        "is true only if it has no assignee and its status category is To Do; why says who has it or what its status is, in a "
+        "few words. Read only; change nothing."
+    )
+    result = sessions.run(
+        sessions.Spec(kind="recheck", prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="haiku", effort="low",
+                      cap_usd=0.5, minutes=5, permission_mode="dontAsk", allowed_tools=CLAIM_TOOLS, max_turns=8, json_schema=CLAIM_SCHEMA),
+        knobs=k, deadline=deadline, morning=morning,
+    )
+    answer = result.data.get("structured_output") if result.status == "ok" else None
+    if not isinstance(answer, dict):
+        return ready, f"could not check in Jira whether the stories waiting for review were picked up ({result.status} {result.reason})".strip()
+    unclaimed = {story["key"] for story in answer["stories"] if story["unclaimed"]}
+    return [item for item in ready if item["key"] in unclaimed], None
+
+
 def progress(issue_dir: Path, text: str) -> None:
     with (issue_dir / "progress.md").open("a") as handle:
         handle.write(f"· {datetime.now():%H:%M} {text}\n")
@@ -535,6 +583,17 @@ def nightly(args: argparse.Namespace) -> None:
             log(change)
         refresh_reviews(config)
         night["awaiting"] = awaiting_review()
+        if k["hold_while_waiting"] and not candidate_keys:
+            waiting, problem = ready_and_unclaimed(config, run_dir=run_dir, k=k, deadline=deadline, morning=morning)
+            if problem:
+                night["warnings"].append(problem)
+            keys = ", ".join(item["key"] for item in waiting)
+            room = int(k["stories"]) - len(waiting)
+            if waiting and room <= 0:
+                return finish("held", f"No new story tonight: {keys} {'is' if len(waiting) == 1 else 'are'} ready for your review and nobody has picked {'it' if len(waiting) == 1 else 'them'} up")
+            if waiting:
+                night["warnings"].append(f"{len(waiting)} of tonight's {k['stories']} stories are already ready and unclaimed ({keys}); working at most {room} new.")
+                k = {**k, "stories": room}
         codex = Codex(bool(k["codex"]), run_dir / "logs", deadline)
         if codex.note:
             night["warnings"].append(codex.note)

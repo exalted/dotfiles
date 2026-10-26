@@ -40,6 +40,7 @@ uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/night_
 | won't merge KEY's branch | `reject KEY "why"` (never retried; branch kept as `night-archive/KEY-<date>`) |
 | try KEY again | `retry KEY "what to change"` (the feedback goes into the next attempt's brief) |
 | merged KEY | `merged KEY` (also detected by itself once main holds the branch) |
+| work new stories however many ready ones wait | `set hold_while_waiting false` |
 | stories on weekend nights | `set weekend_stories N` (0 turns weekend nights off), `set weekend_night_points N` |
 | done reviewing KEY | `cleanup KEY` (add `--force` only when the user says to keep an unmerged branch as an archive) |
 | run it now, test it | `run-now` (`--dry` picks stories and writes the note, works nothing) |
@@ -74,6 +75,13 @@ the user's review, and every morning note lists it under "Waiting for your revie
 `merged` (also detected once `origin/main` holds all of the branch's commits), `reject` (never retried), or
 `retry` (eligible again, with the user's feedback in the next brief). Blocked or unworkable stories are
 looked at again only after they change in Jira.
+
+A story that is ready for review (solved, its branch holds commits) and that nobody has picked up in Jira
+(no assignee, status still To Do) counts against the night's `stories`: with 2 stories a night and 1 waiting,
+the night works 1 new story; with 2 waiting, none, and the run note says which stories hold it. Raising
+`stories` makes room for more; lowering it never removes a ready story. A story that was only looked at and
+skipped (not workable, blocked) never counts. If the Jira check does not finish, every ready story counts.
+`set hold_while_waiting false` turns this off; a manual run with chosen candidates ignores it.
 
 The user also decides through the Obsidian notes. Each note carries a `night_shift_id` in its frontmatter,
 and the night shift finds notes by it across the vault, so renaming or moving a note inside the night-shift
