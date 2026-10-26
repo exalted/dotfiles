@@ -27,3 +27,6 @@ bash_source_relative 'pager'
 bash_source_relative 'paths'
 bash_source_relative 'prompt'
 bash_source_relative 'various'
+
+link_to_home_relative 'bash-history-clean.sh', 'Library/Scripts/bash-history-clean.sh'
+launch_agent_relative 'com.dotfiles.bash-history-clean.plist'

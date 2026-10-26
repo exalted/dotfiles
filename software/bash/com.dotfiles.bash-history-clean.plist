@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.dotfiles.bash-history-clean</string>
+	<!-- The script is the executable on purpose: macOS names a background item after
+	     its executable in the Login Items notice and settings, and /bin/sh showed up as "sh".
+	     launchd expands no variables, so the installer renders @HOME@ when copying. -->
+	<key>ProgramArguments</key>
+	<array>
+		<string>@HOME@/Library/Scripts/bash-history-clean.sh</string>
+	</array>
+	<!-- Daily, 12:47 local. A time slept through runs on wake. -->
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>12</integer>
+		<key>Minute</key>
+		<integer>47</integer>
+	</dict>
+</dict>
+</plist>
