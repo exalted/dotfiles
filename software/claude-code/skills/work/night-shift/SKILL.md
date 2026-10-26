@@ -41,6 +41,7 @@ uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/night_
 | try KEY again | `retry KEY "what to change"` (the feedback goes into the next attempt's brief) |
 | merged KEY | `merged KEY` (also detected by itself once main holds the branch) |
 | work new stories however many ready ones wait | `set hold_while_waiting false` |
+| on the tactical team this week, or not | `set tactical true` / `set tactical false` (confirms the current week; stays until changed) |
 | stories on weekend nights | `set weekend_stories N` (0 turns weekend nights off), `set weekend_night_points N` |
 | done reviewing KEY | `cleanup KEY` (add `--force` only when the user says to remove an unmerged branch) |
 | run it now, test it | `run-now` (`--dry` picks stories and writes the note, works nothing) |
@@ -83,6 +84,21 @@ the night works 1 new story; with 2 waiting, none, and the run note says which s
 skipped (not workable, blocked) never counts. If the Jira check does not finish, every ready story counts.
 `set hold_while_waiting false` turns this off; a manual run with chosen candidates ignores it.
 
+## Tactical or strategic
+
+The team rotates weekly. With `tactical_label` set in `config.toml`, the night shift picks only stories with
+that label while the user is on the tactical team, and only stories without it otherwise. Which team counts
+for a night is decided for the ISO week of the morning after it:
+
+1. the user's own answer for that week: the dialog, or `set tactical true|false`;
+2. else the tactical pairs `/pairing-candidates` recorded for that week, with `pairing_handle` in a pair or not;
+3. else the `tactical` knob, carried over from the last answer.
+
+On weekday mornings, the morning check shows a dialog that stays until answered, "Which team are you on this
+week?", while the current week has neither an answer nor recorded pairs. Ready stories count against
+`stories` only when they belong to the night's team; the others keep their branches and wait. The run note
+and `status` show the team and why. Keys the user chose for a manual run are taken whatever their team.
+
 The user also decides through the Obsidian notes. Each note carries a `night_shift_id` in its frontmatter,
 and the night shift finds notes by it across the vault, so renaming or moving a note inside the night-shift
 folder changes nothing. A story note moved anywhere outside that folder (archived, kept for the user's own
@@ -118,7 +134,13 @@ failing closed:
 - A session starts only if the usage plus what that kind of session usually adds (measured, else a default)
   stays under the ceiling, and the night's rise stays within `night_points` (10; `weekend_night_points` on
   weekend nights). The night's points count every run of the night, restarts included.
-- A running session is stopped when the usage reaches the ceiling (checked every 10 minutes).
+- A story starts only when all its sessions (recheck, work, fix) fit in what is left of the night's points.
+  Otherwise it and the stories after it are left for a later night, untouched. Once started, a story's own
+  sessions may finish it above the night's points, never above the ceiling. So with `stories 3` and room for
+  two, the night completes two and leaves the third.
+- A running session is stopped when the usage reaches the ceiling (checked every 10 minutes). A story the
+  quota stopped half way is dropped (branch and note removed, ledger entry cleared) and starts over on a
+  later night.
 - `caps_usd` are only runaway guards per session, in the one unit `claude --max-budget-usd` accepts.
 - No story starts after `last_start` (03:00), and everything stops by `deadline` (05:00), so the 5-hour window
   the night opened is closed before the morning.

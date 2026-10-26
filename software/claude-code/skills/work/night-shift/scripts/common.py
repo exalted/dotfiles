@@ -33,6 +33,9 @@ LOCK_FILE = STATE_DIR / "lock"
 RUN_NOW_FILE = STATE_DIR / "run-now"
 FETCHED_FILE = STATE_DIR / "fetched.json"
 ALERT_FILE = STATE_DIR / "alert.json"
+TEAM_FILE = STATE_DIR / "team.json"
+# Written by /pairing-candidates when the user records the week's tactical pairs.
+TACTICAL_PAIRS_FILE = Path.home() / ".config" / "dotfiles" / "pairing-candidates" / "tactical.txt"
 # Written by the user's status line script (software/claude-code/statusline-command.sh) during day sessions;
 # a free reading when it is fresh, else the gate probes.
 USAGE_SNAPSHOT = Path.home() / ".local" / "state" / "claude-usage" / "latest.json"
@@ -52,6 +55,8 @@ DEFAULT_KNOBS: Json = {
     "stories": 1,
     # Ready stories waiting for the user's review, that nobody has picked up, count against `stories`.
     "hold_while_waiting": True,
+    # The user's team this week (see team.py): tactical works only stories with config's tactical_label.
+    "tactical": False,
     # Quota is in percent of the 7-day window. Day work keeps day_reserve_percent for each workday left before
     # the weekly reset (more if the ledger measured more); the night shift never goes above what is left, nor
     # above seven_day_ceiling_percent. One night may add at most night_points to the 7-day usage.
@@ -155,6 +160,10 @@ class Config:
     # A story that left To Do is cleaned up, unless it is in this status with the user as assignee or in this field.
     own_status: str = ""
     pair_field: str = ""
+    # Stories with this label are tactical work; the others are strategic. Empty: no split.
+    tactical_label: str = ""
+    # The user's handle in /pairing-candidates' tactical pairs.
+    pairing_handle: str = ""
 
     def subject(self, text: str, key: str | None = None) -> str:
         prefix = self.commit_prefix.format(key=key) if key else self.no_story_prefix
@@ -224,6 +233,8 @@ def load_config() -> Config:
         no_story_prefix=str(raw.get("no_story_prefix", "")),
         own_status=str(raw.get("own_status", "")),
         pair_field=str(raw.get("pair_field", "")),
+        tactical_label=str(raw.get("tactical_label", "")),
+        pairing_handle=str(raw.get("pairing_handle", "")),
     )
 
 

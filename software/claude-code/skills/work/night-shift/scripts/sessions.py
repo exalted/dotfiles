@@ -139,7 +139,8 @@ def run(spec: Spec, *, knobs: Json, deadline: datetime, morning: datetime) -> Re
         remaining = (deadline - datetime.now()).total_seconds()
         if remaining < 120:
             return Result("deadline", "no time left before the run's deadline", cost=total_cost, session_id=session_id, points=total_points)
-        verdict = quota.check(kind=spec.kind, knobs=knobs, morning=morning, **(spec.gate or RUN_GATE))
+        verdict = quota.check(kind=spec.kind, knobs=knobs, morning=morning, started_story=spec.key is not None and spec.kind in quota.STORY_KINDS,
+                              **(spec.gate or RUN_GATE))
         if not verdict.allowed:
             return Result("gated", verdict.reason, cost=total_cost, session_id=session_id, points=total_points)
         entry = quota.reserve(kind=spec.kind, cap=spec.cap_usd, run=spec.run_id, key=spec.key, start=verdict.usage, learn=not RUN_GATE)

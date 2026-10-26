@@ -31,6 +31,9 @@ PROBE_FILE = STATE_DIR / "usage.json"
 READING_MAX_AGE = 300
 # What a session of each kind adds to the 7-day usage, in points, until the ledger has measured enough of them.
 DEFAULT_POINTS = {"pick": 1.0, "recheck": 0.2, "work": 4.0, "fix": 1.5, "report": 0.5, "scan": 6.0, "patch": 2.0}
+# The sessions of one story. A story starts only when all of them fit in the night's points; once started, they
+# may finish it above the night's points, never above the ceiling.
+STORY_KINDS = ("recheck", "work", "fix")
 MIN_SAMPLES = 3
 
 
@@ -164,8 +167,11 @@ def settle(entry_id: str, cost: float | None, status: str) -> float | None:
 
 
 def estimate(kind: str, ledger: Json | None = None) -> float:
-    """What a session of this kind usually adds: the 75th percentile of measured ones, or a default."""
+    """What a session of this kind usually adds: the 75th percentile of measured ones, or a default. A "story" is
+    all of a story's sessions."""
     ledger = ledger or load_ledger()
+    if kind == "story":
+        return round(sum(estimate(part, ledger) for part in STORY_KINDS), 1)
     measured = [entry["points"] for entry in ledger["sessions"] if entry.get("kind") == kind and entry.get("learn", True) and entry.get("points") is not None]
     if len(measured) < MIN_SAMPLES:
         return DEFAULT_POINTS.get(kind, 2.0)
@@ -252,11 +258,12 @@ class Verdict:
         return self.usage.seven if self.usage else None
 
 
-def check(*, kind: str, knobs: Json, morning: datetime, since: float | None = None, points: float | None = None) -> Verdict:
+def check(*, kind: str, knobs: Json, morning: datetime, since: float | None = None, points: float | None = None, started_story: bool = False) -> Verdict:
     """May a session of this kind start now? Every rule must pass; the first failure is the reason.
 
     A night run counts its points from the night's start against night_points; a run with its own budget (a
-    manual run, the security run) passes its own start and points.
+    manual run, the security run) passes its own start and points. A session of a story already started skips
+    the points rule: its story was admitted with room for all its sessions, and half a story helps nobody.
     """
     if knobs.get("paused"):
         return Verdict(False, "the night shift is paused (/night-shift resume)")
@@ -270,6 +277,8 @@ def check(*, kind: str, knobs: Json, morning: datetime, since: float | None = No
         return Verdict(False, f"7-day usage {usage.seven:.0f}% + about {expected:g} for this {kind} would pass the {limit.explain()}", usage, limit)
     if usage.five is not None and usage.five_resets and usage.five_resets > morning.timestamp() and usage.five > 50:
         return Verdict(False, f"5-hour window at {usage.five:.0f}% stays open until {datetime.fromtimestamp(usage.five_resets):%H:%M}", usage, limit)
+    if started_story:
+        return Verdict(True, "ok", usage, limit)
     budget = float(points if points is not None else knobs["night_points"])
     used = usage.seven - baseline(since if since is not None else night_start(morning), usage, ledger)
     if used + expected > budget:

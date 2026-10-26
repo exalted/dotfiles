@@ -39,6 +39,7 @@ import note
 import quota
 import sessions
 import supervise
+import team
 import workspace
 from common import (
     CODEX_EXEC,
@@ -70,6 +71,8 @@ FINAL = {"solved", "partial", "abandoned"}
 FRESH_POLL_SECONDS = 300
 # Session outcomes after which no further Claude session may start tonight.
 STOP_NIGHT = {"usage_limit", "usage_limit_weekly", "gated", "deadline"}
+# A story the quota stopped half way is worth less than none: it is dropped and starts over on a later night.
+QUOTA_STOPS = {"usage_limit", "usage_limit_weekly", "gated"}
 RETRY_AFTER_DAYS = 7
 CODEX_RECHECK_SECONDS = 600
 MAX_DIFF_CHARS = 150_000
@@ -281,9 +284,10 @@ CLAIM_SCHEMA = {
     "additionalProperties": False,
     "required": ["stories"],
     "properties": {"stories": {"type": "array", "items": {
-        "type": "object", "additionalProperties": False, "required": ["key", "assignee", "status_category", "status", "mine"],
+        "type": "object", "additionalProperties": False, "required": ["key", "assignee", "status_category", "status", "mine", "labels"],
         "properties": {
             "key": {"type": "string"},
+            "labels": {"type": "array", "items": {"type": "string"}},
             "assignee": {"type": "string"},
             "mine": {"type": "boolean"},
             "status_category": {"type": "string", "enum": ["To Do", "In Progress", "Done"]},
@@ -295,7 +299,7 @@ CLAIM_TOOLS = ["ToolSearch", "mcp__plugin_atlassian_atlassian__getAccessibleAtla
 
 
 def jira_states(keys: list[str], config: Config, *, run_dir: Path, k: Json, deadline: datetime, morning: datetime) -> dict[str, Json] | None:
-    """Assignee and status of the stories waiting for review, and whether the user is working on each one, from
+    """Assignee, status and labels of the stories waiting for review, and whether the user is working on each one, from
     one small haiku session; None if it did not finish."""
     if not keys:
         return {}
@@ -306,8 +310,8 @@ def jira_states(keys: list[str], config: Config, *, run_dir: Path, k: Json, dead
         mine = (f"Then search with: key in ({listed}) AND status = \"{config.own_status}\" AND ({people}). mine is true exactly for "
                 "the stories this second search returns.")
     prompt = (
-        f"Search Jira with searchJiraIssuesUsingJql for: key in ({listed}), fields assignee and status. For each story give "
-        f"the assignee's display name (empty if none), the status category and the status name. {mine} Read only; change nothing."
+        f"Search Jira with searchJiraIssuesUsingJql for: key in ({listed}), fields assignee, status and labels. For each story give "
+        f"the assignee's display name (empty if none), the status category, the status name and the labels. {mine} Read only; change nothing."
     )
     result = sessions.run(
         sessions.Spec(kind="recheck", prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="haiku", effort="low",
@@ -356,6 +360,15 @@ def drop_story(config: Config, key: str, reason: str) -> list[str]:
         return [f"{key}: {reason}; kept {', '.join(kept)} for now"]
     update_issue(key, review="dropped", final=True, note_state="deleted", reason=reason)
     return [f"{key}: {reason}; removed {' and '.join(done) or 'nothing (already gone)'}"]
+
+
+def forget_story(config: Config, key: str, reason: str) -> list[str]:
+    """Remove a story's branches and note, and its ledger entry, so a later night may pick it again from scratch."""
+    report = drop_story(config, key, reason)
+    if "kept" not in report[0]:
+        with quota.transaction() as ledger:
+            ledger["issues"].pop(key, None)
+    return report
 
 
 def unclaimed(state: Json | None) -> bool:
@@ -508,7 +521,7 @@ def consume_run_now() -> Json | None:
     return request
 
 
-def context_for_picker(config: Config, k: Json, run_dir: Path, keys: list[str] | None = None) -> Path:
+def context_for_picker(config: Config, k: Json, run_dir: Path, tactical: bool, keys: list[str] | None = None) -> Path:
     ledger = quota.load_ledger()
     context = {
         "run_dir": str(run_dir),
@@ -517,7 +530,7 @@ def context_for_picker(config: Config, k: Json, run_dir: Path, keys: list[str] |
         "jira_site": config.jira_site,
         "jira_project": config.jira_project,
         "browse_url": browse_url(config),
-        "candidates": candidate_source(config, keys),
+        "candidates": candidate_source(config, tactical, keys),
         "people": config.people,
         "slack_channels": config.slack_channels,
         "repos": {name: str(repo.path) for name, repo in config.repos.items()},
@@ -531,24 +544,26 @@ def context_for_picker(config: Config, k: Json, run_dir: Path, keys: list[str] |
     return path
 
 
-def candidate_source(config: Config, keys: list[str] | None = None) -> Json:
-    """Where tonight's candidates come from, in the order the team ranks them.
+def candidate_source(config: Config, tactical: bool, keys: list[str] | None = None) -> Json:
+    """Where tonight's candidates come from, in the order the team ranks them, only the week's team's stories.
 
     With a board configured, only the cards in its to-do column count: a team-managed board keeps a separate
     backlog list in the same status, and those items rank above the column without being chosen work.
+    Keys the user chose by hand are taken whatever their team.
     """
     if keys:
         return {"keys": keys}
+    labels = team.label_clause(config, tactical)
     if config.jira_board_id:
         return {
             "board_id": config.jira_board_id,
-            "column_jql": f'status = "{config.jira_board_column_status}" AND assignee is EMPTY AND issuetype != Epic AND Flagged is EMPTY',
+            "column_jql": f'status = "{config.jira_board_column_status}" AND assignee is EMPTY AND issuetype != Epic AND Flagged is EMPTY{labels}',
             "exclude_backlog_list": True,
         }
     return {
         "jql": (
             f'project = {config.jira_project} AND assignee is EMPTY AND statusCategory = "To Do" AND status != Icebox '
-            f"AND Flagged is EMPTY AND issuetype != Epic ORDER BY Rank ASC"
+            f"AND Flagged is EMPTY AND issuetype != Epic{labels} ORDER BY Rank ASC"
         )
     }
 
@@ -634,8 +649,13 @@ def nightly(args: argparse.Namespace) -> None:
             if reason := gone_elsewhere(state):
                 night["warnings"] += drop_story(config, key, reason)
         night["awaiting"] = awaiting_review()
+        tactical, why = team.current(k, config, morning)
+        night["team"] = f"{team.name(tactical)} ({why})" if config.tactical_label else ""
         if k["hold_while_waiting"] and not candidate_keys:
-            waiting = [item for item in night["awaiting"] if ready(config, item) and unclaimed((states or {}).get(item["key"]))]
+            waiting = [
+                item for item in night["awaiting"]
+                if ready(config, item) and unclaimed(state := (states or {}).get(item["key"])) and team.on_team(state, config, tactical)
+            ]
             if states is None:
                 night["warnings"].append("Could not check in Jira whether the stories waiting for review were picked up; all ready ones count.")
             keys = ", ".join(item["key"] for item in waiting)
@@ -649,7 +669,7 @@ def nightly(args: argparse.Namespace) -> None:
         if codex.note:
             night["warnings"].append(codex.note)
 
-        context = context_for_picker(config, k, run_dir, candidate_keys)
+        context = context_for_picker(config, k, run_dir, tactical, candidate_keys)
         pick = sessions.run(
             sessions.Spec(
                 kind="pick",
@@ -681,9 +701,14 @@ def nightly(args: argparse.Namespace) -> None:
         if dry:
             night["stories"] = [{"key": story["key"], "summary": story.get("summary", ""), "status": "", "reason": "dry run: picked, not worked", "summary_text": story["brief"][:600]} for story in stories]
             return finish("dry-run")
-        for index, story in enumerate(stories[: int(k["stories"])]):
+        tonight = stories[: int(k["stories"])]
+        for index, story in enumerate(tonight):
             if datetime.now() > last_start:
                 night["skipped"].append({"key": story["key"], "reason": f"not started: past the last start time {k['last_start']}"})
+                break
+            room = quota.check(kind="story", knobs=k, morning=morning, **sessions.RUN_GATE)
+            if not room.allowed and not (k["codex_fallback"] and codex.ready()):
+                night["skipped"] += [{"key": item["key"], "reason": f"not started, left for a later night: {room.reason}"} for item in tonight[index:]]
                 break
             if stale := wait_until_fresh([config.repos[name] for name in story["repos"]], k, last_start):
                 night["warnings"].append(f"Stopped before {story['key']}: its checkouts stayed stale ({'; '.join(stale)}). Sign in to GitLab and run /sync-gitlab-repos.")
@@ -697,9 +722,13 @@ def nightly(args: argparse.Namespace) -> None:
                 update_issue(story["key"], status="blocked", final=False, reason="; ".join(recheck["reasons"]), jira_updated=recheck.get("updated"))
                 continue
             outcome = work_story(config, k, story, index, run_dir, codex, deadline, morning)
-            night["stories"].append(outcome)
             for problem in outcome.get("release_problems", []):
                 night["warnings"].insert(0, f"Your checkout after {story['key']} needs attention: {problem}")
+            if outcome["status"] in QUOTA_STOPS:
+                night["warnings"] += forget_story(config, story["key"], f"dropped half way, the quota stopped it ({outcome.get('reason')}); a later night starts it over")
+                night["skipped"].append({"key": story["key"], "reason": "dropped half way: the quota stopped it; a later night starts it over"})
+                break
+            night["stories"].append(outcome)
             if outcome["status"] in STOP_NIGHT:
                 night["warnings"].append(f"Stopped after {story['key']}: {outcome.get('reason')}")
                 break
@@ -1174,6 +1203,9 @@ def status(_: argparse.Namespace) -> None:
     runs = sorted(RUNS_DIR.glob("*"), key=lambda path: path.stat().st_mtime)[-3:] if RUNS_DIR.exists() else []
     try:
         config = load_config()
+        if config.tactical_label:
+            tactical, why = team.current(k, config, quota.morning_after(datetime.now()))
+            lines.append(f"team tonight: {team.name(tactical)} ({why})")
         lines += [f"closed now: {change}" for change in sync_notes(config)]
         for repo in config.repos.values():
             fetched = workspace.last_fetched(repo)
@@ -1210,7 +1242,10 @@ def set_knob(args: argparse.Namespace) -> None:
         value = float(raw)
     else:
         value = raw
-    save_knobs({name: value})
+    if name == "tactical":
+        team.confirm(bool(value), team.iso_week(datetime.now()), "set")
+    else:
+        save_knobs({name: value})
     print(f"{name} = {knobs()[name]}")
 
 
@@ -1279,6 +1314,19 @@ def check_repos(_: argparse.Namespace) -> None:
         alert.stale_repos(problems, tonight=False)
     else:
         log("all checkouts fetched")
+    now = datetime.now()
+    week = team.iso_week(now)
+    if config.tactical_label and not team.confirmed(week) and team.from_pairing(week, config.pairing_handle) is None:
+        log(f"asking which team the user is on in {week}")
+        alert.ask_team(week)
+
+
+def ask_team(_: argparse.Namespace) -> None:
+    week = team.iso_week(datetime.now())
+    answer = team.ask(knobs(), week)
+    if answer is not None:
+        team.confirm(answer, week, "dialog")
+        log(f"{week}: {team.name(answer)}")
 
 
 def fail(args: argparse.Namespace) -> None:
@@ -1306,6 +1354,7 @@ def main() -> None:
     p.set_defaults(handler=security)
     sub.add_parser("status").set_defaults(handler=status)
     sub.add_parser("check-repos").set_defaults(handler=check_repos)
+    sub.add_parser("ask-team").set_defaults(handler=ask_team)
     sub.add_parser("pause").set_defaults(handler=lambda _: print(f"paused = {save_knobs({'paused': True})['paused']}"))
     sub.add_parser("resume").set_defaults(handler=lambda _: print(f"paused = {save_knobs({'paused': False})['paused']}"))
     p = sub.add_parser("set")

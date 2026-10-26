@@ -38,6 +38,12 @@ no_story_prefix = "[NO-ID]"
 # own_status = "In Progress"
 # pair_field = "cf[12345]"
 
+# The team rotates weekly: on the tactical team the night shift picks only stories with this label, otherwise
+# only stories without it (the `tactical` knob). pairing_handle is your handle in /pairing-candidates' tactical
+# pairs; when that skill has recorded this week's pairs, they say which team you are on.
+# tactical_label = "tactical"
+# pairing_handle = "<your slack handle>"
+
 # Whose word decides what. Matched by work e-mail first, then by any of the names Jira and Slack show.
 [[people]]
 email = "<lead>@<company>"

@@ -1,7 +1,7 @@
-"""A dialog that stays on screen until the user answers it: for what only the user can fix, such as an
-expired GitLab sign-in that stops `git fetch`.
+"""Dialogs that stay on screen until the user answers them: for what only the user can fix or decide, such as an
+expired GitLab sign-in that stops `git fetch`, or which team they are on this week.
 
-One dialog at a time: while one is open, a new alert does not open a second. "Sync now" opens iTerm with
+One dialog of each kind at a time: while one is open, a new alert of that kind does not open a second. "Sync now" opens iTerm with
 /sync-gitlab-repos in a new Claude Code session; a night run that waits for fresh checkouts sees the sync and
 goes on by itself.
 """
@@ -9,8 +9,11 @@ goes on by itself.
 import os
 import subprocess
 import time
+from pathlib import Path
 
-from common import ALERT_FILE, read_json, write_json
+from common import ALERT_FILE, SCRIPTS_DIR, STATE_DIR, read_json, write_json
+
+TEAM_ALERT_FILE = STATE_DIR / "alert-team.json"
 
 SYNC_COMMAND = "cd ~/Developer && claude /sync-gitlab-repos; exec $SHELL -l"
 DIALOG = """on run argv
@@ -25,8 +28,8 @@ end run
 """
 
 
-def _open() -> bool:
-    pid = int((read_json(ALERT_FILE, {}) or {}).get("pid") or 0)
+def _open(path: Path = ALERT_FILE) -> bool:
+    pid = int((read_json(path, {}) or {}).get("pid") or 0)
     if not pid:
         return False
     try:
@@ -55,3 +58,15 @@ def stale_repos(problems: list[str], *, tonight: bool) -> bool:
         + f"\n\nSign in to GitLab in your browser (its SSO session expired), then run /sync-gitlab-repos. {when}"
     )
     return show("Night shift: sync your GitLab checkouts", message)
+
+
+def ask_team(week: str) -> bool:
+    """Ask which team the user is on, in a process of its own that records the answer, so the caller never waits."""
+    if _open(TEAM_ALERT_FILE):
+        return False
+    process = subprocess.Popen(
+        [str(SCRIPTS_DIR / "night_shift.py"), "ask-team"],
+        stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True,
+    )
+    write_json(TEAM_ALERT_FILE, {"pid": process.pid, "week": week, "at": time.time()})
+    return True
