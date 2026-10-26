@@ -347,6 +347,9 @@ def release_frame(frame_file: Path, *, repo: Repo, log_dir: Path, deadline: date
     if after.stash_list != user.stash_list:
         problems.append("your stash list differs from before the night")
     removed = _remove_if_empty(path, frame)
+    if user.backup_ref and not problems:
+        # The work is back exactly as it was, so its safety copy has done its job.
+        git(path, "update-ref", "-d", user.backup_ref)
     result = {"ok": not problems, "problems": problems, "archived_leftovers": str(archived) if archived else None, "backup_ref": user.backup_ref,
               "removed_empty_branch": removed}
     frame["released"] = result
@@ -465,7 +468,7 @@ def commit_paths(path: Path, paths: list[str], message: str) -> bool:
 
 
 def cleanup(repo: Repo, key: str, *, force: bool) -> str:
-    """After review: remove a story's branch once main holds its work; keep it under an archive name otherwise."""
+    """After review: remove a story's branch once main holds its work, or with force even if it does not."""
     branch = branch_name(key)
     if not git(repo.path, "branch", "--list", branch):
         return f"{repo.name}: no branch {branch}"
@@ -477,7 +480,6 @@ def cleanup(repo: Repo, key: str, *, force: bool) -> str:
         git(repo.path, "branch", "-D", branch)
         return f"{repo.name}: merged branch {branch} removed"
     if not force:
-        return f"{repo.name}: {branch} has commits that are not in main; merge it first, or pass --force to keep it as an archive branch"
-    archive = f"night-archive/{key}-{datetime.now():%Y%m%d}"
-    git(repo.path, "branch", "-m", branch, archive)
-    return f"{repo.name}: unmerged branch kept as {archive}"
+        return f"{repo.name}: {branch} has commits that are not in main; merge it first, or pass --force to remove it anyway"
+    git(repo.path, "branch", "-D", branch)
+    return f"{repo.name}: unmerged branch {branch} removed"

@@ -152,6 +152,9 @@ class Config:
     # How the driver's own commits start, to pass the repositories' commit-msg hooks: {key} is the story key.
     commit_prefix: str = "{key}:"
     no_story_prefix: str = ""
+    # A story that left To Do is cleaned up, unless it is in this status with the user as assignee or in this field.
+    own_status: str = ""
+    pair_field: str = ""
 
     def subject(self, text: str, key: str | None = None) -> str:
         prefix = self.commit_prefix.format(key=key) if key else self.no_story_prefix
@@ -219,6 +222,8 @@ def load_config() -> Config:
         security_rotation=[str(name) for name in raw.get("security_rotation", []) if name in repos],
         commit_prefix=str(raw.get("commit_prefix", "{key}:")),
         no_story_prefix=str(raw.get("no_story_prefix", "")),
+        own_status=str(raw.get("own_status", "")),
+        pair_field=str(raw.get("pair_field", "")),
     )
 
 

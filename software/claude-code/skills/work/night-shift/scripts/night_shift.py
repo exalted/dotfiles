@@ -11,7 +11,7 @@
   night_shift.py pause | resume
   night_shift.py set <knob> <value>          e.g. set stories 2, set night_points 15, set codex false
   night_shift.py skip <KEY>                  never take this story
-  night_shift.py reject <KEY> ["reason"]     you will not merge its branch: never retried, branch kept as night-archive/...
+  night_shift.py reject <KEY> ["reason"]     you will not merge its branch: never retried; branch and story note removed
   night_shift.py retry <KEY> ["feedback"]    take it again; the feedback goes into the next attempt's brief
   night_shift.py merged <KEY>                you merged it (also detected by itself once main holds the branch)
   night_shift.py cleanup <KEY> [--force]     after review: the story's branch removed once main has it
@@ -281,47 +281,94 @@ CLAIM_SCHEMA = {
     "additionalProperties": False,
     "required": ["stories"],
     "properties": {"stories": {"type": "array", "items": {
-        "type": "object", "additionalProperties": False, "required": ["key", "unclaimed", "why"],
-        "properties": {"key": {"type": "string"}, "unclaimed": {"type": "boolean"}, "why": {"type": "string"}},
+        "type": "object", "additionalProperties": False, "required": ["key", "assignee", "status_category", "status", "mine"],
+        "properties": {
+            "key": {"type": "string"},
+            "assignee": {"type": "string"},
+            "mine": {"type": "boolean"},
+            "status_category": {"type": "string", "enum": ["To Do", "In Progress", "Done"]},
+            "status": {"type": "string"},
+        },
     }}},
 }
 CLAIM_TOOLS = ["ToolSearch", "mcp__plugin_atlassian_atlassian__getAccessibleAtlassianResources", "mcp__plugin_atlassian_atlassian__searchJiraIssuesUsingJql"]
 
 
-def ready_and_unclaimed(config: Config, *, run_dir: Path, k: Json, deadline: datetime, morning: datetime) -> tuple[list[Json], str | None]:
-    """Stories whose branch is ready for the user's review and that nobody has picked up in Jira since.
-
-    They count against the night's story count: with as many waiting as the count allows, the night holds,
-    because a new story would only add to the review pile. A story that was only looked at and skipped never
-    waits for review, so it never counts. A Jira check that does not finish counts every ready story: an idle
-    night costs nothing, a story worked twice does.
-    """
-    ready = []
-    for item in awaiting_review():
-        branch = workspace.branch_name(item["key"])
-        repos = [config.repos[name] for name in item.get("repos", []) if name in config.repos]
-        if item.get("status") == "solved" and any(
-            workspace.git(repo.path, "branch", "--list", branch) and workspace.git(repo.path, "log", "--oneline", f"origin/main..{branch}") for repo in repos
-        ):
-            ready.append(item)
-    if not ready:
-        return [], None
-    keys = ", ".join(item["key"] for item in ready)
+def jira_states(keys: list[str], config: Config, *, run_dir: Path, k: Json, deadline: datetime, morning: datetime) -> dict[str, Json] | None:
+    """Assignee and status of the stories waiting for review, and whether the user is working on each one, from
+    one small haiku session; None if it did not finish."""
+    if not keys:
+        return {}
+    listed = ", ".join(keys)
+    mine = "mine is false for every story."
+    if config.own_status:
+        people = "assignee = currentUser()" + (f" OR {config.pair_field} = currentUser()" if config.pair_field else "")
+        mine = (f"Then search with: key in ({listed}) AND status = \"{config.own_status}\" AND ({people}). mine is true exactly for "
+                "the stories this second search returns.")
     prompt = (
-        f"Search Jira with searchJiraIssuesUsingJql for: key in ({keys}), fields assignee and status. For each story, unclaimed "
-        "is true only if it has no assignee and its status category is To Do; why says who has it or what its status is, in a "
-        "few words. Read only; change nothing."
+        f"Search Jira with searchJiraIssuesUsingJql for: key in ({listed}), fields assignee and status. For each story give "
+        f"the assignee's display name (empty if none), the status category and the status name. {mine} Read only; change nothing."
     )
     result = sessions.run(
         sessions.Spec(kind="recheck", prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="haiku", effort="low",
-                      cap_usd=0.5, minutes=5, permission_mode="dontAsk", allowed_tools=CLAIM_TOOLS, max_turns=8, json_schema=CLAIM_SCHEMA),
+                      cap_usd=0.5, minutes=5, permission_mode="dontAsk", allowed_tools=CLAIM_TOOLS, max_turns=10, json_schema=CLAIM_SCHEMA),
         knobs=k, deadline=deadline, morning=morning,
     )
     answer = result.data.get("structured_output") if result.status == "ok" else None
     if not isinstance(answer, dict):
-        return ready, f"could not check in Jira whether the stories waiting for review were picked up ({result.status} {result.reason})".strip()
-    unclaimed = {story["key"] for story in answer["stories"] if story["unclaimed"]}
-    return [item for item in ready if item["key"] in unclaimed], None
+        log(f"Jira state check did not finish: {result.status} {result.reason}")
+        return None
+    return {story["key"]: story for story in answer["stories"]}
+
+
+def gone_elsewhere(state: Json) -> str | None:
+    """Why a story waiting for review no longer needs our branch, or None. We picked it from To Do; once it has left
+    To Do, whoever moved it took it out of the night shift's hands. The exception is the user working on it
+    (own_status, as assignee or pair): then the branch is theirs to use."""
+    if state["status_category"] == "To Do" or state["mine"]:
+        return None
+    return f"it is {state['status']} in Jira" + (f", with {state['assignee']}" if state["assignee"] else "")
+
+
+def drop_story(config: Config, key: str, reason: str) -> list[str]:
+    """Remove a story's night branches and its story note, and close it in the ledger. A checkout on the branch keeps it."""
+    entry = quota.load_ledger()["issues"].get(key, {})
+    branch = workspace.branch_name(key)
+    done, kept = [], []
+    for name in entry.get("repos", []) or list(config.repos):
+        repo = config.repos.get(name)
+        if not repo or not workspace.git(repo.path, "branch", "--list", branch):
+            continue
+        if workspace.git(repo.path, "branch", "--show-current") == branch:
+            kept.append(f"{name} (you are on {branch})")
+            continue
+        workspace.git(repo.path, "branch", "-D", branch)
+        done.append(f"branch in {name}")
+    where = note.find_notes(note.vault_root(config.vault_folder)).get(entry.get("note_id") or "")
+    if where and where.is_relative_to(config.vault_folder):
+        subprocess.run(["/usr/bin/trash", "--stopOnError", str(where)], check=True)
+        done.append("story note")
+        folder = where.parent
+        if folder != config.vault_folder and not any(path for path in folder.iterdir() if not path.name.startswith(".")):
+            subprocess.run(["/usr/bin/trash", "--stopOnError", str(folder)], check=True)
+    if kept:
+        update_issue(key, reason=reason)
+        return [f"{key}: {reason}; kept {', '.join(kept)} for now"]
+    update_issue(key, review="dropped", final=True, note_state="deleted", reason=reason)
+    return [f"{key}: {reason}; removed {' and '.join(done) or 'nothing (already gone)'}"]
+
+
+def unclaimed(state: Json | None) -> bool:
+    """No state (the Jira check did not finish) counts as unclaimed: an idle night costs nothing, a story worked twice does."""
+    return state is None or (not state["assignee"] and state["status_category"] == "To Do")
+
+
+def ready(config: Config, item: Json) -> bool:
+    branch = workspace.branch_name(item["key"])
+    repos = [config.repos[name] for name in item.get("repos", []) if name in config.repos]
+    return item.get("status") == "solved" and any(
+        workspace.git(repo.path, "branch", "--list", branch) and workspace.git(repo.path, "log", "--oneline", f"origin/main..{branch}") for repo in repos
+    )
 
 
 def progress(issue_dir: Path, text: str) -> None:
@@ -582,11 +629,15 @@ def nightly(args: argparse.Namespace) -> None:
         for change in sync_notes(config):
             log(change)
         refresh_reviews(config)
+        states = jira_states([item["key"] for item in awaiting_review()], config, run_dir=run_dir, k=k, deadline=deadline, morning=morning)
+        for key, state in (states or {}).items():
+            if reason := gone_elsewhere(state):
+                night["warnings"] += drop_story(config, key, reason)
         night["awaiting"] = awaiting_review()
         if k["hold_while_waiting"] and not candidate_keys:
-            waiting, problem = ready_and_unclaimed(config, run_dir=run_dir, k=k, deadline=deadline, morning=morning)
-            if problem:
-                night["warnings"].append(problem)
+            waiting = [item for item in night["awaiting"] if ready(config, item) and unclaimed((states or {}).get(item["key"]))]
+            if states is None:
+                night["warnings"].append("Could not check in Jira whether the stories waiting for review were picked up; all ready ones count.")
             keys = ", ".join(item["key"] for item in waiting)
             room = int(k["stories"]) - len(waiting)
             if waiting and room <= 0:
@@ -1170,19 +1221,10 @@ def review(args: argparse.Namespace) -> None:
     text = " ".join(args.text).strip()
     if args.action == "reject":
         config = load_config()
-        entry = quota.load_ledger()["issues"].get(args.key, {})
-        kept = []
-        for name in entry.get("repos", []) or list(config.repos):
-            repo = config.repos.get(name)
-            branch = workspace.branch_name(args.key)
-            if repo and workspace.git(repo.path, "branch", "--list", branch):
-                if workspace.git(repo.path, "branch", "--show-current") == branch:
-                    sys.exit(f"{name}: you are on {branch}; switch away from it first")
-                archive = f"night-archive/{args.key}-{datetime.now():%Y%m%d}"
-                workspace.git(repo.path, "branch", "-m", branch, archive)
-                kept.append(f"{name}: {archive}")
+        with run_lock("reject"):
+            report = drop_story(config, args.key, f"you rejected it{': ' + text if text else ''}")
         update_issue(args.key, status="rejected", final=True, review="rejected", reason=text)
-        print(f"{args.key}: rejected, never retried" + (f"; branch kept as {', '.join(kept)}" if kept else ""))
+        print(f"{args.key}: rejected, never retried. " + "; ".join(report))
     elif args.action == "retry":
         with quota.transaction() as ledger:
             entry = ledger["issues"].get(args.key, {})
@@ -1214,6 +1256,8 @@ def cleanup(args: argparse.Namespace) -> None:
         for repo in config.repos.values():
             if workspace.git(repo.path, "branch", "--list", workspace.branch_name(args.key)):
                 print(workspace.cleanup(repo, args.key, force=args.force))
+        if args.force:
+            update_issue(args.key, review="dropped", final=True)
 
 
 def run_now(args: argparse.Namespace) -> None:

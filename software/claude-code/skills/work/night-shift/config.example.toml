@@ -33,6 +33,11 @@ security_rotation = ["backend", "backend", "webapp"]
 commit_prefix = "[{key}]"
 no_story_prefix = "[NO-ID]"
 
+# A story the night shift worked is cleaned up (branch and story note removed) once it leaves To Do, unless it
+# is in own_status with you as assignee or in pair_field (a JQL field reference, e.g. "cf[12345]").
+# own_status = "In Progress"
+# pair_field = "cf[12345]"
+
 # Whose word decides what. Matched by work e-mail first, then by any of the names Jira and Slack show.
 [[people]]
 email = "<lead>@<company>"
@@ -66,3 +71,4 @@ path = "~/Developer/<webapp>"
 setup = [["pnpm", "install", "--frozen-lockfile"]]
 verify = [["pnpm", "run", "lint"], ["pnpm", "run", "type-check"], ["pnpm", "run", "test", "--run"]]
 security_areas = ["src/<request handling>"]
+

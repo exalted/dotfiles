@@ -37,12 +37,12 @@ uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/night_
 | security analysis on / off | `set security true` / `set security false` |
 | codex on / off, codex fallback | `set codex true|false`, `set codex_fallback true|false` |
 | never take KEY | `skip KEY` |
-| won't merge KEY's branch | `reject KEY "why"` (never retried; branch kept as `night-archive/KEY-<date>`) |
+| won't merge KEY's branch | `reject KEY "why"` (never retried; its branch and story note are removed) |
 | try KEY again | `retry KEY "what to change"` (the feedback goes into the next attempt's brief) |
 | merged KEY | `merged KEY` (also detected by itself once main holds the branch) |
 | work new stories however many ready ones wait | `set hold_while_waiting false` |
 | stories on weekend nights | `set weekend_stories N` (0 turns weekend nights off), `set weekend_night_points N` |
-| done reviewing KEY | `cleanup KEY` (add `--force` only when the user says to keep an unmerged branch as an archive) |
+| done reviewing KEY | `cleanup KEY` (add `--force` only when the user says to remove an unmerged branch) |
 | run it now, test it | `run-now` (`--dry` picks stories and writes the note, works nothing) |
 
 Say what changed in one line. For `status`, explain the quota line in plain words, in percent, never in dollars.
@@ -51,7 +51,7 @@ Say what changed in one line. For `status`, explain the quota line in plain word
 
 The night shift works in the user's own checkouts under `~/Developer/`, one story at a time. Before a story,
 it records the checkout's branch, HEAD, status and stash list, sets the user's uncommitted work aside with
-`git stash` (also kept under `refs/night-shift/backup/`), and creates `night/<KEY>` from `origin/main`. After
+`git stash` (also kept under `refs/night-shift/backup/` until it is restored), and creates `night/<KEY>` from `origin/main`. After
 the story, whatever happens, it saves anything left uncommitted to the archive, switches back, restores the
 user's work exactly (staged stays staged), re-runs the repository's setup, and checks that branch, HEAD,
 status and stash list match the record. A mismatch goes to the top of the note. A crashed run is released
@@ -148,6 +148,14 @@ story's main checkout, on its branch. The fix round resumes the same session, so
 work on the story.
 
 ## Branches
+
+The night shift keeps no archive or backup branches. A rejected story loses its branch and story note. At the
+start of each night, one small Jira check reads the stories waiting for review. The night shift picked each from
+To Do; one that has left To Do (in progress, done or canceled, whoever moved it) is out of its hands: it loses
+its branch and story note (moved to the Trash, with its day folder if that is left empty), and the ledger closes
+it. The exception is the user working on it, in `own_status` from `config.toml` with the user as assignee or in
+`pair_field`: then everything stays. A merged story is detected before this check and keeps its note. A checkout that is on the
+branch keeps it until the next night.
 
 A branch the night created and left without a commit (a repository the story did not need, a story that never
 started) is removed when the night releases the checkout. The user reviews only branches with work on them.
