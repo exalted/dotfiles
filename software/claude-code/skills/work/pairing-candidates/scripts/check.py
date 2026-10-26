@@ -8,6 +8,7 @@
 Never calls, messages, joins or changes anything in Slack or Tuple.
 """
 
+import argparse
 import html
 import json
 import re
@@ -28,6 +29,7 @@ from typing import Any, cast
 CONFIG_DIR = Path.home() / ".config" / "dotfiles" / "pairing-candidates"
 ROSTER_FILE = CONFIG_DIR / "roster.txt"
 CHANNEL_FILE = CONFIG_DIR / "channel"
+TACTICAL_FILE = CONFIG_DIR / "tactical.txt"
 KEYCHAIN_SERVICE = "pairing-candidates-slack-token"
 WORKDAY_START_HOUR = 9
 WORKDAY_END_HOUR = 18
@@ -36,6 +38,7 @@ REQUIRED_SCOPES = "channels:read, channels:history, users:read, users:read.email
 PAIR_REACTIONS = frozenset({"tuple", "pear", "pair", "tuple-pear"})
 MESSAGE_PREVIEW_LENGTH = 300
 EXIT_SETUP_ERROR = 2
+EXIT_TACTICAL_PAIRS_NEEDED = 3
 
 type Json = dict[str, Any]
 
@@ -94,6 +97,10 @@ OCCUPIED_STATUS = status_pattern(
 
 
 class SetupError(Exception):
+    pass
+
+
+class TacticalPairsNeeded(Exception):
     pass
 
 
@@ -175,6 +182,14 @@ class PairingCheck:
     history_known: bool
     missing_handles: tuple[str, ...]
     channel_name: str
+    own_handle: str
+    tactical_pairs: tuple[tuple[str, str], ...]
+
+    @property
+    def tactical_partner(self) -> str | None:
+        return next(
+            (b if a == self.own_handle else a for a, b in self.tactical_pairs if self.own_handle in (a, b)), None
+        )
 
 
 class SlackClient:
@@ -253,6 +268,60 @@ def read_roster() -> dict[str, RosterEntry]:
         handle = handle.lstrip("@").lower()
         roster[handle] = RosterEntry(handle=handle, role=role[0] if role else "", group=group)
     return roster
+
+
+def iso_week(now: datetime) -> str:
+    year, week, _ = now.isocalendar()
+    return f"{year}-W{week:02d}"
+
+
+def to_handle(text: str) -> str:
+    return text.strip().lstrip("@").lower()
+
+
+def read_tactical_pairs(*, now: datetime) -> tuple[tuple[str, str], ...] | None:
+    """Return this week's tactical pairs, or None when they were not recorded for the current ISO week."""
+    if not TACTICAL_FILE.exists():
+        return None
+    week = ""
+    pairs: list[tuple[str, str]] = []
+    for number, raw_line in enumerate(TACTICAL_FILE.read_text().splitlines(), start=1):
+        line = raw_line.split("#", 1)[0].strip()
+        if not line:
+            continue
+        if line.startswith("week "):
+            week = line.removeprefix("week ").strip()
+            continue
+        handles = [to_handle(part) for part in line.split("+")]
+        if len(handles) != 2 or not all(handles):
+            raise SetupError(f"{TACTICAL_FILE.name}:{number}: '{line}' is not a 'handle + handle' pair")
+        pairs.append((handles[0], handles[1]))
+    return tuple(pairs) if week == iso_week(now) else None
+
+
+def pairing_handles_hint(*, roster: dict[str, RosterEntry], own_handle: str) -> str:
+    handles = [f"{h} ({e.role})" if e.role else h for h, e in roster.items() if e.group is RosterGroup.PAIRING]
+    return f"[pairing] handles: {', '.join(handles)}; your own handle: {own_handle}"
+
+
+def record_tactical_pairs(*, arguments: list[str], own_handle: str, now: datetime) -> None:
+    roster = read_roster()
+    allowed = {h for h, e in roster.items() if e.group is RosterGroup.PAIRING} | {own_handle}
+    hint = pairing_handles_hint(roster=roster, own_handle=own_handle)
+    pairs: list[tuple[str, str]] = []
+    if arguments != ["none"]:
+        for argument in arguments:
+            handles = [to_handle(part) for part in argument.split("+")]
+            if len(handles) != 2 or not all(handles):
+                raise TacticalPairsNeeded(f"'{argument}' is not a 'handle+handle' pair. {hint}")
+            if unknown := [h for h in handles if h not in allowed]:
+                raise TacticalPairsNeeded(f"not a [pairing] handle: {', '.join(unknown)}. {hint}")
+            pairs.append((handles[0], handles[1]))
+    seen = [h for pair in pairs for h in pair]
+    if len(seen) != len(set(seen)):
+        raise TacticalPairsNeeded(f"a handle is in more than one pair: {' '.join(arguments)}. {hint}")
+    lines = ["# Written by check.py --tactical; stale once the ISO week changes.", f"week {iso_week(now)}"]
+    TACTICAL_FILE.write_text("\n".join([*lines, *(f"{a} + {b}" for a, b in pairs)]) + "\n")
 
 
 def list_channel_member_ids(*, slack: SlackClient, channel_id: str) -> list[str]:
@@ -459,6 +528,24 @@ def describe_unavailable(verdicts: list[Verdict]) -> list[str]:
     return lines
 
 
+def describe_partner(*, verdict: Verdict, checked_at: datetime) -> str:
+    member = verdict.member
+    if verdict.blocker is Blocker.IN_CALL:
+        details = f"{member.name} (@{member.handle}) · {Blocker.IN_CALL}: {' + '.join(verdict.call_group)}"
+    elif verdict.blocker is not None:
+        details = f"{member.name} (@{member.handle}) · {verdict.blocker}"
+    else:
+        details = describe_reachable(verdict=verdict, checked_at=checked_at)
+    return f"Your tactical partner ({verdict.tier}): {details}"
+
+
+def describe_tactical_pairs(*, check: PairingCheck, names: dict[str, str]) -> str:
+    def name(handle: str) -> str:
+        return "you" if handle == check.own_handle else names.get(handle, f"@{handle}")
+
+    return f"Tactical this week: {' · '.join(f'{name(a)} + {name(b)}' for a, b in check.tactical_pairs)}"
+
+
 def describe_around(verdict: Verdict) -> str:
     role = verdict.roster_entry.role
     return f"{verdict.member.name} ({role})" if role else verdict.member.name
@@ -477,11 +564,23 @@ def describe_unanswered(*, message: UnansweredMessage, checked_at: datetime) -> 
 
 def render(*, check: PairingCheck, checked_at: datetime) -> str:
     verdicts = sorted(check.verdicts, key=lambda v: v.member.name.lower())
-    pairing = [v for v in verdicts if v.roster_entry.group is RosterGroup.PAIRING]
+    tactical = {handle for pair in check.tactical_pairs for handle in pair}
+    partner = check.tactical_partner
+    pairing = [
+        v for v in verdicts if v.roster_entry.group is RosterGroup.PAIRING and v.member.handle.lower() not in tactical
+    ]
     by_tier = {tier: [v for v in pairing if v.tier is tier] for tier in Tier}
     around = [v for v in verdicts if v.roster_entry.group is RosterGroup.ON_REQUEST and v.tier is Tier.CANDIDATE]
     candidates = by_tier[Tier.CANDIDATE]
     lines = [f"Pairing check at {checked_at:%H:%M}: {len(candidates)} of {len(pairing)} teammates can pair now"]
+    if partner is not None:
+        partner_verdict = next((v for v in verdicts if v.member.handle.lower() == partner), None)
+        lines += [
+            "",
+            describe_partner(verdict=partner_verdict, checked_at=checked_at)
+            if partner_verdict
+            else f"Your tactical partner: @{partner}, not found in #{check.channel_name}",
+        ]
     for tier in (Tier.CANDIDATE, Tier.MAYBE):
         if by_tier[tier] or tier is Tier.CANDIDATE:
             lines += ["", f"{tier} ({len(by_tier[tier])})"]
@@ -490,6 +589,9 @@ def render(*, check: PairingCheck, checked_at: datetime) -> str:
             ]
     if unavailable := by_tier[Tier.NOT_AVAILABLE]:
         lines += ["", f"{Tier.NOT_AVAILABLE} ({len(unavailable)})", *describe_unavailable(unavailable)]
+    if check.tactical_pairs:
+        names = {v.member.handle.lower(): v.member.name for v in verdicts}
+        lines += ["", describe_tactical_pairs(check=check, names=names)]
     if around:
         lines += ["", f"Also around (on request): {', '.join(describe_around(v) for v in around)}"]
     if check.missing_handles:
@@ -497,14 +599,13 @@ def render(*, check: PairingCheck, checked_at: datetime) -> str:
         lines += ["", f"Not found in #{check.channel_name}, check {ROSTER_FILE}: {missing}"]
     if not check.dnd_known:
         lines += ["", "DND not checked: the Slack token lacks the dnd:read scope."]
+    # Tactical people already have a partner, so only your own partner's requests concern you.
+    unanswered = [m for m in check.unanswered_messages if m.member.handle.lower() not in tactical - {partner}]
     if not check.history_known:
         lines += ["", "Pair requests not checked: the Slack token lacks the channels:history scope."]
-    elif check.unanswered_messages:
-        lines += [
-            "",
-            f"Unanswered messages to judge ({len(check.unanswered_messages)}), today in #{check.channel_name}",
-        ]
-        lines += [describe_unanswered(message=m, checked_at=checked_at) for m in check.unanswered_messages]
+    elif unanswered:
+        lines += ["", f"Unanswered messages to judge ({len(unanswered)}), today in #{check.channel_name}"]
+        lines += [describe_unanswered(message=m, checked_at=checked_at) for m in unanswered]
     return "\n".join(lines)
 
 
@@ -514,6 +615,12 @@ def check_team(*, slack: SlackClient, now: datetime) -> PairingCheck:
     contacts = read_tuple_contacts()
     own_identity = slack.call("auth.test")
     own_user_id = cast(str, own_identity["user_id"])
+    own_handle = to_handle(cast(str, own_identity["user"]))
+    tactical_pairs = read_tactical_pairs(now=now)
+    if tactical_pairs is None:
+        raise TacticalPairsNeeded(
+            f"no tactical pairs recorded for week {iso_week(now)}. {pairing_handles_hint(roster=roster, own_handle=own_handle)}"
+        )
     channel_name = cast(str, slack.call("conversations.info", channel=channel_id)["channel"]["name"])
     member_ids = [i for i in list_channel_member_ids(slack=slack, channel_id=channel_id) if i != own_user_id]
 
@@ -538,7 +645,7 @@ def check_team(*, slack: SlackClient, now: datetime) -> PairingCheck:
         else []
     )
     handles = {cast(str, u["id"]): cast(str, u["name"]) for u in users}
-    found_handles = {m.handle.lower() for m in members} | {str(own_identity.get("user", "")).lower()}
+    found_handles = {m.handle.lower() for m in members} | {own_handle}
     missing_handles = tuple(sorted(set(roster) - found_handles))
 
     contacts_by_email = {c.email: c for c in contacts}
@@ -572,16 +679,33 @@ def check_team(*, slack: SlackClient, now: datetime) -> PairingCheck:
         history_known=channel_messages is not None,
         missing_handles=missing_handles,
         channel_name=channel_name,
+        own_handle=own_handle,
+        tactical_pairs=tactical_pairs,
     )
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--tactical",
+        nargs="+",
+        metavar="HANDLE+HANDLE",
+        help="record this ISO week's tactical pairs (or 'none'), then run the check",
+    )
+    arguments = parser.parse_args()
     now = datetime.now().astimezone()
     try:
-        check = check_team(slack=SlackClient(read_slack_token()), now=now)
+        slack = SlackClient(read_slack_token())
+        if arguments.tactical:
+            own_handle = to_handle(cast(str, slack.call("auth.test")["user"]))
+            record_tactical_pairs(arguments=arguments.tactical, own_handle=own_handle, now=now)
+        check = check_team(slack=slack, now=now)
     except SetupError as error:
         print(f"SETUP ERROR: {error}", file=sys.stderr)
         return EXIT_SETUP_ERROR
+    except TacticalPairsNeeded as error:
+        print(f"TACTICAL PAIRS NEEDED: {error}", file=sys.stderr)
+        return EXIT_TACTICAL_PAIRS_NEEDED
     except (RuntimeError, urllib.error.URLError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
