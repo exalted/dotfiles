@@ -12,6 +12,7 @@ import subprocess
 import time
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
 
 GRACE_SECONDS = 30
 CODEX_GROUPS_FILE = "codex-pgids"
@@ -23,9 +24,12 @@ class Outcome:
     timed_out: bool
     stdout: str
     stderr: str
+    stopped: str | None = None
 
 
-def run(command: list[str], *, cwd: Path, seconds: float, env: dict[str, str] | None = None, log_dir: Path, name: str) -> Outcome:
+def run(command: list[str], *, cwd: Path, seconds: float, env: dict[str, str] | None = None, log_dir: Path, name: str,
+        watch: Callable[[], str | None] | None = None, watch_every: float = 600) -> Outcome:
+    """`watch` is asked every `watch_every` seconds; a reason it returns ends the child as a deadline would."""
     log_dir.mkdir(parents=True, exist_ok=True)
     out_path, err_path = log_dir / f"{name}.out", log_dir / f"{name}.err"
     with out_path.open("w") as out, err_path.open("w") as err:
@@ -33,10 +37,15 @@ def run(command: list[str], *, cwd: Path, seconds: float, env: dict[str, str] | 
             command, cwd=cwd, env=_child_env(env), stdin=subprocess.DEVNULL, stdout=out, stderr=err, start_new_session=True
         )
         timed_out = False
+        stopped = None
         end = time.monotonic() + max(seconds, 1)
+        next_watch = time.monotonic() + watch_every
         while process.poll() is None:
-            if time.monotonic() >= end:
-                timed_out = True
+            if watch and time.monotonic() >= next_watch:
+                next_watch = time.monotonic() + watch_every
+                stopped = watch()
+            if time.monotonic() >= end or stopped:
+                timed_out = not stopped
                 _signal_group(process.pid, signal.SIGTERM)
                 try:
                     process.wait(GRACE_SECONDS)
@@ -47,7 +56,7 @@ def run(command: list[str], *, cwd: Path, seconds: float, env: dict[str, str] | 
         end_group(process.pid)
         if process.poll() is None:
             process.wait()
-    return Outcome(process.returncode if process.returncode is not None else -1, timed_out, out_path.read_text(), err_path.read_text())
+    return Outcome(process.returncode if process.returncode is not None else -1, timed_out, out_path.read_text(), err_path.read_text(), stopped)
 
 
 def _child_env(extra: dict[str, str] | None) -> dict[str, str]:

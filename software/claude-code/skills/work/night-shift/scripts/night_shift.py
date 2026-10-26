@@ -9,13 +9,14 @@
   night_shift.py security [--now]            the weekly deep security analysis (off until `set security true`)
   night_shift.py status                      knobs, quota, last runs, story branches
   night_shift.py pause | resume
-  night_shift.py set <knob> <value>          e.g. set stories 2, set seven_day_max_percent 50, set codex false
+  night_shift.py set <knob> <value>          e.g. set stories 2, set night_points 15, set codex false
   night_shift.py skip <KEY>                  never take this story
   night_shift.py reject <KEY> ["reason"]     you will not merge its branch: never retried, branch kept as night-archive/...
   night_shift.py retry <KEY> ["feedback"]    take it again; the feedback goes into the next attempt's brief
   night_shift.py merged <KEY>                you merged it (also detected by itself once main holds the branch)
   night_shift.py cleanup <KEY> [--force]     after review: the story's branch removed once main has it
   night_shift.py run-now [--dry]             start the nightly run through the launch agent now
+  night_shift.py check-repos                 the morning check: fetch every checkout, alert if a sync is needed
   night_shift.py fail "<message>"            the wrapper's last resort: write a failure note
 
 Hard rules the code enforces, not the prompts: the quota guard (quota.py) before every Claude session,
@@ -33,6 +34,7 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import alert
 import note
 import quota
 import sessions
@@ -45,7 +47,6 @@ from common import (
     RUNS_DIR,
     SECURITY_REQUEST_FILE,
     STATE_DIR,
-    USAGE_SEEN_WITHOUT,
     Config,
     Json,
     at_time,
@@ -66,6 +67,7 @@ UV = "uv run --quiet --no-project --script"
 SCRIPTS = "~/.claude/skills/night-shift/scripts"
 LAUNCH_LABEL = "com.dotfiles.night-shift"
 FINAL = {"solved", "partial", "abandoned"}
+FRESH_POLL_SECONDS = 300
 # Session outcomes after which no further Claude session may start tonight.
 STOP_NIGHT = {"usage_limit", "usage_limit_weekly", "gated", "deadline"}
 RETRY_AFTER_DAYS = 7
@@ -289,6 +291,31 @@ def update_issue(key: str, **fields: object) -> None:
         ledger["issues"][key] = {**ledger["issues"].get(key, {}), **fields, "date": datetime.now().isoformat(timespec="minutes")}
 
 
+def sync_notes(config: Config) -> list[str]:
+    """The user's word on a story note: archived (moved anywhere in the vault outside the night-shift folder) or
+    deleted means the story is closed, ignored from now on, never picked again and never listed as waiting.
+    Run notes carry no meaning. Notes are found by their id, so a rename or a move inside the folder changes nothing.
+
+    The ledger records it, so the ledger never says what the vault contradicts. An archived note is the user's,
+    not a source: nothing reads it after this.
+    """
+    closed = []
+    notes = note.find_notes(note.vault_root(config.vault_folder))
+    with quota.transaction() as ledger:
+        for key, entry in ledger["issues"].items():
+            if not entry.get("note_id") or entry.get("note_state") in ("archived", "deleted"):
+                continue
+            where = notes.get(entry["note_id"])
+            if where and where.is_relative_to(config.vault_folder):
+                entry["note"] = str(where.relative_to(config.vault_folder))
+                continue
+            state = "archived" if where else "deleted"
+            entry.update(note_state=state, final=True, review=entry.get("review") if entry.get("review") in ("merged", "rejected") else "closed",
+                         closed=datetime.now().isoformat(timespec="minutes"))
+            closed.append(f"{key}: note {state}")
+    return closed
+
+
 def refresh_reviews(config: Config) -> None:
     """A story waiting for review is merged once main holds all of its branch's commits; the user merges and pushes."""
     with quota.transaction() as ledger:
@@ -341,6 +368,35 @@ def reconcile(current_run: Path, config: Config) -> list[str]:
         update_issue(key, status="interrupted", final=True)
         set_phase(phase_file.parent, "reconciled")
     return found
+
+
+def stale_checkouts(repos: list, k: Json) -> list[str]:
+    return [problem for repo in repos if (problem := workspace.staleness(repo, int(k["fetch_max_workdays"])))]
+
+
+def fetch_all(repos: list) -> list[str]:
+    """One warning per distinct failure, naming every repository it hit."""
+    failed: dict[str, list[str]] = {}
+    for repo in repos:
+        if reason := workspace.fetch(repo):
+            failed.setdefault(reason, []).append(repo.name)
+    return [f"git fetch failed for {', '.join(names)} ({reason}); the work is based on their last fetched origin/main." for reason, names in failed.items()]
+
+
+def wait_until_fresh(repos: list, k: Json, until: datetime) -> list[str]:
+    """No story starts on a stale checkout. The user gets a dialog; once they sync (or GitLab lets the fetch
+    through again), the run goes on. What is still stale at `until` is returned."""
+    problems = stale_checkouts(repos, k)
+    if problems:
+        log(f"stale checkouts, waiting until {until:%H:%M} for a sync: {problems}")
+        alert.stale_repos(problems, tonight=True)
+    while problems and datetime.now() + timedelta(seconds=FRESH_POLL_SECONDS) < until:
+        time.sleep(FRESH_POLL_SECONDS)
+        for repo in repos:
+            if workspace.staleness(repo, int(k["fetch_max_workdays"])):
+                workspace.fetch(repo)
+        problems = stale_checkouts(repos, k)
+    return problems
 
 
 def deadlines(k: Json, now: datetime, manual: bool) -> tuple[datetime, datetime]:
@@ -440,18 +496,23 @@ def nightly(args: argparse.Namespace) -> None:
     if any(not valid_key(key) for key in candidate_keys):
         sys.exit(f"invalid key in --candidates: {args.candidates}")
     if manual:
-        sessions.RUN_GATE.update(since=time.time(), allowance=float(k["night_allowance_usd"]))
+        sessions.RUN_GATE.update(since=time.time(), points=float(k["night_points"]))
     run_dir = new_run_dir(now.strftime("%Y%m%d-%H%M%S"))
-    night: Json = {"date": morning.date().isoformat(), "stories": [], "skipped": [], "warnings": [], "interrupted": [], "status": "done"}
+    kind = "Dry run" if dry else "Manual run" if manual else "Night run"
+    night: Json = {"date": morning.date().isoformat(), "started": now.isoformat(), "kind": kind, "stories": [], "skipped": [], "warnings": [], "interrupted": [], "status": "done"}
 
     def finish(status: str | None = None, reason: str | None = None) -> None:
         if status:
             night["status"] = status
         if reason:
             night["reason"] = reason
-        night["quota"] = quota.describe(k, morning, sessions.RUN_GATE.get("since"))
+        quota.current(max_age=0, label="night_end")
+        night["quota"] = quota.describe(k, morning, sessions.RUN_GATE.get("since"), sessions.RUN_GATE.get("points"))
         path = note.night_note(folder=config.vault_folder, night=night, browse=browse_url(config))
         log(f"note: {path}")
+        for story in night.get("stories", []):
+            if story.get("note_id"):
+                update_issue(story["key"], note=story["note"], note_id=story["note_id"], note_state="open")
 
     if not manual and not (now.hour < 12 and now <= last_start):
         log(f"started at {now:%H:%M}, outside the night window (until {k['last_start']}): nothing to do")
@@ -460,19 +521,18 @@ def nightly(args: argparse.Namespace) -> None:
         if int(k["weekend_stories"]) <= 0:
             log("weekend night: weekend_stories is 0, nothing to do")
             return
-        k = {**k, "stories": int(k["weekend_stories"]), "night_allowance_usd": float(k["weekend_night_allowance_usd"])}
+        k = {**k, "stories": int(k["weekend_stories"]), "night_points": float(k["weekend_night_points"])}
     with run_lock("nightly"):
         night["interrupted"] = reconcile(run_dir, config)
         workspace.night_aws_config(config.aws_allowed_accounts)
         workspace.night_docker_config()
-        verdict = quota.check(cap=k["caps_usd"]["pick"], knobs=k, morning=morning)
+        quota.current(max_age=0, label="run_start" if manual else "night_start")
+        verdict = quota.check(kind="pick", knobs=k, morning=morning, **sessions.RUN_GATE)
         if not verdict.allowed:
-            if USAGE_SEEN_WITHOUT.exists() and not quota.snapshot():
-                night["warnings"].append("Your Claude Code status line has not received rate_limits on this account, so the quota gate stays closed.")
             return finish("skipped", f"Not started: {verdict.reason}")
-        for repo in config.repos.values():
-            if warning := workspace.fetch(repo):
-                night["warnings"].append(warning)
+        night["warnings"] += fetch_all(list(config.repos.values()))
+        for change in sync_notes(config):
+            log(change)
         refresh_reviews(config)
         night["awaiting"] = awaiting_review()
         codex = Codex(bool(k["codex"]), run_dir / "logs", deadline)
@@ -514,6 +574,9 @@ def nightly(args: argparse.Namespace) -> None:
         for index, story in enumerate(stories[: int(k["stories"])]):
             if datetime.now() > last_start:
                 night["skipped"].append({"key": story["key"], "reason": f"not started: past the last start time {k['last_start']}"})
+                break
+            if stale := wait_until_fresh([config.repos[name] for name in story["repos"]], k, last_start):
+                night["warnings"].append(f"Stopped before {story['key']}: its checkouts stayed stale ({'; '.join(stale)}). Sign in to GitLab and run /sync-gitlab-repos.")
                 break
             recheck = jira_recheck(story["key"], run_dir=run_dir, k=k, deadline=deadline, morning=morning)
             if recheck["status"] in STOP_NIGHT:
@@ -583,6 +646,10 @@ def brief_text(story: Json, prepared: list[workspace.Prepared], issue_dir: Path,
     return "\n".join(lines) + "\n"
 
 
+def session_name(story: Json) -> str:
+    return f"night {story['key']}: {story.get('summary', '')}".strip().rstrip(":")[:80]
+
+
 def work_story(config: Config, k: Json, story: Json, index: int, run_dir: Path, codex: Codex, deadline: datetime, morning: datetime) -> Json:
     """One story in the user's own checkouts: enter, work, review, fix, verify, check independence, release.
 
@@ -614,6 +681,8 @@ def work_story(config: Config, k: Json, story: Json, index: int, run_dir: Path, 
         for item in reversed(prepared):
             releases[item.repo] = workspace.release(item, repo=config.repos[item.repo], log_dir=issue_dir / "logs", deadline=None)
         outcome["release"] = releases
+        for repo in outcome["repos"]:
+            repo["removed"] = bool((releases.get(repo["repo"]) or {}).get("removed_empty_branch"))
         bad = [f"{repo}: {'; '.join(result['problems'])}" for repo, result in releases.items() if not result["ok"]]
         if bad:
             outcome["release_problems"] = bad
@@ -627,7 +696,7 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
           prepared: list[workspace.Prepared], outcome: Json) -> None:
     key = story["key"]
     set_phase(issue_dir, "working")
-    verdict = quota.check(cap=k["caps_usd"]["work"], knobs=k, morning=morning, **sessions.RUN_GATE)
+    verdict = quota.check(kind="work", knobs=k, morning=morning, **sessions.RUN_GATE)
     seven = verdict.seven_day_percent or 0
     implementer = "codex-first" if codex.ready() and (index % 2 == 1 or seven > 40) else "claude"
     if not verdict.allowed and k.get("codex_fallback") and codex.ready():
@@ -657,12 +726,16 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
                 add_dirs=[item.path for item in prepared[1:]] + [issue_dir, Path(story["dossier"])],
                 fallback_models=["opus"],
                 env={"NIGHT_SHIFT_RUN_DIR": str(issue_dir), **workspace.tool_env(primary.path)},
+                name=session_name(story),
             ),
             knobs=k,
             deadline=deadline,
             morning=morning,
         )
         outcome["cost"] = session.cost
+        outcome["points"] = session.points
+        outcome["session_id"] = session.session_id
+        outcome["session_cwd"] = str(primary.path)
         claude_session = session if session.status == "ok" else None
         result = read_json(issue_dir / "result.json", {}) or {}
         if session.status == "ok" and result.get("status") in FINAL:
@@ -680,6 +753,8 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
             set_phase(issue_dir, "fixing")
             fixed = fix_round(k, story, prepared, issue_dir, outcome["review"], claude_session, deadline, morning)
             outcome["cost"] = outcome.get("cost", 0.0) + fixed.cost
+            if fixed.points is not None:
+                outcome["points"] = round((outcome.get("points") or 0.0) + fixed.points, 1)
             outcome["fix_round"] = fixed.status if fixed.status != "ok" else "done"
             result = read_json(issue_dir / "result.json", {}) or {}
             if fixed.status == "ok" and result.get("status") in FINAL:
@@ -706,7 +781,7 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
         outcome["status"], outcome["reason"] = "partial", "the branch does not stand alone: " + "; ".join(p for repo in changed for p in repo["independence"])
     worked = any(repo["commits"] for repo in outcome["repos"])
     update_issue(key, status=outcome["status"], final=outcome["status"] in FINAL, branch=primary.branch, repos=story["repos"],
-                 review="awaiting" if worked else None, summary=story.get("summary", ""))
+                 review="awaiting" if worked else None, summary=story.get("summary", ""), session=outcome.get("session_id"))
 
 
 def needs_fix(review: Json | None) -> bool:
@@ -742,7 +817,7 @@ def fix_round(k: Json, story: Json, prepared: list[workspace.Prepared], issue_di
             model="fable", effort="high", cap_usd=k["caps_usd"]["fix"], minutes=minutes, settings=settings,
             add_dirs=[item.path for item in prepared[1:]] + [issue_dir, Path(story["dossier"])], fallback_models=["opus"],
             env={"NIGHT_SHIFT_RUN_DIR": str(issue_dir), **workspace.tool_env(primary.path)},
-            resume_from=session.session_id, cost_before=float(session.data.get("total_cost_usd") or 0.0), max_turns=150,
+            resume_from=session.session_id, cost_before=float(session.data.get("total_cost_usd") or 0.0), max_turns=150, name=session_name(story),
         ),
         knobs=k, deadline=deadline, morning=morning,
     )
@@ -847,10 +922,13 @@ def security(args: argparse.Namespace) -> None:
     while morning.weekday() >= 5:
         morning += timedelta(days=1)
     run_dir = new_run_dir(f"security-{now:%Y%m%d-%H%M%S}")
-    report: Json = {"date": morning.date().isoformat(), "warnings": [], "status": "done"}
+    report: Json = {"date": morning.date().isoformat(), "started": now.isoformat(), "warnings": [], "status": "done"}
+
+    started = time.time()
+    gate = {"since": started, "points": float(k["security_points"])}
 
     def finish(status: str, headline: str) -> None:
-        report.update(status=status, headline=headline, quota=quota.describe(k, morning))
+        report.update(status=status, headline=headline, quota=quota.describe(k, morning, **gate))
         log(f"note: {note.security_note(folder=config.vault_folder, report=report)}")
 
     with run_lock("security"):
@@ -869,8 +947,10 @@ def security(args: argparse.Namespace) -> None:
         area_index = ledger["security"]["area_index"].get(name, 0) % len(repo.security_areas)
         area = repo.security_areas[area_index]
         report.update(repo=name, area=area, effort="medium")
-        if warning := workspace.fetch(repo):
-            report["warnings"].append(warning)
+        quota.current(max_age=0, label="run_start")
+        report["warnings"] += fetch_all([repo])
+        if stale := wait_until_fresh([repo], k, deadline - timedelta(hours=6)):
+            return finish("skipped", f"Not started: the checkout stayed stale ({'; '.join(stale)}). Sign in to GitLab and run /sync-gitlab-repos.")
         key = f"SEC-{now:%Y%m%d}"
         journal = run_dir / key
         journal.mkdir()
@@ -882,7 +962,7 @@ def security(args: argparse.Namespace) -> None:
             set_phase(journal, "reported")
             return finish("failed", f"Setup failed: {problem}")
         try:
-            _security_in_checkout(config, k, repo, name, area, key, prepared, journal, run_dir, report, finish, now, deadline, morning, ledger, turn, area_index)
+            _security_in_checkout(config, k, repo, name, area, key, prepared, journal, run_dir, report, finish, now, deadline, morning, ledger, turn, area_index, gate)
         finally:
             released = workspace.release(prepared, repo=repo, log_dir=run_dir / "logs")
             if not released["ok"]:
@@ -890,7 +970,7 @@ def security(args: argparse.Namespace) -> None:
 
 
 def _security_in_checkout(config: Config, k: Json, repo, name: str, area: str, key: str, prepared, journal: Path, run_dir: Path,
-                          report: Json, finish, now: datetime, deadline: datetime, morning: datetime, ledger: Json, turn: int, area_index: int) -> None:
+                          report: Json, finish, now: datetime, deadline: datetime, morning: datetime, ledger: Json, turn: int, area_index: int, gate: Json) -> None:
     if True:
         set_phase(journal, "scanning")
         report.update(commit=prepared.base_sha[:12], branch=prepared.branch, checkout=str(prepared.path))
@@ -901,7 +981,7 @@ def _security_in_checkout(config: Config, k: Json, repo, name: str, area: str, k
             cwd=prepared.path, run_id=run_dir.name, log_dir=run_dir / "logs", model="fable", effort="high", settings=settings,
             fallback_models=["opus"], max_turns=600, env={"NIGHT_SHIFT_RUN_DIR": str(run_dir), **workspace.tool_env(prepared.path)},
             append_system_prompt=TRASH_INSTEAD_OF_CLEAN, max_waits=int(k["security_max_waits"]),
-            gate={"since": time.time(), "allowance": float(k["security_allowance_usd"]), "max_age_hours": float(k["security_snapshot_max_age_hours"])},
+            gate=gate,
         )
         scan = sessions.run(sessions.Spec(kind="scan", prompt=request, cap_usd=k["caps_usd"]["scan"], minutes=240, **common_spec), knobs=k, deadline=deadline, morning=morning)
         reports = sorted(path for path in prepared.path.glob("CLAUDE-SECURITY-*") if path.is_dir() and path.stat().st_mtime >= started)
@@ -982,6 +1062,15 @@ def status(_: argparse.Namespace) -> None:
     if lock.exists() and lock.read_text().strip():
         lines.append(f"last lock holder: {lock.read_text().strip()}")
     runs = sorted(RUNS_DIR.glob("*"), key=lambda path: path.stat().st_mtime)[-3:] if RUNS_DIR.exists() else []
+    try:
+        config = load_config()
+        lines += [f"closed now: {change}" for change in sync_notes(config)]
+        for repo in config.repos.values():
+            fetched = workspace.last_fetched(repo)
+            stale = workspace.staleness(repo, int(k["fetch_max_workdays"]))
+            lines.append(f"{repo.name}: last fetched {datetime.fromtimestamp(fetched):%a %d %b %H:%M}" + (" (STALE)" if stale else "") if fetched else f"{repo.name}: never fetched")
+    except SystemExit:
+        lines.append("config.toml missing: checkouts not listed")
     lines.append("recent runs: " + (", ".join(run.name for run in runs) or "none"))
     waiting = [item for item in awaiting_review()]
     lines.append(f"waiting for your review: {len(waiting)}")
@@ -1074,9 +1163,24 @@ def run_now(args: argparse.Namespace) -> None:
     print("started; follow ~/Library/Logs/night-shift.log" if result.returncode == 0 else f"launchctl: {result.stderr.strip()}")
 
 
+def check_repos(_: argparse.Namespace) -> None:
+    """The morning check: tonight's run needs fresh checkouts, and only the user can renew GitLab's sign-in."""
+    config = load_config()
+    k = knobs()
+    if k["paused"]:
+        return
+    problems = [f"{repo.name}: fetch failed ({failure})" for repo in config.repos.values() if (failure := workspace.fetch(repo))]
+    problems += [stale for stale in stale_checkouts(list(config.repos.values()), k) if stale.split(":")[0] not in {p.split(":")[0] for p in problems}]
+    if problems:
+        log(f"alerting: {problems}")
+        alert.stale_repos(problems, tonight=False)
+    else:
+        log("all checkouts fetched")
+
+
 def fail(args: argparse.Namespace) -> None:
     config = load_config()
-    night = {"date": quota.morning_after(datetime.now()).date().isoformat(), "status": "failed", "reason": args.message, "quota": quota.describe(knobs(), quota.morning_after(datetime.now()))}
+    night = {"date": quota.morning_after(datetime.now()).date().isoformat(), "kind": "Failed run", "status": "failed", "reason": args.message, "quota": quota.describe(knobs(), quota.morning_after(datetime.now()))}
     print(note.night_note(folder=config.vault_folder, night=night, browse=browse_url(config)))
 
 
@@ -1098,6 +1202,7 @@ def main() -> None:
     p.add_argument("--now", action="store_true")
     p.set_defaults(handler=security)
     sub.add_parser("status").set_defaults(handler=status)
+    sub.add_parser("check-repos").set_defaults(handler=check_repos)
     sub.add_parser("pause").set_defaults(handler=lambda _: print(f"paused = {save_knobs({'paused': True})['paused']}"))
     sub.add_parser("resume").set_defaults(handler=lambda _: print(f"paused = {save_knobs({'paused': False})['paused']}"))
     p = sub.add_parser("set")

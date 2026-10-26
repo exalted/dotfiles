@@ -31,9 +31,11 @@ RUNS_DIR = STATE_DIR / "runs"
 ARCHIVE_DIR = STATE_DIR / "archive"
 LOCK_FILE = STATE_DIR / "lock"
 RUN_NOW_FILE = STATE_DIR / "run-now"
-# Written by the user's status line script (software/claude-code/statusline-command.sh) during day sessions.
+FETCHED_FILE = STATE_DIR / "fetched.json"
+ALERT_FILE = STATE_DIR / "alert.json"
+# Written by the user's status line script (software/claude-code/statusline-command.sh) during day sessions;
+# a free reading when it is fresh, else the gate probes.
 USAGE_SNAPSHOT = Path.home() / ".local" / "state" / "claude-usage" / "latest.json"
-USAGE_SEEN_WITHOUT = Path.home() / ".local" / "state" / "claude-usage" / "seen-without-rate-limits.json"
 # Shared with the recap job, so the Jira site and project are configured once.
 JIRA_BROWSE_FILE = Path.home() / ".config" / "dotfiles" / "jira"
 RECAP_CONFIG_DIR = Path.home() / ".config" / "dotfiles" / "recap"
@@ -48,24 +50,28 @@ EXIT_SETUP_ERROR = 2
 DEFAULT_KNOBS: Json = {
     "paused": False,
     "stories": 1,
-    "seven_day_max_percent": 60,
-    "snapshot_max_age_hours": 12,
-    "weekly_allowance_usd": 120.0,
-    "night_allowance_usd": 40.0,
+    # Quota is in percent of the 7-day window. Day work keeps day_reserve_percent for each workday left before
+    # the weekly reset (more if the ledger measured more); the night shift never goes above what is left, nor
+    # above seven_day_ceiling_percent. One night may add at most night_points to the 7-day usage.
+    "day_reserve_percent": 15,
+    "seven_day_ceiling_percent": 90,
+    "night_points": 10,
     "last_start": "03:00",
     "deadline": "05:00",
     "story_minutes": 75,
     "security": False,
     # The weekend security run: it may wait out usage resets until this weekday and time.
     "security_deadline": "Sun 18:00",
-    "security_allowance_usd": 60.0,
-    "security_snapshot_max_age_hours": 60,
+    "security_points": 15,
     "security_max_waits": 12,
-    # Above 0, the nights before Saturday and Sunday run too, with this many stories and their own allowance.
+    # Above 0, the nights before Saturday and Sunday run too, with this many stories and their own points.
     "weekend_stories": 0,
-    "weekend_night_allowance_usd": 70.0,
+    "weekend_night_points": 15,
+    # A checkout whose last successful fetch is this many workday starts old is stale: no story starts on it.
+    "fetch_max_workdays": 2,
     "codex": True,
     "codex_fallback": False,
+    # Runaway guards per session, in the only unit `claude --max-budget-usd` takes; the gate itself is in percent.
     "caps_usd": {"pick": 8.0, "work": 25.0, "fix": 10.0, "report": 5.0, "scan": 30.0, "patch": 15.0},
     # The fix round after codex's review starts only with at least this many minutes left before the deadline.
     "fix_minutes": 30,
@@ -212,6 +218,22 @@ def load_config() -> Config:
         commit_prefix=str(raw.get("commit_prefix", "{key}:")),
         no_story_prefix=str(raw.get("no_story_prefix", "")),
     )
+
+
+WORKDAY_START_HOUR = 8
+
+
+def workdays_between(start: float, end: float) -> int:
+    """Workday starts (08:00, Monday to Friday) between two moments: the day work that happened between them."""
+    count = 0
+    day = datetime.fromtimestamp(start).date()
+    while True:
+        moment = datetime.combine(day, datetime.min.time()).replace(hour=WORKDAY_START_HOUR)
+        if moment.timestamp() > end:
+            return count
+        if moment.timestamp() > start and day.weekday() < 5:
+            count += 1
+        day += timedelta(days=1)
 
 
 def at_time(hhmm: str, *, base: datetime) -> datetime:

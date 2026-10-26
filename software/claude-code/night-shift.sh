@@ -1,7 +1,8 @@
 #!/bin/sh
-# Entry point of the night-shift launch agents (skills/work/night-shift): the nightly backlog run, or with
-# `security` the weekly deep security analysis. The Python driver does the work and enforces the quota
-# guard, the deadlines and the one-run-at-a-time lock; this script only gives it a sane environment.
+# Entry point of the night-shift launch agents (skills/work/night-shift): the nightly backlog run, with
+# `security` the weekly deep security analysis, with `check-repos` the morning fetch check. The Python
+# driver does the work and enforces the quota guard, the deadlines and the one-run-at-a-time lock; this
+# script only gives it a sane environment.
 #
 # launchd runs this script directly with a bare environment: no shell profile, no Homebrew on PATH.
 
@@ -42,6 +43,7 @@ fi
 case "$job" in
   # The weekend security run waits out usage resets until its Sunday deadline (the security_deadline knob).
   security) limit_hours=44 ;;
+  check-repos) limit_hours=1 ;;
   *) limit_hours=6 ;;
 esac
 

@@ -4,8 +4,9 @@ The user's state comes first. Before a story starts, `enter()` records the check
 stash list, sets the user's uncommitted work aside with `git stash` (kept twice: in the stash list and under
 a private backup ref), and switches to `night/<KEY>` from `origin/main`. `release()` always runs afterwards:
 it saves whatever the story left uncommitted, returns to the user's branch, puts their work back exactly
-(staged stays staged), and compares the result with the record. The frame is written to disk, so a crashed
-run is released at the next start.
+(staged stays staged), and compares the result with the record. A branch the night created and left without
+a commit is removed then: the user reviews only branches that hold work. The frame is written to disk, so a
+crashed run is released at the next start.
 
 The driver's own git calls run with core.hooksPath=/dev/null; the model's commits run the repository's hooks,
 as in the user's day work. Nothing here deletes a file: leftovers are saved first, then moved to the Trash.
@@ -21,7 +22,7 @@ from datetime import datetime
 from pathlib import Path
 
 import supervise
-from common import ARCHIVE_DIR, NIGHT_AWS_CONFIG, NIGHT_DOCKER_CONFIG, Json, Repo, log
+from common import ARCHIVE_DIR, FETCHED_FILE, NIGHT_AWS_CONFIG, NIGHT_DOCKER_CONFIG, Json, Repo, log, read_json, workdays_between, write_json
 
 SETUP_MINUTES = 15
 VERIFY_MINUTES = 30
@@ -156,12 +157,44 @@ def branch_name(key: str) -> str:
 
 
 def fetch(repo: Repo) -> str | None:
-    """Refresh origin/main. GitLab may refuse once its SSO session expired; the run then uses the last fetched main."""
+    """Refresh origin/main; on failure, the remote's one-line reason. GitLab refuses once the user's SSO session
+    expired; the run then uses the last fetched main."""
     try:
         git(repo.path, "fetch", "--quiet", "origin", timeout=120)
-        return None
     except (SetupProblem, subprocess.TimeoutExpired) as error:
-        return f"{repo.name}: fetch failed, origin/main may be stale ({str(error)[:200]})"
+        lines = [line.removeprefix("remote:").strip() for line in str(error).splitlines()]
+        return next((line for line in lines if "ERROR" in line), " ".join(lines)[-200:])
+    fetched = read_json(FETCHED_FILE, {}) or {}
+    write_json(FETCHED_FILE, {**fetched, repo.name: datetime.now().timestamp()})
+    return None
+
+
+def last_fetched(repo: Repo) -> float | None:
+    """When origin was last fetched with success, by the night shift or by the user.
+
+    A failed fetch truncates FETCH_HEAD, so only a non-empty one dates a success; the night shift's own record
+    and origin/main's reflog cover the rest.
+    """
+    moments = [float((read_json(FETCHED_FILE, {}) or {}).get(repo.name) or 0)]
+    fetch_head = Path(git(repo.path, "rev-parse", "--path-format=absolute", "--git-path", "FETCH_HEAD"))
+    if fetch_head.is_file() and fetch_head.stat().st_size:
+        moments.append(fetch_head.stat().st_mtime)
+    reflog = git(repo.path, "reflog", "show", "--format=%ct", "-n", "1", "refs/remotes/origin/main", check=False)
+    if reflog.isdigit():
+        moments.append(float(reflog))
+    return max(moments) or None
+
+
+def staleness(repo: Repo, max_workdays: int) -> str | None:
+    """Why this checkout's origin/main is too old to start a story on, or None. Weekends do not age it:
+    the team rarely pushes then."""
+    fetched = last_fetched(repo)
+    if fetched is None:
+        return f"{repo.name}: never fetched"
+    days = workdays_between(fetched, datetime.now().timestamp())
+    if days < max_workdays:
+        return None
+    return f"{repo.name}: last fetched {datetime.fromtimestamp(fetched):%a %d %b %H:%M}, {days} workdays ago"
 
 
 def seconds_until(deadline: datetime) -> float:
@@ -248,10 +281,12 @@ def enter(repo: Repo, key: str, *, log_dir: Path, deadline: datetime, frame_file
         user.stash_sha = git(path, "rev-parse", "stash@{0}")
         user.backup_ref = f"{BACKUP_REF}/{stamp}-{key}"
         git(path, "update-ref", user.backup_ref, user.stash_sha)
+    reused = bool(git(path, "branch", "--list", branch))
+    start = git(path, "rev-parse", branch if reused else "origin/main")
     frame_file.parent.mkdir(parents=True, exist_ok=True)
-    frame_file.write_text(json.dumps({"repo": repo.name, "path": str(path), "branch": branch, "user": asdict(user)}, indent=2))
+    frame = {"repo": repo.name, "path": str(path), "branch": branch, "created": not reused, "start": start, "user": asdict(user)}
+    frame_file.write_text(json.dumps(frame, indent=2))
     try:
-        reused = bool(git(path, "branch", "--list", branch))
         if reused:
             git(path, "switch", "--quiet", branch)
         else:
@@ -311,12 +346,25 @@ def release_frame(frame_file: Path, *, repo: Repo, log_dir: Path, deadline: date
         problems.append("your uncommitted files differ from before the night")
     if after.stash_list != user.stash_list:
         problems.append("your stash list differs from before the night")
-    result = {"ok": not problems, "problems": problems, "archived_leftovers": str(archived) if archived else None, "backup_ref": user.backup_ref}
+    removed = _remove_if_empty(path, frame)
+    result = {"ok": not problems, "problems": problems, "archived_leftovers": str(archived) if archived else None, "backup_ref": user.backup_ref,
+              "removed_empty_branch": removed}
     frame["released"] = result
     frame_file.write_text(json.dumps(frame, indent=2))
     if problems:
         log(f"{frame['repo']}: release problems: {problems}")
     return result
+
+
+def _remove_if_empty(path: Path, frame: Json) -> bool:
+    """A branch this night created and left with no commit of its own holds nothing to review."""
+    branch = frame["branch"]
+    if not frame.get("created") or not frame.get("start") or not git(path, "branch", "--list", branch):
+        return False
+    if git(path, "rev-list", f"{frame['start']}..{branch}") or git(path, "branch", "--show-current") == branch:
+        return False
+    git(path, "branch", "-D", branch)
+    return True
 
 
 def release(prepared: Prepared, *, repo: Repo, log_dir: Path, deadline: datetime | None = None) -> Json:

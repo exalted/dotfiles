@@ -1,50 +1,24 @@
-"""Obsidian notes for the night shift: one per night, one per security run, in their own vault folder.
+"""Obsidian notes for the night shift, in their own vault folder: one folder per day, named after the morning.
 
-Each note starts with `read: false`; the folder's Base lists unread notes, as the recap's does.
-The morning read must answer three questions fast: what is ready to review, how it got there, and what the
-night cost. So the quota line comes first, each story gets a short checkpoint timeline, and the review
-commands are copy-ready.
+The day folder holds one run note per run (the nightly run, a restart, the security run): what the run did
+as a whole, its quota, warnings and errors, and a link to each story note. Each story the run worked gets its
+own note beside it, about that story only: status, how it went, branches, review, open questions.
+
+The user keeps the folder tidy by hand: a story note archived (moved out of the folder) or deleted closes its
+story. Each note carries a `night_shift_id`: Obsidian keeps frontmatter through a rename or a move, so the id, not the path,
+tells where the user put a note (see find_notes).
 """
 
+ID_PROPERTY = "night_shift_id"
+
+
 import json
+import uuid
 from datetime import date, datetime
 from pathlib import Path
 
 from common import Json
 
-BASE_TEMPLATE = """filters:
-  and:
-    - file.inFolder("{folder}")
-properties:
-  file.name:
-    displayName: Note
-  note.read:
-    displayName: Read
-  note.headline:
-    displayName: Headline
-views:
-  - type: table
-    name: Unread
-    filters:
-      and:
-        - read != true
-    order:
-      - file.name
-      - read
-      - headline
-    sort:
-      - property: file.name
-        direction: DESC
-  - type: table
-    name: All
-    order:
-      - file.name
-      - read
-      - headline
-    sort:
-      - property: file.name
-        direction: DESC
-"""
 
 STATUS_WORDS = {
     "solved": "Ready to review",
@@ -61,6 +35,12 @@ STATUS_WORDS = {
 }
 
 
+def run_stem(started: str | None, kind: str) -> str:
+    """`2026-10-24 00.52 Night run`: the run's real start, so its runs sort first in the day folder, in order."""
+    moment = datetime.fromisoformat(started) if started else datetime.now()
+    return f"{moment:%Y-%m-%d %H.%M} {kind}"
+
+
 def unique(folder: Path, stem: str) -> Path:
     """A later run the same morning (a restart, a dry run) gets its own note instead of replacing the first."""
     path = folder / f"{stem}.md"
@@ -69,38 +49,85 @@ def unique(folder: Path, stem: str) -> Path:
     return folder / f"{stem} ({datetime.now():%H.%M.%S}).md"
 
 
-def ensure_folder(folder: Path) -> None:
-    folder.mkdir(parents=True, exist_ok=True)
-    base = folder / f"{folder.name}.base"
-    if not base.exists():
-        base.write_text(BASE_TEMPLATE.format(folder=folder.name))
+def day_folder(folder: Path, day: str) -> Path:
+    path = folder / day
+    path.mkdir(parents=True, exist_ok=True)
+    return path
 
 
 def _yaml(value: object) -> str:
     return json.dumps(value, ensure_ascii=False) if isinstance(value, str) else str(value).lower() if isinstance(value, bool) else str(value)
 
 
+def _callout(warning: str) -> str:
+    """One line: a raw multi-line message would end the callout after its first line."""
+    return f"> [!warning] {' '.join(warning.split())}"
+
+
 def _frontmatter(properties: Json) -> str:
+    properties = {ID_PROPERTY: uuid.uuid4().hex, **properties}
     return "---\n" + "".join(f"{key}: {_yaml(value)}\n" for key, value in properties.items()) + "---\n"
+
+
+def note_id(path: Path) -> str | None:
+    """The id from a note's frontmatter; only the frontmatter is read."""
+    try:
+        with path.open(encoding="utf-8", errors="replace") as handle:
+            if handle.readline().strip() != "---":
+                return None
+            for _, line in zip(range(40), handle):
+                if line.strip() == "---":
+                    return None
+                if line.startswith(f"{ID_PROPERTY}:"):
+                    return line.split(":", 1)[1].strip().strip('"') or None
+    except OSError:
+        return None
+    return None
+
+
+def find_notes(vault: Path) -> dict[str, Path]:
+    """Every night-shift note in the vault by id. Obsidian's own trash counts as deleted."""
+    found = {}
+    for path in vault.rglob("*.md"):
+        if {".obsidian", ".trash"} & set(path.relative_to(vault).parts):
+            continue
+        if identifier := note_id(path):
+            found[identifier] = path
+    return found
+
+
+def vault_root(folder: Path) -> Path:
+    return next(parent for parent in folder.parents if (parent / ".obsidian").is_dir())
+
+
+def _label(story: Json) -> str:
+    label = STATUS_WORDS.get(story.get("status", ""), story.get("status", ""))
+    return (f"**{label}**" if label else "") + (f": {story['reason']}" if label and story.get("reason") else story.get("reason", ""))
 
 
 def _story(story: Json, browse: str) -> list[str]:
     key = story["key"]
-    lines = [f"## [{key}]({browse}{key}) {story.get('summary', '')}", ""]
-    label = STATUS_WORDS.get(story.get("status", ""), story.get("status", ""))
-    lines.append((f"**{label}**" if label else "") + (f": {story['reason']}" if label and story.get("reason") else story.get("reason", "")))
+    lines = [f"# [{key}]({browse}{key}) {story.get('summary', '')}", ""]
+    lines.append(_label(story))
     if story.get("summary_text"):
         lines += ["", story["summary_text"]]
     meta = []
     if story.get("implementer"):
         meta.append(f"implemented by {story['implementer']}")
-    if story.get("cost") is not None:
-        meta.append(f"Claude ≈ ${story['cost']:.2f}")
+    if story.get("points") is not None:
+        meta.append(f"Claude used {story['points']:g} points of your 7-day limit")
     if meta:
         lines += ["", "*" + ", ".join(meta) + "*"]
+    if story.get("session_id"):
+        branch = next((repo["branch"] for repo in story.get("repos", []) if repo.get("commits")), f"night/{key}")
+        lines += ["", "**Continue the night's Claude session** (from its checkout, on its branch):", "", "```sh",
+                  f"cd {story['session_cwd']} && git switch {branch} && claude --resume {story['session_id']}", "```"]
     if story.get("progress"):
         lines += ["", "**How it went**", ""] + [f"- {line[2:]}" if line.startswith("- ") else f"- *{line[2:]}*" for line in story["progress"]]
+    removed = [repo["repo"] for repo in story.get("repos", []) if not repo.get("commits") and repo.get("removed")]
     for repo in story.get("repos", []):
+        if repo["repo"] in removed:
+            continue
         verify = repo.get("verify") or {}
         gate = "✅ gate passed" if verify.get("passed") else "❌ gate failed" if verify else "gate not run"
         lines += ["", f"**{repo['repo']}** · `{repo['branch']}` · {gate} · {len(repo.get('commits', []))} commits"]
@@ -117,24 +144,54 @@ def _story(story: Json, browse: str) -> list[str]:
             lines.append(f"*Fix round after the review: {story['fix_round']}. Its replies are in REPORT.md under Review follow-up.*")
         for finding in review.get("findings", [])[:5]:
             lines.append(f"- [{finding.get('severity', '?')}] {finding.get('file', '')}: {finding.get('issue', '')}")
+    if removed and len(removed) < len(story.get("repos", [])):
+        lines += ["", f"*No change was needed in {', '.join(removed)}; its empty branch was removed.*"]
+    elif removed:
+        lines += ["", "*Nothing was committed; the empty branch was removed.*"]
     if story.get("open_questions"):
         lines += ["", "**Open questions**", ""] + [f"- {question}" for question in story["open_questions"]]
     return lines + [""]
 
 
+def _repos_line(story: Json) -> str:
+    parts = []
+    for repo in story.get("repos", []):
+        if repo.get("commits"):
+            verify = repo.get("verify") or {}
+            gate = "gate passed" if verify.get("passed") else "gate failed" if verify else "gate not run"
+            parts.append(f"{repo['repo']}, {len(repo['commits'])} commits, {gate}")
+    return " · ".join(parts)
+
+
+def story_note(*, folder: Path, day: str, story: Json, browse: str, run_note: str) -> Path:
+    path = unique(folder, f"{day} {story['key']}")
+    properties = {"kind": "story", "story": story["key"], "status": story.get("status", "")}
+    body = _story(story, browse) + [f"*Run: [[{run_note}]]*", ""]
+    path.write_text(_frontmatter(properties) + "\n".join(body))
+    return path
+
+
 def night_note(*, folder: Path, night: Json, browse: str) -> Path:
-    ensure_folder(folder)
     day = night.get("date") or date.today().isoformat()
-    path = unique(folder, f"{day} Night shift")
+    folder = day_folder(folder, day)
+    path = unique(folder, run_stem(night.get("started"), night.get("kind", "Night run")))
     stories = night.get("stories", [])
     ready = sum(1 for story in stories if story.get("status") == "solved")
     headline = night.get("headline") or (f"{ready} of {len(stories)} stories ready to review" if stories else night.get("reason", "Nothing worked tonight"))
     body = [f"# Night shift, {day}", "", f"**{headline}**", "", f"Quota: {night.get('quota', 'unknown')}"]
     for warning in night.get("warnings", []):
-        body.append(f"\n> [!warning] {warning}")
+        body.append("\n" + _callout(warning))
     body.append("")
+    if stories:
+        body += ["## Stories", ""]
     for story in stories:
-        body += _story(story, browse)
+        linked = story_note(folder=folder, day=day, story=story, browse=browse, run_note=path.stem)
+        story["note"] = str(linked.relative_to(folder.parent))
+        story["note_id"] = note_id(linked)
+        details = " · ".join(part for part in (_label(story), _repos_line(story)) if part)
+        body.append(f"- [[{linked.stem}|{story['key']}]] {story.get('summary', '')}: {details}")
+    if stories:
+        body.append("")
     if night.get("awaiting"):
         body += ["## Waiting for your review", ""]
         body += [f"- [{item['key']}]({browse}{item['key']}) {item.get('summary', '')}: {item.get('status')} on `{item.get('branch')}` since {item.get('date', '')[:10]}" for item in night["awaiting"]]
@@ -143,15 +200,14 @@ def night_note(*, folder: Path, night: Json, browse: str) -> Path:
         body += ["## Looked at, not worked", ""] + [f"- [{item['key']}]({browse}{item['key']}): {item['reason']}" for item in night["skipped"]] + [""]
     if night.get("interrupted"):
         body += ["## Interrupted earlier", ""] + [f"- {item}" for item in night["interrupted"]] + [""]
-    properties = {"read": False, "status": night.get("status", "done"), "headline": headline, "stories": len(stories)}
+    properties = {"kind": "run", "status": night.get("status", "done")}
     path.write_text(_frontmatter(properties) + "\n".join(body) + "\n")
     return path
 
 
 def security_note(*, folder: Path, report: Json) -> Path:
-    ensure_folder(folder)
     day = report.get("date") or date.today().isoformat()
-    path = unique(folder, f"{day} Security")
+    path = unique(day_folder(folder, day), run_stem(report.get("started"), "Security run"))
     headline = report.get("headline", "Weekly security analysis")
     body = [f"# Security analysis, {day}", "", f"**{headline}**", "", f"Quota: {report.get('quota', 'unknown')}", ""]
     for label in ("repo", "area", "commit", "effort", "counts", "report_dir"):
@@ -172,6 +228,6 @@ def security_note(*, folder: Path, report: Json) -> Path:
     if report.get("not_examined"):
         body += ["## Not examined", "", report["not_examined"], ""]
     for warning in report.get("warnings", []):
-        body.append(f"> [!warning] {warning}\n")
-    path.write_text(_frontmatter({"read": False, "status": report.get("status", "done"), "headline": headline}) + "\n".join(body) + "\n")
+        body.append(_callout(warning) + "\n")
+    path.write_text(_frontmatter({"kind": "run", "status": report.get("status", "done")}) + "\n".join(body) + "\n")
     return path

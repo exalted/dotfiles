@@ -21,8 +21,9 @@ LIMIT = re.compile(r"hit your (\w+) limit(?:\s*[·\-–]\s*resets\s+([0-9A-Za-z:
 WEEKDAYS = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
 # The shortest useful continuation after a reset; less than this before the deadline is not worth the wait.
 MIN_CONTINUATION = timedelta(minutes=15)
-# A run outside the night (a manual daytime run) sets its own allowance here, counted from its own start, so it
-# neither takes the next night's allowance nor is blocked by the last one's.
+# A run outside the night (a manual daytime run) sets its own points budget here, counted from its own start, so
+# it neither takes the next night's points nor is blocked by the last one's. Its sessions mix with the user's own
+# day work, so they teach the ledger nothing about what a session costs.
 RUN_GATE: Json = {}
 RESUME_PROMPT = (
     "Continue the task exactly where you stopped. The interruption was a usage limit, which has reset now. "
@@ -53,11 +54,13 @@ class Spec:
     append_system_prompt: str | None = None
     # How many usage-limit resets this session may wait out. One for a night story; the weekend security run more.
     max_waits: int = 1
-    # Overrides for quota.check (since, allowance, max_age_hours), for a run with its own allowance.
+    # Overrides for quota.check (since, points), for a run with its own budget.
     gate: Json = field(default_factory=dict)
     # Continue an earlier session (its id) with this prompt instead of starting a new one; its cost so far.
     resume_from: str | None = None
     cost_before: float = 0.0
+    # The display name /rename would set, so the user finds the session in `claude --resume`.
+    name: str | None = None
 
 
 @dataclass
@@ -68,6 +71,7 @@ class Result:
     cost: float = 0.0
     session_id: str = ""
     stderr_tail: str = ""
+    points: float | None = None
 
 
 def _command(spec: Spec, *, session_id: str, model: str, resume: bool, prompt: str) -> list[str]:
@@ -87,6 +91,8 @@ def _command(spec: Spec, *, session_id: str, model: str, resume: bool, prompt: s
         command += ["--json-schema", json.dumps(spec.json_schema)]
     if spec.append_system_prompt:
         command += ["--append-system-prompt", spec.append_system_prompt]
+    if spec.name:
+        command += ["--name", spec.name]
     return command
 
 
@@ -126,18 +132,19 @@ def run(spec: Spec, *, knobs: Json, deadline: datetime, morning: datetime) -> Re
     prompt = spec.prompt
     total_before = spec.cost_before
     total_cost = 0.0
+    total_points: float | None = None
     waits = 0
     attempt = 0
     while True:
         remaining = (deadline - datetime.now()).total_seconds()
         if remaining < 120:
-            return Result("deadline", "no time left before the run's deadline", cost=total_cost, session_id=session_id)
-        verdict = quota.check(cap=spec.cap_usd, knobs=knobs, morning=morning, **(spec.gate or RUN_GATE))
+            return Result("deadline", "no time left before the run's deadline", cost=total_cost, session_id=session_id, points=total_points)
+        verdict = quota.check(kind=spec.kind, knobs=knobs, morning=morning, **(spec.gate or RUN_GATE))
         if not verdict.allowed:
-            return Result("gated", verdict.reason, cost=total_cost, session_id=session_id)
-        entry = quota.reserve(kind=spec.kind, cap=spec.cap_usd, run=spec.run_id, key=spec.key)
+            return Result("gated", verdict.reason, cost=total_cost, session_id=session_id, points=total_points)
+        entry = quota.reserve(kind=spec.kind, cap=spec.cap_usd, run=spec.run_id, key=spec.key, start=verdict.usage, learn=not RUN_GATE)
         seconds = min(spec.minutes * 60, remaining)
-        log(f"{spec.kind}{' ' + spec.key if spec.key else ''}: {model} {spec.effort}, cap ${spec.cap_usd}, {seconds / 60:.0f} min{' (resume)' if resume else ''}")
+        log(f"{spec.kind}{' ' + spec.key if spec.key else ''}: {model} {spec.effort}, 7-day {verdict.usage.seven:.0f}% of {verdict.ceiling.percent:.0f}%, {seconds / 60:.0f} min{' (resume)' if resume else ''}")
         outcome = supervise.run(
             _command(spec, session_id=session_id, model=model, resume=resume, prompt=prompt),
             cwd=spec.cwd,
@@ -152,6 +159,7 @@ def run(spec: Spec, *, knobs: Json, deadline: datetime, morning: datetime) -> Re
             },
             log_dir=spec.log_dir,
             name=f"{spec.kind}-{attempt}",
+            watch=lambda: quota.over_ceiling(knobs, morning),
         )
         attempt += 1
         if run_dir := spec.env.get("NIGHT_SHIFT_RUN_DIR"):
@@ -164,24 +172,27 @@ def run(spec: Spec, *, knobs: Json, deadline: datetime, morning: datetime) -> Re
             total_before = float(reported)
         total_cost += cost if cost is not None else spec.cap_usd
         limit = LIMIT.search("\n".join([outcome.stderr, str(data.get("result", ""))]))
-        status = "timeout" if outcome.timed_out else "usage_limit" if limit else "error" if data.get("is_error") or not data else "ok"
-        quota.settle(entry, cost, status)
+        status = "gated" if outcome.stopped else "timeout" if outcome.timed_out else "usage_limit" if limit else "error" if data.get("is_error") or not data else "ok"
+        points = quota.settle(entry, cost, status)
+        if points is not None:
+            total_points = (total_points or 0.0) + points
         tail = outcome.stderr[-1500:]
         if status != "usage_limit":
-            return Result(status, data.get("subtype", "") if status == "error" else "", data, total_cost, session_id, tail)
+            reason = outcome.stopped or (data.get("subtype", "") if status == "error" else "")
+            return Result(status, reason, data, total_cost, session_id, tail, total_points)
         which, reset_text = limit.group(1).lower(), limit.group(2) or ""
         if which == "weekly":
-            return Result("usage_limit_weekly", f"weekly limit hit ({reset_text or 'no reset time'})", data, total_cost, session_id, tail)
+            return Result("usage_limit_weekly", f"weekly limit hit ({reset_text or 'no reset time'})", data, total_cost, session_id, tail, total_points)
         if which != "session":
             # A model-family limit: another family keeps working.
             if not fallbacks:
-                return Result("usage_limit", f"{which} limit hit", data, total_cost, session_id, tail)
+                return Result("usage_limit", f"{which} limit hit", data, total_cost, session_id, tail, total_points)
             model = fallbacks.pop(0)
             resume, prompt = True, RESUME_PROMPT
             continue
         reset = parse_reset(reset_text, datetime.now()) if reset_text else None
         if reset is None or waits >= spec.max_waits or reset + timedelta(minutes=1) + MIN_CONTINUATION > deadline:
-            return Result("usage_limit", f"session limit hit, resets {reset_text or 'unknown'}: no safe retry before the deadline", data, total_cost, session_id, tail)
+            return Result("usage_limit", f"session limit hit, resets {reset_text or 'unknown'}: no safe retry before the deadline", data, total_cost, session_id, tail, total_points)
         waits += 1
         wait = (reset + timedelta(minutes=1) - datetime.now()).total_seconds()
         log(f"session limit: waiting {wait / 60:.0f} min for the reset at {reset:%H:%M} (wait {waits} of {spec.max_waits}), then resuming")
