@@ -10,7 +10,7 @@ Tell the user, in plain language, what the team delivered since the last recap: 
 
 The projects are parts of one product: a backend, the customer web app and an internal admin console. One feature often touches two or three of them. **The recap tells what happened to the product, not what happened in each project.** Never structure it per project, and never split one piece of work into one item per project.
 
-The result is one Obsidian note per run, called a recap, in the configured vault folder, with the property `read: false`. The folder's Base (`<folder>.base`) lists the unread notes, and the user ticks `read` there. When recaps pile up unread, a catch-up note sums them up (step 7). The note format lives in `scripts/note.py`, so every note has the same properties and layout.
+The result is one Obsidian note per run, called a recap, in the configured vault folder, with the property `read: false`. The folder's Base (`<folder>.base`, beside the folder in its parent) lists the unread notes, and the user ticks `read` there. When recaps pile up unread, a catch-up note sums them up (step 7). The note format lives in `scripts/note.py`, so every note has the same properties and layout.
 
 This skill runs only unattended, from `software/claude-code/comply365-recap.sh` in the dotfiles repo, and nobody can answer a question:
 
@@ -150,7 +150,7 @@ Write `<work dir>/recap.json`:
 uv run --quiet --no-project --script ~/.claude/skills/comply365-recap/scripts/note.py --work-dir <work dir>
 ```
 
-It writes `<vault folder>/<YYYY-MM-DD> (<Mon> <D>) Recap.md` and prints its path. The launch agent already put an in-progress note under that name before this run started; the recap replaces it. The note is named after the workdays whose 19:00 its window holds, not the moment it was written: Tuesday's 19:00 run writes `2026-10-13 (Oct 13) Recap.md`, a Wednesday-morning catch-up of a missed Tuesday 19:00 writes the same name, a Monday run is named after Monday (the weekend is in it), and a long window gets a range (`2026-10-01 (Oct 1–14) Recap.md`). A successful run also moves the failure note to the Trash. It creates the folder's Base on the first run and never changes it afterwards.
+It writes `<vault folder>/<YYYY-MM-DD> (<Mon> <D>) Recap.md` and prints its path. The launch agent already put an in-progress note under that name before this run started; the recap replaces it. The note is named after the workdays whose 19:00 its window holds, not the moment it was written: Tuesday's 19:00 run writes `2026-10-13 (Oct 13) Recap.md`, a Wednesday-morning catch-up of a missed Tuesday 19:00 writes the same name, a Monday run is named after Monday (the weekend is in it), and a long window gets a range (`2026-10-01 (Oct 1–14) Recap.md`). A successful run also moves the failure note to the Trash. It creates the folder's Base in the parent folder when it is missing and never changes it afterwards.
 
 **Exit 4, `INVALID`:** fix `recap.json` as listed (usually a commit missing from every item) and run it again. Do not edit the note by hand: the format lives in `note.py`.
 
@@ -200,7 +200,7 @@ Move the work dir to the Trash (`trash <work dir>`) and print the note paths. Af
 - **In-progress note:** the launch agent writes it (`note.py --started`) before Claude starts, under the name the recap will get, with the headline "Recap in progress, started <HH:MM>" and the property `started`. The recap replaces it. Every script ignores it as a recap: it has no `window_end`, and it never counts as unread.
 - **Failure note:** `<YYYY-MM-DD> (<Mon> <D>) Recap failed.md`, only one, named after the first workday that failed, headline "Recaps missing since <that day>", with the latest error and when that run started and failed. The in-progress note of the failed run becomes the failure note, or goes to the Trash when one exists already. Unread again after each failure.
 - **Notification:** when a run ends with a new recap, `note.py --finish` shows a macOS banner "Recap ready" with its headline. A failure shows no banner, only the failure note.
-- **Base:** `<folder>/<folder>.base`, over every note in the folder. **Unread** shows a catch-up note first, then a failure note, then the recaps, newest first (a formula on the file name); **All** shows every note, newest first. The user can change its views in Obsidian; the skill never overwrites it.
+- **Base:** `<folder>/../<folder>.base`, over every note in the folder. It sits beside the folder, not in it, and each note links to it as `../<folder>.base`. **Unread** shows a catch-up note first, then a failure note, then the recaps, newest first (a formula on the file name); **All** shows every note, newest first. The user can change its views in Obsidian; the skill never overwrites it.
 
 ## Schedule
 

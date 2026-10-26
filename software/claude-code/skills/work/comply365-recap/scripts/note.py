@@ -225,9 +225,13 @@ def previous_recap(*, folder: Path, day: date) -> str | None:
     return earlier[-1] if earlier else None
 
 
+def base_link(folder: Path) -> str:
+    return f"[All recaps]({link_target('../' + folder.name + '.base')})"
+
+
 def related_line(*, folder: Path, day: date) -> str:
     previous = previous_recap(folder=folder, day=day)
-    base = f"[All recaps]({link_target(folder.name + '.base')})"
+    base = base_link(folder)
     return f"Related: {note_link(previous)} · {base}" if previous else f"Related: {base}"
 
 
@@ -483,7 +487,7 @@ def write_catch_up(*, folder: Path, work_dir: Path, browse_url: str) -> Path:
         + "\n".join(
             f"- {note_link(path.stem)}: {read_properties(path).get('headline', '')}" for path in reversed(recaps)
         ),
-        f"Related: [All recaps]({link_target(folder.name + '.base')})",
+        f"Related: {base_link(folder)}",
     ]
     note = folder / f"{name}.md"
     for stale in unread_catch_ups(folder):
@@ -532,7 +536,7 @@ views:
 
 
 def ensure_base(folder: Path) -> None:
-    base = folder / f"{folder.name}.base"
+    base = folder.parent / f"{folder.name}.base"
     if not base.exists():
         base.write_text(BASE.format(folder=folder.name))
 
