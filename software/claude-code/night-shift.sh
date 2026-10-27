@@ -1,6 +1,7 @@
 #!/bin/sh
 # Entry point of the night-shift launch agents (skills/work/night-shift): the nightly backlog run, with
-# `security` the weekly deep security analysis, with `check-repos` the morning fetch check. The Python
+# `security` the weekly deep security analysis, with `check-repos` the morning fetch check, with
+# `check-power` the evening reminder to keep the Mac on power. The Python
 # driver does the work and enforces the quota guard, the deadlines and the one-run-at-a-time lock; this
 # script only gives it a sane environment.
 #
@@ -16,6 +17,9 @@ log="$HOME/Library/Logs/night-shift.log"
 exec >>"$log" 2>&1
 
 echo "=== $(/bin/date '+%Y-%m-%dT%H:%M:%S%z') start $job"
+# When launchd fired, as against when the Mac let the job work: a night note says why a night was missed.
+NIGHT_SHIFT_FIRED_AT="$(/bin/date +%s)"
+export NIGHT_SHIFT_FIRED_AT
 
 # A lid-closed DarkWake starts launch agents for two seconds at a time; only a full wake has Graphics.
 fully_awake() {
@@ -43,7 +47,7 @@ fi
 case "$job" in
   # The weekend security run waits out usage resets until its Sunday deadline (the security_deadline knob).
   security) limit_hours=44 ;;
-  check-repos) limit_hours=1 ;;
+  check-repos|check-power) limit_hours=1 ;;
   *) limit_hours=6 ;;
 esac
 

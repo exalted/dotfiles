@@ -35,10 +35,12 @@ if _resolve_profile == 'work'
   launch_agent_relative 'com.dotfiles.night-shift.plist'
   launch_agent_relative 'com.dotfiles.night-shift-security.plist'
   launch_agent_relative 'com.dotfiles.night-shift-check.plist'
+  launch_agent_relative 'com.dotfiles.night-shift-power.plist'
 else
   launch_agent_remove_relative 'com.dotfiles.night-shift.plist'
   launch_agent_remove_relative 'com.dotfiles.night-shift-security.plist'
   launch_agent_remove_relative 'com.dotfiles.night-shift-check.plist'
+  launch_agent_remove_relative 'com.dotfiles.night-shift-power.plist'
   trash "#{ENV["HOME"]}/.claude/night-shift.sh"
 end
 

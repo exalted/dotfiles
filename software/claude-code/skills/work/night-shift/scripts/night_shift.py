@@ -62,6 +62,8 @@ from common import (
 )
 
 SKILLS = Path.home() / ".claude" / "skills"
+# The last morning a scheduled run started in its window, and the last morning a missed one was reported.
+NIGHTS_FILE = STATE_DIR / "nights.json"
 WORK_SETTINGS = SKILLS / "night-shift-work" / "settings.json"
 SECURITY_SETTINGS = SKILLS / "night-shift-work" / "settings-security.json"
 UV = "uv run --quiet --no-project --script"
@@ -626,7 +628,13 @@ def nightly(args: argparse.Namespace) -> None:
 
     if not manual and not (now.hour < 12 and now <= last_start):
         log(f"started at {now:%H:%M}, outside the night window (until {k['last_start']}): nothing to do")
+        if reason := missed_night(now, k):
+            night.update(date=now.date().isoformat(), kind="Missed run", status="missed", reason=reason, quota=quota.describe(k, morning))
+            log(f"note: {note.night_note(folder=config.vault_folder, night=night, browse=browse_url(config))}")
+            write_json(NIGHTS_FILE, {**(read_json(NIGHTS_FILE, {}) or {}), "missed": now.date().isoformat()})
         return
+    if not manual:
+        write_json(NIGHTS_FILE, {**(read_json(NIGHTS_FILE, {}) or {}), "ran": morning.date().isoformat()})
     if not manual and morning.weekday() >= 5:
         if int(k["weekend_stories"]) <= 0:
             log("weekend night: weekend_stories is 0, nothing to do")
@@ -733,6 +741,40 @@ def nightly(args: argparse.Namespace) -> None:
                 night["warnings"].append(f"Stopped after {story['key']}: {outcome.get('reason')}")
                 break
         finish()
+
+
+def missed_night(now: datetime, k: Json) -> str | None:
+    """Why last night had no run, if it should have had one and nobody was told yet; else None."""
+    today = now.date().isoformat()
+    nights = read_json(NIGHTS_FILE, {}) or {}
+    if k["paused"] or today in (nights.get("ran"), nights.get("missed")):
+        return None
+    if now.weekday() >= 5 and int(k["weekend_stories"]) <= 0:
+        return None
+    window_start = datetime.combine(now.date() - timedelta(days=1), datetime.min.time()).replace(hour=20)
+    fired = datetime.fromtimestamp(int(os.environ.get("NIGHT_SHIFT_FIRED_AT") or now.timestamp()))
+    last = k["last_start"]
+    if window_start <= fired < now - timedelta(minutes=5):
+        return f"Did not run: the Mac was asleep. The launch agent fired at {fired:%H:%M}, but the Mac woke fully only at {now:%H:%M}, after the last start time {last}."
+    return f"Did not run: the Mac was asleep or off through the night window (until {last}). It woke at {now:%H:%M}."
+
+
+def check_power(_: argparse.Namespace) -> None:
+    """The evening reminder: a Mac on battery sleeps through the night window, and only the user can plug it in."""
+    k = knobs()
+    now = datetime.now()
+    if k["paused"] or now.hour < 18:
+        log("no reminder: paused, or the Mac woke too late for this evening's reminder")
+        return
+    if quota.morning_after(now).weekday() >= 5 and int(k["weekend_stories"]) <= 0:
+        log("no reminder: no night run tonight")
+        return
+    power = subprocess.run(["/usr/bin/pmset", "-g", "ps"], capture_output=True, text=True).stdout.splitlines()
+    if not power or "Battery Power" not in power[0]:
+        log("on power")
+        return
+    log("on battery: reminding")
+    alert.plug_in(k["last_start"])
 
 
 def second_opinions(codex: Codex, stories: list[Json], config: Config, night: Json, run_dir: Path) -> list[Json]:
@@ -1355,6 +1397,7 @@ def main() -> None:
     sub.add_parser("status").set_defaults(handler=status)
     sub.add_parser("check-repos").set_defaults(handler=check_repos)
     sub.add_parser("ask-team").set_defaults(handler=ask_team)
+    sub.add_parser("check-power").set_defaults(handler=check_power)
     sub.add_parser("pause").set_defaults(handler=lambda _: print(f"paused = {save_knobs({'paused': True})['paused']}"))
     sub.add_parser("resume").set_defaults(handler=lambda _: print(f"paused = {save_knobs({'paused': False})['paused']}"))
     p = sub.add_parser("set")

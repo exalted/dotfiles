@@ -14,6 +14,7 @@ from pathlib import Path
 from common import ALERT_FILE, SCRIPTS_DIR, STATE_DIR, read_json, write_json
 
 TEAM_ALERT_FILE = STATE_DIR / "alert-team.json"
+POWER_ALERT_FILE = STATE_DIR / "alert-power.json"
 
 SYNC_COMMAND = "cd ~/Developer && claude /sync-gitlab-repos; exec $SHELL -l"
 DIALOG = """on run argv
@@ -69,4 +70,25 @@ def ask_team(week: str) -> bool:
         stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True,
     )
     write_json(TEAM_ALERT_FILE, {"pid": process.pid, "week": week, "at": time.time()})
+    return True
+
+
+NOTICE = """on run argv
+    display alert (item 1 of argv) message (item 2 of argv) as critical buttons {"OK"} default button "OK"
+end run
+"""
+
+
+def plug_in(last_start: str) -> bool:
+    if _open(POWER_ALERT_FILE):
+        return False
+    message = (
+        "The Mac is on battery. On battery with the lid closed it sleeps, and tonight's night shift cannot run.\n\n"
+        f"Plug it in and leave the lid open (or closed with an external display) until {last_start}."
+    )
+    process = subprocess.Popen(
+        ["/usr/bin/osascript", "-e", NOTICE, "Night shift: plug in the Mac and keep it awake tonight", message],
+        stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True,
+    )
+    write_json(POWER_ALERT_FILE, {"pid": process.pid, "at": time.time()})
     return True

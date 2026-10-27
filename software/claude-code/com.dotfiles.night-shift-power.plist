@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.dotfiles.night-shift-power</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>@HOME@/.claude/night-shift.sh</string>
+		<string>check-power</string>
+	</array>
+	<!-- Every evening at 22:00: a Mac left on battery sleeps through the night window, so the night shift
+	     cannot run. The driver decides whether tonight has a run at all. -->
+	<key>StartCalendarInterval</key>
+	<dict><key>Hour</key><integer>22</integer><key>Minute</key><integer>0</integer></dict>
+</dict>
+</plist>

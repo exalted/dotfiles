@@ -163,6 +163,16 @@ starts old. Weekends do not count, so a Thursday fetch is fresh enough for the w
 
 `status` lists each checkout's last fetch.
 
+## A Mac that sleeps
+
+The night shift works only while the Mac is fully awake: on battery with the lid closed it sleeps, and the
+launch agent waits for a full wake. So:
+
+- every evening at 22:00 `com.dotfiles.night-shift-power` checks whether tonight has a run; if it has and the
+  Mac is on battery, a dialog that stays until answered asks the user to plug it in and keep it awake;
+- a scheduled night that got no chance to start before `last_start` still leaves a short "Missed run" note in
+  that morning's folder, saying why (the Mac was asleep from when the agent fired until it woke).
+
 ## Continuing a story by hand
 
 Each story note has the command to continue the night's Claude session: `claude --resume <session id>` in the
