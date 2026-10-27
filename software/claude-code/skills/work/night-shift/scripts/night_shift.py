@@ -528,7 +528,7 @@ def context_for_picker(config: Config, k: Json, run_dir: Path, tactical: bool, k
     context = {
         "run_dir": str(run_dir),
         "stories_wanted": int(k["stories"]),
-        "examine_max": 12,
+        "examine_max": int(k["examine_max"]),
         "jira_site": config.jira_site,
         "jira_project": config.jira_project,
         "browse_url": browse_url(config),

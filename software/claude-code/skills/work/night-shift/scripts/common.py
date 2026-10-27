@@ -53,6 +53,8 @@ EXIT_SETUP_ERROR = 2
 DEFAULT_KNOBS: Json = {
     "paused": False,
     "stories": 1,
+    # How many candidates the picker may read before it gives up on finding `stories` workable ones.
+    "examine_max": 30,
     # Ready stories waiting for the user's review, that nobody has picked up, count against `stories`.
     "hold_while_waiting": True,
     # The user's team this week (see team.py): tactical works only stories with config's tactical_label.

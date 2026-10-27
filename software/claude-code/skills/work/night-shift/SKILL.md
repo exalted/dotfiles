@@ -29,6 +29,7 @@ uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/night_
 | pause it, not tonight | `pause` |
 | resume it | `resume` |
 | work on N stories | `set stories N` |
+| let the picker read more or fewer candidates | `set examine_max N` (30; skipped ones are not read again until they change in Jira) |
 | keep more for day work | `set day_reserve_percent P` (percent kept per workday left before the weekly reset) |
 | let a night use more or less | `set night_points N` (points of the 7-day window per night) |
 | the absolute ceiling | `set seven_day_ceiling_percent P` |
