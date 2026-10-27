@@ -159,7 +159,8 @@ def run(spec: Spec, *, knobs: Json, deadline: datetime, morning: datetime) -> Re
                 **spec.env,
             },
             log_dir=spec.log_dir,
-            name=f"{spec.kind}-{attempt}",
+            # Keyed and timed, so a story's recheck, a retry or a later story never overwrites an earlier log.
+            name=f"{spec.kind}-{spec.key + '-' if spec.key else ''}{attempt}-{datetime.now():%H%M%S}",
             watch=lambda: quota.over_ceiling(knobs, morning),
         )
         attempt += 1

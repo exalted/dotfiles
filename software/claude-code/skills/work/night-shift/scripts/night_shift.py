@@ -270,11 +270,15 @@ def jira_recheck(key: str, *, run_dir: Path, k: Json, deadline: datetime, mornin
         "an 'is blocked by' link points to an issue that is not done; reasons lists each such finding in a few words; "
         "updated is the issue's updated timestamp. Read only; change nothing."
     )
-    result = sessions.run(
-        sessions.Spec(kind="recheck", key=key, prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="haiku", effort="low",
-                      cap_usd=0.5, minutes=5, permission_mode="dontAsk", allowed_tools=RECHECK_TOOLS, max_turns=8, json_schema=RECHECK_SCHEMA),
-        knobs=k, deadline=deadline, morning=morning,
-    )
+    # It usually answers in seconds; a session that hangs without output is tried once more, not taken as a verdict.
+    for _ in range(2):
+        result = sessions.run(
+            sessions.Spec(kind="recheck", key=key, prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="haiku", effort="low",
+                          cap_usd=0.5, minutes=2, permission_mode="dontAsk", allowed_tools=RECHECK_TOOLS, max_turns=8, json_schema=RECHECK_SCHEMA),
+            knobs=k, deadline=deadline, morning=morning,
+        )
+        if result.status != "timeout":
+            break
     answer = result.data.get("structured_output") if result.status == "ok" else None
     if isinstance(answer, dict):
         return {**answer, "status": "ok"}
