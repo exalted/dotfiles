@@ -6,6 +6,7 @@
   "permissions": {
     "allow": [
       "Bash(uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/progress.py *)",
+      "Bash(uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/night_shift.py continue-update *)",
       "Bash(uv run --quiet --no-project --script ~/.claude/skills/codex-servant/scripts/codex_exec.py *)"
     ],
     "deny": [

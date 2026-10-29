@@ -13,6 +13,7 @@ ID_PROPERTY = "night_shift_id"
 
 
 import json
+import re
 import uuid
 from datetime import date, datetime
 from pathlib import Path
@@ -64,9 +65,25 @@ def _callout(warning: str) -> str:
     return f"> [!warning] {' '.join(warning.split())}"
 
 
-def _frontmatter(properties: Json) -> str:
-    properties = {ID_PROPERTY: uuid.uuid4().hex, **properties}
+def _frontmatter(properties: Json, identifier: str | None = None) -> str:
+    properties = {ID_PROPERTY: identifier or uuid.uuid4().hex, **properties}
     return "---\n" + "".join(f"{key}: {_yaml(value)}\n" for key, value in properties.items()) + "---\n"
+
+
+def set_properties(path: Path, properties: Json) -> None:
+    """Set frontmatter properties in place; the rest of the frontmatter and the body stay as they are."""
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n") or (end := text.find("\n---\n", 3)) < 0:
+        return
+    lines = text[4:end].split("\n")
+    for key, value in properties.items():
+        line = f"{key}: {_yaml(value)}"
+        index = next((i for i, existing in enumerate(lines) if existing.startswith(f"{key}:")), None)
+        if index is None:
+            lines.append(line)
+        else:
+            lines[index] = line
+    path.write_text("---\n" + "\n".join(lines) + text[end:], encoding="utf-8")
 
 
 def note_id(path: Path) -> str | None:
@@ -163,12 +180,35 @@ def _repos_line(story: Json) -> str:
     return " · ".join(parts)
 
 
-def story_note(*, folder: Path, day: str, story: Json, browse: str, run_note: str) -> Path:
-    path = unique(folder, f"{day} {story['key']}")
+def story_note(*, folder: Path, day: str, story: Json, browse: str, run_note: str, replacing: Path | None = None) -> Path:
+    """A new story note, or, for a story worked again with progress, its earlier note moved here and rewritten.
+    Only the latest state counts: the earlier run note no longer mentions the story."""
+    path = replacing if replacing and replacing.parent == folder else unique(folder, f"{day} {story['key']}")
     properties = {"kind": "story", "story": story["key"], "status": story.get("status", "")}
     body = _story(story, browse) + [f"*Run: [[{run_note}]]*", ""]
-    path.write_text(_frontmatter(properties) + "\n".join(body))
+    identifier = note_id(replacing) if replacing else None
+    if replacing:
+        replacing.rename(path)
+        _forget_in_run_notes(replacing.parent, replacing.stem)
+    path.write_text(_frontmatter(properties, identifier) + "\n".join(body))
     return path
+
+
+def _forget_in_run_notes(folder: Path, stem: str) -> None:
+    for run in folder.glob("*.md"):
+        text = run.read_text(encoding="utf-8")
+        if f"[[{stem}|" not in text or '\nkind: "run"\n' not in text:
+            continue
+        lines = [line for line in text.split("\n") if not line.startswith(f"- [[{stem}|")]
+        stories = [line for line in lines if line.startswith("- [[")]
+        if stories:
+            ready = sum("**Ready to review**" in line for line in stories)
+            headline = f"**{ready} of {len(stories)} stories ready to review**"
+        else:
+            headline = "**No story of this run is left to review**"
+            lines = [line for line in lines if line != "## Stories"]
+        lines = [headline if re.fullmatch(r"\*\*\d+ of \d+ stories ready to review\*\*", line) else line for line in lines]
+        run.write_text("\n".join(lines), encoding="utf-8")
 
 
 def night_note(*, folder: Path, night: Json, browse: str) -> Path:
@@ -187,7 +227,12 @@ def night_note(*, folder: Path, night: Json, browse: str) -> Path:
     if stories:
         body += ["## Stories", ""]
     for story in stories:
-        linked = story_note(folder=folder, day=day, story=story, browse=browse, run_note=path.stem)
+        earlier = Path(story["earlier_note"]) if story.get("earlier_note") else None
+        if earlier and not story.get("advanced"):
+            linked = earlier
+            story["reason"] = "; ".join(filter(None, [story.get("reason"), "no progress tonight, so its note is still the earlier one"]))
+        else:
+            linked = story_note(folder=folder, day=day, story=story, browse=browse, run_note=path.stem, replacing=earlier)
         story["note"] = str(linked.relative_to(folder.parent))
         story["note_id"] = note_id(linked)
         details = " · ".join(part for part in (_label(story), _repos_line(story)) if part)
@@ -204,6 +249,43 @@ def night_note(*, folder: Path, night: Json, browse: str) -> Path:
         body += ["## Interrupted earlier", ""] + [f"- {item}" for item in night["interrupted"]] + [""]
     properties = {"kind": "run", "status": night.get("status", "done")}
     path.write_text(_frontmatter(properties) + "\n".join(body) + "\n")
+    return path
+
+
+def ensure_overview(folder: Path) -> Path:
+    """The Bases view beside the night-shift folder, written once: the user may change its views."""
+    path = folder.with_suffix(".base")
+    if path.exists():
+        return path
+    inside = folder.relative_to(vault_root(folder)).as_posix()
+    path.write_text(f"""filters:
+  and:
+    - file.inFolder({json.dumps(inside)})
+    - kind == "story"
+properties:
+  file.name:
+    displayName: Note
+  note.jira_rank:
+    displayName: Backlog rank
+  note.status:
+    displayName: Night status
+  note.jira_status:
+    displayName: Jira status
+  note.jira_assignee:
+    displayName: Assignee
+views:
+  - type: table
+    name: By backlog rank
+    order:
+      - file.name
+      - jira_rank
+      - status
+      - jira_status
+      - jira_assignee
+    sort:
+      - property: note.jira_rank
+        direction: ASC
+""")
     return path
 
 

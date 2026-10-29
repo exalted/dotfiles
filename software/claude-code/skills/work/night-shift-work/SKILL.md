@@ -27,6 +27,12 @@ own rules (test first, commands, conventions) apply exactly as in the user's day
   on your branch: never switch branches, stash, reset, merge, rebase, push or touch `main`, and never change
   Jira, Confluence, Slack or GitLab. Deny rules enforce most of this; do not look for ways around a denial.
 - Your branch must stand on its own: deployable without any other story's work. Build only on `origin/main`.
+- The branch may hold an earlier night's attempt, already rebased onto `origin/main` (the brief says so). Continue
+  from it: read its `REPORT.md` and commits first, keep what is sound, and update that `REPORT.md` instead of
+  starting a new one. If the brief says the rebase stopped at a conflict, resolve that first: edit the
+  conflicting files, `git add` them, and run the `continue-update` command the brief gives until it says the
+  branch is on `origin/main`. It is the only way to move the rebase on. A rebase you leave unfinished is
+  aborted after you, and the branch returns to where it was before the night.
 - Never start, stop or reset a repository's local stack (`make local-*`, `docker compose`). Its project name
   and ports are fixed, and it is the user's own running stack. If an
   acceptance criterion can only be checked against the stack, say so in the report and leave it to the user.

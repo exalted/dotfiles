@@ -69,7 +69,9 @@ SECURITY_SETTINGS = SKILLS / "night-shift-work" / "settings-security.json"
 UV = "uv run --quiet --no-project --script"
 SCRIPTS = "~/.claude/skills/night-shift/scripts"
 LAUNCH_LABEL = "com.dotfiles.night-shift"
-FINAL = {"solved", "partial", "abandoned"}
+RESULT_STATUSES = {"solved", "partial", "abandoned"}
+# A partial story is not final: it competes with the other candidates on rank every night and continues its branch.
+FINAL = {"solved", "abandoned"}
 FRESH_POLL_SECONDS = 300
 # Session outcomes after which no further Claude session may start tonight.
 STOP_NIGHT = {"usage_limit", "usage_limit_weekly", "gated", "deadline"}
@@ -288,25 +290,33 @@ def jira_recheck(key: str, *, run_dir: Path, k: Json, deadline: datetime, mornin
 CLAIM_SCHEMA = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["stories"],
-    "properties": {"stories": {"type": "array", "items": {
-        "type": "object", "additionalProperties": False, "required": ["key", "assignee", "status_category", "status", "mine", "labels"],
-        "properties": {
-            "key": {"type": "string"},
-            "labels": {"type": "array", "items": {"type": "string"}},
-            "assignee": {"type": "string"},
-            "mine": {"type": "boolean"},
-            "status_category": {"type": "string", "enum": ["To Do", "In Progress", "Done"]},
-            "status": {"type": "string"},
-        },
-    }}},
+    "required": ["stories", "missing"],
+    "properties": {
+        "stories": {"type": "array", "items": {
+            "type": "object", "additionalProperties": False,
+            "required": ["key", "rank", "assignee", "assigned_to_me", "status_category", "status", "mine", "labels", "in_backlog_list"],
+            "properties": {
+                "key": {"type": "string"},
+                "rank": {"type": "integer"},
+                "labels": {"type": "array", "items": {"type": "string"}},
+                "assignee": {"type": "string"},
+                "assigned_to_me": {"type": "boolean"},
+                "mine": {"type": "boolean"},
+                "status_category": {"type": "string", "enum": ["To Do", "In Progress", "Done"]},
+                "status": {"type": "string"},
+                "in_backlog_list": {"type": "boolean"},
+            },
+        }},
+        "missing": {"type": "array", "items": {"type": "string"}},
+    },
 }
-CLAIM_TOOLS = ["ToolSearch", "mcp__plugin_atlassian_atlassian__getAccessibleAtlassianResources", "mcp__plugin_atlassian_atlassian__searchJiraIssuesUsingJql"]
+CLAIM_TOOLS = ["ToolSearch", "mcp__plugin_atlassian_atlassian__getAccessibleAtlassianResources", "mcp__plugin_atlassian_atlassian__searchJiraIssuesUsingJql",
+               "mcp__plugin_atlassian_atlassian__getJiraIssue", "mcp__plugin_atlassian_atlassian__discover", "mcp__plugin_atlassian_atlassian__executeRead"]
 
 
 def jira_states(keys: list[str], config: Config, *, run_dir: Path, k: Json, deadline: datetime, morning: datetime) -> dict[str, Json] | None:
-    """Assignee, status and labels of the stories waiting for review, and whether the user is working on each one, from
-    one small haiku session; None if it did not finish."""
+    """Rank, assignee, status and labels of the stories the night shift tracks, whether the user is working on each one,
+    and which no longer exist, from one small haiku session; None if it did not finish."""
     if not keys:
         return {}
     listed = ", ".join(keys)
@@ -314,30 +324,73 @@ def jira_states(keys: list[str], config: Config, *, run_dir: Path, k: Json, dead
     if config.own_status:
         people = "assignee = currentUser()" + (f" OR {config.pair_field} = currentUser()" if config.pair_field else "")
         mine = (f"Then search with: key in ({listed}) AND status = \"{config.own_status}\" AND ({people}). mine is true exactly for "
-                "the stories this second search returns.")
+                "the stories this search returns.")
+    backlog = "in_backlog_list is false for every story."
+    if config.jira_board_id:
+        backlog = (f"Then read board {config.jira_board_id}'s backlog list with executeRead, operation getJiraBoardIssueData, dataset backlog, "
+                   "every page (use discover for its exact inputs if needed). in_backlog_list is true exactly for the stories it lists.")
     prompt = (
-        f"Search Jira with searchJiraIssuesUsingJql for: key in ({listed}), fields assignee, status and labels. For each story give "
-        f"the assignee's display name (empty if none), the status category, the status name and the labels. {mine} Read only; change nothing."
+        f"Search Jira with searchJiraIssuesUsingJql for: key in ({listed}) ORDER BY Rank ASC, fields assignee, status and labels, every page. "
+        "If Jira answers that a key does not exist, read that key with getJiraIssue; if it is not found either, put it in missing and "
+        "search again without it. For each story found give rank (its 1-based position in the search result), the assignee's display "
+        "name (empty if none), the status category, the status name and the labels. "
+        f"Then search with: key in ({listed}) AND assignee = currentUser(). assigned_to_me is true exactly for the stories it returns. "
+        f"{mine} {backlog} Read only; change nothing."
     )
     result = sessions.run(
         sessions.Spec(kind="recheck", prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="haiku", effort="low",
-                      cap_usd=0.5, minutes=5, permission_mode="dontAsk", allowed_tools=CLAIM_TOOLS, max_turns=10, json_schema=CLAIM_SCHEMA),
+                      cap_usd=0.5, minutes=8, permission_mode="dontAsk", allowed_tools=CLAIM_TOOLS, max_turns=25, json_schema=CLAIM_SCHEMA),
         knobs=k, deadline=deadline, morning=morning,
     )
     answer = result.data.get("structured_output") if result.status == "ok" else None
     if not isinstance(answer, dict):
         log(f"Jira state check did not finish: {result.status} {result.reason}")
         return None
-    return {story["key"]: story for story in answer["stories"]}
+    states = {story["key"]: story for story in answer["stories"]}
+    states.update({key: {"key": key, "missing": True} for key in answer["missing"] if key in keys and key not in states})
+    return states
 
 
-def gone_elsewhere(state: Json) -> str | None:
-    """Why a story waiting for review no longer needs our branch, or None. We picked it from To Do; once it has left
-    To Do, whoever moved it took it out of the night shift's hands. The exception is the user working on it
-    (own_status, as assignee or pair): then the branch is theirs to use."""
-    if state["status_category"] == "To Do" or state["mine"]:
+def gone_elsewhere(state: Json, config: Config) -> str | None:
+    """Why a story the night shift tracks is no longer its own to work, or None. We picked it from the to-do column;
+    once it left it, someone took it, or it no longer exists, it is out of our hands. The exception is the user working
+    on it (own_status, as assignee or pair): then the branch is theirs to use. Another team's label is not a reason:
+    the team rotates, and the story waits for its week."""
+    if state.get("missing"):
+        return "it no longer exists in Jira"
+    if state["mine"]:
         return None
-    return f"it is {state['status']} in Jira" + (f", with {state['assignee']}" if state["assignee"] else "")
+    if state["status_category"] != "To Do":
+        return f"it is {state['status']} in Jira" + (f", with {state['assignee']}" if state["assignee"] else "")
+    if state["assignee"] and not state["assigned_to_me"]:
+        return f"{state['assignee']} took it"
+    if config.jira_board_id:
+        if state["in_backlog_list"]:
+            return "it moved to the board's backlog list"
+        if config.jira_board_column_status and state["status"] != config.jira_board_column_status:
+            return f"it left the board's to-do column ({state['status']})"
+    elif state["status"] == "Icebox":
+        return "it is in Icebox"
+    return None
+
+
+def tracked() -> list[str]:
+    """Stories with a branch waiting for review or an open story note; a merged or closed one is the user's now."""
+    return [key for key, entry in sorted(quota.load_ledger()["issues"].items())
+            if entry.get("review") not in ("merged", "rejected", "dropped", "closed")
+            and (entry.get("review") == "awaiting" or entry.get("note_state") == "open")]
+
+
+def show_ranks(config: Config, states: dict[str, Json] | None) -> None:
+    """Each open story note carries its story's backlog rank and Jira state, so the overview sorts as the backlog does."""
+    ledger = quota.load_ledger()["issues"]
+    notes = note.find_notes(note.vault_root(config.vault_folder))
+    for key, state in (states or {}).items():
+        where = notes.get((ledger.get(key) or {}).get("note_id") or "")
+        if state.get("missing") or not where or not where.is_relative_to(config.vault_folder):
+            continue
+        note.set_properties(where, {"jira_rank": state["rank"], "jira_status": state["status"], "jira_assignee": state["assignee"]})
+    note.ensure_overview(config.vault_folder)
 
 
 def drop_story(config: Config, key: str, reason: str) -> list[str]:
@@ -379,6 +432,8 @@ def forget_story(config: Config, key: str, reason: str) -> list[str]:
 
 def unclaimed(state: Json | None) -> bool:
     """No state (the Jira check did not finish) counts as unclaimed: an idle night costs nothing, a story worked twice does."""
+    if state is not None and state.get("missing"):
+        return False
     return state is None or (not state["assignee"] and state["status_category"] == "To Do")
 
 
@@ -616,6 +671,7 @@ def nightly(args: argparse.Namespace) -> None:
     run_dir = new_run_dir(now.strftime("%Y%m%d-%H%M%S"))
     kind = "Dry run" if dry else "Manual run" if manual else "Night run"
     night: Json = {"date": morning.date().isoformat(), "started": now.isoformat(), "kind": kind, "stories": [], "skipped": [], "warnings": [], "interrupted": [], "status": "done"}
+    ranks: dict[str, Json] | None = None
 
     def finish(status: str | None = None, reason: str | None = None) -> None:
         if status:
@@ -629,6 +685,7 @@ def nightly(args: argparse.Namespace) -> None:
         for story in night.get("stories", []):
             if story.get("note_id"):
                 update_issue(story["key"], note=story["note"], note_id=story["note_id"], note_state="open")
+        show_ranks(config, ranks)
 
     if not manual and not (now.hour < 12 and now <= last_start):
         log(f"started at {now:%H:%M}, outside the night window (until {k['last_start']}): nothing to do")
@@ -656,10 +713,11 @@ def nightly(args: argparse.Namespace) -> None:
         for change in sync_notes(config):
             log(change)
         refresh_reviews(config)
-        states = jira_states([item["key"] for item in awaiting_review()], config, run_dir=run_dir, k=k, deadline=deadline, morning=morning)
+        states = jira_states(tracked(), config, run_dir=run_dir, k=k, deadline=deadline, morning=morning)
         for key, state in (states or {}).items():
-            if reason := gone_elsewhere(state):
-                night["warnings"] += drop_story(config, key, reason)
+            if reason := gone_elsewhere(state, config):
+                night["warnings"] += forget_story(config, key, reason)
+        ranks = states
         night["awaiting"] = awaiting_review()
         tactical, why = team.current(k, config, morning)
         night["team"] = f"{team.name(tactical)} ({why})" if config.tactical_label else ""
@@ -710,6 +768,7 @@ def nightly(args: argparse.Namespace) -> None:
             update_issue(item["key"], status=item.get("kind", "not_workable"), final=False, reason=item.get("reason", ""), jira_updated=item.get("jira_updated"))
         night["warnings"] += [f"plan: {problem}" for problem in problems]
         stories = second_opinions(codex, stories, config, night, run_dir)
+        ranks = jira_states(sorted(set(tracked()) | {story["key"] for story in stories}), config, run_dir=run_dir, k=k, deadline=deadline, morning=morning) or ranks
         if dry:
             night["stories"] = [{"key": story["key"], "summary": story.get("summary", ""), "status": "", "reason": "dry run: picked, not worked", "summary_text": story["brief"][:600]} for story in stories]
             return finish("dry-run")
@@ -733,13 +792,22 @@ def nightly(args: argparse.Namespace) -> None:
                 night["skipped"].append({"key": story["key"], "reason": "changed since picking: " + "; ".join(recheck["reasons"])})
                 update_issue(story["key"], status="blocked", final=False, reason="; ".join(recheck["reasons"]), jira_updated=recheck.get("updated"))
                 continue
+            earlier = quota.load_ledger()["issues"].get(story["key"]) or {}
             outcome = work_story(config, k, story, index, run_dir, codex, deadline, morning)
             for problem in outcome.get("release_problems", []):
                 night["warnings"].insert(0, f"Your checkout after {story['key']} needs attention: {problem}")
+            if outcome["status"] in QUOTA_STOPS and outcome.get("earlier_commits"):
+                update_issue(story["key"], **{field: earlier.get(field) for field in ("status", "final", "review")})
+                night["skipped"].append({"key": story["key"], "reason": "stopped half way by the quota; its branch keeps the work so far"})
+                break
             if outcome["status"] in QUOTA_STOPS:
                 night["warnings"] += forget_story(config, story["key"], f"dropped half way, the quota stopped it ({outcome.get('reason')}); a later night starts it over")
                 night["skipped"].append({"key": story["key"], "reason": "dropped half way: the quota stopped it; a later night starts it over"})
                 break
+            where = note.find_notes(note.vault_root(config.vault_folder)).get(earlier.get("note_id") or "") if earlier.get("note_state") == "open" else None
+            if where and where.is_relative_to(config.vault_folder):
+                outcome["earlier_note"] = str(where)
+                outcome["advanced"] = outcome.get("new_commits", 0) > 0 or (outcome["status"] == "solved" and earlier.get("status") != "solved")
             night["stories"].append(outcome)
             if outcome["status"] in STOP_NIGHT:
                 night["warnings"].append(f"Stopped after {story['key']}: {outcome.get('reason')}")
@@ -813,6 +881,11 @@ def brief_text(story: Json, prepared: list[workspace.Prepared], issue_dir: Path,
         "",
         f"- Checkout (your working directory): {primary.path}, on branch {primary.branch} from origin/main",
         *[f"- Also: {item.repo} checkout {item.path}, on branch {item.branch}" for item in others],
+        *[f"- {item.repo}: {item.branch} holds {item.earlier} commits of an earlier attempt, rebased onto origin/main; continue from them"
+          for item in prepared if item.earlier],
+        *[f"- {item.repo}: the rebase onto origin/main stopped at a conflict in {', '.join(item.conflict.split())}. Resolve it first: "
+          f"edit the files, `git add` them, then run `{UV} {SCRIPTS}/night_shift.py continue-update {item.path}` until it says the branch is on origin/main"
+          for item in prepared if item.conflict],
         "- The user's own work in these checkouts is set aside for the night and is not yours to see or touch.",
         f"- Run directory (result.json, progress.md): {issue_dir}",
         f"- Dossier (read it before touching code): {story['dossier']}",
@@ -923,13 +996,16 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
         outcome["session_cwd"] = str(primary.path)
         claude_session = session if session.status == "ok" else None
         result = read_json(issue_dir / "result.json", {}) or {}
-        if session.status == "ok" and result.get("status") in FINAL:
+        if session.status == "ok" and result.get("status") in RESULT_STATUSES:
             outcome["status"] = result["status"]
         else:
             outcome["status"] = session.status if session.status != "ok" else "error"
             outcome["reason"] = session.reason or "the session ended without a result.json"
         outcome["summary_text"] = result.get("summary", "")
         outcome["open_questions"] = result.get("open_questions", [])
+    for item in prepared:
+        if workspace.abort_unfinished_rebase(item.path):
+            progress(issue_dir, f"{item.repo}: the rebase onto origin/main was not finished; aborted, the branch is as before tonight")
     # The review commits to REPORT.md, so it comes first: the gate then runs on the branch tip the user gets.
     set_phase(issue_dir, "reviewing")
     if any(workspace.commits_since(item.path, item.base_sha) for item in prepared) and codex.ready():
@@ -942,7 +1018,7 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
                 outcome["points"] = round((outcome.get("points") or 0.0) + fixed.points, 1)
             outcome["fix_round"] = fixed.status if fixed.status != "ok" else "done"
             result = read_json(issue_dir / "result.json", {}) or {}
-            if fixed.status == "ok" and result.get("status") in FINAL:
+            if fixed.status == "ok" and result.get("status") in RESULT_STATUSES:
                 outcome["status"] = result["status"]
                 outcome["summary_text"] = result.get("summary", outcome.get("summary_text", ""))
                 outcome["open_questions"] = result.get("open_questions", outcome.get("open_questions", []))
@@ -957,6 +1033,8 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
             progress(issue_dir, f"{item.repo} branch not standalone: {'; '.join(independence)}")
         outcome["repos"].append({"repo": item.repo, "branch": item.branch, "checkout": str(item.path), "commits": commits, "verify": verify, "independence": independence})
     write_json(issue_dir / "verify.json", outcome["repos"])
+    outcome["earlier_commits"] = sum(item.earlier for item in prepared)
+    outcome["new_commits"] = sum(len(repo["commits"]) for repo in outcome["repos"]) - outcome["earlier_commits"]
     changed = [repo for repo in outcome["repos"] if repo["commits"]]
     if outcome["status"] == "solved" and not changed:
         outcome["status"], outcome["reason"] = "partial", "the model said solved, but no commit landed on the branch"
@@ -1310,7 +1388,8 @@ def review(args: argparse.Namespace) -> None:
         with quota.transaction() as ledger:
             entry = ledger["issues"].get(args.key, {})
             ledger["issues"][args.key] = {"status": "retry", "final": False, "review": None, "feedback": text or None,
-                                          "previous_status": entry.get("status"), "date": datetime.now().isoformat(timespec="minutes")}
+                                          "previous_status": entry.get("status"), "date": datetime.now().isoformat(timespec="minutes"),
+                                          **{field: entry[field] for field in ("note", "note_id", "note_state") if field in entry}}
         print(f"{args.key}: eligible again" + (" with your feedback" if text else ""))
     else:
         update_issue(args.key, review="merged")
@@ -1339,6 +1418,16 @@ def cleanup(args: argparse.Namespace) -> None:
                 print(workspace.cleanup(repo, args.key, force=args.force))
         if args.force:
             update_issue(args.key, review="dropped", final=True)
+
+
+def continue_update(args: argparse.Namespace) -> None:
+    """For the work session: move a conflicted rebase of its night branch onto origin/main on, once it resolved the files."""
+    path = Path(args.path).expanduser().resolve()
+    if path not in {repo.path.resolve() for repo in load_config().repos.values()}:
+        sys.exit(f"{path} is not a configured checkout")
+    ok, text = workspace.continue_rebase(path)
+    print(text)
+    sys.exit(0 if ok else 1)
 
 
 def run_now(args: argparse.Namespace) -> None:
@@ -1426,6 +1515,9 @@ def main() -> None:
     p = sub.add_parser("fail")
     p.add_argument("message")
     p.set_defaults(handler=fail)
+    p = sub.add_parser("continue-update")
+    p.add_argument("path")
+    p.set_defaults(handler=continue_update)
     p = sub.add_parser("validate-plan")
     p.add_argument("run_dir")
     p.set_defaults(handler=validate)

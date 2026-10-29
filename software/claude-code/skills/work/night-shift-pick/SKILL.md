@@ -26,7 +26,7 @@ The context's `candidates` says where candidates come from.
   the keys in the board's separate backlog list; then `dataset: "board"` with `jql` set to `column_jql`,
   fields `summary,status,issuetype,updated,priority`, page by page. Drop every key that is in the backlog
   list: those share the column's status but are not on the board, and they are never candidates.
-- **A JQL** (`jql`): run it with `searchJiraIssuesUsingJql`, 25 results, same fields.
+- **A JQL** (`jql`): run it with `searchJiraIssuesUsingJql`, same fields, page by page.
 - **A list of keys** (`keys`): the user chose these candidates by hand, in this order. Read each one with
   `getJiraIssue`; the assignment and status rules below still apply to them.
 
@@ -35,11 +35,18 @@ flag per issue in step 3.
 
 Go down the list in order. Skip a candidate without reading further when `previous` says:
 
-- `final: true` (solved, partial, abandoned, rejected, or skipped by the user): worked already or decided by
-  the user; a story waiting for the user's review is always final;
-- `blocked` or `not_workable`, and the issue's `updated` is not later than the recorded `jira_updated`;
-- any other status from fewer than `retry_after_days` days ago, except `retry`: the user asked for another
-  attempt, so it is eligible now, and its `feedback` (if any) must shape the brief.
+- `final: true` (solved, abandoned, rejected, or skipped by the user): worked already or decided by the user;
+- any other status from fewer than `retry_after_days` days ago, except these, which are eligible now:
+  - `retry`: the user asked for another attempt; its `feedback` (if any) must shape the brief;
+  - `partial`: an earlier night did part of it, also when that part waits for the user's review. It keeps its
+    place in the backlog order, like any other candidate;
+  - `blocked` or `not_workable`: read again in full at every run, since a blocker can lift without a change to
+    the story itself (its blocking issue is done, a "go ahead" in Slack).
+
+For a story with an earlier attempt (`partial`, or `retry` with a `night/<KEY>` branch in a repository), read what
+is on its branch too:
+`command git -C <path> log origin/main..night/<KEY>` and `command git -C <path> show night/<KEY>:REPORT.md`. The
+brief then says what is done, what is left, and what the earlier report left open.
 
 Stop when you have `stories_wanted` workable stories, or after `examine_max` candidates examined in steps 2-4.
 

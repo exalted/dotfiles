@@ -2,7 +2,8 @@
 
 The user's state comes first. Before a story starts, `enter()` records the checkout's branch, HEAD, status and
 stash list, sets the user's uncommitted work aside with `git stash` (kept twice: in the stash list and under
-a private backup ref), and switches to `night/<KEY>` from `origin/main`. `release()` always runs afterwards:
+a private backup ref), and switches to `night/<KEY>` from `origin/main`, or, when an earlier attempt left the branch,
+rebases it onto `origin/main`. `release()` always runs afterwards:
 it saves whatever the story left uncommitted, returns to the user's branch, puts their work back exactly
 (staged stays staged), and compares the result with the record. A branch the night created and left without
 a commit is removed then: the user reviews only branches that hold work. The frame is written to disk, so a
@@ -255,6 +256,9 @@ class Prepared:
     reused: bool
     user: UserState = field(default_factory=lambda: UserState(None, "", "", ""))
     frame_file: Path | None = None
+    # Commits an earlier attempt left on the branch, and a rebase onto origin/main that stopped at a conflict.
+    earlier: int = 0
+    conflict: str = ""
 
 
 def _run_setup(repo: Repo, path: Path, *, log_dir: Path, deadline: datetime, label: str) -> None:
@@ -283,19 +287,60 @@ def enter(repo: Repo, key: str, *, log_dir: Path, deadline: datetime, frame_file
         git(path, "update-ref", user.backup_ref, user.stash_sha)
     reused = bool(git(path, "branch", "--list", branch))
     start = git(path, "rev-parse", branch if reused else "origin/main")
+    earlier = len(commits_since(path, "origin/main", branch)) if reused else 0
+    conflict = ""
     frame_file.parent.mkdir(parents=True, exist_ok=True)
     frame = {"repo": repo.name, "path": str(path), "branch": branch, "created": not reused, "start": start, "user": asdict(user)}
     frame_file.write_text(json.dumps(frame, indent=2))
     try:
         if reused:
             git(path, "switch", "--quiet", branch)
+            conflict = _rebase_onto_main(path)
         else:
             git(path, "switch", "--quiet", "-c", branch, "origin/main")
         _run_setup(repo, path, log_dir=log_dir, deadline=deadline, label="night")
     except Exception:
         release_frame(frame_file, repo=repo, log_dir=log_dir)
         raise
-    return Prepared(repo.name, path, branch, git(path, "merge-base", "HEAD", "origin/main"), reused, user, frame_file)
+    return Prepared(repo.name, path, branch, git(path, "merge-base", "HEAD", "origin/main"), reused, user, frame_file, earlier, conflict)
+
+
+def _rebase_in_progress(path: Path) -> bool:
+    return _git_dir_marker(path, "rebase-merge") or _git_dir_marker(path, "rebase-apply")
+
+
+def _rebase_onto_main(path: Path) -> str:
+    """A branch must stand on current origin/main. A conflict stays in progress for the work session to resolve;
+    the conflicting files are returned."""
+    git(path, "-c", "core.editor=true", "rebase", "--quiet", "origin/main", check=False)
+    if not _rebase_in_progress(path):
+        return ""
+    return git(path, "diff", "--name-only", "--diff-filter=U") or "unknown files"
+
+
+def abort_unfinished_rebase(path: Path) -> bool:
+    """Only the night can have a rebase in progress: preflight leaves a checkout with one alone."""
+    if not _rebase_in_progress(path):
+        return False
+    git(path, "rebase", "--abort")
+    return True
+
+
+def continue_rebase(path: Path) -> tuple[bool, str]:
+    """The work session's one way to move a conflicted rebase of its night branch on, after it resolved the files."""
+    if not _rebase_in_progress(path):
+        return False, "no rebase is in progress"
+    head = (Path(git(path, "rev-parse", "--absolute-git-dir")) / "rebase-merge" / "head-name")
+    if not head.exists() or not head.read_text().strip().startswith("refs/heads/night/"):
+        return False, "the rebase in progress is not of a night branch"
+    if unresolved := git(path, "diff", "--name-only", "--diff-filter=U"):
+        return False, f"still unresolved: {unresolved}; edit and `git add` them, then run this again"
+    result =subprocess.run(["git", "-c", "core.hooksPath=/dev/null", "-c", "core.editor=true", "-C", str(path), "rebase", "--continue"], check=False,
+                            capture_output=True, text=True, timeout=300)
+    if _rebase_in_progress(path):
+        unmerged = git(path, "diff", "--name-only", "--diff-filter=U")
+        return False, f"the next commit conflicts too: resolve {unmerged or 'the files git names'}, stage them, and run this again\n{result.stdout}{result.stderr}"
+    return result.returncode == 0, (result.stdout + result.stderr).strip() or "the branch is on origin/main now"
 
 
 def _clear_leftovers(path: Path, key: str) -> Path | None:
@@ -319,6 +364,8 @@ def release_frame(frame_file: Path, *, repo: Repo, log_dir: Path, deadline: date
     key = frame["branch"].removeprefix("night/")
     problems: list[str] = []
     archived = None
+    if abort_unfinished_rebase(path):
+        log(f"{frame['repo']}: the rebase of {frame['branch']} onto origin/main was not finished; aborted")
     current = git(path, "branch", "--show-current")
     if current == frame["branch"]:
         archived = _clear_leftovers(path, key)

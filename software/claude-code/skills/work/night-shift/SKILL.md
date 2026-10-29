@@ -29,7 +29,7 @@ uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/night_
 | pause it, not tonight | `pause` |
 | resume it | `resume` |
 | work on N stories | `set stories N` |
-| let the picker read more or fewer candidates | `set examine_max N` (30; skipped ones are not read again until they change in Jira) |
+| let the picker read more or fewer candidates | `set examine_max N` (30; blocked and not-workable ones are read again at every run, and count) |
 | keep more for day work | `set day_reserve_percent P` (percent kept per workday left before the weekly reset) |
 | let a night use more or less | `set night_points N` (points of the 7-day window per night) |
 | the absolute ceiling | `set seven_day_ceiling_percent P` |
@@ -39,7 +39,7 @@ uv run --quiet --no-project --script ~/.claude/skills/night-shift/scripts/night_
 | codex on / off, codex fallback | `set codex true|false`, `set codex_fallback true|false` |
 | never take KEY | `skip KEY` |
 | won't merge KEY's branch | `reject KEY "why"` (never retried; its branch and story note are removed) |
-| try KEY again | `retry KEY "what to change"` (the feedback goes into the next attempt's brief) |
+| try KEY again | `retry KEY "what to change"` (the feedback goes into the next attempt's brief; it continues the branch if there is one) |
 | merged KEY | `merged KEY` (also detected by itself once main holds the branch) |
 | work new stories however many ready ones wait | `set hold_while_waiting false` |
 | on the tactical team this week, or not | `set tactical true` / `set tactical false` (confirms the current week; stays until changed) |
@@ -72,11 +72,24 @@ including the Docker-backed suites marked `requires = "docker"` in `config.toml`
 
 ## Stories it already worked
 
-A story the night shift worked is never picked again on its own. With commits on its branch it waits for
-the user's review, and every morning note lists it under "Waiting for your review" until one of these:
-`merged` (also detected once `origin/main` holds all of the branch's commits), `reject` (never retried), or
-`retry` (eligible again, with the user's feedback in the next brief). Blocked or unworkable stories are
-looked at again only after they change in Jira.
+A solved or abandoned story is never picked again on its own. With commits on its branch it waits for the
+user's review, and every morning note lists it under "Waiting for your review" until one of these: `merged`
+(also detected once `origin/main` holds all of the branch's commits), `reject` (never retried), or `retry`
+(eligible again, with the user's feedback in the next brief).
+
+A partial story is a candidate again every night, in its backlog place, also while it waits for review, with
+no limit on attempts. The picker reads its branch and `REPORT.md`, and the work session continues from them.
+Before the session, the driver rebases `night/<KEY>` onto `origin/main` (the same for `retry`). If the rebase
+stops at a conflict, the session resolves it and moves it on with `night_shift.py continue-update <checkout>`,
+the one rebase step it may take; a rebase left unfinished is aborted, and the branch stays as it was. If the
+quota stops a continued story, it keeps its branch and earlier status.
+
+On a new attempt with progress (new commits, or now solved), the story's note is rewritten, moved into that
+morning's folder, and the earlier run note no longer mentions the story: only the latest state counts. Without
+progress the earlier note stays as it is, and the run note links to it.
+
+Blocked and not-workable stories are read again in full at every run, since a blocker can lift without a
+change to the story itself. Stories that failed for another reason (timeout, error, setup) wait 7 days.
 
 A story that is ready for review (solved, its branch holds commits) and that nobody has picked up in Jira
 (no assignee, status still To Do) counts against the night's `stories`: with 2 stories a night and 1 waiting,
@@ -183,12 +196,19 @@ work on the story.
 ## Branches
 
 The night shift keeps no archive or backup branches. A rejected story loses its branch and story note. At the
-start of each night, one small Jira check reads the stories waiting for review. The night shift picked each from
-To Do; one that has left To Do (in progress, done or canceled, whoever moved it) is out of its hands: it loses
-its branch and story note (moved to the Trash, with its day folder if that is left empty), and the ledger closes
-it. The exception is the user working on it, in `own_status` from `config.toml` with the user as assignee or in
-`pair_field`: then everything stays. A merged story is detected before this check and keeps its note. A checkout that is on the
-branch keeps it until the next night.
+start of each night, one small Jira check reads every story with a branch waiting for review or an open story
+note. The night shift picked each from the to-do column; it is out of its hands, and loses its branch and story
+note (moved to the Trash, with its day folder if that is left empty), when it:
+
+- left the To Do status category (in progress, done or canceled, whoever moved it);
+- is still To Do, but someone other than the user is its assignee;
+- is in Icebox, or, with a board, left the board's to-do column or sits in the board's backlog list;
+- no longer exists in Jira.
+
+The ledger then forgets it, so a story that comes back to the column later is a fresh candidate. The exception
+is the user working on it, in `own_status` from `config.toml` with the user as assignee or in `pair_field`: then
+everything stays. A story with another team's label stays too: it waits for that team's week. A merged story is
+detected before this check and keeps its note. A checkout that is on the branch keeps it until the next night.
 
 A branch the night created and left without a commit (a repository the story did not need, a story that never
 started) is removed when the night releases the checkout. The user reviews only branches with work on them.
@@ -229,6 +249,10 @@ Check each item and tell the user only what is missing:
 
 - Morning notes: the vault folder from `config.toml` (default: `Night shift` beside the recap folder), one
   folder per day (named after the morning) with a run note per run and a note per story.
+- Overview: `<folder>.base` beside that folder, an Obsidian Bases table of the story notes in the folder,
+  sorted by backlog rank. A second small Jira check after the pick writes `jira_rank`, `jira_status` and
+  `jira_assignee` into each open story note at the end of the run. The driver writes the `.base` file only when
+  it is missing, so the user may change its views.
 - Per run: `~/.local/state/night-shift/runs/<date-time>/`: `plan.json`, one directory per story with
   `brief.md`, `dossier/`, `progress.md`, `result.json`, `verify.json`, and logs.
 - Log: `~/Library/Logs/night-shift.log`.
