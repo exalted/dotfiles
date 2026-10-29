@@ -61,20 +61,14 @@ names = ["<Full Name>", "<slack handle>"]
 role = "product: decides what the feature does and what is in or out of scope"
 
 
+# The gate is each repository's own git pre-push hook, run on the branch tip; nothing here copies it.
 [repos.backend]
 path = "~/Developer/<backend>"
 setup = [["uv", "sync", "--frozen"]]
-verify = [
-  ["uv", "run", "--env-file", ".env", "pytest", "tests", "-q", "--tb=short", "-n", "6"],
-  ["uv", "run", "ruff", "check"],
-  ["uv", "run", "ruff", "format", "--check"],
-  ["uv", "run", "pyright"],
-]
 security_areas = ["src/<api layer>", "src/<auth>"]
 
 [repos.webapp]
 path = "~/Developer/<webapp>"
 setup = [["pnpm", "install", "--frozen-lockfile"]]
-verify = [["pnpm", "run", "lint"], ["pnpm", "run", "type-check"], ["pnpm", "run", "test", "--run"]]
 security_areas = ["src/<request handling>"]
 

@@ -28,14 +28,21 @@ class Outcome:
 
 
 def run(command: list[str], *, cwd: Path, seconds: float, env: dict[str, str] | None = None, log_dir: Path, name: str,
-        watch: Callable[[], str | None] | None = None, watch_every: float = 600) -> Outcome:
+        watch: Callable[[], str | None] | None = None, watch_every: float = 600, stdin: str | None = None) -> Outcome:
     """`watch` is asked every `watch_every` seconds; a reason it returns ends the child as a deadline would."""
     log_dir.mkdir(parents=True, exist_ok=True)
     out_path, err_path = log_dir / f"{name}.out", log_dir / f"{name}.err"
     with out_path.open("w") as out, err_path.open("w") as err:
         process = subprocess.Popen(
-            command, cwd=cwd, env=_child_env(env), stdin=subprocess.DEVNULL, stdout=out, stderr=err, start_new_session=True
+            command, cwd=cwd, env=_child_env(env), stdin=subprocess.DEVNULL if stdin is None else subprocess.PIPE, stdout=out, stderr=err,
+            start_new_session=True, text=True,
         )
+        if stdin is not None:
+            try:
+                process.stdin.write(stdin)
+                process.stdin.close()
+            except BrokenPipeError:
+                pass
         timed_out = False
         stopped = None
         end = time.monotonic() + max(seconds, 1)

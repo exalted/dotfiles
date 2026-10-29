@@ -50,6 +50,7 @@ from common import (
     STATE_DIR,
     Config,
     Json,
+    Repo,
     at_time,
     knobs,
     load_config,
@@ -707,7 +708,6 @@ def nightly(args: argparse.Namespace) -> None:
     with run_lock("nightly"):
         night["interrupted"] = reconcile(run_dir, config)
         workspace.night_aws_config(config.aws_allowed_accounts)
-        workspace.night_docker_config()
         quota.current(max_age=0, label="run_start" if manual else "night_start")
         verdict = quota.check(kind="pick", knobs=k, morning=morning, **sessions.RUN_GATE)
         if not verdict.allowed:
@@ -1029,10 +1029,11 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
     set_phase(issue_dir, "verifying")
     for item in prepared:
         commits = workspace.commits_since(item.path, item.base_sha)
-        verify = workspace.verify(config.repos[item.repo], item, key=key, log_dir=issue_dir / "logs", deadline=deadline) if commits else None
+        verify = gate(config.repos[item.repo], item, key=key, log_dir=issue_dir / "logs", run_id=issue_dir.parent.name, k=k,
+                      deadline=deadline, morning=morning) if commits else None
         independence = workspace.independence_problems(item.path, key) if commits else []
         if verify:
-            progress(issue_dir, f"{item.repo} gate {'passed' if verify['passed'] else 'FAILED'} on {verify['final_sha'][:8]}")
+            progress(issue_dir, f"{item.repo} gate {gate_word(verify)} on {verify['final_sha'][:8]}")
         if independence:
             progress(issue_dir, f"{item.repo} branch not standalone: {'; '.join(independence)}")
         outcome["repos"].append({"repo": item.repo, "branch": item.branch, "checkout": str(item.path), "commits": commits, "verify": verify, "independence": independence})
@@ -1042,13 +1043,61 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
     changed = [repo for repo in outcome["repos"] if repo["commits"]]
     if outcome["status"] == "solved" and not changed:
         outcome["status"], outcome["reason"] = "partial", "the model said solved, but no commit landed on the branch"
-    elif outcome["status"] == "solved" and not all(repo["verify"]["passed"] for repo in changed):
+    elif outcome["status"] == "solved" and not all(gate_ok(repo["verify"]) for repo in changed):
         outcome["status"], outcome["reason"] = "partial", "the model said solved, but the repository gate failed on the branch tip"
     elif outcome["status"] == "solved" and any(repo["independence"] for repo in changed):
         outcome["status"], outcome["reason"] = "partial", "the branch does not stand alone: " + "; ".join(p for repo in changed for p in repo["independence"])
     worked = any(repo["commits"] for repo in outcome["repos"])
     update_issue(key, status=outcome["status"], final=outcome["status"] in FINAL, branch=primary.branch, repos=story["repos"],
                  review="awaiting" if worked else None, summary=story.get("summary", ""), session=outcome.get("session_id"))
+
+
+GATE_JUDGE_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["code_failure", "reason"],
+    "properties": {"code_failure": {"type": "boolean"}, "reason": {"type": "string"}},
+}
+
+
+def gate(repo: Repo, prepared: workspace.Prepared, *, key: str, log_dir: Path, run_id: str, k: Json, deadline: datetime, morning: datetime) -> Json:
+    """The repository's pre-push hook on the branch tip, with a failure judged: the night never pushes.
+
+    A hook step that exists only for a push (an upstream to compare against, the branch's CI pipeline, a registry
+    login) can stop the hook before its checks run. A small haiku session reads the hook and its output; when only
+    such a step failed, the gate is blocked, not failed, and the story keeps the status the work session gave it.
+    """
+    verify = workspace.verify(repo, prepared, key=key, log_dir=log_dir, deadline=deadline)
+    result = verify["commands"][0]
+    if verify["passed"] or result["timed_out"] or result["tail"].startswith("not run"):
+        return verify
+    prompt = (
+        f"The night shift ran this repository's git pre-push hook ({result['command']}) on branch {prepared.branch}, which is never "
+        "pushed: it has no upstream, no CI pipeline, and nothing is deployed from it. The hook failed. Read the hook and any script "
+        "it calls, then its output below, and find the step that failed. code_failure is true when a test, lint, type check, build "
+        "or any other check of the code failed. It is false only when the failed step exists for pushing or needs something outside "
+        "the code: an upstream or @{push} comparison, the branch's CI pipeline status, a registry or service login, an unreachable "
+        "host, or a tool or engine that is not running. reason is one sentence naming the step and why it failed. Read only; change "
+        f"nothing.\n\nOutput (its last part):\n{result['tail']}\n"
+    )
+    judged = sessions.run(
+        sessions.Spec(kind="judge", key=key, prompt=prompt, cwd=prepared.path, run_id=run_id, log_dir=log_dir, model="haiku", effort="low",
+                      cap_usd=0.5, minutes=3, permission_mode="dontAsk", allowed_tools=["Read", "Grep", "Glob"], max_turns=15,
+                      json_schema=GATE_JUDGE_SCHEMA),
+        knobs=k, deadline=deadline, morning=morning,
+    )
+    answer = judged.data.get("structured_output") if judged.status == "ok" else None
+    if isinstance(answer, dict) and not answer["code_failure"]:
+        verify["blocked"] = answer["reason"]
+    return verify
+
+
+def gate_ok(verify: Json) -> bool:
+    return verify["passed"] or bool(verify.get("blocked"))
+
+
+def gate_word(verify: Json) -> str:
+    return "passed" if verify["passed"] else f"blocked ({verify['blocked']})" if verify.get("blocked") else "FAILED"
 
 
 def needs_fix(review: Json | None) -> bool:
@@ -1201,7 +1250,6 @@ def security(args: argparse.Namespace) -> None:
     with run_lock("security"):
         report["warnings"] += [f"interrupted earlier: {item}" for item in reconcile(run_dir, config)]
         workspace.night_aws_config(config.aws_allowed_accounts)
-        workspace.night_docker_config()
         ledger = quota.load_ledger()
         names = [name for name, repo in config.repos.items() if repo.security_areas]
         if not names:
@@ -1305,10 +1353,10 @@ def _security_in_checkout(config: Config, k: Json, repo, name: str, area: str, k
                     f"# Security fix for {finding.get('title')}\n\n```json\n{json.dumps(finding, indent=2)}\n```\n\n## Patch note\n\n{patch_note.read_text() if patch_note.exists() else ''}\n\n## Independent challenge (codex)\n\n{report['challenge']}\n"
                 )
                 workspace.commit_paths(prepared.path, ["."], config.subject(f"Fix security finding: {finding.get('title')}"))
-                verify = workspace.verify(repo, prepared, key=key, log_dir=run_dir / "logs", deadline=deadline)
+                verify = gate(repo, prepared, key=key, log_dir=run_dir / "logs", run_id=run_dir.name, k=k, deadline=deadline, morning=morning)
                 closes = bool(challenge and challenge.get("closes_finding"))
-                status = "review-ready" if verify["passed"] and closes else "needs attention"
-                report["patch"] = f"Applied on `{prepared.branch}`; gate {'passed' if verify['passed'] else 'failed'}; codex says it {'closes' if closes else 'may not close'} the finding."
+                status = "review-ready" if gate_ok(verify) and closes else "needs attention"
+                report["patch"] = f"Applied on `{prepared.branch}`; gate {gate_word(verify)}; codex says it {'closes' if closes else 'may not close'} the finding."
             else:
                 report["patch"] = f"The patch no longer applies: {check.stderr.strip()[:300]}"
         else:

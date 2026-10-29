@@ -146,7 +146,7 @@ def _story(story: Json, browse: str) -> list[str]:
         if repo["repo"] in removed:
             continue
         verify = repo.get("verify") or {}
-        gate = "✅ gate passed" if verify.get("passed") else "❌ gate failed" if verify else "gate not run"
+        gate = "✅ gate passed" if verify.get("passed") else f"⚠️ gate blocked: {verify['blocked']}" if verify.get("blocked") else "❌ gate failed" if verify else "gate not run"
         lines += ["", f"**{repo['repo']}** · `{repo['branch']}` · {gate} · {len(repo.get('commits', []))} commits"]
         for command in verify.get("commands", []):
             if not command["ok"]:
@@ -175,7 +175,7 @@ def _repos_line(story: Json) -> str:
     for repo in story.get("repos", []):
         if repo.get("commits"):
             verify = repo.get("verify") or {}
-            gate = "gate passed" if verify.get("passed") else "gate failed" if verify else "gate not run"
+            gate = "gate passed" if verify.get("passed") else "gate blocked" if verify.get("blocked") else "gate failed" if verify else "gate not run"
             parts.append(f"{repo['repo']}, {len(repo['commits'])} commits, {gate}")
     return " · ".join(parts)
 

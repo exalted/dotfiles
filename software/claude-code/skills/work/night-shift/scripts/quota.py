@@ -32,10 +32,10 @@ READING_MAX_AGE = 300
 # What a session of each kind adds to the 7-day usage, in points, until the ledger has measured enough of them.
 # Upper bounds from the first nights: the most each kind cost in dollars, at the most points a dollar can have
 # been (all of that week's usage counted as night work).
-DEFAULT_POINTS = {"pick": 1.6, "recheck": 0.1, "work": 6.6, "fix": 0.8, "report": 0.5, "scan": 6.0, "patch": 2.0}
+DEFAULT_POINTS = {"pick": 1.6, "recheck": 0.1, "judge": 0.1, "work": 6.6, "fix": 0.8, "report": 0.5, "scan": 6.0, "patch": 2.0}
 # The sessions of one story. A story starts only when all of them fit in the night's points; once started, they
 # may finish it above the night's points, never above the ceiling.
-STORY_KINDS = ("recheck", "work", "fix")
+STORY_KINDS = ("recheck", "work", "fix", "judge")
 MIN_SAMPLES = 3
 
 

@@ -67,8 +67,10 @@ branch, and merges into main without a conflict. Otherwise the story is partial.
 
 Codex reviews the branch. If it asks for changes, or reports a medium or high finding, the same Claude session
 resumes for one fix round (cap `caps_usd.fix`, at most `fix_minutes`, only with time left before the deadline)
-and answers each finding in REPORT.md. Then the repository's gate runs on the branch tip, outside the model,
-including the Docker-backed suites marked `requires = "docker"` in `config.toml` when a Docker engine answers.
+and answers each finding in REPORT.md. Then the repository's own git pre-push hook runs on the branch tip,
+outside the model, with the user's own Docker config. The night never pushes, so if the hook fails, a small
+haiku session reads the hook and its output: when only a push step failed (an upstream comparison, the CI
+pipeline status, a registry login), the gate is blocked, not failed, and the note says which step.
 
 ## Stories it already worked
 
@@ -234,7 +236,7 @@ its recipe would run `git clean`, the session moves the untracked files to the T
 Check each item and tell the user only what is missing:
 
 1. `~/.config/dotfiles/night-shift/config.toml` exists. Start from `config.example.toml` in this skill.
-   It holds the repositories (path, setup, verify, security areas) and
+   It holds the repositories (path, setup, security areas) and
    the people whose word counts, with their roles. Jira, Confluence, Slack and GitLab are read through the
    user's own plugin MCP sign-ins, and Datadog through the user's `datadog` MCP server; no API tokens are stored.
 2. Each checkout's `.env` is checked before a run: every host must be local, alpha, or match

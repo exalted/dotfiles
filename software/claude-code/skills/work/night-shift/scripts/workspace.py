@@ -23,10 +23,10 @@ from datetime import datetime
 from pathlib import Path
 
 import supervise
-from common import ARCHIVE_DIR, FETCHED_FILE, NIGHT_AWS_CONFIG, NIGHT_DOCKER_CONFIG, Json, Repo, log, read_json, workdays_between, write_json
+from common import ARCHIVE_DIR, FETCHED_FILE, NIGHT_AWS_CONFIG, Json, Repo, log, read_json, workdays_between, write_json
 
 SETUP_MINUTES = 15
-VERIFY_MINUTES = 30
+GATE_MINUTES = 60
 TAIL = 3000
 # A file the user changed this recently means they are working in the checkout: a manual run leaves it alone.
 ACTIVE_MINUTES = 10
@@ -92,45 +92,12 @@ def night_aws_config(allowed_accounts: list[str]) -> Path:
     return NIGHT_AWS_CONFIG
 
 
-def night_docker_config() -> Path:
-    """The user's Docker client config without its credential store: nothing at night may open the keychain.
-
-    A keychain prompt waits for a password nobody types at night, and the test run hangs until its time limit.
-    Images the suites use must already be on the machine (day work keeps them there); a missing private image
-    then fails fast instead. Contexts stay shared, so the same engine answers.
-    """
-    source = Path.home() / ".docker" / "config.json"
-    config = json.loads(source.read_text()) if source.exists() else {}
-    for key in ("credsStore", "credHelpers", "auths"):
-        config.pop(key, None)
-    NIGHT_DOCKER_CONFIG.mkdir(parents=True, exist_ok=True)
-    (NIGHT_DOCKER_CONFIG / "config.json").write_text(json.dumps(config, indent=2) + "\n")
-    contexts = NIGHT_DOCKER_CONFIG / "contexts"
-    if not contexts.exists() and (Path.home() / ".docker" / "contexts").exists():
-        contexts.symlink_to(Path.home() / ".docker" / "contexts")
-    return NIGHT_DOCKER_CONFIG
-
-
-def docker_socket() -> str | None:
-    """The socket of the Docker engine in use (Docker Desktop, Colima, ...), or None when none answers."""
-    try:
-        env = {**os.environ, "DOCKER_CONFIG": str(NIGHT_DOCKER_CONFIG)} if (NIGHT_DOCKER_CONFIG / "config.json").exists() else None
-        info = subprocess.run(["docker", "context", "inspect", "--format", "{{.Endpoints.docker.Host}}"], capture_output=True, text=True, timeout=20, env=env)
-        alive = subprocess.run(["docker", "info", "--format", "{{.ServerVersion}}"], capture_output=True, text=True, timeout=30, env=env)
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        return None
-    host = info.stdout.strip()
-    return host.removeprefix("unix://") if alive.returncode == 0 and host.startswith("unix://") else None
-
-
 def tool_env(checkout: Path) -> dict[str, str]:
     """The Node version the repository pins in .nvmrc, as the user's shell hook selects it by day.
 
     launchd's PATH has Homebrew's Node only, which may be a different major version than the repository's.
     """
     env = {"AWS_CONFIG_FILE": str(NIGHT_AWS_CONFIG)} if NIGHT_AWS_CONFIG.exists() else {}
-    if (NIGHT_DOCKER_CONFIG / "config.json").exists():
-        env["DOCKER_CONFIG"] = str(NIGHT_DOCKER_CONFIG)
     nvmrc = checkout / ".nvmrc"
     if not nvmrc.is_file():
         return env
@@ -453,40 +420,46 @@ def archive_dirty(path: Path, key: str) -> Path | None:
     return target
 
 
+def pre_push_hook(path: Path) -> Path | None:
+    """The hook git itself runs on a push, wherever the repository's core.hooksPath points."""
+    found = subprocess.run(["git", "-C", str(path), "rev-parse", "--git-path", "hooks/pre-push"], capture_output=True, text=True, check=True, timeout=30)
+    hook = Path(found.stdout.strip())
+    hook = hook if hook.is_absolute() else path / hook
+    return hook if hook.is_file() and os.access(hook, os.X_OK) else None
+
+
 def verify(repo: Repo, prepared: Prepared, *, key: str, log_dir: Path, deadline: datetime) -> Json:
-    """Run the repository's own gate on the story's last commit, outside the model.
+    """Run the repository's own pre-push hook on the story's last commit, outside the model: the gate the user
+    clears before every push, so the night keeps no copy of it.
 
     The checkout holds exactly origin/main plus this story's commits (the user's work is set aside), so a
     passing gate means the branch is deployable on its own. Uncommitted leftovers are archived and stashed
-    first, so only committed code is judged.
+    first, so only committed code is judged and the hook's clean-tree check holds.
     """
     archived = archive_dirty(prepared.path, key)
     stashed = False
     if archived:
         git(prepared.path, "stash", "push", "--include-untracked", "--message", "night-shift-verify")
         stashed = True
-    results, passed = [], True
     try:
         final_sha = head(prepared.path)
-        docker = docker_socket()
-        for index, item in enumerate(repo.verify):
-            command = item["command"]
-            if seconds_until(deadline) < 60:
-                passed = False
-                results.append({"command": " ".join(command), "ok": False, "timed_out": True, "tail": "not run: no time left before the deadline"})
-                continue
-            if item.get("requires") == "docker" and not docker:
-                passed = False
-                results.append({"command": " ".join(command), "ok": False, "timed_out": False, "tail": "not run: no Docker engine answered"})
-                continue
-            outcome = supervise.run(command, cwd=prepared.path, seconds=min(VERIFY_MINUTES * 60, seconds_until(deadline)), env=tool_env(prepared.path), log_dir=log_dir, name=f"verify-{repo.name}-{index}")
+        hook = pre_push_hook(prepared.path)
+        if not hook:
+            result = {"command": "pre-push hook", "ok": False, "timed_out": False, "tail": "not run: the repository has no active pre-push hook"}
+        elif seconds_until(deadline) < 60:
+            result = {"command": "pre-push hook", "ok": False, "timed_out": True, "tail": "not run: no time left before the deadline"}
+        else:
+            remote = git(prepared.path, "remote", "get-url", "origin", check=False)
+            ref = f"refs/heads/{prepared.branch}"
+            outcome = supervise.run([str(hook), "origin", remote], cwd=prepared.path, seconds=min(GATE_MINUTES * 60, seconds_until(deadline)),
+                                    env=tool_env(prepared.path), log_dir=log_dir, name=f"verify-{repo.name}", stdin=f"{ref} {final_sha} {ref} {'0' * 40}\n")
             ok = outcome.returncode == 0 and not outcome.timed_out
-            passed &= ok
-            results.append({"command": " ".join(command), "ok": ok, "timed_out": outcome.timed_out, "tail": (outcome.stdout + outcome.stderr)[-TAIL:]})
+            result = {"command": f"{hook.relative_to(prepared.path) if hook.is_relative_to(prepared.path) else hook} origin", "ok": ok,
+                      "timed_out": outcome.timed_out, "tail": (outcome.stdout + outcome.stderr)[-TAIL:]}
     finally:
         if stashed:
             git(prepared.path, "stash", "pop", check=False)
-    return {"repo": repo.name, "passed": passed and bool(results), "final_sha": final_sha, "base_sha": prepared.base_sha, "archived_uncommitted": str(archived) if archived else None, "commands": results}
+    return {"repo": repo.name, "passed": result["ok"], "final_sha": final_sha, "base_sha": prepared.base_sha, "archived_uncommitted": str(archived) if archived else None, "commands": [result]}
 
 
 def independence_problems(path: Path, key: str) -> list[str]:

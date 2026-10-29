@@ -43,7 +43,6 @@ USAGE_SNAPSHOT = Path.home() / ".local" / "state" / "claude-usage" / "latest.jso
 JIRA_BROWSE_FILE = Path.home() / ".config" / "dotfiles" / "jira"
 RECAP_CONFIG_DIR = Path.home() / ".config" / "dotfiles" / "recap"
 NIGHT_AWS_CONFIG = STATE_DIR / "aws-config"
-NIGHT_DOCKER_CONFIG = STATE_DIR / "docker-config"
 CODEX_EXEC = Path.home() / ".claude" / "skills" / "codex-servant" / "scripts" / "codex_exec.py"
 
 KEY_PATTERN = re.compile(r"^[A-Z][A-Z0-9]+-\d+$")
@@ -137,7 +136,6 @@ class Repo:
     name: str
     path: Path
     setup: list[list[str]]
-    verify: list[Json]
     security_areas: list[str]
 
 
@@ -210,7 +208,6 @@ def load_config() -> Config:
             name=name,
             path=path,
             setup=[list(command) for command in entry.get("setup", [])],
-            verify=[item if isinstance(item, dict) else {"command": list(item)} for item in entry.get("verify", [])],
             security_areas=list(entry.get("security_areas", [])),
         )
     if not repos:
