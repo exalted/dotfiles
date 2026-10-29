@@ -444,8 +444,12 @@ def verify(repo: Repo, prepared: Prepared, *, key: str, log_dir: Path, deadline:
     try:
         final_sha = head(prepared.path)
         hook = pre_push_hook(prepared.path)
+        # The gate must not be one the story wrote: a branch that edits the hooks is not checked by them.
+        hooks_changed = hook and hook.is_relative_to(prepared.path) and git(prepared.path, "diff", "--name-only", f"{prepared.base_sha}..{final_sha}", "--", str(hook.parent.relative_to(prepared.path)))
         if not hook:
             result = {"command": "pre-push hook", "ok": False, "timed_out": False, "tail": "not run: the repository has no active pre-push hook"}
+        elif hooks_changed:
+            result = {"command": "pre-push hook", "ok": False, "timed_out": False, "tail": f"not run: the branch changes the repository's git hooks ({hooks_changed.replace(chr(10), ', ')})"}
         elif seconds_until(deadline) < 60:
             result = {"command": "pre-push hook", "ok": False, "timed_out": True, "tail": "not run: no time left before the deadline"}
         else:

@@ -90,6 +90,10 @@
       "Bash(make local-*)",
       "Bash(make -C * local-*)",
       "Bash(docker compose *)",
+      "Bash(docker push *)",
+      "Bash(command docker push *)",
+      "Bash(docker image push *)",
+      "Bash(command docker image push *)",
       "Bash(docker-compose *)",
       "Bash(command docker compose *)",
       "Bash(command make local-*)",
@@ -108,7 +112,7 @@
     "hard_deny": [
       "$defaults",
       "Never connect to, query or change a production system: a production database, API, queue, bucket or host.",
-      "Never push to any git remote, and never trigger, retry or run a CI/CD pipeline, a release or a deployment."
+      "Never push to any git remote or any image registry, and never trigger, retry or run a CI/CD pipeline, a release or a deployment."
     ]
   }
 }
