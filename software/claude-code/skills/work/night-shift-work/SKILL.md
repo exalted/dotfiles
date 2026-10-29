@@ -64,10 +64,11 @@ Done means every item of this list, in this order:
 
 1. **tests_added**: tests for the new behavior, written first and seen failing, then passing (follow the
    repository's own test-first rules where it has them).
-2. **repo_gate**: the repository's full final gate passes (its CLAUDE.md names it: tests, lint, types).
-   When a Docker engine runs, testcontainers-based integration suites run too:
-   run the ones that cover what you changed. Suites that need live cloud credentials do not run at night; name
-   them in the report as not run.
+2. **repo_gate**: if the repository has a skill for verifying or finishing a change, follow it: it decides the
+   coverage and the final gate. Otherwise its CLAUDE.md or AGENTS.md names the final gate (tests, lint, types).
+   Either way, the checks in its git pre-push hook must pass too: the driver runs that hook on your last commit.
+   A check that needs what the night does not have (live cloud credentials, a sign-in, a person's go) does not
+   run at night; name it in the report as not run.
 3. **code_review**: run `/code-review` on your branch and fix every real finding.
 4. **simplify**: run `/simplify` and apply what makes the diff smaller or clearer.
 5. **security_review**: run `/security-review` on your branch and fix every real finding.
