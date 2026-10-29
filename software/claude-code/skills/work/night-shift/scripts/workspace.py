@@ -432,6 +432,13 @@ def pre_push_hook(path: Path) -> Path | None:
     return hook if hook.is_file() and os.access(hook, os.X_OK) else None
 
 
+def hook_scripts(hook: Path, path: Path) -> list[str]:
+    """The repository files a hook names, such as `${GIT_ROOT}/setup/check-ci.sh`: read from its text, so a guess."""
+    code = "\n".join(line for line in hook.read_text(errors="replace").splitlines() if not line.lstrip().startswith("#"))
+    named = re.findall(r"(?:\$\{?GIT_ROOT\}?/|\./)?((?:[\w.-]+/)+[\w.-]+)", code)
+    return sorted({name for name in named if (path / name).is_file()})
+
+
 def verify(repo: Repo, prepared: Prepared, *, key: str, log_dir: Path, deadline: datetime) -> Json:
     """Run the repository's own pre-push hook on the story's last commit, outside the model: the gate the user
     clears before every push, so the night keeps no copy of it.
@@ -467,7 +474,10 @@ def verify(repo: Repo, prepared: Prepared, *, key: str, log_dir: Path, deadline:
     finally:
         if stashed:
             git(prepared.path, "stash", "pop", check=False)
-    return {"repo": repo.name, "passed": result["ok"], "final_sha": final_sha, "base_sha": prepared.base_sha, "archived_uncommitted": str(archived) if archived else None, "commands": [result]}
+    scripts = hook_scripts(hook, prepared.path) if hook else []
+    scripts_changed = git(prepared.path, "diff", "--name-only", f"{prepared.base_sha}..{final_sha}", "--", *scripts).splitlines() if scripts else []
+    return {"repo": repo.name, "passed": result["ok"], "final_sha": final_sha, "base_sha": prepared.base_sha, "archived_uncommitted": str(archived) if archived else None,
+            "commands": [result], "gate_scripts_changed": scripts_changed}
 
 
 def independence_problems(path: Path, key: str) -> list[str]:

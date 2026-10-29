@@ -125,6 +125,10 @@ def _label(story: Json) -> str:
 def _story(story: Json, browse: str) -> list[str]:
     key = story["key"]
     lines = [f"# [{key}]({browse}{key}) {story.get('summary', '')}", ""]
+    for repo in story.get("repos", []):
+        if changed := (repo.get("verify") or {}).get("gate_scripts_changed"):
+            lines += [f"> [!danger] The branch changes scripts the {repo['repo']} gate runs: {', '.join(f'`{name}`' for name in changed)}",
+                      "> Its gate result cannot be trusted. Read these changes first, before anything else on the branch.", ""]
     lines.append(_label(story))
     if story.get("summary_text"):
         lines += ["", story["summary_text"]]
@@ -176,7 +180,7 @@ def _repos_line(story: Json) -> str:
         if repo.get("commits"):
             verify = repo.get("verify") or {}
             gate = "gate passed" if verify.get("passed") else "gate blocked" if verify.get("blocked") else "gate failed" if verify else "gate not run"
-            parts.append(f"{repo['repo']}, {len(repo['commits'])} commits, {gate}")
+            parts.append(f"{repo['repo']}, {len(repo['commits'])} commits, {gate}" + (" · ⚠️ changes the gate's scripts" if verify.get("gate_scripts_changed") else ""))
     return " · ".join(parts)
 
 

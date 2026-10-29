@@ -1146,7 +1146,8 @@ def gate(repo: Repo, prepared: workspace.Prepared, *, key: str, log_dir: Path, r
     """
     verify = workspace.verify(repo, prepared, key=key, log_dir=log_dir, deadline=deadline)
     result = verify["commands"][0]
-    if verify["passed"] or result["timed_out"] or result["tail"].startswith("not run"):
+    # A branch that changed a script the hook runs could fake a push-only failure: no judge then, the gate failed.
+    if verify["passed"] or result["timed_out"] or result["tail"].startswith("not run") or verify.get("gate_scripts_changed"):
         return verify
     prompt = (
         f"The night shift ran this repository's git pre-push hook ({result['command']}) on branch {prepared.branch}, which is never "
