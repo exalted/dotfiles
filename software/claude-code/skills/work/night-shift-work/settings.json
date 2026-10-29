@@ -82,6 +82,11 @@
       "mcp__plugin_gitlab_gitlab__link_work_items",
       "mcp__plugin_gitlab_gitlab__start_duo_session",
       "mcp__plugin_gitlab_gitlab__send_duo_session_input",
+      "mcp__datadog__create_datadog_notebook",
+      "mcp__datadog__edit_datadog_notebook",
+      "mcp__datadog__delete_datadog_notebook",
+      "mcp__datadog__recover_datadog_notebook",
+      "mcp__datadog__upsert_datadog_dashboard",
       "Bash(make local-*)",
       "Bash(make -C * local-*)",
       "Bash(docker compose *)",
@@ -97,7 +102,8 @@
       "$defaults",
       "This is an unattended nightly job with nobody watching. It works one Jira story at a time in the user's own checkout, on a branch named night/<KEY> made from origin/main, and commits there. The driver set the user's own work aside before the session and restores it afterwards.",
       "It may do what the user does by day in this project: edit files in the checkout, create scratch files, install the project's dependencies and run any of the project's commands, tests and tools. It never pushes, never starts a CI/CD pipeline or a deployment, never changes Jira, Confluence, Slack or GitLab, and never switches branches, stashes, resets or merges.",
-      "The codex_exec.py helper runs the Codex CLI as a delegate inside the same checkout; it is trusted."
+      "The codex_exec.py helper runs the Codex CLI as a delegate inside the same checkout; it is trusted.",
+      "Reading logs, traces and service metadata through the datadog MCP tools is allowed: Datadog is the observability service, not a production system, and the session only reads from it."
     ],
     "hard_deny": [
       "$defaults",

@@ -128,7 +128,8 @@ installs the project's dependencies, and runs any of the project's commands, tes
 touch production or start a deployment, enforced in layers:
 
 - deny rules: every `git push` (both `git` and `command git` forms), `glab`, and the GitLab, Jira, Confluence
-  and Slack write tools;
+  and Slack write tools, and the Datadog notebook and dashboard tools (reading Datadog logs is allowed: they
+  are a strong signal, not production data);
 - auto mode `hard_deny` rules: no production system, no push or pipeline, plus the production hosts
   (`env_forbidden_hosts`) and the allowed AWS accounts (`aws_allowed_accounts`) from `config.toml`;
 - night processes see only the AWS profiles of `aws_allowed_accounts`;
@@ -235,7 +236,7 @@ Check each item and tell the user only what is missing:
 1. `~/.config/dotfiles/night-shift/config.toml` exists. Start from `config.example.toml` in this skill.
    It holds the repositories (path, setup, verify, security areas) and
    the people whose word counts, with their roles. Jira, Confluence, Slack and GitLab are read through the
-   user's own plugin MCP sign-ins; no API tokens are stored.
+   user's own plugin MCP sign-ins, and Datadog through the user's `datadog` MCP server; no API tokens are stored.
 2. Each checkout's `.env` is checked before a run: every host must be local, alpha, or match
    `env_allowed_hosts`, and none may match `env_forbidden_hosts` (production); otherwise the night shift
    leaves that repository alone. Night processes read an AWS config with only the profiles of

@@ -42,6 +42,18 @@ own rules (test first, commands, conventions) apply exactly as in the user's day
 - Commit on the story branch in small steps, with messages that say why. No attribution lines, no story
   numbers in the message body.
 
+## Datadog logs
+
+If the dossier has `datadog.md`, read it with the rest. While you debug, you may query Datadog logs too, through
+the Datadog MCP tools as their server instructions say; it is read-only. Logs are a strong signal, not
+production data: they show what was logged, not the full state behind it. So:
+
+- Turn what the logs show into a failing test, and fix against that test.
+- Never copy a raw log line into code, a test fixture, a commit or `REPORT.md`: raw lines may hold customer
+  data. Write the pattern instead, with identifiers replaced by made-up values.
+- In `REPORT.md`, under "How it was verified", say which parts rest on log evidence only and what a check
+  against real data must still confirm. Put that check in the open questions for the reviewer.
+
 ## The goal: the smallest change that solves the story, done properly
 
 Prefer the least diff that meets every acceptance criterion. A refactoring is allowed only when the story

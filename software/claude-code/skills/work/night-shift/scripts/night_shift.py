@@ -103,6 +103,9 @@ PICK_TOOLS = [
     "mcp__plugin_slack_slack__slack_read_file",
     "mcp__plugin_gitlab_gitlab__get_commit",
     "mcp__plugin_gitlab_gitlab__search",
+    "mcp__datadog__list_datadog_skills", "mcp__datadog__load_datadog_skill", "mcp__datadog__search_datadog_sdk",
+    "mcp__datadog__execute_code", "mcp__datadog__search_datadog_logs", "mcp__datadog__analyze_datadog_logs",
+    "mcp__datadog__search_datadog_entities", "mcp__datadog__search_datadog_spans", "mcp__datadog__get_datadog_trace",
 ]
 
 OPINION_SCHEMA = {
@@ -859,7 +862,8 @@ def second_opinions(codex: Codex, stories: list[Json], config: Config, night: Js
         prompt = (
             "You are an independent senior engineer. Decide whether this Jira story can be worked unattended overnight by an "
             "AI agent in this repository, with no one to ask. Not workable: needs a product or design decision, external "
-            "access, production data, or is too vague to test. Read the repository as needed; do not change anything.\n\n"
+            "access, production data that the dossier's Datadog logs do not show well enough to reproduce in a test, or is too "
+            "vague to test. Read the repository as needed; do not change anything.\n\n"
             f"Story {story['key']}: {story.get('summary', '')}\n\nBrief:\n{story['brief']}\n\nDossier directory (read it): {story['dossier']}\n"
         )
         result = codex.run("opinion", cd=primary.path, prompt=prompt, name=f"opinion-{story['key']}", schema=OPINION_SCHEMA, add_dirs=[])
