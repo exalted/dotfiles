@@ -135,7 +135,6 @@ def save_knobs(changes: Json) -> Json:
 class Repo:
     name: str
     path: Path
-    setup: list[list[str]]
     security_areas: list[str]
 
 
@@ -207,7 +206,6 @@ def load_config() -> Config:
         repos[name] = Repo(
             name=name,
             path=path,
-            setup=[list(command) for command in entry.get("setup", [])],
             security_areas=list(entry.get("security_areas", [])),
         )
     if not repos:

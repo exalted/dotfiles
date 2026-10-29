@@ -18,6 +18,7 @@ import os
 import re
 import shutil
 import subprocess
+from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -25,12 +26,15 @@ from pathlib import Path
 import supervise
 from common import ARCHIVE_DIR, FETCHED_FILE, NIGHT_AWS_CONFIG, Json, Repo, log, read_json, workdays_between, write_json
 
-SETUP_MINUTES = 15
 GATE_MINUTES = 60
 TAIL = 3000
 # A file the user changed this recently means they are working in the checkout: a manual run leaves it alone.
 ACTIVE_MINUTES = 10
 BACKUP_REF = "refs/night-shift/backup"
+
+
+# Moves a checkout's dependencies and generated files from one commit to another: (checkout, from, to, label).
+Setup = Callable[[Path, str, str, str], None]
 
 
 class SetupProblem(Exception):
@@ -231,18 +235,14 @@ class Prepared:
     conflict: str = ""
 
 
-def _run_setup(repo: Repo, path: Path, *, log_dir: Path, deadline: datetime, label: str) -> None:
-    """The repository's own setup commands (dependencies, generated binaries) for the branch now checked out."""
-    env = tool_env(path)
-    for index, command in enumerate(repo.setup):
-        if seconds_until(deadline) < 60:
-            raise SetupProblem(f"{repo.name}: no time left before the deadline for setup")
-        outcome = supervise.run(command, cwd=path, seconds=min(SETUP_MINUTES * 60, seconds_until(deadline)), env=env, log_dir=log_dir, name=f"setup-{label}-{repo.name}-{index}")
-        if outcome.timed_out or outcome.returncode != 0:
-            raise SetupProblem(f"{repo.name}: setup `{' '.join(command)}` failed: {(outcome.stderr or outcome.stdout)[-400:]}")
+def _follow(setup: Setup, path: Path, before: str, label: str) -> None:
+    """The checkout moved between commits; its dependencies and generated files follow, if anything changed at all."""
+    after = head(path)
+    if git(path, "diff", "--name-only", before, after):
+        setup(path, before, after, label)
 
 
-def enter(repo: Repo, key: str, *, log_dir: Path, deadline: datetime, frame_file: Path) -> Prepared:
+def enter(repo: Repo, key: str, *, frame_file: Path, setup: Setup) -> Prepared:
     """Set the user's work aside and switch the checkout to the story's branch."""
     path = repo.path
     user = _state(path)
@@ -268,9 +268,9 @@ def enter(repo: Repo, key: str, *, log_dir: Path, deadline: datetime, frame_file
             conflict = _rebase_onto_main(path)
         else:
             git(path, "switch", "--quiet", "-c", branch, "origin/main")
-        _run_setup(repo, path, log_dir=log_dir, deadline=deadline, label="night")
+        _follow(setup, path, user.head, "night")
     except Exception:
-        release_frame(frame_file, repo=repo, log_dir=log_dir)
+        release_frame(frame_file, setup=setup)
         raise
     return Prepared(repo.name, path, branch, git(path, "merge-base", "HEAD", "origin/main"), reused, user, frame_file, earlier, conflict)
 
@@ -324,7 +324,7 @@ def _clear_leftovers(path: Path, key: str) -> Path | None:
     return archived
 
 
-def release_frame(frame_file: Path, *, repo: Repo, log_dir: Path, deadline: datetime | None = None) -> Json:
+def release_frame(frame_file: Path, *, setup: Setup) -> Json:
     """Return the checkout to the user exactly as recorded. Safe to run twice, and after a crash."""
     frame = json.loads(frame_file.read_text())
     if frame.get("released"):
@@ -334,6 +334,7 @@ def release_frame(frame_file: Path, *, repo: Repo, log_dir: Path, deadline: date
     key = frame["branch"].removeprefix("night/")
     problems: list[str] = []
     archived = None
+    night_head = head(path)
     if abort_unfinished_rebase(path):
         log(f"{frame['repo']}: the rebase of {frame['branch']} onto origin/main was not finished; aborted")
     current = git(path, "branch", "--show-current")
@@ -353,7 +354,7 @@ def release_frame(frame_file: Path, *, repo: Repo, log_dir: Path, deadline: date
         else:
             problems.append(f"your set-aside work is no longer on top of the stash list; it is safe under {user.backup_ref}")
     try:
-        _run_setup(repo, path, log_dir=log_dir, deadline=deadline or datetime.max, label="user")
+        _follow(setup, path, night_head, "user")
     except SetupProblem as problem:
         problems.append(f"re-running setup for your branch failed: {problem}")
     after = _state(path)
@@ -387,8 +388,8 @@ def _remove_if_empty(path: Path, frame: Json) -> bool:
     return True
 
 
-def release(prepared: Prepared, *, repo: Repo, log_dir: Path, deadline: datetime | None = None) -> Json:
-    return release_frame(prepared.frame_file, repo=repo, log_dir=log_dir, deadline=deadline)
+def release(prepared: Prepared, *, setup: Setup) -> Json:
+    return release_frame(prepared.frame_file, setup=setup)
 
 
 def head(path: Path) -> str:

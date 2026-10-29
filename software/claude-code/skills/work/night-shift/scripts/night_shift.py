@@ -238,7 +238,7 @@ def browse_url(config: Config) -> str:
     return f"{config.jira_site}/browse/"
 
 
-def session_settings(template: Path, *, target: Path, config: Config) -> Path:
+def session_settings(template: Path, *, target: Path, config: Config, hard_deny: tuple[str, ...] = ()) -> Path:
     """The night rules, plus this machine's production boundaries from the untracked config.
 
     The session works like the user by day: no sandbox, auto mode's classifier reviews each action. What
@@ -251,6 +251,7 @@ def session_settings(template: Path, *, target: Path, config: Config) -> Path:
         hard.append("These hosts are production; never connect to them in any way: " + ", ".join(config.env_forbidden_hosts) + " (regular expressions).")
     if config.aws_allowed_accounts:
         hard.append("Use AWS only through profiles of these accounts, never any other account: " + ", ".join(config.aws_allowed_accounts) + ".")
+    hard += hard_deny
     write_json(target, settings)
     return target
 
@@ -267,7 +268,7 @@ RECHECK_TOOLS = ["ToolSearch", "mcp__plugin_atlassian_atlassian__getAccessibleAt
 def jira_recheck(key: str, *, run_dir: Path, k: Json, deadline: datetime, morning: datetime) -> Json:
     """Right before work: is the story still unassigned, in the backlog, unflagged and not blocked by an open issue?
 
-    A small haiku session reads it through the user's own Atlassian sign-in; no API token is involved.
+    A small sonnet session reads it through the user's own Atlassian sign-in; no API token is involved.
     A check that does not finish is not a green light: the story is skipped, and a quota stop ends the night.
     """
     prompt = (
@@ -279,7 +280,7 @@ def jira_recheck(key: str, *, run_dir: Path, k: Json, deadline: datetime, mornin
     # It usually answers in seconds; a session that hangs without output is tried once more, not taken as a verdict.
     for _ in range(2):
         result = sessions.run(
-            sessions.Spec(kind="recheck", key=key, prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="haiku", effort="low",
+            sessions.Spec(kind="recheck", key=key, prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="sonnet", effort="low",
                           cap_usd=0.5, minutes=2, permission_mode="dontAsk", allowed_tools=RECHECK_TOOLS, max_turns=8, json_schema=RECHECK_SCHEMA),
             knobs=k, deadline=deadline, morning=morning,
         )
@@ -320,7 +321,7 @@ CLAIM_TOOLS = ["ToolSearch", "mcp__plugin_atlassian_atlassian__getAccessibleAtla
 
 def jira_states(keys: list[str], config: Config, *, run_dir: Path, k: Json, deadline: datetime, morning: datetime) -> dict[str, Json] | None:
     """Rank, assignee, status and labels of the stories the night shift tracks, whether the user is working on each one,
-    and which no longer exist, from one small haiku session; None if it did not finish."""
+    and which no longer exist, from one small sonnet session; None if it did not finish."""
     if not keys:
         return {}
     listed = ", ".join(keys)
@@ -342,7 +343,7 @@ def jira_states(keys: list[str], config: Config, *, run_dir: Path, k: Json, dead
         f"{mine} {backlog} Read only; change nothing."
     )
     result = sessions.run(
-        sessions.Spec(kind="recheck", prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="haiku", effort="low",
+        sessions.Spec(kind="recheck", prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="sonnet", effort="low",
                       cap_usd=0.5, minutes=8, permission_mode="dontAsk", allowed_tools=CLAIM_TOOLS, max_turns=25, json_schema=CLAIM_SCHEMA),
         knobs=k, deadline=deadline, morning=morning,
     )
@@ -519,7 +520,7 @@ def new_run_dir(name: str) -> Path:
             path = RUNS_DIR / f"{name}-{os.getpid()}-{time.time_ns() % 10_000}"
 
 
-def reconcile(current_run: Path, config: Config) -> list[str]:
+def reconcile(current_run: Path, config: Config, k: Json, morning: datetime) -> list[str]:
     """Stories a crashed or killed run left half-done: the user's checkout is released first, then the story is
     reported once as interrupted, never silently retried or deleted."""
     found = []
@@ -527,7 +528,8 @@ def reconcile(current_run: Path, config: Config) -> list[str]:
         frame = read_json(frame_file, {}) or {}
         if frame.get("released") or frame.get("repo") not in config.repos:
             continue
-        result = workspace.release_frame(frame_file, repo=config.repos[frame["repo"]], log_dir=frame_file.parent / "logs")
+        setup = setup_agent(config, k, run_id=current_run.name, log_dir=frame_file.parent / "logs", deadline=datetime.now(), morning=morning)
+        result = workspace.release_frame(frame_file, setup=setup)
         state = "restored" if result["ok"] else "NEEDS ATTENTION: " + "; ".join(result["problems"])
         found.append(f"{frame['repo']} checkout left on {frame['branch']} by run {frame_file.parent.parent.name}: {state}")
     for phase_file in sorted(RUNS_DIR.glob("*/*/phase.json")):
@@ -706,7 +708,7 @@ def nightly(args: argparse.Namespace) -> None:
             return
         k = {**k, "stories": int(k["weekend_stories"]), "night_points": float(k["weekend_night_points"])}
     with run_lock("nightly"):
-        night["interrupted"] = reconcile(run_dir, config)
+        night["interrupted"] = reconcile(run_dir, config, k, morning)
         workspace.night_aws_config(config.aws_allowed_accounts)
         quota.current(max_age=0, label="run_start" if manual else "night_start")
         verdict = quota.check(kind="pick", knobs=k, morning=morning, **sessions.RUN_GATE)
@@ -925,12 +927,14 @@ def work_story(config: Config, k: Json, story: Json, index: int, run_dir: Path, 
     set_phase(issue_dir, "preparing")
     manual = bool(sessions.RUN_GATE)
     prepared: list[workspace.Prepared] = []
+    setup = setup_agent(config, k, run_id=run_dir.name, log_dir=issue_dir / "logs", deadline=deadline, morning=morning, key=key,
+                        say=lambda line: progress(issue_dir, line))
     try:
         try:
             for name in story["repos"]:
                 repo = config.repos[name]
                 workspace.preflight(repo, manual=manual, env_allowed_hosts=config.env_allowed_hosts, env_forbidden_hosts=config.env_forbidden_hosts)
-                prepared.append(workspace.enter(repo, key, log_dir=issue_dir / "logs", deadline=deadline, frame_file=issue_dir / f"frame-{name}.json"))
+                prepared.append(workspace.enter(repo, key, frame_file=issue_dir / f"frame-{name}.json", setup=setup))
         except workspace.SetupProblem as problem:
             outcome.update(status="setup_failed", reason=str(problem))
             update_issue(key, status="setup_failed", final=False)
@@ -941,7 +945,7 @@ def work_story(config: Config, k: Json, story: Json, index: int, run_dir: Path, 
     finally:
         releases = {}
         for item in reversed(prepared):
-            releases[item.repo] = workspace.release(item, repo=config.repos[item.repo], log_dir=issue_dir / "logs", deadline=None)
+            releases[item.repo] = workspace.release(item, setup=setup)
         outcome["release"] = releases
         for repo in outcome["repos"]:
             repo["removed"] = bool((releases.get(repo["repo"]) or {}).get("removed_empty_branch"))
@@ -1052,6 +1056,58 @@ def _work(config: Config, k: Json, story: Json, index: int, run_dir: Path, issue
                  review="awaiting" if worked else None, summary=story.get("summary", ""), session=outcome.get("session_id"))
 
 
+SETUP_MINUTES = 15
+SETUP_SCHEMA = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["ready", "steps", "problem"],
+    "properties": {"ready": {"type": "boolean"}, "steps": {"type": "array", "items": {"type": "string"}}, "problem": {"type": "string"}},
+}
+SETUP_HARD_DENY = (
+    "This session only prepares a checkout for a commit. Never install, upgrade or remove a machine-wide tool (brew, an nvm or "
+    "language installer, curl piped to a shell), never write a shell startup file, never change git config, never switch "
+    "branches, commit, stash or reset, and never delete a whole environment directory such as .venv or node_modules.",
+)
+
+
+def setup_agent(config: Config, k: Json, *, run_id: str, log_dir: Path, deadline: datetime, morning: datetime, key: str | None = None,
+                say=log) -> workspace.Setup:
+    """Which steps a checkout needs after moving between commits is the repository's own knowledge (its setup script
+    and docs), so a small session reads it and runs only what the change calls for, rather than the night keeping a copy.
+
+    Giving the checkout back to the user gets its own short time window: the user's dependencies must follow even
+    when the night's deadline has passed.
+    """
+    def setup(path: Path, before: str, after: str, label: str) -> None:
+        settings = session_settings(WORK_SETTINGS, target=log_dir / f"settings-setup-{path.name}-{label}.json", config=config, hard_deny=SETUP_HARD_DENY)
+        prompt = (
+            f"Prepare this checkout for commit {after}: until now it was at {before}. Only what changed between the two commits "
+            "matters. Read how the repository installs its dependencies, generated files and test tools (its setup script, such as "
+            f"setup/setup.sh, and CLAUDE.md, AGENTS.md and the README), and what `git diff --stat {before} {after}` changes "
+            "(lockfiles, manifests, sources of generated binaries, tool version pins). Run only the project-local steps the new "
+            "commit needs, such as syncing dependencies from a lockfile, rebuilding a generated binary or installing a test "
+            "browser; when nothing relevant changed, run nothing. The setup script also does machine-wide work (installing tools, "
+            "writing shell startup files, git config): never do that part. ready is true when the checkout can run its tests at "
+            "the new commit; steps lists each command you ran and why, in a few words; problem says what is missing when ready "
+            "is false, else it is empty."
+        )
+        window = deadline if label == "night" else datetime.now() + timedelta(minutes=SETUP_MINUTES + 5)
+        result = sessions.run(
+            sessions.Spec(kind="setup", key=key, prompt=prompt, cwd=path, run_id=run_id, log_dir=log_dir, model="sonnet", effort="low",
+                          cap_usd=1.0, minutes=SETUP_MINUTES, settings=settings, env=workspace.tool_env(path), max_turns=40,
+                          json_schema=SETUP_SCHEMA, name=f"setup-{label}-{path.name}"),
+            knobs=k, deadline=window, morning=morning,
+        )
+        answer = result.data.get("structured_output") if result.status == "ok" else None
+        if not isinstance(answer, dict):
+            raise workspace.SetupProblem(f"{path.name}: the setup session did not finish ({result.status} {result.reason})".strip())
+        say(f"{path.name} set up for {'the night branch' if label == 'night' else 'your branch'}: {'; '.join(answer['steps']) or 'nothing needed'}")
+        if not answer["ready"]:
+            raise workspace.SetupProblem(f"{path.name}: {answer['problem']}")
+
+    return setup
+
+
 GATE_JUDGE_SCHEMA = {
     "type": "object",
     "additionalProperties": False,
@@ -1064,7 +1120,7 @@ def gate(repo: Repo, prepared: workspace.Prepared, *, key: str, log_dir: Path, r
     """The repository's pre-push hook on the branch tip, with a failure judged: the night never pushes.
 
     A hook step that exists only for a push (an upstream to compare against, the branch's CI pipeline, a registry
-    login) can stop the hook before its checks run. A small haiku session reads the hook and its output; when only
+    login) can stop the hook before its checks run. A small sonnet session reads the hook and its output; when only
     such a step failed, the gate is blocked, not failed, and the story keeps the status the work session gave it.
     """
     verify = workspace.verify(repo, prepared, key=key, log_dir=log_dir, deadline=deadline)
@@ -1083,7 +1139,7 @@ def gate(repo: Repo, prepared: workspace.Prepared, *, key: str, log_dir: Path, r
         f"Output (its last part):\n{result['tail']}\n"
     )
     judged = sessions.run(
-        sessions.Spec(kind="judge", key=key, prompt=prompt, cwd=prepared.path, run_id=run_id, log_dir=log_dir, model="haiku", effort="low",
+        sessions.Spec(kind="judge", key=key, prompt=prompt, cwd=prepared.path, run_id=run_id, log_dir=log_dir, model="sonnet", effort="low",
                       cap_usd=0.5, minutes=3, permission_mode="dontAsk", allowed_tools=["Read", "Grep", "Glob"], max_turns=15,
                       json_schema=GATE_JUDGE_SCHEMA),
         knobs=k, deadline=deadline, morning=morning,
@@ -1250,7 +1306,7 @@ def security(args: argparse.Namespace) -> None:
         log(f"note: {note.security_note(folder=config.vault_folder, report=report)}")
 
     with run_lock("security"):
-        report["warnings"] += [f"interrupted earlier: {item}" for item in reconcile(run_dir, config)]
+        report["warnings"] += [f"interrupted earlier: {item}" for item in reconcile(run_dir, config, k, morning)]
         workspace.night_aws_config(config.aws_allowed_accounts)
         ledger = quota.load_ledger()
         names = [name for name, repo in config.repos.items() if repo.security_areas]
@@ -1274,14 +1330,16 @@ def security(args: argparse.Namespace) -> None:
         set_phase(journal, "preparing")
         try:
             workspace.preflight(repo, manual=bool(args.now), env_allowed_hosts=config.env_allowed_hosts, env_forbidden_hosts=config.env_forbidden_hosts)
-            prepared = workspace.enter(repo, key, log_dir=run_dir / "logs", deadline=deadline, frame_file=journal / f"frame-{name}.json")
+            setup = setup_agent(config, k, run_id=run_dir.name, log_dir=run_dir / "logs", deadline=deadline, morning=morning, key=key,
+                                say=lambda line: report["warnings"].append(line))
+            prepared = workspace.enter(repo, key, frame_file=journal / f"frame-{name}.json", setup=setup)
         except workspace.SetupProblem as problem:
             set_phase(journal, "reported")
             return finish("failed", f"Setup failed: {problem}")
         try:
             _security_in_checkout(config, k, repo, name, area, key, prepared, journal, run_dir, report, finish, now, deadline, morning, ledger, turn, area_index, gate)
         finally:
-            released = workspace.release(prepared, repo=repo, log_dir=run_dir / "logs")
+            released = workspace.release(prepared, setup=setup)
             if not released["ok"]:
                 report["warnings"].insert(0, "Your checkout was not restored exactly: " + "; ".join(released["problems"]))
 

@@ -32,10 +32,10 @@ READING_MAX_AGE = 300
 # What a session of each kind adds to the 7-day usage, in points, until the ledger has measured enough of them.
 # Upper bounds from the first nights: the most each kind cost in dollars, at the most points a dollar can have
 # been (all of that week's usage counted as night work).
-DEFAULT_POINTS = {"pick": 1.6, "recheck": 0.1, "judge": 0.1, "work": 6.6, "fix": 0.8, "report": 0.5, "scan": 6.0, "patch": 2.0}
+DEFAULT_POINTS = {"pick": 1.6, "recheck": 0.3, "judge": 0.3, "setup": 0.5, "work": 6.6, "fix": 0.8, "report": 0.5, "scan": 6.0, "patch": 2.0}
 # The sessions of one story. A story starts only when all of them fit in the night's points; once started, they
 # may finish it above the night's points, never above the ceiling.
-STORY_KINDS = ("recheck", "work", "fix", "judge")
+STORY_KINDS = ("recheck", "setup", "work", "fix", "judge")
 MIN_SAMPLES = 3
 
 
@@ -98,7 +98,7 @@ def _from_probe_file() -> Usage | None:
 
 def probe() -> Usage | None:
     """One tiny headless turn whose stream carries the account's live rate-limit windows."""
-    command = ["claude", "-p", "Reply with OK.", "--model", "haiku", "--output-format", "stream-json", "--verbose",
+    command = ["claude", "-p", "Reply with OK.", "--model", "sonnet", "--output-format", "stream-json", "--verbose",
                "--max-turns", "1", "--max-budget-usd", "0.05", "--strict-mcp-config", "--permission-mode", "dontAsk"]
     env = {"CLAUDE_TODO_HOOKS": "0", "ENABLE_CLAUDEAI_MCP_SERVERS": "false"}
     STATE_DIR.mkdir(parents=True, exist_ok=True)

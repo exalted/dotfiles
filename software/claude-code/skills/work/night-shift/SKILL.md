@@ -55,8 +55,13 @@ The night shift works in the user's own checkouts under `~/Developer/`, one stor
 it records the checkout's branch, HEAD, status and stash list, sets the user's uncommitted work aside with
 `git stash` (also kept under `refs/night-shift/backup/` until it is restored), and creates `night/<KEY>` from `origin/main`. After
 the story, whatever happens, it saves anything left uncommitted to the archive, switches back, restores the
-user's work exactly (staged stays staged), re-runs the repository's setup, and checks that branch, HEAD,
-status and stash list match the record. A mismatch goes to the top of the note. A crashed run is released
+user's work exactly (staged stays staged), and checks that branch, HEAD,
+status and stash list match the record. A mismatch goes to the top of the note.
+
+Each time the checkout moves between commits (onto the night branch, and back), a small sonnet session reads
+the repository's own setup script and docs and runs only the project-local steps the change needs (dependency
+sync, generated binaries, test browsers), never the machine-wide ones. The night keeps no setup commands of its
+own. Every command it ran goes into the story's timeline. A crashed run is released
 at the next start. A manual run leaves a checkout alone when a file in it changed in the last 10 minutes.
 
 Each story's branch must stand on its own: the gate runs with nothing but `origin/main` plus the story, and
@@ -69,7 +74,7 @@ Codex reviews the branch. If it asks for changes, or reports a medium or high fi
 resumes for one fix round (cap `caps_usd.fix`, at most `fix_minutes`, only with time left before the deadline)
 and answers each finding in REPORT.md. Then the repository's own git pre-push hook runs on the branch tip,
 outside the model, with the user's own Docker config. The night never pushes, so if the hook fails, a small
-haiku session reads the hook and its output: when only a push step failed (an upstream comparison, the CI
+sonnet session reads the hook and its output: when only a push step failed (an upstream comparison, the CI
 pipeline status, a registry login), the gate is blocked, not failed, and the note says which step.
 
 ## Stories it already worked
@@ -236,7 +241,7 @@ its recipe would run `git clean`, the session moves the untracked files to the T
 Check each item and tell the user only what is missing:
 
 1. `~/.config/dotfiles/night-shift/config.toml` exists. Start from `config.example.toml` in this skill.
-   It holds the repositories (path, setup, security areas) and
+   It holds the repositories (path, security areas) and
    the people whose word counts, with their roles. Jira, Confluence, Slack and GitLab are read through the
    user's own plugin MCP sign-ins, and Datadog through the user's `datadog` MCP server; no API tokens are stored.
 2. Each checkout's `.env` is checked before a run: every host must be local, alpha, or match
