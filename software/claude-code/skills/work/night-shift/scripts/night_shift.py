@@ -758,12 +758,17 @@ def nightly(args: argparse.Namespace) -> None:
 
         context = context_for_picker(config, k, run_dir, tactical, candidate_keys)
         place = in_repos(config, extra=(run_dir,))
+        # The repositories are there to read: the picker writes only its run directory, whatever a story's text asks.
+        pick_settings = run_dir / "settings-pick.json"
+        write_json(pick_settings, {"permissions": {"deny": [
+            f"{tool}(/{repo.path}/**)" for repo in config.repos.values() for tool in ("Edit", "Write", "NotebookEdit")]}})
         pick = sessions.run(
             sessions.Spec(
                 kind="pick",
                 prompt=f"Run the night-shift-pick skill with the context file {context}.",
                 cwd=place["cwd"],
                 add_dirs=place["add_dirs"],
+                settings=pick_settings,
                 run_id=run_dir.name,
                 log_dir=run_dir / "logs",
                 model="opus",
