@@ -3,9 +3,11 @@
 # `security` the weekly deep security analysis, with `check-repos` the morning fetch check, with
 # `check-power` the evening reminder to keep the Mac on power. The Python
 # driver does the work and enforces the quota guard, the deadlines and the one-run-at-a-time lock; this
-# script only gives it a sane environment.
+# script only gives it the user's own environment.
 #
-# launchd runs this script directly with a bare environment: no shell profile, no Homebrew on PATH.
+# launchd runs this script directly with a bare environment: no shell profile, no Homebrew on PATH. So it
+# starts itself again from the user's login profile, through Homebrew's bash: the driver and everything it
+# starts then see what a terminal sees, and the night keeps no copy of the shell setup.
 
 # Everything runs inside main, so sh parses the whole script before it starts: an update to this file while
 # a run is active cannot change what that run executes.
@@ -13,6 +15,10 @@ main() {
   self="$(/usr/bin/readlink -f "$0")"
   dotfiles="$(cd "$(/usr/bin/dirname "$self")/../.." && pwd)"
   . "$dotfiles/software/homebrew/shellenv.sh"
+  if [ -z "${NIGHT_SHIFT_PROFILE:-}" ]; then
+    export NIGHT_SHIFT_PROFILE=1
+    exec bash -lc 'exec "$0" "$@"' "$self" "$@"
+  fi
 
   job="${1:-nightly}"
   log="$HOME/Library/Logs/night-shift.log"

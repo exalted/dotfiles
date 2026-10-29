@@ -93,19 +93,22 @@ def night_aws_config(allowed_accounts: list[str]) -> Path:
 
 
 def tool_env(checkout: Path) -> dict[str, str]:
-    """The Node version the repository pins in .nvmrc, as the user's shell hook selects it by day.
+    """The environment a terminal opened in the checkout has by day, so the night keeps no copy of the user's shell.
 
-    launchd's PATH has Homebrew's Node only, which may be a different major version than the repository's.
+    The user's hooks (direnv, the .nvmrc Node) run before a prompt, and no prompt ever shows at night: the
+    profile shell runs them once, explicitly. The night's AWS config goes on top.
     """
-    env = {"AWS_CONFIG_FILE": str(NIGHT_AWS_CONFIG)} if NIGHT_AWS_CONFIG.exists() else {}
-    nvmrc = checkout / ".nvmrc"
-    if not nvmrc.is_file():
-        return env
-    version = nvmrc.read_text().strip().lstrip("v")
-    node_bin = Path.home() / ".nvm" / "versions" / "node" / f"v{version}" / "bin"
-    if not node_bin.is_dir():
-        raise SetupProblem(f"{checkout.name}: .nvmrc asks for Node {version}, which nvm has not installed (nvm install {version})")
-    return {**env, "PATH": f"{node_bin}:{os.environ.get('PATH', '')}"}
+    shell = subprocess.run(["bash", "-lc", 'cd "$1" && { eval "$PROMPT_COMMAND"; } >&2 && /usr/bin/env -0', "tool-env", str(checkout)],
+                           capture_output=True, stdin=subprocess.DEVNULL, timeout=120)
+    errors = shell.stderr.decode(errors="replace")
+    if shell.returncode != 0 or "is blocked" in errors or "no installed Node matches" in errors:
+        raise SetupProblem(f"{checkout.name}: the shell profile did not set up the checkout: {errors.strip()[-400:]}")
+    env = dict(item.split("=", 1) for item in shell.stdout.decode(errors="replace").split("\0") if "=" in item)
+    for name in ("PWD", "OLDPWD", "SHLVL", "_"):
+        env.pop(name, None)
+    if NIGHT_AWS_CONFIG.exists():
+        env["AWS_CONFIG_FILE"] = str(NIGHT_AWS_CONFIG)
+    return env
 
 
 def git(cwd: Path, *args: str, check: bool = True, timeout: int = 300) -> str:
