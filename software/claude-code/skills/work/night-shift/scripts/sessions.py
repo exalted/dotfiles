@@ -155,6 +155,7 @@ def run(spec: Spec, *, knobs: Json, deadline: datetime, morning: datetime) -> Re
                 "CLAUDE_CODE_MCP_STARTUP_WAIT_MS": "60000",
                 "CLAUDE_CODE_RETRY_WATCHDOG": "1",
                 "CLAUDE_TODO_HOOKS": "0",
+                "CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD": "1",
                 "NIGHT_SHIFT_DEADLINE": str(int(time.time() + seconds)),
                 **spec.env,
             },

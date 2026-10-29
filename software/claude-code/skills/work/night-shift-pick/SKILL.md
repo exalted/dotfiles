@@ -14,6 +14,10 @@ the Jira site and browse URL, the repositories (name and path), the people whose
 the Slack channels, the scripts path, and `previous`: what earlier
 nights did with each story.
 
+You run inside the first repository, with the others beside it, as a day session would: their CLAUDE.md files
+and skills are loaded. When a repository's skill covers what a dossier needs (a Datadog runbook, the rules for a
+kind of story), follow it within the rules here: read only, never ask.
+
 Load the tools you need by name with `ToolSearch` (`select:<name>,…`) before you call them. Get the Atlassian
 `cloudId` once with `getAccessibleAtlassianResources`.
 

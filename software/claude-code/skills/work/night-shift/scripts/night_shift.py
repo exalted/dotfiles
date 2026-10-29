@@ -265,7 +265,19 @@ RECHECK_SCHEMA = {
 RECHECK_TOOLS = ["ToolSearch", "mcp__plugin_atlassian_atlassian__getAccessibleAtlassianResources", "mcp__plugin_atlassian_atlassian__getJiraIssue"]
 
 
-def jira_recheck(key: str, *, run_dir: Path, k: Json, deadline: datetime, morning: datetime) -> Json:
+def in_repos(config: Config, primary: str | None = None, *, extra: tuple[Path, ...] = ()) -> Json:
+    """Where a night session runs: inside a repository, with the user's environment there and the other repositories
+    beside it, so it sees what a day session started in that checkout sees (its CLAUDE.md, skills and settings)."""
+    home = config.repos[primary or next(iter(config.repos))].path
+    try:
+        env = workspace.tool_env(home)
+    except workspace.SetupProblem as problem:
+        log(f"session environment: {problem}")
+        env = {}
+    return {"cwd": home, "add_dirs": [repo.path for repo in config.repos.values() if repo.path != home] + list(extra), "env": env}
+
+
+def jira_recheck(key: str, config: Config, primary: str, *, run_dir: Path, k: Json, deadline: datetime, morning: datetime) -> Json:
     """Right before work: is the story still unassigned, in the backlog, unflagged and not blocked by an open issue?
 
     A small sonnet session reads it through the user's own Atlassian sign-in; no API token is involved.
@@ -280,7 +292,7 @@ def jira_recheck(key: str, *, run_dir: Path, k: Json, deadline: datetime, mornin
     # It usually answers in seconds; a session that hangs without output is tried once more, not taken as a verdict.
     for _ in range(2):
         result = sessions.run(
-            sessions.Spec(kind="recheck", key=key, prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="sonnet", effort="low",
+            sessions.Spec(kind="recheck", key=key, prompt=prompt, **in_repos(config, primary), run_id=run_dir.name, log_dir=run_dir / "logs", model="sonnet", effort="low",
                           cap_usd=0.5, minutes=2, permission_mode="dontAsk", allowed_tools=RECHECK_TOOLS, max_turns=8, json_schema=RECHECK_SCHEMA),
             knobs=k, deadline=deadline, morning=morning,
         )
@@ -343,7 +355,7 @@ def jira_states(keys: list[str], config: Config, *, run_dir: Path, k: Json, dead
         f"{mine} {backlog} Read only; change nothing."
     )
     result = sessions.run(
-        sessions.Spec(kind="recheck", prompt=prompt, cwd=run_dir, run_id=run_dir.name, log_dir=run_dir / "logs", model="sonnet", effort="low",
+        sessions.Spec(kind="recheck", prompt=prompt, **in_repos(config), run_id=run_dir.name, log_dir=run_dir / "logs", model="sonnet", effort="low",
                       cap_usd=0.5, minutes=8, permission_mode="dontAsk", allowed_tools=CLAIM_TOOLS, max_turns=25, json_schema=CLAIM_SCHEMA),
         knobs=k, deadline=deadline, morning=morning,
     )
@@ -745,11 +757,13 @@ def nightly(args: argparse.Namespace) -> None:
             night["warnings"].append(codex.note)
 
         context = context_for_picker(config, k, run_dir, tactical, candidate_keys)
+        place = in_repos(config, extra=(run_dir,))
         pick = sessions.run(
             sessions.Spec(
                 kind="pick",
                 prompt=f"Run the night-shift-pick skill with the context file {context}.",
-                cwd=run_dir,
+                cwd=place["cwd"],
+                add_dirs=place["add_dirs"],
                 run_id=run_dir.name,
                 log_dir=run_dir / "logs",
                 model="opus",
@@ -759,7 +773,7 @@ def nightly(args: argparse.Namespace) -> None:
                 permission_mode="acceptEdits",
                 allowed_tools=PICK_TOOLS,
                 max_turns=200,
-                env={"NIGHT_SHIFT_RUN_DIR": str(run_dir)},
+                env={**place["env"], "NIGHT_SHIFT_RUN_DIR": str(run_dir)},
             ),
             knobs=k,
             deadline=deadline,
@@ -789,7 +803,7 @@ def nightly(args: argparse.Namespace) -> None:
             if stale := wait_until_fresh([config.repos[name] for name in story["repos"]], k, last_start):
                 night["warnings"].append(f"Stopped before {story['key']}: its checkouts stayed stale ({'; '.join(stale)}). Sign in to GitLab and run /sync-gitlab-repos.")
                 break
-            recheck = jira_recheck(story["key"], run_dir=run_dir, k=k, deadline=deadline, morning=morning)
+            recheck = jira_recheck(story["key"], config, story["repos"][0], run_dir=run_dir, k=k, deadline=deadline, morning=morning)
             if recheck["status"] in STOP_NIGHT:
                 night["warnings"].append(f"Stopped before {story['key']}: {'; '.join(recheck['reasons'])}")
                 break
