@@ -731,6 +731,8 @@ def nightly(args: argparse.Namespace) -> None:
         night["warnings"] += fetch_all(list(config.repos.values()))
         for change in sync_notes(config):
             log(change)
+        for day in note.tidy_days(config.vault_folder, morning.date().isoformat()):
+            log(f"day folder {day} trashed: no story note left in it")
         refresh_reviews(config)
         states = jira_states(tracked(), config, run_dir=run_dir, k=k, deadline=deadline, morning=morning)
         for key, state in (states or {}).items():

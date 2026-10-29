@@ -14,6 +14,7 @@ ID_PROPERTY = "night_shift_id"
 
 import json
 import re
+import subprocess
 import uuid
 from datetime import date, datetime
 from pathlib import Path
@@ -254,6 +255,19 @@ def night_note(*, folder: Path, night: Json, browse: str) -> Path:
     properties = {"kind": "run", "status": night.get("status", "done")}
     path.write_text(_frontmatter(properties) + "\n".join(body) + "\n")
     return path
+
+
+def tidy_days(folder: Path, today: str) -> list[str]:
+    """Day folders before today with no story note left, only run notes or nothing: moved to the Trash, run notes
+    included, since a run note only points at its stories. A story note, or any other file the user added there,
+    keeps its folder."""
+    removed = []
+    for day in sorted(path for path in folder.iterdir() if path.is_dir() and re.fullmatch(r"\d{4}-\d{2}-\d{2}", path.name) and path.name < today):
+        entries = [entry for entry in day.iterdir() if not entry.name.startswith(".")]
+        if all(entry.is_file() and entry.suffix == ".md" and '\nkind: "run"\n' in entry.read_text(encoding="utf-8") for entry in entries):
+            subprocess.run(["/usr/bin/trash", "--stopOnError", str(day)], check=True)
+            removed.append(day.name)
+    return removed
 
 
 def ensure_overview(folder: Path) -> Path:

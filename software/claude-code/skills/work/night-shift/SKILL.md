@@ -127,6 +127,8 @@ memory) or deleted (also into Obsidian's trash) closes the story: from the next 
 again and never listed as waiting, and the ledger records `note_state` and `review: closed` so it never
 contradicts the vault. The night shift never reads an archived note. Deleting a run note, or a whole day
 folder, is only cleanup; for story notes in it, it closes them too. `retry KEY` reopens a closed story.
+The night shift tidies up too: at the start of each night, an earlier day folder with no story note left (only
+run notes, or nothing) goes to the Trash, run notes included.
 
 ## What a night session may do
 
