@@ -265,16 +265,18 @@ RECHECK_SCHEMA = {
 RECHECK_TOOLS = ["ToolSearch", "mcp__plugin_atlassian_atlassian__getAccessibleAtlassianResources", "mcp__plugin_atlassian_atlassian__getJiraIssue"]
 
 
-def in_repos(config: Config, primary: str | None = None, *, extra: tuple[Path, ...] = ()) -> Json:
-    """Where a night session runs: inside a repository, with the user's environment there and the other repositories
-    beside it, so it sees what a day session started in that checkout sees (its CLAUDE.md, skills and settings)."""
+def in_repos(config: Config, primary: str | None = None, *, extra: tuple[Path, ...] = (), others: bool = False) -> Json:
+    """Where a night session runs: inside a repository, with the user's environment there, so it sees what a day
+    session started in that checkout sees (its CLAUDE.md, skills and settings). Only a session that works across
+    repositories gets the others beside it: their skills load there, but not their local settings."""
     home = config.repos[primary or next(iter(config.repos))].path
     try:
         env = workspace.tool_env(home)
     except workspace.SetupProblem as problem:
         log(f"session environment: {problem}")
         env = {}
-    return {"cwd": home, "add_dirs": [repo.path for repo in config.repos.values() if repo.path != home] + list(extra), "env": env}
+    beside = [repo.path for repo in config.repos.values() if repo.path != home] if others else []
+    return {"cwd": home, "add_dirs": beside + list(extra), "env": env}
 
 
 def jira_recheck(key: str, config: Config, primary: str, *, run_dir: Path, k: Json, deadline: datetime, morning: datetime) -> Json:
@@ -757,7 +759,7 @@ def nightly(args: argparse.Namespace) -> None:
             night["warnings"].append(codex.note)
 
         context = context_for_picker(config, k, run_dir, tactical, candidate_keys)
-        place = in_repos(config, extra=(run_dir,))
+        place = in_repos(config, extra=(run_dir,), others=True)
         # The repositories are there to read: the picker writes only its run directory, whatever a story's text asks.
         pick_settings = run_dir / "settings-pick.json"
         write_json(pick_settings, {"permissions": {"deny": [
