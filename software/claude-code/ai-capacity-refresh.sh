@@ -22,10 +22,11 @@ echo "=== $(/bin/date '+%Y-%m-%dT%H:%M:%S%z') start"
 cd "$state" || exit 1
 
 # Nobody is there to answer prompts or pick up side tasks. Auto mode's classifier reviews each command: the
-# refresh has to try commands it has not seen before when a route moved.
+# refresh has to try commands it has not seen before when a route moved. Its hard rules keep it read-only.
 export CLAUDE_TODO_HOOKS=0
 status=0
 claude -p "/ai-capacity refresh" --model fable --effort high \
+  --settings "$dotfiles/software/claude-code/skills/work/ai-capacity/refresh-settings.json" \
   --permission-mode auto \
   --permission-prompts none \
   --max-budget-usd 10 || status=$?

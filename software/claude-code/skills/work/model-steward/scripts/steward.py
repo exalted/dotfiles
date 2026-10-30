@@ -17,6 +17,7 @@ user's other work never rides along. Nothing is pushed.
 """
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -46,7 +47,22 @@ def strongest() -> tuple[str, str]:
         sys.exit(f"capacity.json is from {refreshed:%Y-%m-%d}, older than {MAX_AGE.days} days; nothing changed")
     if not re.fullmatch(r"[a-z0-9.\[\]-]+", alias) or effort not in EFFORTS:
         sys.exit(f"capacity.json names no verified strongest model ({best!r}); nothing changed")
+    if alias not in claude_aliases():
+        sys.exit(f"Claude Code does not offer the alias {alias!r} that capacity.json names; nothing changed")
     return alias, effort
+
+
+def claude_aliases() -> set[str]:
+    """The aliases Claude Code itself lists, so a model session's mistake, or a page it read, cannot put any
+    other name into a commit. `/model` is local: it runs no model turn."""
+    done = subprocess.run(["claude", "-p", "/model", "--output-format", "json", "--max-turns", "1", "--max-budget-usd", "0.01"],
+                          capture_output=True, text=True, timeout=120, cwd=CAPACITY.parent, env={**os.environ, "CLAUDE_TODO_HOOKS": "0"})
+    try:
+        listed = json.loads(done.stdout).get("result", "")
+    except json.JSONDecodeError:
+        return set()
+    match = re.search(r"Available:\s*(.+)", listed)
+    return {name.strip(" .") for name in match.group(1).split(",")} if match else set()
 
 
 def frontmatter(text: str) -> tuple[str, str] | None:
