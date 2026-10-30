@@ -44,6 +44,15 @@ else
   trash "#{ENV["HOME"]}/.claude/night-shift.sh"
 end
 
+# Weekly ai-capacity refresh, then model-steward; see skills/work/ai-capacity and skills/work/model-steward.
+if _resolve_profile == 'work'
+  link_to_home_relative 'ai-capacity-refresh.sh', '.claude/ai-capacity-refresh.sh'
+  launch_agent_relative 'com.dotfiles.ai-capacity-refresh.plist'
+else
+  launch_agent_remove_relative 'com.dotfiles.ai-capacity-refresh.plist'
+  trash "#{ENV["HOME"]}/.claude/ai-capacity-refresh.sh"
+end
+
 # One link per skill, never one for ~/.claude/skills itself: Claude Code writes
 # the skills it syncs from claude.ai into that directory too.
 %W[common #{_resolve_profile}].each do |group|
