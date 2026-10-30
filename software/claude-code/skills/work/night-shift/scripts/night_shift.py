@@ -27,6 +27,7 @@ written to Jira, nothing deleted.
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -47,6 +48,7 @@ from common import (
     RUN_NOW_FILE,
     RUNS_DIR,
     SECURITY_REQUEST_FILE,
+    AI_CAPACITY_DIR,
     STATE_DIR,
     Config,
     Json,
@@ -391,6 +393,26 @@ def gone_elsewhere(state: Json, config: Config) -> str | None:
     elif state["status"] == "Icebox":
         return "it is in Icebox"
     return None
+
+
+def capacity_advice(now: datetime) -> list[str]:
+    """ai-capacity's current advice on models, efforts and allowances. The night shift shows it and never acts
+    on it; facts older than eight days say so first."""
+    facts = read_json(AI_CAPACITY_DIR / "capacity.json", None)
+    if not isinstance(facts, dict) or not facts.get("refreshed_at"):
+        return ["No ai-capacity facts yet: run `/ai-capacity refresh`."]
+    refreshed = datetime.fromisoformat(facts["refreshed_at"])
+    days = (now.astimezone(refreshed.tzinfo) - refreshed).days if refreshed.tzinfo else (now - refreshed).days
+    advice = AI_CAPACITY_DIR / "advice.md"
+    lines: list[str] = []
+    for line in advice.read_text().splitlines() if advice.is_file() else []:
+        if item := re.match(r"(?:- |\d+\. )(.*)", line):
+            lines.append(item.group(1).strip())
+        elif lines and line.startswith((" ", "\t")) and line.strip():
+            lines[-1] += " " + line.strip()
+    if days > 8:
+        lines.insert(0, f"The ai-capacity facts are {days} days old: run `/ai-capacity refresh`.")
+    return lines
 
 
 def tracked() -> list[str]:
@@ -742,6 +764,7 @@ def nightly(args: argparse.Namespace) -> None:
         night["awaiting"] = awaiting_review()
         tactical, why = team.current(k, config, morning)
         night["team"] = f"{team.name(tactical)} ({why})" if config.tactical_label else ""
+        night["capacity"] = capacity_advice(now)
         if k["hold_while_waiting"] and not candidate_keys:
             waiting = [
                 item for item in night["awaiting"]
@@ -1466,6 +1489,7 @@ def status(_: argparse.Namespace) -> None:
         if config.tactical_label:
             tactical, why = team.current(k, config, quota.morning_after(datetime.now()))
             lines.append(f"team tonight: {team.name(tactical)} ({why})")
+        lines += [f"ai-capacity: {line}" for line in capacity_advice(datetime.now())]
         lines += [f"closed now: {change}" for change in sync_notes(config)]
         for repo in config.repos.values():
             fetched = workspace.last_fetched(repo)

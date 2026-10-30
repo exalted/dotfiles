@@ -250,6 +250,8 @@ def night_note(*, folder: Path, night: Json, browse: str) -> Path:
         body += ["", "Decide with `/night-shift merged KEY`, `/night-shift reject KEY \"why\"` or `/night-shift retry KEY \"what to change\"`.", ""]
     if night.get("skipped"):
         body += ["## Looked at, not worked", ""] + [f"- [{item['key']}]({browse}{item['key']}): {item['reason']}" for item in night["skipped"]] + [""]
+    if night.get("capacity"):
+        body += ["## AI capacity", ""] + [f"- {line}" for line in night["capacity"]] + ["", "*From ai-capacity; see the AI status note. Advice only: nothing was changed.*", ""]
     if night.get("interrupted"):
         body += ["## Interrupted earlier", ""] + [f"- {item}" for item in night["interrupted"]] + [""]
     properties = {"kind": "run", "status": night.get("status", "done")}

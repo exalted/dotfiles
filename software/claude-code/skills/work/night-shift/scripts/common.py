@@ -43,6 +43,8 @@ USAGE_SNAPSHOT = Path.home() / ".local" / "state" / "claude-usage" / "latest.jso
 JIRA_BROWSE_FILE = Path.home() / ".config" / "dotfiles" / "jira"
 RECAP_CONFIG_DIR = Path.home() / ".config" / "dotfiles" / "recap"
 NIGHT_AWS_CONFIG = STATE_DIR / "aws-config"
+# ai-capacity's facts and advice about the user's Claude and Codex accounts (skills/work/ai-capacity).
+AI_CAPACITY_DIR = Path.home() / ".local" / "state" / "ai-capacity"
 CODEX_EXEC = Path.home() / ".claude" / "skills" / "codex-servant" / "scripts" / "codex_exec.py"
 
 KEY_PATTERN = re.compile(r"^[A-Z][A-Z0-9]+-\d+$")

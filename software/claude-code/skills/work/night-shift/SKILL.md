@@ -144,6 +144,13 @@ touch production or start a deployment, enforced in layers:
 - night processes see only the AWS profiles of `aws_allowed_accounts`;
 - a checkout whose `.env` names a production host is left alone.
 
+## Models, plans and limits
+
+The night shift learns about the user's Claude and Codex accounts from the `ai-capacity` skill, which a
+weekly job refreshes. Each run note has an "AI capacity" section with its current advice (models, efforts,
+allowances), and `status` lists it too; facts older than eight days say so first. The night shift shows that
+advice and never acts on it: the user applies it with `set`.
+
 ## The quota guard
 
 The user's rule: the night shift never leaves them without quota for day work. Every limit is in percent of
