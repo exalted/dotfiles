@@ -138,11 +138,12 @@ def current(*, max_age: float = READING_MAX_AGE, label: str | None = None) -> Us
 
 # ---------- sessions ----------
 
-def reserve(*, kind: str, cap: float, run: str, key: str | None, engine: str = "claude", start: Usage | None = None, learn: bool = True) -> str:
+def reserve(*, kind: str, cap: float, run: str, key: str | None, engine: str = "claude", model: str | None = None, effort: str | None = None,
+            start: Usage | None = None, learn: bool = True) -> str:
     entry_id = uuid.uuid4().hex[:12]
     with transaction() as ledger:
         ledger["sessions"].append({
-            "id": entry_id, "run": run, "kind": kind, "key": key, "engine": engine, "cap_usd": cap, "cost": None, "at": time.time(),
+            "id": entry_id, "run": run, "kind": kind, "key": key, "engine": engine, "model": model, "effort": effort, "cap_usd": cap, "cost": None, "at": time.time(),
             "start_seven": start.seven if start else None, "start_resets": start.seven_resets if start else None, "learn": learn,
         })
     return entry_id

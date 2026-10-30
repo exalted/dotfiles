@@ -143,7 +143,8 @@ def run(spec: Spec, *, knobs: Json, deadline: datetime, morning: datetime) -> Re
                               **(spec.gate or RUN_GATE))
         if not verdict.allowed:
             return Result("gated", verdict.reason, cost=total_cost, session_id=session_id, points=total_points)
-        entry = quota.reserve(kind=spec.kind, cap=spec.cap_usd, run=spec.run_id, key=spec.key, start=verdict.usage, learn=not RUN_GATE)
+        entry = quota.reserve(kind=spec.kind, cap=spec.cap_usd, run=spec.run_id, key=spec.key, model=model, effort=spec.effort, start=verdict.usage,
+                              learn=not RUN_GATE)
         seconds = min(spec.minutes * 60, remaining)
         log(f"{spec.kind}{' ' + spec.key if spec.key else ''}: {model} {spec.effort}, 7-day {verdict.usage.seven:.0f}% of {verdict.ceiling.percent:.0f}%, {seconds / 60:.0f} min{' (resume)' if resume else ''}")
         outcome = supervise.run(
