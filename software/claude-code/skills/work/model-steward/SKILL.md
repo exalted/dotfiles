@@ -3,6 +3,8 @@ name: model-steward
 description: Keep every introspective skill (one that studies Claude Code, the tools or the accounts, marked `introspective: true`) and its scheduled job on the strongest Claude model, at that model's own default effort, as ai-capacity last verified them, and commit the change. Use for /model-steward, after an ai-capacity refresh, or when the user asks which model the introspective skills run on.
 argument-hint: "[--commit]"
 introspective: true
+model: fable
+effort: high
 ---
 
 # Model steward
