@@ -94,13 +94,20 @@ of advice that helps:
 - work worth moving to Codex while its windows have room, or a free Codex reset about to expire;
 - Claude Code's own `/usage` suggestions that apply.
 
-Each item names its evidence. No item without a concrete action. "No change" is a valid result.
+Only what the user should know or do: a change that affects them, or an action worth taking. Nothing about
+how the refresh went, no facts that are merely current, no item that repeats last week's unless it is still
+open and still matters. Fewer is better; none is a valid result.
 
-Format: one top-level `- ` line per item, action first, evidence after a colon on the same line, nothing else
-at the top level. The night shift shows these lines in each run note and in `/night-shift status`.
+Format: one top-level `- ` line per item, under about 25 words: the action or the news first, the reason after.
+Its evidence goes on indented lines below it (`  - evidence: …`), which only `advice.md` keeps. The night
+shift shows the top-level lines in each run note and in `/night-shift status`.
 
 ### 4. Tell the user
 
-Write the section for the AI status note — what changed first, then the current facts as one short table per
-tool, then the advice — to a file in the state folder and run `status_note.py ai-capacity <that file>`. End
-with a summary of a few lines: routes re-learned, what changed, the advice.
+The AI status note says only what the user should know or do: the top-level advice lines, nothing else. No
+heading of its own, no tables, no facts, no account of the refresh. With no advice, the section is the single
+line "Nothing needs you." Write it to a file in the state folder and run
+`status_note.py ai-capacity <that file>`. A route that broke and could not be re-learned is advice too: one
+line saying which fact is missing.
+
+End with a summary of a few lines for the job's log: routes re-learned, what changed, the advice.

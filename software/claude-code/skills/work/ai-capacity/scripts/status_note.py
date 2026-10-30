@@ -27,7 +27,7 @@ def main() -> None:
     section, body = sys.argv[1], Path(sys.argv[2]).read_text().strip()
     note = Path(CONFIG.read_text().strip()).expanduser()
     start, end = f"<!-- {section}:start -->", f"<!-- {section}:end -->"
-    block = f"{start}\n{body}\n\n*Updated {datetime.now():%Y-%m-%d %H:%M}*\n{end}"
+    block = f"{start}\n## {section} · {datetime.now():%Y-%m-%d}\n\n{body}\n{end}"
     text = note.read_text() if note.exists() else "# AI status\n"
     pattern = re.compile(re.escape(start) + r".*?" + re.escape(end), re.DOTALL)
     text = pattern.sub(lambda _: block, text) if pattern.search(text) else text.rstrip() + "\n\n" + block + "\n"

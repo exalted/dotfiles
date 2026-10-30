@@ -410,8 +410,6 @@ def capacity_advice(now: datetime) -> list[str]:
     for line in advice.read_text().splitlines() if advice.is_file() else []:
         if item := re.match(r"(?:- |\d+\. )(.*)", line):
             lines.append(item.group(1).strip())
-        elif lines and line.startswith((" ", "\t")) and line.strip():
-            lines[-1] += " " + line.strip()
     if days > 8:
         lines.insert(0, f"The ai-capacity facts are {days} days old: run `/ai-capacity refresh`.")
     return lines
