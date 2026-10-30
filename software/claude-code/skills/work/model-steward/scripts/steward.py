@@ -1,0 +1,120 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = []
+# ///
+"""Keep every introspective skill on the strongest Claude model, at that model's own default effort.
+
+  steward.py [--commit]
+
+The strongest model comes from ai-capacity's `capacity.json` (`claude.strongest`). An introspective skill
+says `introspective: true` in its frontmatter; its `model:` and `effort:` are set there, and so are the
+`--model` and `--effort` of every scheduled job that runs it (`claude -p "/<skill> …"` in
+software/claude-code/*.sh). The effort is written out on purpose: without it the user's own `modelSettings`
+override would apply, and the rule is the model's own default.
+
+With --commit, the changed files are committed by pathspec, and only when each was unmodified before, so the
+user's other work never rides along. Nothing is pushed.
+"""
+
+import json
+import re
+import subprocess
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+
+DOTFILES = Path(__file__).resolve().parents[6]
+SKILLS = DOTFILES / "software" / "claude-code" / "skills"
+JOBS = DOTFILES / "software" / "claude-code"
+CAPACITY = Path.home() / ".local" / "state" / "ai-capacity" / "capacity.json"
+EFFORTS = ("low", "medium", "high", "xhigh", "max")
+MAX_AGE = timedelta(days=14)
+
+
+def git(*args: str) -> str:
+    return subprocess.run(["git", "-C", str(DOTFILES), *args], capture_output=True, text=True, check=True).stdout
+
+
+def strongest() -> tuple[str, str]:
+    if not CAPACITY.is_file():
+        sys.exit(f"no {CAPACITY}: run /ai-capacity refresh first; nothing changed")
+    data = json.loads(CAPACITY.read_text())
+    best = (data.get("claude") or {}).get("strongest") or {}
+    alias, effort = best.get("alias", ""), best.get("default_effort", "")
+    refreshed = datetime.fromisoformat(data.get("refreshed_at", "1970-01-01T00:00:00+00:00"))
+    if datetime.now(refreshed.tzinfo) - refreshed > MAX_AGE:
+        sys.exit(f"capacity.json is from {refreshed:%Y-%m-%d}, older than {MAX_AGE.days} days; nothing changed")
+    if not re.fullmatch(r"[a-z0-9.\[\]-]+", alias) or effort not in EFFORTS:
+        sys.exit(f"capacity.json names no verified strongest model ({best!r}); nothing changed")
+    return alias, effort
+
+
+def frontmatter(text: str) -> tuple[str, str] | None:
+    match = re.match(r"---\n(.*?)\n---\n", text, re.DOTALL)
+    return (match.group(1), text[match.end():]) if match else None
+
+
+def set_key(head: str, key: str, value: str) -> str:
+    line = f"{key}: {value}"
+    if re.search(rf"^{key}:.*$", head, re.MULTILINE):
+        return re.sub(rf"^{key}:.*$", line, head, flags=re.MULTILINE)
+    return head + "\n" + line
+
+
+def introspective() -> list[Path]:
+    found = []
+    for skill in sorted(SKILLS.glob("*/*/SKILL.md")):
+        parts = frontmatter(skill.read_text())
+        if parts and re.search(r"^introspective:\s*true\s*$", parts[0], re.MULTILINE):
+            found.append(skill)
+    return found
+
+
+def update_skill(path: Path, alias: str, effort: str) -> bool:
+    text = path.read_text()
+    head, body = frontmatter(text)
+    new = f"---\n{set_key(set_key(head, 'model', alias), 'effort', effort)}\n---\n{body}"
+    if new != text:
+        path.write_text(new)
+    return new != text
+
+
+def update_jobs(names: list[str], alias: str, effort: str) -> list[Path]:
+    changed = []
+    for job in sorted(JOBS.glob("*.sh")):
+        text = job.read_text()
+        new = text
+        for name in names:
+            pattern = re.compile(rf'^(\s*claude -p "/{re.escape(name)}\b[^"]*")((?:\s+--(?:model|effort) \S+)*)', re.MULTILINE)
+            new = pattern.sub(lambda match: f"{match.group(1)} --model {alias} --effort {effort}", new)
+        if new != text:
+            job.write_text(new)
+            changed.append(job)
+    return changed
+
+
+def main() -> None:
+    commit = sys.argv[1:] == ["--commit"]
+    if sys.argv[1:] not in ([], ["--commit"]):
+        sys.exit("usage: steward.py [--commit]")
+    alias, effort = strongest()
+    skills = introspective()
+    names = [skill.parent.name for skill in skills]
+    candidates = skills + sorted(JOBS.glob("*.sh"))
+    dirty = {line[3:] for line in git("status", "--porcelain", "--", *map(str, candidates)).splitlines()}
+    changed = [skill for skill in skills if update_skill(skill, alias, effort)] + update_jobs(names, alias, effort)
+    relative = [str(path.relative_to(DOTFILES)) for path in changed]
+    print(f"strongest: {alias} at {effort}; introspective skills: {', '.join(names) or 'none'}")
+    print("changed: " + (", ".join(relative) or "nothing"))
+    if not commit or not changed:
+        return
+    if blocked := [path for path in relative if path in dirty]:
+        print("not committed: these files had uncommitted changes before the run: " + ", ".join(blocked))
+        return
+    git("commit", "--quiet", "-m", f"Run introspective skills on {alias} at {effort} effort",
+        "-m", f"ai-capacity found {alias} to be the strongest model, and {effort} its own default effort.", "--", *relative)
+    print("committed " + git("rev-parse", "--short", "HEAD").strip())
+
+
+if __name__ == "__main__":
+    main()
