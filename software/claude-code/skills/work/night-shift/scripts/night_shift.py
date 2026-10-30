@@ -348,8 +348,10 @@ def jira_states(keys: list[str], config: Config, *, run_dir: Path, k: Json, dead
                 "the stories this search returns.")
     backlog = "in_backlog_list is false for every story."
     if config.jira_board_id:
-        backlog = (f"Then read board {config.jira_board_id}'s backlog list with executeRead, operation getJiraBoardIssueData, dataset backlog, "
-                   "every page (use discover for its exact inputs if needed). in_backlog_list is true exactly for the stories it lists.")
+        backlog = ("Then call executeRead with name getJiraBoardIssueData and inputs "
+                   f'{{"boardId": {config.jira_board_id}, "dataset": "backlog", "jql": "key in (<every key found>)", "fields": ["status"], '
+                   '"maxResults": 100}: board ' f"{config.jira_board_id}'s backlog list, filtered to these stories, in one page. "
+                   "in_backlog_list is true exactly for the stories it returns.")
     prompt = (
         f"Search Jira with searchJiraIssuesUsingJql for: key in ({listed}) ORDER BY Rank ASC, fields assignee, status and labels, every page. "
         "If Jira answers that a key does not exist, read that key with getJiraIssue; if it is not found either, put it in missing and "
