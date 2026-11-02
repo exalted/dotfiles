@@ -223,7 +223,9 @@ def night_note(*, folder: Path, night: Json, browse: str) -> Path:
     stories = night.get("stories", [])
     ready = sum(1 for story in stories if story.get("status") == "solved")
     headline = night.get("headline") or (f"{ready} of {len(stories)} stories ready to review" if stories else night.get("reason", "Nothing worked tonight"))
-    body = [f"# Night shift, {day}", "", f"**{headline}**", "", f"Quota: {night.get('quota', 'unknown')}"]
+    body = [f"# Night shift, {day}", "", f"**{headline}**"]
+    if night.get("status") != "missed":
+        body += ["", f"Quota: {night.get('quota', 'unknown')}"]
     if night.get("team"):
         body += ["", f"Team: {night['team']}"]
     for warning in night.get("warnings", []):

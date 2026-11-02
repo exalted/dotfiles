@@ -732,7 +732,9 @@ def nightly(args: argparse.Namespace) -> None:
     if not manual and not (now.hour < 12 and now <= last_start):
         log(f"started at {now:%H:%M}, outside the night window (until {k['last_start']}): nothing to do")
         if reason := missed_night(now, k):
-            night.update(date=now.date().isoformat(), kind="Missed run", status="missed", reason=reason, quota=quota.describe(k, morning))
+            # No quota line: a missed run fires on wake, often in the user's work day, and reading the quota
+            # would cost a headless probe that starts their 5-hour window.
+            night.update(date=now.date().isoformat(), kind="Missed run", status="missed", reason=reason)
             log(f"note: {note.night_note(folder=config.vault_folder, night=night, browse=browse_url(config))}")
             write_json(NIGHTS_FILE, {**(read_json(NIGHTS_FILE, {}) or {}), "missed": now.date().isoformat()})
         return
