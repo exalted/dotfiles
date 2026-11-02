@@ -238,6 +238,7 @@ class HookTests(unittest.TestCase):
         self.add("One")
         code, out = self.hook("Stop")
         self.assertIn("1. One", self.context(out))
+        self.assertEqual(json.loads(out)["systemMessage"], "Side tasks changed: 1 open. Claude lists them when your request is done.")
         self.assertEqual(self.hook("Stop"), (0, ""))
         self.add("Two")
         self.assertIn("2. Two", self.context(self.hook("Stop")[1]))
@@ -245,7 +246,9 @@ class HookTests(unittest.TestCase):
         self.run("list")
         self.run("remove", "1")
         self.run("remove", "2")
-        self.assertIn("No open side tasks remain", self.context(self.hook("Stop")[1]))
+        out = self.hook("Stop")[1]
+        self.assertIn("No open side tasks remain", self.context(out))
+        self.assertEqual(json.loads(out)["systemMessage"], "Side tasks changed: none open.")
         self.assertEqual(self.hook("Stop"), (0, ""))
 
     def test_hooks_off_and_outside_repo(self) -> None:

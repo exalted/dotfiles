@@ -457,8 +457,13 @@ def hooks_off() -> bool:
     return os.environ.get(HOOKS_OFF_VAR) == "0"
 
 
-def emit(event: str, context: str) -> None:
-    print(json.dumps({"hookSpecificOutput": {"hookEventName": event, "additionalContext": context}}))
+def emit(event: str, context: str, for_user: Optional[str] = None) -> None:
+    # On Stop, additionalContext also shows in the transcript, but it is written for Claude;
+    # systemMessage gives the user a plain line of their own.
+    output: Dict[str, object] = {"hookSpecificOutput": {"hookEventName": event, "additionalContext": context}}
+    if for_user:
+        output["systemMessage"] = for_user
+    print(json.dumps(output))
 
 
 def repo_for_hook(data: Dict[str, object]) -> Optional[Repo]:
@@ -529,7 +534,11 @@ def cmd_stop(_: argparse.Namespace, __: Optional[Repo]) -> int:
     repo.ensure_dirs()
     atomic_write(offered, current)
     if not tasks:
-        emit("Stop", "No open side tasks remain. If this reply already said so, add nothing.")
+        emit(
+            "Stop",
+            "No open side tasks remain. If this reply already said so, add nothing.",
+            for_user="Side tasks changed: none open.",
+        )
         return 0
     text, _ = render_listing(todo, repo.branch_section, everything=False, cap=MAX_LINES_IN_HOOK_OUTPUT)
     emit(
@@ -538,6 +547,7 @@ def cmd_stop(_: argparse.Namespace, __: Optional[Repo]) -> int:
         + text
         + "\n\nIf this reply already reported the change, add at most one short line. "
         "Otherwise offer the open tasks when the request is resolved. Do not start one on your own.",
+        for_user=f"Side tasks changed: {len(tasks)} open. Claude lists them when your request is done.",
     )
     return 0
 
