@@ -17,6 +17,7 @@
   night_shift.py cleanup <KEY> [--force]     after review: the story's branch removed once main has it
   night_shift.py run-now [--dry]             start the nightly run through the launch agent now
   night_shift.py check-repos                 the morning check: fetch every checkout, alert if a sync is needed
+  night_shift.py check-team                  Monday 15:00: ask which team the user is on, unless this week is known
   night_shift.py fail "<message>"            the wrapper's last resort: write a failure note
 
 Hard rules the code enforces, not the prompts: the quota guard (quota.py) before every Claude session,
@@ -1611,8 +1612,14 @@ def check_repos(_: argparse.Namespace) -> None:
         alert.stale_repos(problems, tonight=False)
     else:
         log("all checkouts fetched")
-    now = datetime.now()
-    week = team.iso_week(now)
+
+
+def check_team(_: argparse.Namespace) -> None:
+    """Monday afternoon, not morning: the week's team is settled by then, and the user is at work to answer."""
+    config = load_config()
+    if knobs()["paused"]:
+        return
+    week = team.iso_week(datetime.now())
     if config.tactical_label and not team.confirmed(week) and team.from_pairing(week, config.pairing_handle) is None:
         log(f"asking which team the user is on in {week}")
         alert.ask_team(week)
@@ -1651,6 +1658,7 @@ def main() -> None:
     p.set_defaults(handler=security)
     sub.add_parser("status").set_defaults(handler=status)
     sub.add_parser("check-repos").set_defaults(handler=check_repos)
+    sub.add_parser("check-team").set_defaults(handler=check_team)
     sub.add_parser("ask-team").set_defaults(handler=ask_team)
     sub.add_parser("check-power").set_defaults(handler=check_power)
     sub.add_parser("pause").set_defaults(handler=lambda _: print(f"paused = {save_knobs({'paused': True})['paused']}"))

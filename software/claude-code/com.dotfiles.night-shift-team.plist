@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.dotfiles.night-shift-team</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>@HOME@/.claude/night-shift.sh</string>
+		<string>check-team</string>
+	</array>
+	<!-- Mondays at 15:00 local time, or at the next wake: the morning is too early, since the week's team
+	     is not settled yet. -->
+	<key>StartCalendarInterval</key>
+	<dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>15</integer><key>Minute</key><integer>0</integer></dict>
+</dict>
+</plist>

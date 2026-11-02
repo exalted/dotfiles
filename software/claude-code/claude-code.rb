@@ -29,17 +29,19 @@ if _resolve_profile == 'work'
   launch_agent_relative 'com.dotfiles.comply365-recap.plist'
 end
 
-# Unattended night shift, its weekly security analysis and its morning fetch check; see skills/work/night-shift.
+# Unattended night shift, its weekly security analysis its morning fetch check and its Monday team question; see skills/work/night-shift.
 if _resolve_profile == 'work'
   link_to_home_relative 'night-shift.sh', '.claude/night-shift.sh'
   launch_agent_relative 'com.dotfiles.night-shift.plist'
   launch_agent_relative 'com.dotfiles.night-shift-security.plist'
   launch_agent_relative 'com.dotfiles.night-shift-check.plist'
+launch_agent_relative 'com.dotfiles.night-shift-team.plist'
   launch_agent_relative 'com.dotfiles.night-shift-power.plist'
 else
   launch_agent_remove_relative 'com.dotfiles.night-shift.plist'
   launch_agent_remove_relative 'com.dotfiles.night-shift-security.plist'
   launch_agent_remove_relative 'com.dotfiles.night-shift-check.plist'
+launch_agent_remove_relative 'com.dotfiles.night-shift-team.plist'
   launch_agent_remove_relative 'com.dotfiles.night-shift-power.plist'
   trash "#{ENV["HOME"]}/.claude/night-shift.sh"
 end

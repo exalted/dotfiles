@@ -1,7 +1,7 @@
 """Which team the user is on this week. The team rotates weekly: on the tactical team the night shift works only
 stories with the tactical label, otherwise only stories without it.
 
-For the current ISO week the user's own answer (the Monday dialog, or `set tactical`) wins, then the tactical
+For the current ISO week the user's own answer (the Monday 15:00 dialog, or `set tactical`) wins, then the tactical
 pairs that /pairing-candidates recorded for the week. Without either, last week's answer carries over.
 """
 

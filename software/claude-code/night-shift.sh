@@ -1,7 +1,7 @@
 #!/bin/sh
 # Entry point of the night-shift launch agents (skills/work/night-shift): the nightly backlog run, with
 # `security` the weekly deep security analysis, with `check-repos` the morning fetch check, with
-# `check-power` the evening reminder to keep the Mac on power. The Python
+# `check-team` the Monday question about the week's team, with `check-power` the evening reminder to keep the Mac on power. The Python
 # driver does the work and enforces the quota guard, the deadlines and the one-run-at-a-time lock; this
 # script only gives it the user's own environment.
 #
@@ -56,7 +56,7 @@ main() {
   case "$job" in
     # The weekend security run waits out usage resets until its Sunday deadline (the security_deadline knob).
     security) limit_hours=44 ;;
-    check-repos|check-power) limit_hours=1 ;;
+    check-repos|check-team|check-power) limit_hours=1 ;;
     *) limit_hours=6 ;;
   esac
 
