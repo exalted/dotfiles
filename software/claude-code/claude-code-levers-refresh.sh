@@ -19,6 +19,12 @@ log="$HOME/Library/Logs/claude-code-levers-refresh.log"
 exec >>"$log" 2>&1
 
 echo "=== $(/bin/date '+%Y-%m-%dT%H:%M:%S%z') start"
+
+# Its slot runs from Friday 17:00 to Sunday 22:00, so it never holds a work day's 5-hour window and ends
+# before the Monday night shift.
+. "$dotfiles/software/claude-code/work-hours-gate.sh"
+gate_job claude-code-levers-refresh fri 17 53 "Fri 17:17, Sat 10:17, Sun 10:17"
+
 cd "$dotfiles" || exit 1
 
 # The job commits the map by itself at the end. A map that is already dirty
@@ -75,5 +81,6 @@ elif [ "$map_was_clean" -eq 0 ]; then
   echo "the map had uncommitted changes before the run; result left uncommitted"
 fi
 
+gate_done claude-code-levers-refresh "$status"
 echo "=== $(/bin/date '+%Y-%m-%dT%H:%M:%S%z') end exit=$status"
 exit "$status"

@@ -11,16 +11,35 @@
 	<array>
 		<string>@HOME@/.claude/ai-capacity-refresh.sh</string>
 	</array>
-	<!-- Weekly, Wednesday 06:23 local: just after Claude's 7-day window resets, so the
-	     week just ended is complete. A time slept through runs on wake. -->
+	<!-- Weekly, in the slot work-hours-gate.sh allows (Wednesday 17:00, after Claude's 7-day window reset,
+	     to Sunday 22:00): each trigger retries until one run succeeds. A trigger slept through fires on
+	     wake, and the gate skips it in work hours. -->
 	<key>StartCalendarInterval</key>
-	<dict>
-		<key>Weekday</key>
-		<integer>3</integer>
-		<key>Hour</key>
-		<integer>6</integer>
-		<key>Minute</key>
-		<integer>23</integer>
-	</dict>
+	<array>
+		<dict>
+			<key>Weekday</key>
+			<integer>3</integer>
+			<key>Hour</key>
+			<integer>17</integer>
+			<key>Minute</key>
+			<integer>23</integer>
+		</dict>
+		<dict>
+			<key>Weekday</key>
+			<integer>4</integer>
+			<key>Hour</key>
+			<integer>17</integer>
+			<key>Minute</key>
+			<integer>23</integer>
+		</dict>
+		<dict>
+			<key>Weekday</key>
+			<integer>6</integer>
+			<key>Hour</key>
+			<integer>9</integer>
+			<key>Minute</key>
+			<integer>23</integer>
+		</dict>
+	</array>
 </dict>
 </plist>

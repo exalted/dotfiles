@@ -11,16 +11,35 @@
 	<array>
 		<string>@HOME@/.claude/claude-code-levers-refresh.sh</string>
 	</array>
-	<!-- Weekly, Monday 09:17 local. Off the hour so it does not pile onto the
-	     API with every other "9 o'clock" job. A time slept through runs on wake. -->
+	<!-- Weekly, in the slot work-hours-gate.sh allows (Friday 17:00 to Sunday 22:00): each trigger retries
+	     until one run succeeds. A trigger slept through fires on wake, and the gate skips it in work hours.
+	     Off the hour so it does not pile onto the API with every other scheduled job. -->
 	<key>StartCalendarInterval</key>
-	<dict>
-		<key>Weekday</key>
-		<integer>1</integer>
-		<key>Hour</key>
-		<integer>9</integer>
-		<key>Minute</key>
-		<integer>17</integer>
-	</dict>
+	<array>
+		<dict>
+			<key>Weekday</key>
+			<integer>5</integer>
+			<key>Hour</key>
+			<integer>17</integer>
+			<key>Minute</key>
+			<integer>17</integer>
+		</dict>
+		<dict>
+			<key>Weekday</key>
+			<integer>6</integer>
+			<key>Hour</key>
+			<integer>10</integer>
+			<key>Minute</key>
+			<integer>17</integer>
+		</dict>
+		<dict>
+			<key>Weekday</key>
+			<integer>0</integer>
+			<key>Hour</key>
+			<integer>10</integer>
+			<key>Minute</key>
+			<integer>17</integer>
+		</dict>
+	</array>
 </dict>
 </plist>

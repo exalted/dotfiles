@@ -19,6 +19,12 @@ log="$HOME/Library/Logs/ai-capacity-refresh.log"
 /bin/mkdir -p "$state" "$(/usr/bin/dirname "$log")"
 exec >>"$log" 2>&1
 echo "=== $(/bin/date '+%Y-%m-%dT%H:%M:%S%z') start"
+
+# Claude's 7-day window resets on Wednesday morning, and the refresh wants that week complete; Wednesday 17:00
+# is the first start after it that keeps the user's work day free. The slot ends Sunday 22:00.
+. "$dotfiles/software/claude-code/work-hours-gate.sh"
+gate_job ai-capacity-refresh wed 17 101 "Wed 17:23, Thu 17:23, Sat 09:23"
+
 cd "$state" || exit 1
 
 # Nobody is there to answer prompts or pick up side tasks. Auto mode's classifier reviews each command: the
@@ -35,5 +41,6 @@ if [ "$status" -eq 0 ]; then
   uv run --quiet --no-project --script "$dotfiles/software/claude-code/skills/work/model-steward/scripts/steward.py" --commit || status=$?
 fi
 
+gate_done ai-capacity-refresh "$status"
 echo "=== $(/bin/date '+%Y-%m-%dT%H:%M:%S%z') end exit=$status"
 exit "$status"
