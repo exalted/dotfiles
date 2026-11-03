@@ -116,11 +116,11 @@ that label while the user is on the tactical team, and only stories without it o
 for a night is decided for the ISO week of the morning after it:
 
 1. the user's own answer for that week: the dialog, or `set tactical true|false`;
-2. else the tactical pairs `/pairing-candidates` recorded for that week, with `pairing_handle` in a pair or not;
+2. else the tactical people `/pairing-candidates` recorded for that week, with `pairing_handle` among them or not;
 3. else the `tactical` knob, carried over from the last answer.
 
 On Monday at 15:00 (or at the next wake after it), a dialog that stays until answered asks "Which team are
-you on this week?", while the current week has neither an answer nor recorded pairs. Ready stories count against
+you on this week?", while the current week has neither an answer nor a recorded tactical team. Ready stories count against
 `stories` only when they belong to the night's team; the others keep their branches and wait. The run note
 and `status` show the team and why. Keys the user chose for a manual run are taken whatever their team.
 

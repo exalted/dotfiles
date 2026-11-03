@@ -2,14 +2,15 @@
 stories with the tactical label, otherwise only stories without it.
 
 For the current ISO week the user's own answer (the Monday 15:00 dialog, or `set tactical`) wins, then the tactical
-pairs that /pairing-candidates recorded for the week. Without either, last week's answer carries over.
+people that /pairing-candidates recorded for the week. Without either, last week's answer carries over.
 """
 
+import re
 import subprocess
 import time
 from datetime import datetime
 
-from common import TACTICAL_PAIRS_FILE, TEAM_FILE, Config, Json, read_json, save_knobs, write_json
+from common import TACTICAL_TEAM_FILE, TEAM_FILE, Config, Json, read_json, save_knobs, write_json
 
 
 def iso_week(when: datetime) -> str:
@@ -18,17 +19,17 @@ def iso_week(when: datetime) -> str:
 
 
 def from_pairing(week: str, handle: str) -> bool | None:
-    """Whether the user is in one of this week's tactical pairs, or None when the pairs are not recorded for this week."""
-    if not handle or not TACTICAL_PAIRS_FILE.is_file():
+    """Whether the user is among this week's tactical people, or None when they are not recorded for this week."""
+    if not handle or not TACTICAL_TEAM_FILE.is_file():
         return None
     recorded, people = "", set()
-    for line in TACTICAL_PAIRS_FILE.read_text().splitlines():
-        line = line.strip()
+    for line in TACTICAL_TEAM_FILE.read_text().splitlines():
+        line = line.split("#", 1)[0].strip()
         if line.startswith("week "):
             recorded = line.removeprefix("week ").strip()
-        elif "+" in line and not line.startswith("#"):
-            people |= {part.strip().lower() for part in line.split("+")}
-    return handle.lower() in people if recorded == week else None
+        else:
+            people |= {part.lstrip("@").lower() for part in re.split(r"[\s,+]+", line) if part}
+    return handle.lstrip("@").lower() in people if recorded == week else None
 
 
 def confirmed(week: str) -> bool:
@@ -41,7 +42,7 @@ def confirm(tactical: bool, week: str, source: str) -> None:
 
 
 def current(k: Json, config: Config, when: datetime) -> tuple[bool, str]:
-    """(tactical, why). Adopts the pairs' answer as the knob, so it carries over into a week nobody confirms."""
+    """(tactical, why). Adopts the recorded team's answer as the knob, so it carries over into a week nobody confirms."""
     week = iso_week(when)
     if confirmed(week):
         return bool(k["tactical"]), "you confirmed it for this week"
@@ -49,7 +50,7 @@ def current(k: Json, config: Config, when: datetime) -> tuple[bool, str]:
     if paired is not None:
         if paired != bool(k["tactical"]):
             save_knobs({"tactical": paired})
-        return paired, "from this week's tactical pairs in /pairing-candidates"
+        return paired, "from this week's tactical team in /pairing-candidates"
     return bool(k["tactical"]), f"carried over: not confirmed for {week} yet"
 
 

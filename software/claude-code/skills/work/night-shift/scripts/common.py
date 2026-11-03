@@ -34,8 +34,8 @@ RUN_NOW_FILE = STATE_DIR / "run-now"
 FETCHED_FILE = STATE_DIR / "fetched.json"
 ALERT_FILE = STATE_DIR / "alert.json"
 TEAM_FILE = STATE_DIR / "team.json"
-# Written by /pairing-candidates when the user records the week's tactical pairs.
-TACTICAL_PAIRS_FILE = Path.home() / ".config" / "dotfiles" / "pairing-candidates" / "tactical.txt"
+# Written by /pairing-candidates when the user records the week's tactical people.
+TACTICAL_TEAM_FILE = Path.home() / ".config" / "dotfiles" / "pairing-candidates" / "tactical.txt"
 # Written by the user's status line script (software/claude-code/statusline-command.sh) during day sessions;
 # a free reading when it is fresh, else the gate probes.
 USAGE_SNAPSHOT = Path.home() / ".local" / "state" / "claude-usage" / "latest.json"
@@ -163,7 +163,7 @@ class Config:
     pair_field: str = ""
     # Stories with this label are tactical work; the others are strategic. Empty: no split.
     tactical_label: str = ""
-    # The user's handle in /pairing-candidates' tactical pairs.
+    # The user's Slack handle, matched against /pairing-candidates' tactical people.
     pairing_handle: str = ""
 
     def subject(self, text: str, key: str | None = None) -> str:
