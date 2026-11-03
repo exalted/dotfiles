@@ -76,6 +76,10 @@ and answers each finding in REPORT.md. Then the repository's own git pre-push ho
 outside the model, with the user's own Docker config. The night never pushes, so if the hook fails, a small
 sonnet session reads the hook and its output: when only a push step failed (an upstream comparison, the CI
 pipeline status, a registry login), the gate is blocked, not failed, and the note says which step.
+If the hook passes, the same kind of session checks that each of its checks really ran: a check that
+compares against `@{push}` finds no upstream on a night branch and passes without checking (cortex's
+migration check does). The judge then does that check itself on the branch's changes. A broken rule fails the
+gate; a check it could not do is named in the note.
 
 ## Stories it already worked
 

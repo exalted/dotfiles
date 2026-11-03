@@ -151,8 +151,12 @@ def _story(story: Json, browse: str) -> list[str]:
         if repo["repo"] in removed:
             continue
         verify = repo.get("verify") or {}
-        gate = "✅ gate passed" if verify.get("passed") else f"⚠️ gate blocked: {verify['blocked']}" if verify.get("blocked") else "❌ gate failed" if verify else "gate not run"
+        gate = ("⚠️ gate passed, but not every check ran" if verify.get("passed") and verify.get("unchecked") else "✅ gate passed" if verify.get("passed")
+                else f"⚠️ gate blocked: {verify['blocked']}" if verify.get("blocked") else "❌ gate failed" if verify else "gate not run")
         lines += ["", f"**{repo['repo']}** · `{repo['branch']}` · {gate} · {len(repo.get('commits', []))} commits"]
+        for label, field in (("Not checked", "unchecked"), ("Checked by the judge, as the hook could not", "redone"), ("The judge found", "judged")):
+            if verify.get(field):
+                lines += ["", f"{label}: {verify[field]}"]
         for command in verify.get("commands", []):
             if not command["ok"]:
                 lines += ["", f"> [!failure]- `{command['command']}`", "> ```", *[f"> {tail}" for tail in command["tail"].splitlines()[-15:]], "> ```"]
@@ -180,7 +184,8 @@ def _repos_line(story: Json) -> str:
     for repo in story.get("repos", []):
         if repo.get("commits"):
             verify = repo.get("verify") or {}
-            gate = "gate passed" if verify.get("passed") else "gate blocked" if verify.get("blocked") else "gate failed" if verify else "gate not run"
+            gate = ("gate passed, not every check ran" if verify.get("passed") and verify.get("unchecked") else "gate passed" if verify.get("passed")
+                    else "gate blocked" if verify.get("blocked") else "gate failed" if verify else "gate not run")
             parts.append(f"{repo['repo']}, {len(repo['commits'])} commits, {gate}" + (" · ⚠️ changes the gate's scripts" if verify.get("gate_scripts_changed") else ""))
     return " · ".join(parts)
 
