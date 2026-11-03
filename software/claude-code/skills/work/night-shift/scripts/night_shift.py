@@ -1264,7 +1264,7 @@ def codex_review(codex: Codex, story: Json, prepared: list[workspace.Prepared], 
     result = codex.run("review", cd=primary.path, prompt=prompt, name=f"review-{story['key']}", schema=REVIEW_SCHEMA)
     review = result.get("data")
     if not review:
-        progress(issue_dir, f"codex review not done: {result.get('status')}")
+        progress(issue_dir, f"codex review not done: {result.get('reason') or result.get('status')}")
         return None
     lines = ["", "## Independent review (codex)", "", f"Verdict: {review['verdict']}. {review['summary']}", ""]
     if review["tests_weakened"]:

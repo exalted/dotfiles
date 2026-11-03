@@ -10,7 +10,9 @@ defaults. The context comes from the prompt alone: no AGENTS.md discovery, no me
 skills, apps or MCP servers, unless a call asks for a named MCP server from roles.json.
 
 When Codex reports a usage or rate limit, this script records it and answers `unavailable` without calling
-Codex for the next 10 minutes, so callers fall back to Claude and check back later.
+Codex for the next 10 minutes, so callers fall back to Claude and check back later. When OpenAI says the model
+is at capacity, it tries again twice, after 1 and 3 minutes, then answers `unavailable` without recording it:
+that is load on OpenAI's side, gone in minutes, and says nothing about the user's quota.
 
   codex_exec.py run --role <role> --cd <dir> (--prompt-file <file> | --prompt <text>) [--schema <file>] [--out <file>]
                     [--model <m>] [--effort <e>] [--network] [--mcp context7] [--add-dir <dir>]
@@ -36,6 +38,9 @@ STATUS_FILE = STATE_DIR / "status.json"
 MODELS_CACHE = Path.home() / ".codex" / "models_cache.json"
 UNAVAILABLE_FOR = 600
 EXHAUSTED = re.compile(r"usage limit|rate.?limit|\b429\b|quota|too many requests|exceeded your", re.IGNORECASE)
+# Only codex's own ERROR lines: its output echoes the prompt, and a reviewed diff can hold these words.
+AT_CAPACITY = re.compile(r"^ERROR:.*\b(at capacity|overloaded)\b", re.IGNORECASE | re.MULTILINE)
+CAPACITY_WAITS = (60, 180)
 
 
 def emit(payload: dict, code: int) -> None:
@@ -80,6 +85,42 @@ def command_for(*, roles: dict, role: dict, model: str, effort: str, cd: Path, n
     return command + ["-"]
 
 
+running: subprocess.Popen | None = None
+
+
+def forward(signum: int, _frame: object) -> None:
+    if running:
+        try:
+            os.killpg(running.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+    sys.exit(128 + signum)
+
+
+def attempt(command: list[str], prompt: str, *, seconds: float) -> tuple[int | None, str, str]:
+    """Run codex once; None as the return code means it ran out of time and was stopped."""
+    global running
+    running = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True)
+    # Codex runs in its own process group, outside the caller's. Record it for a supervising job to reap, and
+    # pass a termination on, so ending the caller never leaves codex editing files on its own.
+    if run_dir := os.environ.get("NIGHT_SHIFT_RUN_DIR"):
+        with (Path(run_dir) / "codex-pgids").open("a") as record:
+            record.write(f"{running.pid}\n")
+    for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+        signal.signal(sig, forward)
+    try:
+        stdout, stderr = running.communicate(prompt, timeout=max(seconds, 1))
+    except subprocess.TimeoutExpired:
+        os.killpg(running.pid, signal.SIGTERM)
+        try:
+            running.communicate(timeout=30)
+        except subprocess.TimeoutExpired:
+            os.killpg(running.pid, signal.SIGKILL)
+            running.communicate()
+        return None, "", ""
+    return running.returncode, stdout, stderr
+
+
 def run(args: argparse.Namespace) -> None:
     roles = json.loads(ROLES_FILE.read_text())
     if args.role not in roles["roles"]:
@@ -98,40 +139,30 @@ def run(args: argparse.Namespace) -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     command = command_for(roles=roles, role=role, model=model, effort=effort, cd=Path(args.cd).resolve(), network=args.network, mcp=args.mcp, schema=args.schema, out=out, add_dirs=args.add_dir)
     started = time.monotonic()
-    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True)
-    # Codex runs in its own process group, outside the caller's. Record it for a supervising job to reap, and
-    # pass a termination on, so ending the caller never leaves codex editing files on its own.
-    if run_dir := os.environ.get("NIGHT_SHIFT_RUN_DIR"):
-        with (Path(run_dir) / "codex-pgids").open("a") as record:
-            record.write(f"{process.pid}\n")
-
-    def forward(signum: int, _frame: object) -> None:
-        try:
-            os.killpg(process.pid, signal.SIGTERM)
-        except ProcessLookupError:
-            pass
-        sys.exit(128 + signum)
-
-    for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
-        signal.signal(sig, forward)
-    try:
-        stdout, stderr = process.communicate(prompt, timeout=role["minutes"] * 60)
-    except subprocess.TimeoutExpired:
-        os.killpg(process.pid, signal.SIGTERM)
-        try:
-            stdout, stderr = process.communicate(timeout=30)
-        except subprocess.TimeoutExpired:
-            os.killpg(process.pid, signal.SIGKILL)
-            stdout, stderr = process.communicate()
-        emit({"status": "timeout", "role": args.role, "model": model, "effort": effort, "minutes": role["minutes"]}, 4)
+    deadline = started + role["minutes"] * 60
+    waits = list(CAPACITY_WAITS)
+    tries = 0
+    while True:
+        tries += 1
+        returncode, stdout, stderr = attempt(command, prompt, seconds=deadline - time.monotonic())
+        if returncode is None:
+            emit({"status": "timeout", "role": args.role, "model": model, "effort": effort, "minutes": role["minutes"]}, 4)
+        text = (stderr + stdout)[-2000:]
+        if returncode == 0 or not AT_CAPACITY.search(text) or not waits or time.monotonic() + waits[0] >= deadline:
+            break
+        time.sleep(waits.pop(0))
     seconds = round(time.monotonic() - started)
     tokens = re.search(r"tokens used\s*\n\s*([\d,]+)", stdout + stderr)
-    if process.returncode != 0:
-        text = (stderr + stdout)[-2000:]
+    if returncode != 0:
         if EXHAUSTED.search(text):
             save_status({**status, "unavailable_until": time.time() + UNAVAILABLE_FOR, "reason": text.strip().splitlines()[-1][:300]})
             emit({"status": "unavailable", "reason": text.strip().splitlines()[-1][:300]}, 3)
-        emit({"status": "error", "role": args.role, "model": model, "returncode": process.returncode, "stderr_tail": text}, 1)
+        if AT_CAPACITY.search(text):
+            minutes = max(1, round(seconds / 60))
+            reason = (f"OpenAI was too busy to run {model}: it refused {tries} times in {minutes} minute{'s' if minutes > 1 else ''}. "
+                      "This is OpenAI's load, not your Codex quota.")
+            emit({"status": "unavailable", "role": args.role, "model": model, "reason": reason}, 3)
+        emit({"status": "error", "role": args.role, "model": model, "returncode": returncode, "stderr_tail": text}, 1)
     if status.get("unavailable_until"):
         status.pop("unavailable_until", None)
         status.pop("reason", None)

@@ -19,8 +19,9 @@ uv run --quiet --no-project --script ~/.claude/skills/codex-servant/scripts/code
 ```
 
 It prints one JSON object: `status` is `ok` (the answer is in `last_message_file`), `unavailable` (codex hit
-a usage or rate limit; the script answers `unavailable` without calling codex for 10 minutes), `timeout` or
-`error`. On anything but `ok`, do the work yourself and check back later; never block on codex.
+a usage or rate limit; the script answers `unavailable` without calling codex for 10 minutes; or OpenAI was
+too busy for the model three times in a row, 1 and 3 minutes apart; `reason` says which), `timeout` or `error`.
+On anything but `ok`, do the work yourself and check back later; never block on codex.
 
 | Role | Model | Effort | Sandbox | Use it for |
 |---|---|---|---|---|
