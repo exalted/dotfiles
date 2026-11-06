@@ -1,6 +1,10 @@
 #!/bin/sh
 cd "${CLAUDE_PROJECT_DIR:-.}" 2>/dev/null || exit 0
 
+# The hook runs repository code (the migrator, the compose file), so each clone opts in with a
+# marker under .git/, which no repository can ship: touch "$(git rev-parse --git-path lsp-servers-postgres)"
+[ -f "$(git rev-parse --git-path lsp-servers-postgres 2>/dev/null)" ] || exit 0
+
 # Before the snapshot import, applying every migration would break the local setup.
 [ -f .local/setup-complete ] && [ -d database/migrations ] && [ -x database/migrator/migrator ] || exit 0
 
