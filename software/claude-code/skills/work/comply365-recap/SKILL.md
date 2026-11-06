@@ -118,7 +118,7 @@ Write `<work dir>/recap.json`:
 - `fixed`: something that was wrong now works as it should.
 - `under_the_hood`: changes users do not see: infrastructure, tooling, tests, refactors, security hardening, data migrations, model changes. Say why each one matters.
 
-**Writing:** the user reads the top of the note at the end of the day, or the next morning, and should get the day at a glance. Write the headline, summaries and titles the way a teammate would tell them in the hallway: warm, plain and concrete. Everything technical goes into `details`.
+**Writing:** the user reads the top of the note at the end of the day, or the next morning, and should get the day at a glance. Write the headline, summaries and titles the way a teammate would tell them in the hallway: warm, plain and concrete. Everything technical goes into `details`. Put code, paths and template strings like `<label>` in backticks: the note writer escapes a bare `<` for you, but the backticks keep the text readable.
 
 - Say what someone can now do, see or stop worrying about, and who that someone is (analysts, airlines, support staff, the team). Not what the code does.
 - Use everyday words. Keep the product's own terms the team uses (operational area, investigation, Cockpit), but no engineering words: no endpoint, flag, scope, mapping, migration, allowlist, refactor, enforce, ensure, leverage, functionality.

@@ -156,6 +156,15 @@ def quoted(text: str) -> str:
     return "\n".join(f"> {line}" if line else ">" for line in text.splitlines())
 
 
+CODE_SPAN = re.compile(r"(```.*?```|`[^`\n]*`)", re.DOTALL)
+
+
+def escape_html(text: str) -> str:
+    # Obsidian reads a bare <word> as an HTML tag and swallows the rest of the callout.
+    parts = CODE_SPAN.split(text)
+    return "".join(part if index % 2 else part.replace("<", "&lt;") for index, part in enumerate(parts))
+
+
 def link_line(*, jira_keys: list[str], slack: list[Json], issues: Json, browse_url: str) -> str:
     links = []
     for key in jira_keys:
@@ -188,13 +197,13 @@ def render_item(*, item: Json, recap: Json, commits: dict[str, Json], browse_url
         browse_url=browse_url,
     )
     meta = " · ".join(part for part in (" · ".join(f"*{product}*" for product in products), links) if part)
-    parts = [f"### {item['title']}"]
+    parts = [f"### {escape_html(item['title'])}"]
     if meta:
         parts.append(meta)
-    parts.append(item["summary"].strip())
+    parts.append(escape_html(item["summary"].strip()))
     technical = []
     if item.get("details"):
-        technical.append(item["details"].strip())
+        technical.append(escape_html(item["details"].strip()))
     if item.get("diagram"):
         technical.append(f"```mermaid\n{item['diagram'].strip()}\n```")
     if item_commits:
@@ -207,13 +216,13 @@ def render_item(*, item: Json, recap: Json, commits: dict[str, Json], browse_url
 def render_entries(*, heading: str, entries: list[Json], issues: Json, browse_url: str) -> str:
     blocks = [f"## {heading}"]
     for entry in entries:
-        block = [f"### {entry['title']}"]
+        block = [f"### {escape_html(entry['title'])}"]
         links = link_line(
             jira_keys=entry.get("jira", []), slack=entry.get("slack", []), issues=issues, browse_url=browse_url
         )
         if links:
             block.append(links)
-        block.append(entry["summary"].strip())
+        block.append(escape_html(entry["summary"].strip()))
         if entry.get("recaps"):
             block.append("From " + ", ".join(note_link(name) for name in entry["recaps"]))
         blocks.append("\n\n".join(block))
