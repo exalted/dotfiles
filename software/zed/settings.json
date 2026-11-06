@@ -26,7 +26,8 @@
   "theme": "One Dark",
   "base_keymap": "VSCode",
   "terminal": {
-    "dock": "right"
+    "dock": "right",
+    "copy_on_select": true
   },
   "ui_font_size": 18,
   "buffer_font_size": 16,
