@@ -82,7 +82,7 @@ __prompt_command_append __venv_ps1_update
 # loaded in IntelliJ's terminal by a guard that excluded only Zed; it `export`s a
 # PS1 wrapped in OSC 133 markers, and that came back byte-corrupted (`❯`, E2 9D
 # AF, read as Latin-1 and re-encoded). Fixed where it belongs — see
-# software/iterm2/bashrc — after which `❯` renders correctly in all three
+# software/iterm2/bashrc.bash — after which `❯` renders correctly in all three
 # terminals with this plain assignment.
 #
 # So: do not reintroduce a rebuild here. It costs a prompt hook and silently
@@ -96,7 +96,7 @@ PS1="\[\e[34m\]\w \[\e[31m\]\$(__git_ps1 \"(%s)\")\[\e[36m\]\$(__venv_ps1)\n\[\e
 # This is an *additive* PROMPT_COMMAND entry. The previous version ran
 # `unset PROMPT_COMMAND` after the first prompt, which also wiped out every other
 # prompt hook — direnv, nvm auto-use, shared history — since they all live in
-# PROMPT_COMMAND too. Registering alongside them (see prompt-command.bashrc) lets
+# PROMPT_COMMAND too. Registering alongside them (see prompt-command.bash) lets
 # them coexist and keep firing on every prompt.
 # (Ref.: https://stackoverflow.com/a/48915032/11895)
 __prompt_blank_lines() {

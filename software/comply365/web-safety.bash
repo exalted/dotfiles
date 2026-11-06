@@ -5,7 +5,7 @@
 # registration at the bottom).
 #
 # Note on ordering: `nvm` is a shell *function*, not a program. dotfiles loads it
-# in software/node/bashrc, but that is sourced *after* this file (node sorts
+# in software/node/bashrc.bash, but that is sourced *after* this file (node sorts
 # after comply365), and a repo — not dotfiles — might be what provides nvm. So we
 # must NOT test for nvm now, at load time. Instead we check (and load nvm if
 # needed) at runtime, inside the hook, which runs on the first prompt — by which

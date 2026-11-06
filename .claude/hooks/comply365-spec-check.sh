@@ -30,7 +30,7 @@ cd "$repo" || exit 0
 DIR=software/comply365
 SPEC="$DIR/SPEC.md"
 LEDGER=.claude/comply365-manual-signoff.json
-WATCHED=("$DIR" software/bash/prompt-command.bashrc software/bash/prompt.bashrc software/node/nvm-loader.sh software/homebrew/shellenv.sh software/watch/bashrc software/git/bin/git-hist software/bash/pager.bashrc software/iterm2/bashrc profiles.rb .claude/tools/setup-review.sh .claude/skills/comply365/SKILL.md .claude/hooks/comply365-spec-check.sh .claude/hooks/comply365-signoff.sh .claude/hooks/lib .claude/tools/zsh-drift.sh)
+WATCHED=("$DIR" software/bash/prompt-command.bash software/bash/prompt.bash software/node/nvm-loader.sh software/homebrew/shellenv.sh software/watch/bashrc.bash software/git/bin/git-hist software/bash/pager.bash software/iterm2/bashrc.bash profiles.rb .claude/tools/setup-review.sh .claude/skills/comply365/SKILL.md .claude/hooks/comply365-spec-check.sh .claude/hooks/comply365-signoff.sh .claude/hooks/lib .claude/tools/zsh-drift.sh)
 # The verifier and the sign-off recorder are in WATCHED for the same reason the
 # fragments are: a session that changes how the batch is checked has changed the
 # batch's guarantees, and used to end without the checks running at all. They are
@@ -49,7 +49,7 @@ touched="$(git status --porcelain -- "${WATCHED[@]}"; git diff --name-only "$bas
 # glance (which bash wins, hence prompt rendering and `git hist`). So any change
 # to any watched file re-opens every manual criterion.
 batch_digest() {
-  git -C "$repo" ls-files --cached --others --exclude-standard -- 'software/comply365/*.bashrc' 'software/comply365/*.rb' software/comply365/zshenv software/bash/prompt-command.bashrc software/bash/prompt.bashrc software/node/nvm-loader.sh software/node/bashrc software/homebrew/shellenv.sh software/homebrew/bashrc software/watch/bashrc software/git/bin/git-hist software/bash/pager.bashrc software/iterm2/bashrc profiles.rb 2>/dev/null \
+  git -C "$repo" ls-files --cached --others --exclude-standard -- 'software/comply365/*.bash' 'software/comply365/*.rb' software/comply365/zshenv software/bash/prompt-command.bash software/bash/prompt.bash software/node/nvm-loader.sh software/node/bashrc.bash software/homebrew/shellenv.sh software/homebrew/bashrc.bash software/watch/bashrc.bash software/git/bin/git-hist software/bash/pager.bash software/iterm2/bashrc.bash profiles.rb 2>/dev/null \
     | command sort \
     | while read -r f; do command shasum -a 256 "$repo/$f"; done \
     | command shasum -a 256 | cut -c1-16
@@ -78,14 +78,14 @@ for f in cortex.rb web-safety.rb zsh.rb jira.rb; do
   [ -x "$DIR/$f" ]; check AC-1 "$DIR/$f is not executable (bin/dotfiles won't run it)"
   command grep -q "comply365/${f%.rb}" profiles.rb; check AC-1 "comply365/${f%.rb} is not registered in profiles.rb"
 done
-for f in cortex.bashrc web-safety.bashrc jira.bashrc zshenv SPEC.md; do
+for f in cortex.bash web-safety.bash jira.bash zshenv SPEC.md; do
   [ ! -x "$DIR/$f" ]; check AC-1 "$DIR/$f is executable — _defined_software_names would treat it as a software entry"
 done
 
 # ---- AC-2  syntax, incl. stock ruby 2.6 for bootstrap ----------------------
-"$BASH_BIN" -n "$DIR/cortex.bashrc" 2>/dev/null; check AC-2 "cortex.bashrc fails bash -n"
-"$BASH_BIN" -n "$DIR/web-safety.bashrc" 2>/dev/null; check AC-2 "web-safety.bashrc fails bash -n"
-"$BASH_BIN" -n "$DIR/jira.bashrc" 2>/dev/null; check AC-2 "jira.bashrc fails bash -n"
+"$BASH_BIN" -n "$DIR/cortex.bash" 2>/dev/null; check AC-2 "cortex.bash fails bash -n"
+"$BASH_BIN" -n "$DIR/web-safety.bash" 2>/dev/null; check AC-2 "web-safety.bash fails bash -n"
+"$BASH_BIN" -n "$DIR/jira.bash" 2>/dev/null; check AC-2 "jira.bash fails bash -n"
 if command -v zsh >/dev/null; then
   zsh -n "$DIR/zshenv" 2>/dev/null; check AC-2 "zshenv fails zsh -n"
 fi
@@ -102,14 +102,14 @@ done
 ! command grep -rqE 'gitlab\.com[:/][A-Za-z0-9]|git@[a-z]|[A-Za-z0-9-]\.atlassian\.net' "$DIR"; check AC-4 "a GitLab repo path or Atlassian site leaked into $DIR — dotfiles is public"
 
 # ---- AC-5/6/7  registration under the real load order ----------------------
-# env -i means nvm does NOT exist while web-safety.bashrc is sourced — exactly
+# env -i means nvm does NOT exist while web-safety.bash is sourced — exactly
 # the real order (comply365 sorts before node). Sourced twice for idempotency.
 pc="$("$ENV_BIN" -i HOME="$HOME" PATH=/usr/bin:/bin "$BASH_BIN" --norc -c '
   cd "$1" || exit 1
-  . software/bash/prompt-command.bashrc
+  . software/bash/prompt-command.bash
   __prompt_command_prepend _direnv_hook
-  . software/comply365/web-safety.bashrc
-  . software/comply365/web-safety.bashrc
+  . software/comply365/web-safety.bash
+  . software/comply365/web-safety.bash
   printf "%s\n" "$PROMPT_COMMAND"
   declare -p PROMPT_COMMAND
 ' _ "$repo" 2>/dev/null)"
@@ -123,10 +123,10 @@ n_reg="$(printf '%s' "$registered" | command grep -o '__comply365_auto_nvm_use' 
 ! printf '%s' "$pc" | command grep -q 'declare -x PROMPT_COMMAND'; check AC-7 "PROMPT_COMMAND is exported — a --norc child inherits names without definitions"
 
 # ---- AC-8/9/12  no $PWD gate, full cache key, own .nvmrc walk -------------
-! command grep -qE '^[^#]*__comply365_nvm_on_chdir' "$DIR/web-safety.bashrc"; check AC-8 "the \$PWD-gated wrapper is back — an in-place .nvmrc rewrite goes unnoticed"
-[ "$(command grep -cF '$__comply365_nvmrc|$__comply365_nvmrc_version|$PATH' "$DIR/web-safety.bashrc")" -ge 2 ]; check AC-9 "the cache key is no longer nvmrc|version|PATH in both the compare and the assignment"
-! command grep -qE '^[^#]*nvm_find_nvmrc' "$DIR/web-safety.bashrc"; check AC-12 "nvm's private nvm_find_nvmrc is being called again"
-command grep -qF '[ -n "$dir" ] || break' "$DIR/web-safety.bashrc"; check AC-12 "the walk no longer reaches /.nvmrc, so it disagrees with nvm about the same directory"
+! command grep -qE '^[^#]*__comply365_nvm_on_chdir' "$DIR/web-safety.bash"; check AC-8 "the \$PWD-gated wrapper is back — an in-place .nvmrc rewrite goes unnoticed"
+[ "$(command grep -cF '$__comply365_nvmrc|$__comply365_nvmrc_version|$PATH' "$DIR/web-safety.bash")" -ge 2 ]; check AC-9 "the cache key is no longer nvmrc|version|PATH in both the compare and the assignment"
+! command grep -qE '^[^#]*nvm_find_nvmrc' "$DIR/web-safety.bash"; check AC-12 "nvm's private nvm_find_nvmrc is being called again"
+command grep -qF '[ -n "$dir" ] || break' "$DIR/web-safety.bash"; check AC-12 "the walk no longer reaches /.nvmrc, so it disagrees with nvm about the same directory"
 
 # ---- AC-10/11/13  hook behavior against a stub nvm ------------------------
 # Warnings go to files, never through $(...): a command substitution forks, and
@@ -151,8 +151,8 @@ behavior="$("$ENV_BIN" -i HOME="$HOME" PATH=/usr/bin:/bin "$BASH_BIN" --norc -c 
       "use "*)                      [ "$nvm_use_fail" = 1 ] && return 1; STUB_CURRENT="v$2" ;;
     esac
   }
-  . software/bash/prompt-command.bashrc
-  . software/comply365/web-safety.bashrc
+  . software/bash/prompt-command.bash
+  . software/comply365/web-safety.bash
 
   cd "$tmp/missing"
   __comply365_auto_nvm_use 2>"$tmp/w1" >/dev/null
@@ -182,8 +182,8 @@ behavior="$("$ENV_BIN" -i HOME="$HOME" PATH=/usr/bin:/bin "$BASH_BIN" --norc -c 
 [[ "$behavior" == *"state_after_failed_use=unset"* ]]; check AC-13 "a failed nvm use was cached as success, so it never retries"
 
 # ---- AC-15/16  direnv wiring ----------------------------------------------
-command grep -qF 'direnv hook bash' "$DIR/cortex.bashrc"; check AC-15 "cortex.bashrc no longer re-adds the direnv hook that bin/dotfiles wipes"
-command grep -qF 'command -v direnv' "$DIR/cortex.bashrc"; check AC-15 "cortex.bashrc no longer guards on direnv being installed"
+command grep -qF 'direnv hook bash' "$DIR/cortex.bash"; check AC-15 "cortex.bash no longer re-adds the direnv hook that bin/dotfiles wipes"
+command grep -qF 'command -v direnv' "$DIR/cortex.bash"; check AC-15 "cortex.bash no longer guards on direnv being installed"
 command grep -qE '^[^#]*\bwarn\b' "$DIR/cortex.rb"; check AC-16 "cortex.rb no longer warns when direnv is missing — the failure would be silent"
 
 # ---- AC-19/20/21  zsh reachability ---------------------------------------
@@ -272,31 +272,31 @@ f="$(fact ssh_fresh_mode)"
 
 # AC-32: the live generated file, in the order the fragments require.
 rc="$HOME/.bashrc"
-for frag in bash/prompt-command.bashrc bash/prompt.bashrc bash/history.bashrc bash/pager.bashrc node/bashrc homebrew/bashrc watch/bashrc comply365/cortex.bashrc comply365/web-safety.bashrc comply365/jira.bashrc; do
+for frag in bash/prompt-command.bash bash/prompt.bash bash/history.bash bash/pager.bash node/bashrc.bash homebrew/bashrc.bash watch/bashrc.bash comply365/cortex.bash comply365/web-safety.bash comply365/jira.bash; do
   count="$(command grep -c "software/$frag\$" "$rc" 2>/dev/null)"
   [ "$count" = 1 ]
   check AC-32 "~/.bashrc sources software/$frag ${count:-0} times, expected exactly 1 (re-run bin/dotfiles if a fragment is new)"
 done
-pcl="$(command grep -n 'bash/prompt-command.bashrc' "$rc" | cut -d: -f1 | head -1)"
-for after in bash/history.bashrc bash/prompt.bashrc; do
+pcl="$(command grep -n 'bash/prompt-command.bash' "$rc" | cut -d: -f1 | head -1)"
+for after in bash/history.bash bash/prompt.bash; do
   n="$(command grep -n "$after" "$rc" | cut -d: -f1 | head -1)"
   [ -n "$pcl" ] && [ -n "$n" ] && [ "$pcl" -lt "$n" ]
-  check AC-32 "~/.bashrc sources $after (line ${n:-?}) before prompt-command.bashrc (line ${pcl:-?}) — the helpers it registers through do not exist yet"
+  check AC-32 "~/.bashrc sources $after (line ${n:-?}) before prompt-command.bash (line ${pcl:-?}) — the helpers it registers through do not exist yet"
 done
 
 # ---- AC-34  $LESS must survive being handed to less ----------------------
 # A malformed option makes less reject the WHOLE variable, silently dropping
 # -R (colors) and -F (quit on one screen) together.
 pager_less="$("$ENV_BIN" -i HOME="$HOME" PATH=/usr/bin:/bin TERM=dumb "$BASH_BIN" --norc -c '
-  cd "$1" || exit 1; . software/bash/pager.bashrc; printf "%s" "$LESS"' _ "$repo" 2>/dev/null)"
+  cd "$1" || exit 1; . software/bash/pager.bash; printf "%s" "$LESS"' _ "$repo" 2>/dev/null)"
 case "$pager_less" in *--RAW-CONTROL-CHARS*) true ;; *) false ;; esac
 check AC-34 "\$LESS lacks --RAW-CONTROL-CHARS, so a pager strips ANSI colors"
 case "$pager_less" in *--quit-if-one-screen*) true ;; *) false ;; esac
 check AC-34 "\$LESS lacks --quit-if-one-screen, so a one-line result waits for q"
 case "$pager_less" in *=[[:space:]]*|*=) false ;; *) true ;; esac
 check AC-34 "\$LESS has an option with an empty value ($pager_less) — less rejects the entire variable"
-! command grep -qE '^[^#]*\$\((tput|expr)' software/bash/pager.bashrc
-check AC-34 "pager.bashrc computes an option value at shell startup; where TERM is unset that fails and poisons all of \$LESS"
+! command grep -qE '^[^#]*\$\((tput|expr)' software/bash/pager.bash
+check AC-34 "pager.bash computes an option value at shell startup; where TERM is unset that fails and poisons all of \$LESS"
 # Not the exit status: less exits 0 even when it rejects the variable, and only
 # complains on stderr. Empty stderr is the actual signal.
 less_complaint="$(printf 'x\n' | LESS="$pager_less" less 2>&1 >/dev/null)"
@@ -309,7 +309,7 @@ check AC-34 "less refuses the composed \$LESS ($less_complaint) — every option
 iterm2_loaded() { # $1..: extra env assignments
   "$ENV_BIN" -i HOME="$HOME" PATH=/usr/bin:/bin TERM=xterm-256color "$@" "$BASH_BIN" --norc -i -c '
     cd "$1" || exit 1
-    . software/iterm2/bashrc
+    . software/iterm2/bashrc.bash
     printf "\nRESULT=%s\n" "${ITERM_SHELL_INTEGRATION_INSTALLED:-no}"' _ "$repo" 2>/dev/null \
     | command sed -n 's/.*RESULT=//p' | tail -1
 }
@@ -371,8 +371,8 @@ jira_out="$("$ENV_BIN" -i PATH=/usr/bin:/bin "$BASH_BIN" --norc -c '
   export HOME="$(mktemp -d)"; trap "rm -rf $HOME" EXIT
   config="$HOME/.config/dotfiles/jira"
   mkdir -p "${config%/*}"; echo work > "${config%/*}/profile"
-  . software/bash/commands.bashrc
-  . software/comply365/jira.bashrc
+  . software/bash/commands.bash
+  . software/comply365/jira.bash
   open() { printf "OPENED:%s\n" "$*"; }
   probe() { local out rc; out="$(jira "${@:2}" 2>&1)"; rc=$?; echo "$1=[$out] rc=$rc"; }
   rb() { echo "$1=[$(/usr/bin/ruby software/comply365/jira.rb 2>&1 | tr "\n" " ")]"; }

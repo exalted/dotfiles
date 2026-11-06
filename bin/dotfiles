@@ -34,7 +34,7 @@ cleanup
 # throwaway grandchild subshell, not the shell that ran `dotfiles`.
 #
 # Solution: change how `dotfiles` is invoked — replace the plain PATH
-# executable with a shell function (e.g. in bash/commands.bashrc) that runs
+# executable with a shell function (e.g. in bash/commands.bash) that runs
 # this script and then sources ~/.bashrc itself, in the same process:
 #   dotfiles() { command ruby "$DOTFILES_ROOT/bin/dotfiles" "$@" && source ~/.bashrc; }
 

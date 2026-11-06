@@ -37,16 +37,16 @@ effective() {
 # unbalanced `nvm (use`, which bash rejected on every line and silently matched
 # nothing.
 MIRRORED=(
-  'direnv hook=>software/comply365/cortex.bashrc (direnv hook, any .envrc repo)'
-  'NVM_DIR=>software/node/bashrc + node/nvm-loader.sh — but note this line points at a curl-installed nvm; we standardize on Homebrew'"'"'s'
-  'nvm\.sh=>software/node/bashrc + node/nvm-loader.sh'
-  'bash_completion=>software/node/bashrc'
-  'add-zsh-hook=>software/comply365/web-safety.bashrc (auto-nvm-use, any .nvmrc repo)'
-  'auto_nvm_use=>software/comply365/web-safety.bashrc'
-  'nvm auto-use=>software/comply365/web-safety.bashrc'
-  'chpwd=>software/comply365/web-safety.bashrc (PROMPT_COMMAND is the Bash analog)'
-  'nvm_find_nvmrc=>software/comply365/web-safety.bashrc (we do our own walk on purpose)'
-  'nvm (use|install|current|version)=>software/comply365/web-safety.bashrc'
+  'direnv hook=>software/comply365/cortex.bash (direnv hook, any .envrc repo)'
+  'NVM_DIR=>software/node/bashrc.bash + node/nvm-loader.sh — but note this line points at a curl-installed nvm; we standardize on Homebrew'"'"'s'
+  'nvm\.sh=>software/node/bashrc.bash + node/nvm-loader.sh'
+  'bash_completion=>software/node/bashrc.bash'
+  'add-zsh-hook=>software/comply365/web-safety.bash (auto-nvm-use, any .nvmrc repo)'
+  'auto_nvm_use=>software/comply365/web-safety.bash'
+  'nvm auto-use=>software/comply365/web-safety.bash'
+  'chpwd=>software/comply365/web-safety.bash (PROMPT_COMMAND is the Bash analog)'
+  'nvm_find_nvmrc=>software/comply365/web-safety.bash (we do our own walk on purpose)'
+  'nvm (use|install|current|version)=>software/comply365/web-safety.bash'
   'brew shellenv=>software/homebrew/shellenv.sh'
   'JetBrains=>not shell behavior (Toolbox PATH entry) — ignorable'
 )

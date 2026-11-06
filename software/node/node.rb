@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative '../../src/helpers'
 
-# Default version is set in `software/node/bashrc` via `PATH`
+# Default version is set in `software/node/bashrc.bash` via `PATH`
 brew 'node'
 
 #

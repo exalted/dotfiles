@@ -1,6 +1,6 @@
 # iTerm2's shell integration, loaded only where it is actually wanted.
 #
-# It used to be sourced from software/zed/bashrc, guarded on $ZED_TERM alone —
+# It used to be sourced from software/zed/bashrc.bash, guarded on $ZED_TERM alone —
 # an accident of history: Zed was the first terminal found to mishandle it, so
 # the exclusion landed in Zed's software entry rather than iTerm2's. The script
 # itself only self-guards on $TERM and interactivity; it never checks whether it

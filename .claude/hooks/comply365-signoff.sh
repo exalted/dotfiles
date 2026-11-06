@@ -25,7 +25,7 @@ sed -n '/<!-- manual-checks/,/-->/p' "$SPEC" | command grep -qE "^${id}\|" \
 # would read as stale immediately. One digest for the whole batch on purpose: a
 # change anywhere re-opens every manual criterion.
 repo="$(git rev-parse --show-toplevel)"
-digest="$(git -C "$repo" ls-files --cached --others --exclude-standard -- 'software/comply365/*.bashrc' 'software/comply365/*.rb' software/comply365/zshenv software/bash/prompt-command.bashrc software/bash/prompt.bashrc software/node/nvm-loader.sh software/node/bashrc software/homebrew/shellenv.sh software/homebrew/bashrc software/watch/bashrc software/git/bin/git-hist software/bash/pager.bashrc software/iterm2/bashrc profiles.rb 2>/dev/null \
+digest="$(git -C "$repo" ls-files --cached --others --exclude-standard -- 'software/comply365/*.bash' 'software/comply365/*.rb' software/comply365/zshenv software/bash/prompt-command.bash software/bash/prompt.bash software/node/nvm-loader.sh software/node/bashrc.bash software/homebrew/shellenv.sh software/homebrew/bashrc.bash software/watch/bashrc.bash software/git/bin/git-hist software/bash/pager.bash software/iterm2/bashrc.bash profiles.rb 2>/dev/null \
     | command sort \
     | while read -r f; do command shasum -a 256 "$repo/$f"; done \
     | command shasum -a 256 | cut -c1-16)"

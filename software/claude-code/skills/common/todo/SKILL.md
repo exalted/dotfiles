@@ -42,7 +42,7 @@ todo.py add --by user|claude --text "<task>" --while "<what the session was doin
 ```
 
 - `--while` is one line a stranger session can relate to: "while fixing the nvm hook in
-  prompt.bashrc".
+  prompt.bash".
 - On the default branch the script needs `--section`. Use the scratchpad work-name of
   this body of work if the session has one, else `<STORY-ID>-<description>`, else
   `YYYY-MM-DD_<description>`. On any other branch the script derives it from the branch.
@@ -68,7 +68,7 @@ done, or dropped, when the work it belongs to ends.
 
 | Add | Do not add |
 |---|---|
-| "Update the README once the flag name is confirmed" | "Edit prompt.bashrc", "run the tests", "report back" |
+| "Update the README once the flag name is confirmed" | "Edit prompt.bash", "run the tests", "report back" |
 | "Decide: keep or drop the per-prompt PS1 rebuild, user has not answered" | "Ask the user about PS1" while the question is on screen |
 | "Re-run the manual criteria after the shell change" | one line per criterion |
 | "After the review, adjust the branch and merge it" | "Trash the scratchpad after the merge", "Decide whether to commit the plan file" |

@@ -1,7 +1,7 @@
 # Put Homebrew — and everything installed through it — on PATH, and export the
 # HOMEBREW_* / INFOPATH / MANPATH values that go with it.
 #
-# Sourced by software/homebrew/bashrc (interactive Bash) and by
+# Sourced by software/homebrew/bashrc.bash (interactive Bash) and by
 # software/comply365/zshenv (every zsh, including the git hooks GUI apps spawn),
 # so both shells find Homebrew the same way. POSIX sh for that reason.
 #

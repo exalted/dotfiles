@@ -7,7 +7,7 @@ scratch on every run**.
 
 That last point drives most of the design: anything appended to `~/.bashrc` from
 outside this repo is erased on the next run. The only durable place for shell
-config is a `software/<tool>/bashrc` fragment inside this repo.
+config is a `software/<tool>/bashrc.bash` fragment inside this repo.
 
 ## This repo is public
 
@@ -41,11 +41,11 @@ Its three mechanisms are **generic despite their per-project names**:
 
 | File | Covers | Applies to |
 |---|---|---|
-| `cortex.bashrc` | the `direnv` hook | any repo with an `.envrc` |
-| `web-safety.bashrc` | auto-`nvm use` on `cd` | any repo with an `.nvmrc` |
+| `cortex.bash` | the `direnv` hook | any repo with an `.envrc` |
+| `web-safety.bash` | auto-`nvm use` on `cd` | any repo with an `.nvmrc` |
 | `zshenv` (via `zsh.rb`) | Homebrew + nvm on PATH for **every** zsh | any repo with zsh git hooks |
 
-`jira.{rb,bashrc}` is neither a mechanism nor a work repo: it is the `work`-only
+`jira.{rb,bash}` is neither a mechanism nor a work repo: it is the `work`-only
 `jira <n>` command. Its Jira site and project key live in the untracked
 `~/.config/dotfiles/jira`, never in this public repo.
 
@@ -63,14 +63,14 @@ because nothing recorded that it existed.
 
 1. `grep -rE 'bashrc|zshrc|zprofile|nvm|direnv|chpwd' <repo>/setup*/setup.sh` —
    does its setup write to an rc file, or install a runtime manager?
-2. Does it have `.envrc`? Covered — `cortex.bashrc` already hooks direnv for
+2. Does it have `.envrc`? Covered — `cortex.bash` already hooks direnv for
    every directory. The one manual step is `direnv allow` inside the clone.
 3. Does it have `.nvmrc`? Covered — the hook walks up from `$PWD`, so it works
    for any repo. `web-cockpit` needed zero changes for exactly this reason.
    Do **not** add a per-project copy of the hook.
 4. Are its git hooks `#!/bin/zsh`? Covered by `~/.zshenv`.
 5. Only if none of the above covers it: add `software/comply365/<project>.rb`
-   (+ a `.bashrc` fragment if it needs one), register it in `profiles.rb` under
+   (+ a `.bash` fragment if it needs one), register it in `profiles.rb` under
    `work`, `chmod +x` the `.rb`, and add acceptance criteria to
    `software/comply365/SPEC.md`.
 
@@ -155,7 +155,7 @@ session end quietly while any of them fail.
 - Run it directly at any time:
   `echo '{}' | .claude/hooks/comply365-spec-check.sh`
 - It self-gates: it does nothing unless the session touched
-  `software/comply365/`, `software/bash/prompt{,-command}.bashrc`,
+  `software/comply365/`, `software/bash/prompt{,-command}.bash`,
   `software/node/nvm-loader.sh` or `software/homebrew/shellenv.sh`.
 - Criteria marked `[eyes]` cannot be scripted (they need a real terminal, a real
   `cd`, or a GUI app). **Ask the user to run them and wait for a pass/fail** —
@@ -174,7 +174,7 @@ session end quietly while any of them fail.
 Each of these was flagged by a review, re-investigated, and kept. Read the
 comment above the code before "fixing" one:
 
-- **`prompt.bashrc` sets `PS1` once, and that is enough.** A garbled `❯` in
+- **`prompt.bash` sets `PS1` once, and that is enough.** A garbled `❯` in
   IntelliJ was chased for a whole session with a per-prompt `PS1` rebuild and a
   `TERMINAL_EMULATOR` check; both were wrong. The cause was `software/iterm2/`'s
   shell integration being loaded in IntelliJ's terminal by a guard that excluded

@@ -21,7 +21,7 @@
 #
 # Enforced, not just documented: the export attribute survives a plain
 # reassignment, so any shell descended from one started before this file existed
-# (history.bashrc used to `export PROMPT_COMMAND=…`) would keep exporting ours.
+# (history.bash used to `export PROMPT_COMMAND=…`) would keep exporting ours.
 # `export -n` on an unset variable is a no-op, so this is safe to run always.
 export -n PROMPT_COMMAND
 

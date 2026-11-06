@@ -219,7 +219,7 @@ def bash_source(path)
 end
 
 def bash_source_relative(name = nil)
-  name = name ? "#{name}.bashrc" : 'bashrc'
+  name = name ? "#{name}.bash" : 'bashrc.bash'
 
   bash_source(
     profile_specific(File.absolute_path("#{Pathname.new(Kernel.caller_locations.last.path).dirname}/#{name}"))

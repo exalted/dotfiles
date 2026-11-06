@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative '../../src/helpers'
 
-# # Default version is set in `software/python/bashrc` via `PATH`
+# # Default version is set in `software/python/bashrc.bash` via `PATH`
 # brew 'python3'
 # brew 'python@3.12'
 # brew 'python@3.11'

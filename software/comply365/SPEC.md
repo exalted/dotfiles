@@ -1,7 +1,7 @@
 # comply365 shell integration — acceptance criteria
 
 Scope: `software/comply365/` and the shared pieces it depends on
-(`software/bash/prompt-command.bashrc`, `software/node/nvm-loader.sh`,
+(`software/bash/prompt-command.bash`, `software/node/nvm-loader.sh`,
 `software/homebrew/shellenv.sh`).
 
 Premise the whole directory exists for: `bin/dotfiles` regenerates `~/.bashrc`
@@ -17,10 +17,10 @@ working because some work repos ship zsh git hooks.
 
 - **AC-1 [auto]** `cortex.rb`, `web-safety.rb`, `zsh.rb`, `jira.rb` are executable
   and each registered in `profiles.rb` under `work` as `comply365/<name>`. The
-  sourced fragments (`cortex.bashrc`, `web-safety.bashrc`, `jira.bashrc`,
+  sourced fragments (`cortex.bash`, `web-safety.bash`, `jira.bash`,
   `zshenv`) are **not** executable — `_defined_software_names` only counts executable files, and a
   fragment that looks like a software entry breaks `_guard_profiles`.
-- **AC-2 [auto]** Every file parses: `bash -n` on the `.bashrc` fragments,
+- **AC-2 [auto]** Every file parses: `bash -n` on the `.bash` fragments,
   `zsh -n` on `zshenv`, and `ruby -c` under **stock `/usr/bin/ruby` (2.6)** on
   every `.rb` file — `bin/dotfiles` bootstraps before rbenv exists.
 - **AC-3 [auto]** These files install nothing. The work repos' own setups own
@@ -34,7 +34,7 @@ working because some work repos ship zsh git hooks.
   keeps, not something the script enforces: prose about what an internal setup
   script does is not caught mechanically. Keep verdicts in that table generic.
 
-## nvm auto-use on cd (`web-safety.bashrc`)
+## nvm auto-use on cd (`web-safety.bash`)
 
 - **AC-5 [auto]** The hook registers even when `nvm` does not exist at load
   time. `comply365/*` is sourced *before* `software/node`, so a source-time
@@ -71,7 +71,7 @@ working because some work repos ship zsh git hooks.
   proves the walk is generic — it got zero per-project wiring, so if it tracks
   its own `.nvmrc` then the mechanism, not a per-project file, is what works.
 
-## direnv / venv (`cortex.rb`, `cortex.bashrc`)
+## direnv / venv (`cortex.rb`, `cortex.bash`)
 
 - **AC-15 [auto]** The hook is re-added on every `bin/dotfiles` run, guarded on
   `command -v direnv`, with no hand-rolled duplicate guard — `direnv hook bash`
@@ -125,7 +125,7 @@ working because some work repos ship zsh git hooks.
 
 Not comply365-specific, but they break *because* of files in this batch's
 dependency set (`homebrew/shellenv.sh` decides which `bash` wins;
-`bash/prompt.bashrc` draws the prompt), and they are what actually gets noticed
+`bash/prompt.bash` draws the prompt), and they are what actually gets noticed
 when something here regresses.
 
 - **AC-24 [auto]** Homebrew's `bash` resolves before macOS's `/bin/bash` (3.2) in
@@ -144,7 +144,7 @@ when something here regresses.
   last case is the one that used to fail: IntelliJ inherits no `ZED_TERM` there,
   so before AC-36 it loaded iTerm2's integration and got a mojibaked `PS1`.
 - **AC-28 [eyes]** `watch git hist` renders colors the same way plain `git hist`
-  does. Two independent halves, in two different files: `software/watch/bashrc`
+  does. Two independent halves, in two different files: `software/watch/bashrc.bash`
   aliases `watch --color` so it forwards ANSI through, and
   `software/git/bin/git-hist` passes `git log --color` so git emits ANSI even to
   a non-tty. Break either and the output goes plain.
@@ -171,8 +171,8 @@ machine that is already set up.
   world-writable (ssh refuses it). Created fresh, it is mode `600` even under a
   permissive umask.
 - **AC-32 [auto]** The live generated `~/.bashrc` sources each of this batch's
-  fragments exactly once, with `prompt-command.bashrc` ahead of
-  `history.bashrc` and `prompt.bashrc` — the helpers those two register through.
+  fragments exactly once, with `prompt-command.bash` ahead of
+  `history.bash` and `prompt.bash` — the helpers those two register through.
 - **AC-33 [eyes]** The real thing: `bin/dotfiles` completes twice in a row with
   no errors, and the shell still works afterwards. Cannot be automated — it
   needs sudo, Homebrew, and `chsh`.
@@ -217,7 +217,7 @@ machine that is already set up.
   Note what is deliberately **not** in the sign-off digest: `SKILL.md`. Recording
   a routine "nothing relevant changed" verdict must not expire ten `[eyes]`
   sign-offs. It does not need to — a delta that genuinely affects us is wired by
-  editing the `.bashrc`/`.rb` files, and *those* are in the digest, so the
+  editing the `.bash`/`.rb` files, and *those* are in the digest, so the
   expiry happens through the real change rather than through the bookkeeping.
 
 - **AC-38 [auto]** No tracked repo ships `.githooks/` while its
@@ -235,13 +235,13 @@ machine that is already set up.
 
   Checked per repo by `.claude/tools/setup-review.sh`, alongside AC-37.
 
-## Work utilities (`jira.rb`, `jira.bashrc`)
+## Work utilities (`jira.rb`, `jira.bash`)
 
 Not a work repo's setup re-expressed: a command for the `work` profile only,
 kept here because it is work-specific.
 
 - **AC-39 [auto]** `jira <number>` opens `<prefix><number>` through `browse`
-  (`software/bash/commands.bashrc`), where `<prefix>` is the first line of
+  (`software/bash/commands.bash`), where `<prefix>` is the first line of
   `~/.config/dotfiles/jira`, e.g. `https://<site>.atlassian.net/browse/<PROJECT>-`.
   The site and project key live only in that per-machine file, never in this
   public repo (AC-4). Anything but exactly one all-digit argument is a usage
@@ -259,14 +259,14 @@ A sign-off is invalidated when the files it depends on change again.
 Format: `<AC-id>|<comma-separated files the sign-off depends on>|<what to do>`
 
 <!-- manual-checks
-AC-14|software/comply365/web-safety.bashrc|IMPORTANT: run each `cd` and each `nvm current` as SEPARATE commands. The hook runs from PROMPT_COMMAND, i.e. after your command line finishes, so a chained `cd X && nvm current` reports the version from BEFORE the hook ran for X — every reading comes out one step behind and it looks broken when it is not. In a fresh terminal, `cd` into each of the following IN THIS ORDER, running `nvm current` after each one: cortex (expect v22.12.0), web-safety (v24.13.1), cortex again (v22.12.0), web-cockpit (v24.13.1), cortex again (v22.12.0). The route deliberately returns to cortex between the other two: web-safety and web-cockpit both pin 24.13.1, so hopping straight between them reports 24.13.1 whether the hook ran or not — that reading proves nothing. Only a transition to or from cortex's 22.12.0 actually demonstrates a switch. web-cockpit is the repo that matters most: it has no software/comply365 file of its own, so it is what proves the .nvmrc walk is generic rather than per-project — expect no "N/A"/"system" and no nvm install prompt there. Finally `cd ~` and expect `system`.
-AC-17|software/comply365/cortex.rb,software/comply365/cortex.bashrc|In a fresh terminal: `cd ~/Developer/cortex`, then `which python3` (expect a path inside the repo's .venv) and `echo $POSTGRES_HOST` (expect a value from .env, not empty). `cd ..` and confirm both revert.
-AC-18|software/bash/prompt.bashrc,software/comply365/cortex.bashrc|In the same cortex shell, confirm the prompt shows `[venv: cortex]` exactly once — no doubled `(cortex)`, no stray quote characters — and that typing feels instant (no per-keystroke lag).
+AC-14|software/comply365/web-safety.bash|IMPORTANT: run each `cd` and each `nvm current` as SEPARATE commands. The hook runs from PROMPT_COMMAND, i.e. after your command line finishes, so a chained `cd X && nvm current` reports the version from BEFORE the hook ran for X — every reading comes out one step behind and it looks broken when it is not. In a fresh terminal, `cd` into each of the following IN THIS ORDER, running `nvm current` after each one: cortex (expect v22.12.0), web-safety (v24.13.1), cortex again (v22.12.0), web-cockpit (v24.13.1), cortex again (v22.12.0). The route deliberately returns to cortex between the other two: web-safety and web-cockpit both pin 24.13.1, so hopping straight between them reports 24.13.1 whether the hook ran or not — that reading proves nothing. Only a transition to or from cortex's 22.12.0 actually demonstrates a switch. web-cockpit is the repo that matters most: it has no software/comply365 file of its own, so it is what proves the .nvmrc walk is generic rather than per-project — expect no "N/A"/"system" and no nvm install prompt there. Finally `cd ~` and expect `system`.
+AC-17|software/comply365/cortex.rb,software/comply365/cortex.bash|In a fresh terminal: `cd ~/Developer/cortex`, then `which python3` (expect a path inside the repo's .venv) and `echo $POSTGRES_HOST` (expect a value from .env, not empty). `cd ..` and confirm both revert.
+AC-18|software/bash/prompt.bash,software/comply365/cortex.bash|In the same cortex shell, confirm the prompt shows `[venv: cortex]` exactly once — no doubled `(cortex)`, no stray quote characters — and that typing feels instant (no per-keystroke lag).
 AC-23|software/comply365/zshenv,software/comply365/zsh.rb|Do NOT push to origin — nothing needs publishing. The pre-push hook has no remote-specific logic, so a local remote exercises it identically: `git init --bare ~/.cache/dotfiles/hooktest/web-safety.git` then `git -C ~/Developer/web-safety remote add hooktest ~/.cache/dotfiles/hooktest/web-safety.git`. In Sourcetree (NOT a terminal) push main to `hooktest`. The hook must print real versions — `node: vX, pnpm: Y` — rather than "command not found"; that line alone satisfies the criterion, so cancel once you see it instead of waiting for pnpm test/build. An existing branch is enough, no commit required. Afterwards: `git remote remove hooktest`, trash the bare repo, and confirm `git config --get branch.main.remote` is still `origin`.
 AC-25|software/homebrew/shellenv.sh|In EACH of iTerm2, IntelliJ's terminal and Zed's terminal: run `git hist -- .nvmrc` inside ~/Developer/cortex. It must print history with no "Oh my! That's a very old version of bash" line. Also run `type -a bash` and confirm the Homebrew path is listed first.
-AC-26|software/bash/prompt.bashrc,software/comply365/cortex.bashrc,software/comply365/web-safety.bashrc|Open a fresh tab in EACH of iTerm2, IntelliJ's terminal and Zed's terminal: no error text on open, the prompt renders with its path/git/venv segments, and blank-line spacing appears from the second prompt on.
-AC-27|software/bash/prompt.bashrc,software/iterm2/bashrc|In all three terminals, confirm the prompt's `❯` renders correctly (not `â ¯`). Include the case that used to fail: run `idea .` from an iTerm2 shell and check IntelliJ's terminal there. Then, in each terminal, `echo "$PROMPT_COMMAND" | command grep -c __iterm2_prompt_command` must print 0 in IntelliJ and Zed and 1 in iTerm2 (where the integration is wanted). Do NOT judge this from `printf '%q' "$PS1"`: the integration's own preexec restores the unwrapped PS1 before every command, so a working iTerm2 never shows `133` markers there and their absence elsewhere proves nothing.
-AC-28|software/watch/bashrc,software/git/bin/git-hist|Run `git hist` and then `watch git hist` in the same repo, side by side: the colors must match. Report fail if watch shows plain/uncolored output.
+AC-26|software/bash/prompt.bash,software/comply365/cortex.bash,software/comply365/web-safety.bash|Open a fresh tab in EACH of iTerm2, IntelliJ's terminal and Zed's terminal: no error text on open, the prompt renders with its path/git/venv segments, and blank-line spacing appears from the second prompt on.
+AC-27|software/bash/prompt.bash,software/iterm2/bashrc.bash|In all three terminals, confirm the prompt's `❯` renders correctly (not `â ¯`). Include the case that used to fail: run `idea .` from an iTerm2 shell and check IntelliJ's terminal there. Then, in each terminal, `echo "$PROMPT_COMMAND" | command grep -c __iterm2_prompt_command` must print 0 in IntelliJ and Zed and 1 in iTerm2 (where the integration is wanted). Do NOT judge this from `printf '%q' "$PS1"`: the integration's own preexec restores the unwrapped PS1 before every command, so a working iTerm2 never shows `133` markers there and their absence elsewhere proves nothing.
+AC-28|software/watch/bashrc.bash,software/git/bin/git-hist|Run `git hist` and then `watch git hist` in the same repo, side by side: the colors must match. Report fail if watch shows plain/uncolored output.
 AC-33|software/comply365/cortex.rb,software/comply365/web-safety.rb,software/comply365/zsh.rb,software/ssh/ssh.rb|ONE terminal is enough — the per-terminal sweep is AC-25/26/27, and the cd behaviors are AC-14/17/18. Run `bin/dotfiles` twice in a row: both must finish with "Okey dokey" and no error output. Then, in that same tab: (a) `command grep -cxF 'Include ~/.ssh/config.d/*' ~/.ssh/config` prints 1 — other tools' own `Include` lines (Colima adds one for its VM) are expected and not counted; (b) `ssh -G gitlab.com | command grep -i identityfile` resolves; (c) `ls -l ~/.zshenv` is still a symlink into the repo. Finally open ONE new tab and run `echo "$PROMPT_COMMAND" | tr ';' '\n' | command grep -n .` — among OUR hooks, `__comply365_auto_nvm_use` must be the LAST one and `_direnv_hook` must appear somewhere before it, with `__prompt_blank_lines`, `__history_sync` and `__venv_ps1_update` all present, no name appearing twice, and no error output. Only "direnv before nvm, nvm last" is being asserted — that is what this repo controls. Where direnv itself lands among the middle four depends on direnv's own generated snippet (it currently prepends, which is why it appears first despite comply365 being sourced last); a future direnv that appended instead would still satisfy the invariant. A terminal with shell integration wraps that list with its own entries (iTerm2 adds `__bp_precmd_invoke_cmd` / `__iterm2_prompt_command` / `__bp_interactive_mode`, IntelliJ adds `__jetbrains_intellij_command_precmd`) — expected, not a failure; only the relative order of our own hooks is being asserted.
-AC-35|software/bash/pager.bashrc,software/diff/bin/diff-pager,software/git/bin/git-hist|In EACH of iTerm2, IntelliJ and Zed: `cd ~/Developer/cortex && git hist -- .nvmrc`. The SHA/author/date must be visibly dimmer than the commit message, and the command must return to the prompt on its own without needing `q`.
+AC-35|software/bash/pager.bash,software/diff/bin/diff-pager,software/git/bin/git-hist|In EACH of iTerm2, IntelliJ and Zed: `cd ~/Developer/cortex && git hist -- .nvmrc`. The SHA/author/date must be visibly dimmer than the commit message, and the command must return to the prompt on its own without needing `q`.
 -->

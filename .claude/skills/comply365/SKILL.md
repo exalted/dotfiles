@@ -46,8 +46,8 @@ gained an rc-file write"*, never what it writes or for which service.
 
 | repo | wiring here | analyzed at | verdict |
 |---|---|---|---|
-| cortex | `cortex.{rb,bashrc}` (direnv), `zshenv` | `d15352e7f` | setup appends a direnv hook to the **bash** rc and installs direnv itself; both already re-expressed. Later setup also provisions a container runtime (system socket link, boot job, tool config files — no shell rc file) and bumps a toolchain it links itself; hook changes are regex-only; `.envrc` and runtime pins unchanged. Later still, setup tightens that runtime (a minimum VM-tool version, a VM restart, one more runtime config key, a clock-check script — still no shell rc file); the rest is docs, make targets and local-stack services. Hooks use `sh` shebangs — the documented startup-file gap, which pre-push's now Homebrew-only container CLI also falls into; no wiring possible |
-| web-safety | `web-safety.{rb,bashrc}` (nvm), `zshenv` | `df81d9aa` | setup appends a zsh-only auto-`nvm use` hook and curl-installs a runtime manager into the shared dir; both already re-expressed. Later changes are new npm/make scripts, dependency bumps and docs only; setup, hooks and `.nvmrc` unchanged. Hooks are zsh — covered by the managed `zshenv` |
+| cortex | `cortex.{rb,bash}` (direnv), `zshenv` | `d15352e7f` | setup appends a direnv hook to the **bash** rc and installs direnv itself; both already re-expressed. Later setup also provisions a container runtime (system socket link, boot job, tool config files — no shell rc file) and bumps a toolchain it links itself; hook changes are regex-only; `.envrc` and runtime pins unchanged. Later still, setup tightens that runtime (a minimum VM-tool version, a VM restart, one more runtime config key, a clock-check script — still no shell rc file); the rest is docs, make targets and local-stack services. Hooks use `sh` shebangs — the documented startup-file gap, which pre-push's now Homebrew-only container CLI also falls into; no wiring possible |
+| web-safety | `web-safety.{rb,bash}` (nvm), `zshenv` | `df81d9aa` | setup appends a zsh-only auto-`nvm use` hook and curl-installs a runtime manager into the shared dir; both already re-expressed. Later changes are new npm/make scripts, dependency bumps and docs only; setup, hooks and `.nvmrc` unchanged. Hooks are zsh — covered by the managed `zshenv` |
 | web-cockpit | none — covered by the generic mechanisms | `02f00c8` | same shape as web-safety, pinning an older runtime-manager version; needs no wiring of its own. Later changes are one npm script, a dependency and docs; setup, hooks and `.nvmrc` unchanged. Hooks use `sh` shebangs — the documented gap |
 
 Onboarding a repo means adding a row here, `-` in `analyzed at`, which makes the
@@ -139,15 +139,15 @@ cd ~/Developer/dotfiles && .claude/tools/zsh-drift.sh
    hooks are dead and nothing else here will notice.
 1. `grep -rE 'bashrc|zshrc|zprofile|nvm|direnv|chpwd' <repo>/setup*/setup.sh` —
    does it write to an rc file or install a runtime manager?
-2. Has `.envrc`? Covered by `comply365/cortex.bashrc` (direnv hook, every
+2. Has `.envrc`? Covered by `comply365/cortex.bash` (direnv hook, every
    directory). One manual step per clone: `direnv allow` inside it.
-3. Has `.nvmrc`? Covered by `comply365/web-safety.bashrc` — the hook walks up
+3. Has `.nvmrc`? Covered by `comply365/web-safety.bash` — the hook walks up
    from `$PWD`, so it works for any repo. `web-cockpit` needed zero changes for
    exactly this reason. **Do not add a per-project copy of the hook.**
 4. Git hooks with `#!/bin/zsh` or `env zsh`? Covered by `~/.zshenv`
    (`comply365/zsh.rb`).
 5. Only if none of the above covers it: add `software/comply365/<project>.rb`
-   (+ a `.bashrc` fragment if needed), register it in `profiles.rb` under
+   (+ a `.bash` fragment if needed), register it in `profiles.rb` under
    `work`, `chmod +x` the `.rb`, then [add criteria](#adding-a-criterion).
 
 The three mechanisms are **generic despite their per-project names**. Widening
@@ -224,10 +224,10 @@ diff <(grep -o "ls-files.*profiles.rb" .claude/hooks/comply365-spec-check.sh) \
      <(grep -o "ls-files.*profiles.rb" .claude/hooks/comply365-signoff.sh) && echo "in sync"
 ```
 
-Paths missed once here, each with a real consequence: `software/watch/bashrc`
+Paths missed once here, each with a real consequence: `software/watch/bashrc.bash`
 and `software/git/bin/git-hist` (AC-28's actual mechanism), `profiles.rb` (it
 decides whether a fragment is sourced *at all* — how the `watch` alias went
-missing for the whole `work` profile), `software/iterm2/bashrc`.
+missing for the whole `work` profile), `software/iterm2/bashrc.bash`.
 
 ## Getting the manual criteria confirmed
 
@@ -342,9 +342,9 @@ Read the comment above the code before "fixing" one.
 | Path | Role |
 |---|---|
 | `software/comply365/SPEC.md` | The criteria, plus the `manual-checks` block |
-| `software/comply365/{cortex,web-safety}.{rb,bashrc}` | direnv hook; auto-`nvm use` |
+| `software/comply365/{cortex,web-safety}.{rb,bash}` | direnv hook; auto-`nvm use` |
 | `software/comply365/{zsh.rb,zshenv}` | Homebrew + nvm for every zsh |
-| `software/comply365/jira.{rb,bashrc}` | Not a repo or a mechanism: `jira <n>` opens a story via `browse`; the site and project key live in the untracked `~/.config/dotfiles/jira` (AC-39) |
+| `software/comply365/jira.{rb,bash}` | Not a repo or a mechanism: `jira <n>` opens a story via `browse`; the site and project key live in the untracked `~/.config/dotfiles/jira` (AC-39) |
 | `.claude/hooks/comply365-spec-check.sh` | Stop-hook verifier (`[auto]`) |
 | `.claude/hooks/comply365-signoff.sh` | Records a human verdict + code digest |
 | `.claude/hooks/lib/` | Probes the verifier calls |
