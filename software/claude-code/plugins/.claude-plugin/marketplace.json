@@ -1,0 +1,23 @@
+{
+  "name": "dotfiles",
+  "owner": { "name": "dotfiles" },
+  "plugins": [
+    {
+      "name": "lsp-servers",
+      "source": "./work/lsp-servers",
+      "description": "Language servers for Claude Code: Python, TypeScript and Vue, shell, YAML, Terraform, Postgres, Go, Ruby and Swift",
+      "version": "0.1.0",
+      "lspServers": "./lsp.json",
+      "hooks": {
+        "SessionStart": [
+          {
+            "hooks": [
+              { "type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/install-node-modules.sh\"", "async": true },
+              { "type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/prepare-postgres.sh\"", "async": true }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

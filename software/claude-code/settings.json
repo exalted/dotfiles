@@ -178,7 +178,9 @@
     "context7@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": false,
+    "typescript-lsp@claude-plugins-official": false,
+    "lsp-servers@dotfiles": true,
     "atlassian@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
@@ -187,7 +189,14 @@
     "claude-security@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": false
   },
-  "extraKnownMarketplaces": {},
+  "extraKnownMarketplaces": {
+    "dotfiles": {
+      "source": {
+        "source": "directory",
+        "path": "~/Developer/dotfiles/software/claude-code/plugins"
+      }
+    }
+  },
   "outputStyle": "Concise",
   "effortLevel": "xhigh",
   "pluginConfigs": {

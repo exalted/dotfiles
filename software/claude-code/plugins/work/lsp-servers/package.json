@@ -1,0 +1,7 @@
+{
+  "name": "lsp-servers",
+  "private": true,
+  "dependencies": {
+    "@postgres-language-server/cli": "0.28.2"
+  }
+}

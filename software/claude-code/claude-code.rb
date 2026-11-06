@@ -63,6 +63,12 @@ end
   end
 end
 
+# Plugins live in plugins/<group>/ and reach Claude Code through the marketplace file in
+# plugins/.claude-plugin/, which settings.json registers; an install is needed once per machine.
+if _resolve_profile == 'work'
+  system "claude plugin install lsp-servers@dotfiles --scope user" unless Kernel.system "claude plugin list 2>/dev/null | grep -q lsp-servers@dotfiles"
+end
+
 # Hooks that settings.json runs, and the module they share; see each script for what it enforces.
 link_to_home_relative 'hooks/require-command-prefix.py', '.claude/hooks/require-command-prefix.py'
 link_to_home_relative 'hooks/guard-paths.py',            '.claude/hooks/guard-paths.py'

@@ -80,6 +80,7 @@ PROFILES['work'] = %w[
   finicky
   jq
   keka
+  language-servers
   logi-options-plus
   ripgrep
   rocket

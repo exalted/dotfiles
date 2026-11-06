@@ -1,0 +1,113 @@
+{
+  "python": {
+    "command": "sh",
+    "args": ["${CLAUDE_PLUGIN_ROOT}/launch-python.sh"],
+    "extensionToLanguage": {
+      ".py": "python",
+      ".pyi": "python"
+    }
+  },
+  "typescript-vue": {
+    "command": "typescript-language-server",
+    "args": ["--stdio"],
+    "extensionToLanguage": {
+      ".ts": "typescript",
+      ".tsx": "typescriptreact",
+      ".mts": "typescript",
+      ".cts": "typescript",
+      ".js": "javascript",
+      ".jsx": "javascriptreact",
+      ".mjs": "javascript",
+      ".cjs": "javascript",
+      ".vue": "vue"
+    },
+    "initializationOptions": {
+      "plugins": [
+        {
+          "name": "@vue/typescript-plugin",
+          "location": ".",
+          "languages": ["vue"]
+        }
+      ],
+      "tsserver": { "useSyntaxServer": "never" }
+    },
+    "startupTimeout": 60000
+  },
+  "bash": {
+    "command": "bash-language-server",
+    "args": ["start"],
+    "extensionToLanguage": {
+      ".sh": "shellscript",
+      ".bash": "shellscript"
+    }
+  },
+  "yaml": {
+    "command": "yaml-language-server",
+    "args": ["--stdio"],
+    "extensionToLanguage": {
+      ".yml": "yaml",
+      ".yaml": "yaml"
+    },
+    "settings": {
+      "yaml": {
+        "schemaStore": { "enable": true },
+        "customTags": [
+          "!Ref scalar",
+          "!Sub scalar",
+          "!Sub sequence",
+          "!GetAtt scalar",
+          "!GetAtt sequence",
+          "!Join sequence",
+          "!Equals sequence",
+          "!If sequence",
+          "!Not sequence",
+          "!And sequence",
+          "!Or sequence",
+          "!Select sequence",
+          "!Split sequence",
+          "!FindInMap sequence",
+          "!ImportValue scalar",
+          "!Condition scalar",
+          "!Base64 scalar",
+          "!reference sequence"
+        ]
+      }
+    }
+  },
+  "terraform": {
+    "command": "terraform-ls",
+    "args": ["serve"],
+    "extensionToLanguage": {
+      ".tf": "terraform",
+      ".tfvars": "terraform-vars"
+    }
+  },
+  "postgres": {
+    "command": "sh",
+    "args": ["${CLAUDE_PLUGIN_ROOT}/launch-postgres.sh"],
+    "extensionToLanguage": {
+      ".sql": "sql"
+    },
+    "startupTimeout": 30000
+  },
+  "go": {
+    "command": "gopls",
+    "extensionToLanguage": {
+      ".go": "go"
+    }
+  },
+  "ruby": {
+    "command": "ruby-lsp",
+    "extensionToLanguage": {
+      ".rb": "ruby",
+      ".rake": "ruby",
+      ".gemspec": "ruby"
+    }
+  },
+  "swift": {
+    "command": "sourcekit-lsp",
+    "extensionToLanguage": {
+      ".swift": "swift"
+    }
+  }
+}
