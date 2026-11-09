@@ -73,9 +73,9 @@ PROFILES['work'] = %w[
   claude-code
   clipy
   codex
-  comply365/jira
   direnv
   finicky
+  jira
   jq
   keka
   language-servers
