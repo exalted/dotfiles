@@ -23,7 +23,7 @@ import os
 import re
 import subprocess
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 DOTFILES = Path(__file__).resolve().parents[6]
@@ -31,7 +31,6 @@ SKILLS = DOTFILES / "software" / "claude-code" / "skills"
 JOBS = DOTFILES / "software" / "claude-code"
 CAPACITY = Path.home() / ".local" / "state" / "ai-capacity" / "capacity.json"
 EFFORTS = ("low", "medium", "high", "xhigh", "max")
-MAX_AGE = timedelta(days=14)
 
 
 def git(*args: str) -> str:
@@ -44,9 +43,9 @@ def strongest() -> tuple[str, str]:
     data = json.loads(CAPACITY.read_text())
     best = (data.get("claude") or {}).get("strongest") or {}
     alias, effort = best.get("alias", ""), best.get("default_effort", "")
-    refreshed = datetime.fromisoformat(data.get("refreshed_at", "1970-01-01T00:00:00+00:00"))
-    if datetime.now(refreshed.tzinfo) - refreshed > MAX_AGE:
-        sys.exit(f"capacity.json is from {refreshed:%Y-%m-%d}, older than {MAX_AGE.days} days; nothing changed")
+    stale_after = datetime.fromisoformat(data.get("stale_after", "1970-01-01T00:00:00+00:00"))
+    if datetime.now(stale_after.tzinfo) > stale_after:
+        sys.exit(f"capacity.json went stale on {stale_after:%Y-%m-%d}; nothing changed")
     if not re.fullmatch(r"[a-z0-9.\[\]-]+", alias) or effort not in EFFORTS:
         sys.exit(f"capacity.json names no verified strongest model ({best!r}); nothing changed")
     if alias not in claude_aliases():

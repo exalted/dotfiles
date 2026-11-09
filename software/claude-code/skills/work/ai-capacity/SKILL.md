@@ -13,7 +13,7 @@ user's accounts goes into the dotfiles repository, a commit, or a message to any
 | File | Holds |
 |---|---|
 | `methods.md` | how to get each fact today; starts as a copy of `methods.seed.md` beside this file |
-| `capacity.json` | the latest facts, each with its route and time (shape below) |
+| `capacity.json` | the latest facts, each with its route and time (shape below), and `stale_after` |
 | `history/<date>.json` | one copy of `capacity.json` per refresh |
 | `advice.md` | the current advice, each item with its evidence |
 
@@ -27,8 +27,8 @@ drop them. Advice is advice: never change a setting, a knob or a skill.
 
 ## No argument: answer from what is known
 
-Read `capacity.json` and `advice.md` and answer the question. Say how old the facts are. If they are older
-than 8 days, or the question needs a fact they lack, do not refresh: answer from what is there, say what is
+Read `capacity.json` and `advice.md` and answer the question. Say how old the facts are. If now is past
+`stale_after` (or the file has none), or the question needs a fact they lack, do not refresh: answer from what is there, say what is
 stale or missing, and tell the user to run `/ai-capacity refresh` in a session on the strongest model
 (`/model fable` first). A lookup runs on the session's model, and the refresh is worth the strongest one.
 
@@ -81,7 +81,10 @@ Get every fact through the verified routes and write `capacity.json`:
 default effort from the docs (never the user's `modelSettings` override). `model-steward` relies on it: write
 it only when both parts are verified, else leave it out and say why.
 
-Copy the file to `history/<today>.json`.
+Then run `uv run --quiet --no-project --script scripts/stamp_stale_after.py` from this skill's directory. It
+sets `stale_after` from `freshness.json` beside this file: the refresh interval plus a margin that covers the
+scheduled job's retries. Every reader compares against it; none keeps a number of its own. Copy the file to
+`history/<today>.json`.
 
 ### 3. Advise
 

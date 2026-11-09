@@ -17,7 +17,7 @@ uv run --quiet --no-project --script ~/.claude/skills/model-steward/scripts/stew
 ```
 
 - The strongest model and its default effort come from ai-capacity (`claude.strongest` in
-  `~/.local/state/ai-capacity/capacity.json`). If that is missing, older than 14 days, or not verified, the
+  `~/.local/state/ai-capacity/capacity.json`). If that is missing, past its `stale_after`, or not verified, the
   script changes nothing and says why: run `/ai-capacity refresh` first.
 - It sets `--model` and `--effort` on every `claude -p "/<skill> …"` line of the jobs in
   `software/claude-code/*.sh`, and removes `model:` and `effort:` from each introspective skill's frontmatter.

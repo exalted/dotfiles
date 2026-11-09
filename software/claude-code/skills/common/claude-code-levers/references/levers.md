@@ -1,5 +1,6 @@
 ---
 last_verified: 2026-11-06
+stale_after: 2026-11-16
 docs_root: https://code.claude.com/docs/en/
 ---
 

@@ -400,7 +400,7 @@ def gone_elsewhere(state: Json, config: Config) -> str | None:
 
 def capacity_advice(now: datetime) -> list[str]:
     """ai-capacity's current advice on models, efforts and allowances. The night shift shows it and never acts
-    on it; facts older than eight days say so first."""
+    on it; facts past their `stale_after` say so first."""
     facts = read_json(AI_CAPACITY_DIR / "capacity.json", None)
     if not isinstance(facts, dict) or not facts.get("refreshed_at"):
         return ["No ai-capacity facts yet: run `/ai-capacity refresh`."]
@@ -411,7 +411,8 @@ def capacity_advice(now: datetime) -> list[str]:
     for line in advice.read_text().splitlines() if advice.is_file() else []:
         if item := re.match(r"(?:- |\d+\. )(.*)", line):
             lines.append(item.group(1).strip())
-    if days > 8:
+    stale_after = facts.get("stale_after")
+    if not stale_after or now.astimezone() > datetime.fromisoformat(stale_after):
         lines.insert(0, f"The ai-capacity facts are {days} days old: run `/ai-capacity refresh`.")
     return lines
 

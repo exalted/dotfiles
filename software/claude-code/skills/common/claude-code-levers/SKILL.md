@@ -29,7 +29,7 @@ Say "lever", not "extension point", so these do not blur.
 
 ## `refresh`: challenge the map
 
-Run when invoked as `/claude-code-levers refresh`, or when `last_verified` in `references/levers.md` is older than 30 days and the user agrees. The run is non-interactive: ask no questions, commit nothing. (The scheduled job, installed on the `work` profile only, commits and pushes the map by itself after the run. Every other machine takes the map from Git and keeps no refresh job, docs mirror or log.)
+Run only when invoked as `/claude-code-levers refresh`. If `stale_after` in `references/levers.md` has passed (or is missing), still answer from the map, but tell the user it is stale and to run `/claude-code-levers refresh` in a session on the strongest model (`/model fable` first); never refresh inside a lookup, which runs on the session's model. The run is non-interactive: ask no questions, commit nothing. (The scheduled job, installed on the `work` profile only, commits and pushes the map by itself after the run. Every other machine takes the map from Git and keeps no refresh job, docs mirror or log.)
 
 Three sources, with different authority:
 
@@ -59,6 +59,6 @@ Three sources, with different authority:
    - Add new levers. Add a post to a row's Sources only when the row says something taken from it.
    - Move superseded or removed levers to the **Retired** section with today's date and the successor. Drop a Retired row at the next refresh after the one that added it.
    - Update **Watch**: add the new lines, turn covered lines into rows, drop lines older than 90 days.
-   - Set `last_verified` to today.
+   - Set `last_verified` to today, then run `scripts/stamp-stale-after.sh`. It sets `stale_after` from `freshness.json`: the refresh interval plus a margin that covers the scheduled job's retries.
 6. Keep the file generic. It lives in a public repo: no personal data, no organization identifiers.
 7. Leave the changes uncommitted. Print one thing only: a short summary of rows changed, added, retired, Watch lines added or resolved, and anything the agent could not verify, with no preamble about what you did or did not commit. The scheduled job stores that output verbatim as the body of the map's commit message, so it has the same public-repo rule as the file, and it must explain the changes well enough that the commit makes sense on its own.
