@@ -1,10 +1,7 @@
 # Locate and source nvm.sh, which is what defines the `nvm` shell function.
 #
-# Three places need nvm, and each used to carry its own copy of this search:
-# software/node/bashrc.bash (interactive Bash), software/comply365/zshenv (the zsh git
-# hooks some work repos ship) and software/comply365/web-safety.bash (the
-# auto-use-on-cd hook's fallback). This is the one copy, so there is a single
-# place that knows where nvm lives. Kept to POSIX sh so zsh can source it too.
+# Sourced by software/node/bashrc.bash (interactive Bash), so a single place knows
+# where nvm lives. Kept to POSIX sh so any other shell can source it too.
 #
 # Sourcing this is a no-op once nvm is loaded.
 if ! command -v nvm >/dev/null 2>&1; then

@@ -73,10 +73,8 @@ PROFILES['work'] = %w[
   claude-code
   clipy
   codex
-  comply365/cortex
   comply365/jira
-  comply365/web-safety
-  comply365/zsh
+  direnv
   finicky
   jq
   keka

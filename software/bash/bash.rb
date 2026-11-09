@@ -11,7 +11,7 @@ link_to_home_relative 'inputrc', '.inputrc'
 link_to_home_relative 'hushlogin', '.hushlogin'
 
 # Out of alphabetical order on purpose: this only defines helpers, and the
-# fragments below (plus comply365's) call them to register their prompt hooks.
+# fragments below call them to register their prompt hooks.
 bash_source_relative 'prompt-command'
 
 # Keep these in alphabetical order:

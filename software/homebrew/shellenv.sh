@@ -1,9 +1,8 @@
 # Put Homebrew — and everything installed through it — on PATH, and export the
 # HOMEBREW_* / INFOPATH / MANPATH values that go with it.
 #
-# Sourced by software/homebrew/bashrc.bash (interactive Bash) and by
-# software/comply365/zshenv (every zsh, including the git hooks GUI apps spawn),
-# so both shells find Homebrew the same way. POSIX sh for that reason.
+# Sourced by software/homebrew/bashrc.bash. Kept to POSIX sh so any other shell
+# can source it the same way.
 #
 # `brew` itself isn't findable yet at this point — that's the whole problem this
 # solves — so we probe for it, the way Homebrew's own installer-generated snippet
@@ -23,9 +22,8 @@
 # Re-running `brew shellenv` is not free of side effects, which is why the guard
 # has to exist at all: it re-prepends its bin directory whenever that isn't
 # already the head of PATH, demoting anything deliberately put in front — an
-# `nvm use` version behind Homebrew's own node, say. That matters here because
-# ~/.zshenv sources this file on *every* zsh, including hooks spawned from a
-# shell that has already selected a version.
+# `nvm use` version behind Homebrew's own node, say. That matters because this
+# file can be sourced again from a shell that has already selected a version.
 # "On PATH" is not enough: it has to be on PATH *ahead of the system
 # directories*. macOS's path_helper runs from /etc/profile in every login shell
 # — which is what terminals start — and rebuilds PATH with /usr/bin and /bin
