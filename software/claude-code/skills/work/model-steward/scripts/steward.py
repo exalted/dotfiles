@@ -2,15 +2,17 @@
 # requires-python = ">=3.12"
 # dependencies = []
 # ///
-"""Keep every introspective skill on the strongest Claude model, at that model's own default effort.
+"""Run the scheduled jobs of every introspective skill on the strongest Claude model, at its own default effort.
 
   steward.py [--commit]
 
 The strongest model comes from ai-capacity's `capacity.json` (`claude.strongest`). An introspective skill
-says `introspective: true` in its frontmatter; its `model:` and `effort:` are set there, and so are the
-`--model` and `--effort` of every scheduled job that runs it (`claude -p "/<skill> …"` in
-software/claude-code/*.sh). The effort is written out on purpose: without it the user's own `modelSettings`
-override would apply, and the rule is the model's own default.
+says `introspective: true` in its frontmatter. The `--model` and `--effort` of every scheduled job that runs
+it (`claude -p "/<skill> …"` in software/claude-code/*.sh) are set; its own `model:` and `effort:` are
+removed, because an interactive lookup must stay on the session's model: the weekly refresh is where the
+strongest model pays off, and a lookup pinned to it cost a tenth of a week's usage. The effort is written out
+on purpose: without it the user's own `modelSettings` override would apply, and the rule is the model's own
+default.
 
 With --commit, the changed files are committed by pathspec, and only when each was unmodified before, so the
 user's other work never rides along. Nothing is pushed.
@@ -70,11 +72,8 @@ def frontmatter(text: str) -> tuple[str, str] | None:
     return (match.group(1), text[match.end():]) if match else None
 
 
-def set_key(head: str, key: str, value: str) -> str:
-    line = f"{key}: {value}"
-    if re.search(rf"^{key}:.*$", head, re.MULTILINE):
-        return re.sub(rf"^{key}:.*$", line, head, flags=re.MULTILINE)
-    return head + "\n" + line
+def drop_key(head: str, key: str) -> str:
+    return re.sub(rf"^{key}:.*\n?", "", head, flags=re.MULTILINE).rstrip("\n")
 
 
 def introspective() -> list[Path]:
@@ -86,10 +85,10 @@ def introspective() -> list[Path]:
     return found
 
 
-def update_skill(path: Path, alias: str, effort: str) -> bool:
+def unpin_skill(path: Path) -> bool:
     text = path.read_text()
     head, body = frontmatter(text)
-    new = f"---\n{set_key(set_key(head, 'model', alias), 'effort', effort)}\n---\n{body}"
+    new = f"---\n{drop_key(drop_key(head, 'model'), 'effort')}\n---\n{body}"
     if new != text:
         path.write_text(new)
     return new != text
@@ -118,7 +117,7 @@ def main() -> None:
     names = [skill.parent.name for skill in skills]
     candidates = skills + sorted(JOBS.glob("*.sh"))
     dirty = {line[3:] for line in git("status", "--porcelain", "--", *map(str, candidates)).splitlines()}
-    changed = [skill for skill in skills if update_skill(skill, alias, effort)] + update_jobs(names, alias, effort)
+    changed = [skill for skill in skills if unpin_skill(skill)] + update_jobs(names, alias, effort)
     relative = [str(path.relative_to(DOTFILES)) for path in changed]
     print(f"strongest: {alias} at {effort}; introspective skills: {', '.join(names) or 'none'}")
     print("changed: " + (", ".join(relative) or "nothing"))
@@ -127,7 +126,7 @@ def main() -> None:
     if blocked := [path for path in relative if path in dirty]:
         print("not committed: these files had uncommitted changes before the run: " + ", ".join(blocked))
         return
-    git("commit", "--quiet", "-m", f"Run introspective skills on {alias} at {effort} effort",
+    git("commit", "--quiet", "-m", f"Run the introspective skills' scheduled jobs on {alias} at {effort} effort",
         "-m", f"ai-capacity found {alias} to be the strongest model, and {effort} its own default effort.", "--", *relative)
     print("committed " + git("rev-parse", "--short", "HEAD").strip())
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 # Entry point of the com.dotfiles.ai-capacity-refresh launch agent: the weekly, unattended
-# `/ai-capacity refresh` (skills/work/ai-capacity), then model-steward, which moves the introspective skills to
+# `/ai-capacity refresh` (skills/work/ai-capacity), then model-steward, which moves the introspective skills' jobs to
 # the strongest model it found and commits that (skills/work/model-steward).
 #
 # launchd runs this script directly with a bare environment, so it starts itself again from the user's login

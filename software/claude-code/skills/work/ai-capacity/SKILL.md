@@ -2,8 +2,6 @@
 name: ai-capacity
 description: What the user's Claude and Codex accounts give them right now — plans, models, usage windows, limits, credits and default efforts — kept current by a weekly refresh that first re-learns how to get each fact, and advice on models, efforts and allowances (advice only, never a change). Use when the user asks about their plan, quota, limits, usage, credits or which models they have, when another skill (the night shift, model-steward) needs those facts, and for "/ai-capacity refresh".
 argument-hint: "[refresh]"
-model: fable
-effort: high
 introspective: true
 ---
 
@@ -30,7 +28,9 @@ drop them. Advice is advice: never change a setting, a knob or a skill.
 ## No argument: answer from what is known
 
 Read `capacity.json` and `advice.md` and answer the question. Say how old the facts are. If they are older
-than 8 days, or the question needs a fact they lack, run the refresh first.
+than 8 days, or the question needs a fact they lack, do not refresh: answer from what is there, say what is
+stale or missing, and tell the user to run `/ai-capacity refresh` in a session on the strongest model
+(`/model fable` first). A lookup runs on the session's model, and the refresh is worth the strongest one.
 
 ## refresh
 
