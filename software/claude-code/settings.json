@@ -47,6 +47,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "sonnet",
   "skillOverrides": {
     "anthropic-skills:docs": "off",
     "anthropic-skills:docx": "off",
@@ -188,7 +189,8 @@
     "gitlab@claude-plugins-official": true,
     "obsidian-notes@anthropic-plugin-directory": true,
     "claude-security@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": false
+    "security-guidance@claude-plugins-official": true,
+    "mattpocock-skills@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "dotfiles": {
@@ -200,6 +202,7 @@
   },
   "outputStyle": "Concise",
   "effortLevel": "xhigh",
+  "advisorModel": "opus",
   "pluginConfigs": {
     "cc-plugin-agents-md@builtin": {
       "options": {
@@ -213,9 +216,11 @@
     "enabled": true,
     "mode": "hold"
   },
+  "skipWorkflowUsageWarning": true,
   "theme": "custom:my-claude-code-style:dark-mine",
   "editorMode": "normal",
   "autoCompactEnabled": true,
+  "idleCompaction": false,
   "remoteControlAtStartup": false,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
