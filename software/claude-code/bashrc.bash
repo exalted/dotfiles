@@ -32,6 +32,8 @@ _claude_clean_session_name() {
 _claude_eligible_entry() {
   local raw=$1 name
   (( ${#raw} <= 200 )) || return 1
+  raw=${raw#"${raw%%[![:space:]]*}"}
+  raw=${raw%"${raw##*[![:space:]]}"}
   [[ $raw != *$'\n'* && $raw != *$'\r'* ]] || return 1
 
   name=$(_claude_clean_session_name "$raw")
@@ -69,9 +71,11 @@ _claude_clipboard_entries() {
 
   local output
   if ! output=$(sqlite3 -readonly "$database" "
-    SELECT CASE WHEN length(title) > 200 OR instr(title, char(10)) > 0 OR instr(title, char(13)) > 0
-                THEN '' ELSE title END
-    FROM pasteboardHistories ORDER BY updateAt DESC LIMIT 3" 2>&1); then
+    SELECT CASE WHEN length(text) > 200 OR instr(text, char(10)) > 0 OR instr(text, char(13)) > 0
+                THEN '' ELSE text END
+    FROM (SELECT trim(title, ' ' || char(9) || char(10) || char(13)) AS text, updateAt
+          FROM pasteboardHistories)
+    ORDER BY updateAt DESC LIMIT 3" 2>&1); then
     _claude_warn "cannot read the history (${output%%$'\n'*})"
     return 0
   fi
