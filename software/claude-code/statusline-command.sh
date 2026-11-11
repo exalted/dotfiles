@@ -61,14 +61,15 @@ fi
 
 # The cells are background-colored so the centered label can sit on top. Each
 # label character takes the contrast of the cell under it: black on a filled
-# cell, the threshold color on an empty one.
+# cell, the threshold color on an empty one. The fill follows $pct; the color
+# follows $3 (default $pct), so a caller can color by a different measure.
 render_bar() {
-  local pct=$1 label=${2:-$1%} fg bg
-  if [ "$pct" -lt 20 ]; then
+  local pct=$1 label=${2:-$1%} color_pct=${3:-$1} fg bg
+  if [ "$color_pct" -lt 20 ]; then
     fg="32"; bg="42"                       # green
-  elif [ "$pct" -lt 50 ]; then
+  elif [ "$color_pct" -lt 50 ]; then
     fg="33"; bg="43"                       # yellow
-  elif [ "$pct" -lt 80 ]; then
+  elif [ "$color_pct" -lt 80 ]; then
     fg="38;5;208"; bg="48;5;208"           # orange
   else
     fg="31"; bg="41"                       # red
@@ -107,11 +108,19 @@ if [ -f "$credits_cache" ] && [ $(( now - $(mtime "$credits_cache") )) -lt 3600 
     | @tsv
   ' "$credits_cache" 2>/dev/null)
   if [ -n "$credits_pct" ]; then
-    printf " \e[37m·\e[0m 💸 "
-    render_bar "$credits_pct" "$(printf "%.2f/%.0f" "$used" "$limit")"
     # The endpoint gives no reset time; /usage shows credits resetting on the 1st of each month.
     today=$(/bin/date -j -f %Y-%m-%d "$(/bin/date +%Y-%m-%d)" +%s)
     first=$(/bin/date -j -f %Y-%m-%d "$(/bin/date -v1d -v+1m +%Y-%m-%d)" +%s)
+    month_start=$(/bin/date -r "$now" -j -v1d -v0H -v0M -v0S +%s)
+    reset=$(/bin/date -r "$now" -j -v1d -v+1m -v0H -v0M -v0S +%s)
+    # Color by the credits left against the share of the month left: the same spend turns greener as the
+    # reset nears, and on the 1st the thresholds equal the plain percentage ones. Never redder than the
+    # plain percentage. 100% used stays red until the reset.
+    color_pct=$(( 100 - (100 - credits_pct) * (reset - month_start) / (reset - now) ))
+    [ "$color_pct" -lt 0 ] && color_pct=0
+    [ "$color_pct" -gt 100 ] && color_pct=100
+    printf " \e[37m·\e[0m 💸 "
+    render_bar "$credits_pct" "$(printf "%.2f/%.0f" "$used" "$limit")" "$color_pct"
     printf "\e[37m (-%dd)\e[0m" $(( (first - today + 43200) / 86400 ))
   fi
 fi
