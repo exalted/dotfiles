@@ -4,7 +4,8 @@ export const FALLBACK_COLUMNS = 100
 export const TABLE_BUBBLE_MARGIN = 1
 
 const MAX_WIDTH_SHARE = 0.9
-const PADDING = 2
+const PADDING_X = 2
+const PADDING = PADDING_X * 2
 const CORNER_COLUMNS = 2
 
 export type Elements = { Box: any; Text: any }
@@ -48,7 +49,7 @@ export const bubble = (elements: Elements, color: string, width: number, body: u
   return (
     <Box flexDirection="column" width={width}>
       {edge(elements, color, width, '▗', '▄', '▖')}
-      <Box backgroundColor={color} paddingX={1} width={width}>
+      <Box backgroundColor={color} paddingX={PADDING_X} width={width}>
         {body}
       </Box>
       {edge(elements, color, width, '▝', '▀', '▘')}
