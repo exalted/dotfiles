@@ -46,7 +46,7 @@ map_was_clean=1
 export CLAUDE_TODO_HOOKS=0
 status=0
 summary="$scratch/run-summary.txt"
-claude -p "/claude-code-levers refresh" --model fable --effort high \
+claude -p "/claude-code-levers refresh" --model fable --effort medium \
   --permission-mode acceptEdits \
   --permission-prompts none \
   --allowedTools "Agent,Skill,WebFetch,WebSearch,Bash(git status:*),Bash(git diff:*),Bash($skill/scripts/sync-docs.sh:*),Bash($HOME/.claude/skills/claude-code-levers/scripts/sync-docs.sh:*),Bash(~/.claude/skills/claude-code-levers/scripts/sync-docs.sh:*),Bash($skill/scripts/fetch-page.sh:*),Bash($HOME/.claude/skills/claude-code-levers/scripts/fetch-page.sh:*),Bash(~/.claude/skills/claude-code-levers/scripts/fetch-page.sh:*),Bash($skill/scripts/triage.sh:*),Bash($HOME/.claude/skills/claude-code-levers/scripts/triage.sh:*),Bash(~/.claude/skills/claude-code-levers/scripts/triage.sh:*)" \

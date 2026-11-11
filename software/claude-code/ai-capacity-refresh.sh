@@ -31,7 +31,7 @@ cd "$state" || exit 1
 # refresh has to try commands it has not seen before when a route moved. Its hard rules keep it read-only.
 export CLAUDE_TODO_HOOKS=0
 status=0
-claude -p "/ai-capacity refresh" --model fable --effort high \
+claude -p "/ai-capacity refresh" --model fable --effort medium \
   --settings "$dotfiles/software/claude-code/skills/work/ai-capacity/refresh-settings.json" \
   --permission-mode auto \
   --permission-prompts none \
