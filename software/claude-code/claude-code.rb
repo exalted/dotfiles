@@ -7,7 +7,6 @@ bash_source_relative
 link_to_home_relative 'CLAUDE.md',             '.claude/CLAUDE.md'
 link_to_home_relative 'settings.json',         '.claude/settings.json'
 link_to_home_relative 'statusline-command.sh', '.claude/statusline-command.sh'
-link_to_home_relative 'themes/dark-mine.json', '.claude/themes/dark-mine.json'
 
 # Weekly unattended `/claude-code-levers refresh`; see skills/common/claude-code-levers.
 # One machine refreshes the map and pushes it; every other machine takes the map
@@ -68,6 +67,9 @@ end
 if _resolve_profile == 'work'
   system "claude plugin install lsp-servers@dotfiles --scope user" unless Kernel.system "claude plugin list 2>/dev/null | grep -q lsp-servers@dotfiles"
 end
+
+# The style plugin redraws the chat and ships the color theme, so it installs on every profile.
+system "claude plugin install my-claude-code-style@dotfiles --scope user" unless Kernel.system "claude plugin list 2>/dev/null | grep -q my-claude-code-style@dotfiles"
 
 # Hooks that settings.json runs, and the module they share; see each script for what it enforces.
 link_to_home_relative 'hooks/require-command-prefix.py', '.claude/hooks/require-command-prefix.py'

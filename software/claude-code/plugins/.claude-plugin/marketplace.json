@@ -3,6 +3,12 @@
   "owner": { "name": "dotfiles" },
   "plugins": [
     {
+      "name": "my-claude-code-style",
+      "source": "./common/my-claude-code-style",
+      "description": "How I like Claude Code to look and work: chat bubbles, message actions and the colors that go with them",
+      "version": "0.1.0"
+    },
+    {
       "name": "lsp-servers",
       "source": "./work/lsp-servers",
       "description": "Language servers for Claude Code: Python, TypeScript and Vue, shell, YAML, Terraform, Postgres, Go, Ruby and Swift",

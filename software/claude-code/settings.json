@@ -181,6 +181,7 @@
     "pyright-lsp@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": false,
     "lsp-servers@dotfiles": true,
+    "my-claude-code-style@dotfiles": true,
     "atlassian@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
@@ -212,7 +213,7 @@
     "enabled": true,
     "mode": "hold"
   },
-  "theme": "custom:dark-mine",
+  "theme": "custom:my-claude-code-style:dark-mine",
   "editorMode": "normal",
   "autoCompactEnabled": true,
   "remoteControlAtStartup": false,

@@ -1,0 +1,6 @@
+{
+  "name": "my-claude-code-style",
+  "version": "0.1.0",
+  "description": "How I like Claude Code to look and work: chat bubbles, message actions and the colors that go with them.",
+  "types": "./types/index.d.ts"
+}
