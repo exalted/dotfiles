@@ -1,5 +1,6 @@
 require 'pathname'
 require 'fileutils'
+require 'json'
 
 require_relative './common'
 
@@ -211,6 +212,36 @@ end
 def ensure_line(path, line)
   return if File.exist?(path) && File.readlines(path, chomp: true).include?(line)
   File.open(path, 'a') { |f| f.puts "\n#{line}" }
+end
+
+# Add each of `entries` that is missing to the top-level array `key` of the JSON file `path`.
+# Every other key stays as it is. A missing file, invalid JSON or a `key` that is not an array
+# is skipped with a warning: a running tool owns the file and rewrites it, so only a complete,
+# valid file is touched. The write goes through a temp file and a rename, so nothing reads half
+# a file. Ruby 2.6 prints an empty container as two lines, so those are folded back to keep the
+# output byte-identical to what Claude Code writes.
+def ensure_json_array_entries(path, key, entries)
+  return warn "#{path}: not found, #{key} not updated" unless File.file?(path)
+
+  data = begin
+    JSON.parse(File.read(path))
+  rescue JSON::ParserError
+    nil
+  end
+  return warn "#{path}: not a JSON object, #{key} not updated" unless data.is_a?(Hash)
+
+  current = data.fetch(key, [])
+  return warn "#{path}: #{key} is not an array, not updated" unless current.is_a?(Array)
+
+  missing = entries - current
+  return if missing.empty?
+
+  data[key] = current + missing
+  json = JSON.pretty_generate(data).gsub(/\{\n\s*\}/, '{}').gsub(/\[\n\s*\]/, '[]')
+  temp = "#{path}.dotfiles-tmp"
+  File.write(temp, json)
+  File.chmod(File.stat(path).mode & 0o7777, temp)
+  File.rename(temp, path)
 end
 
 def bash_source(path)

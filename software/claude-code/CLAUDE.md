@@ -106,4 +106,13 @@ In long sessions I lose track of what an ID or a reply refers to. Make each refe
 - Create or edit a user-level skill **in the dotfiles repo**, never as a plain directory in `~/.claude/skills/`. Then link it: `ln -s ~/Developer/dotfiles/software/claude-code/skills/<group>/<name> ~/.claude/skills/<name>` (the dotfiles installer creates the same link on its next run).
 - Never replace `~/.claude/skills` itself with a symlink: Claude Code writes the skills it syncs from claude.ai into that directory.
 
+## LSP servers live in dotfiles
+
+- Language servers come from the `lsp-servers` plugin: `software/claude-code/plugins/work/lsp-servers/lsp.json`. To cover a language, add its server there. Do not install the official `<language>-lsp` plugin.
+- Then do both steps for that language's official plugin (`<language>-lsp@claude-plugins-official`):
+  1. Set it to `false` in `enabledPlugins` in `software/claude-code/settings.json`.
+  2. Add `<language>-lsp` to `covered_lsp_plugins` in `software/claude-code/claude-code.rb`.
+- The installer then adds the plugin to `lspRecommendationNeverPlugins` in `~/.claude.json`. This stops the install prompt that Claude Code shows on the first file of that language. Never edit `~/.claude.json` by hand for this.
+- Why: `~/.claude.json` is app state, not settings, and git cannot carry it. `enabledPlugins` alone is not known to stop the prompt.
+
 The dotfiles repo is public on GitHub. Its `CLAUDE.md` says what may not go in it; read that before you change a file there.

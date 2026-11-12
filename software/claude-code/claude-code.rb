@@ -66,6 +66,14 @@ end
 # plugins/.claude-plugin/, which settings.json registers; an install is needed once per machine.
 if _resolve_profile == 'work'
   system "claude plugin install lsp-servers@dotfiles --scope user" unless Kernel.system "claude plugin list 2>/dev/null | grep -q lsp-servers@dotfiles"
+
+  # Official LSP plugins whose language lsp-servers already covers. Claude Code still offers each
+  # one on first use of its files, and it remembers a "Never" answer in ~/.claude.json, which is
+  # app state, not settings.json, so the answer is recorded here. Extend this list together with
+  # `enabledPlugins` in settings.json; see "LSP servers live in dotfiles" in CLAUDE.md.
+  covered_lsp_plugins = %w[gopls-lsp pyright-lsp ruby-lsp swift-lsp typescript-lsp]
+  ensure_json_array_entries "#{ENV["HOME"]}/.claude.json", 'lspRecommendationNeverPlugins',
+                            covered_lsp_plugins.map { |name| "#{name}@claude-plugins-official" }
 end
 
 # The style plugin redraws the chat and ships the color theme, so it installs on every profile.
