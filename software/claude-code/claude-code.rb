@@ -78,3 +78,4 @@ link_to_home_relative 'hooks/deny-deletions.py',         '.claude/hooks/deny-del
 link_to_home_relative 'hooks/guard-git-history.py',      '.claude/hooks/guard-git-history.py'
 link_to_home_relative 'hooks/story-not-ticket.py',       '.claude/hooks/story-not-ticket.py'
 link_to_home_relative 'hooks/shell_commands.py',         '.claude/hooks/shell_commands.py'
+link_to_home_relative 'hooks/notify.sh',                 '.claude/hooks/notify.sh'

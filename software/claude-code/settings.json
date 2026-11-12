@@ -100,6 +100,22 @@
             "type": "command",
             "command": "~/.claude/skills/todo/scripts/todo.py stop",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify.sh stop",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify.sh attention",
+            "timeout": 10
           }
         ]
       }
