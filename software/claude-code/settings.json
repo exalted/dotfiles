@@ -47,6 +47,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "sonnet",
   "skillOverrides": {
     "anthropic-skills:docs": "off",
     "anthropic-skills:docx": "off",
@@ -185,11 +186,12 @@
     "gitlab@claude-plugins-official": true,
     "obsidian-notes@anthropic-plugin-directory": true,
     "claude-security@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": false
+    "security-guidance@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {},
   "outputStyle": "Concise",
   "effortLevel": "xhigh",
+  "advisorModel": "opus",
   "pluginConfigs": {
     "cc-plugin-agents-md@builtin": {
       "options": {
