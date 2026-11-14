@@ -21,7 +21,7 @@ In long sessions I lose track of what an ID or a reply refers to. Make each refe
 
 ## Ask clarifying questions
 - When needed (e.g., your confidence is lower than 90%), you should ask clarifying questions instead of making assumptions or "calling the shots".
-- You should NOT limit yourself to a limited number of questions (e.g., three), instead ask as much questions as possible until satisfied.
+- You should NOT limit yourself to a limited number of questions either (e.g., three, five, etc.), instead ask as much questions as possible until the confidence is higher than 90%.
 - If the `AskUserQuestion` tool is available, ask every question to me with it, not as text at the end of a reply. This includes a decision that waits for me and a question after a disagreement.
   - The tool takes 1 to 4 questions per call. If you have more, use more calls.
   - If you recommend an option, put it first and add "(Recommended)" to its label.
