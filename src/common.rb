@@ -135,6 +135,36 @@ def _shadow_brew_with_pty
   ENV["PATH"] = "#{wrapper_dir}:#{ENV["PATH"]}"
 end
 
+SOFTWARE_DIR = File.expand_path("#{__dir__}/../software").freeze
+SOFTWARE_EXTENSIONS = %w[rb sh py js].freeze
+
+def software_candidates(name)
+  stems =
+    if name.include?("/")
+      ["#{SOFTWARE_DIR}/#{name}"]
+    else
+      ["#{SOFTWARE_DIR}/#{name}", "#{SOFTWARE_DIR}/#{name}/#{name}"]
+    end
+  stems.flat_map { |stem| SOFTWARE_EXTENSIONS.map { |ext| "#{stem}.#{ext}" } }
+end
+
+def resolve_software(name)
+  candidates = software_candidates(name)
+  relative = ->(path) { path.sub("#{SOFTWARE_DIR}/", "software/") }
+
+  found = candidates.find { |path| File.file?(path) }
+  abort "profiles.rb lists #{name.inspect}, but no entry script exists " \
+        "(looked for: #{candidates.map(&relative).join(", ")})" unless found
+  abort "#{relative.call(found)} is listed in profiles.rb but is not " \
+        "executable — run `chmod +x` on it" unless File.executable?(found)
+
+  found
+end
+
+def software_manifest
+  (COMMON + PROFILES.fetch(_resolve_profile)).sort
+end
+
 # Only executable files count as entry scripts — that's resolve_software's
 # contract, and it's what tells an installer apart from a support file that
 # sits beside it (e.g. finicky/finicky.js, Finicky's config).

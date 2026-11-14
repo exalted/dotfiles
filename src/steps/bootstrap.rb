@@ -1,5 +1,4 @@
 require_relative '../common'
-require_relative './install_everything'
 
 # Foundational software the dotfiles machinery itself depends on. Unlike the
 # profile lists in profiles.rb this is not configurable — bin/dotfiles can't run
