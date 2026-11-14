@@ -4,3 +4,7 @@
 # Keep the committed bundler config; ignore anything else Bundler writes here.
 /.bundle/*
 !/.bundle/config
+
+# Each machine resolves its own: Homebrew upgrades Ruby and Bundler at different
+# times on each, and every bundle install would rewrite the lock file.
+/Gemfile.lock
