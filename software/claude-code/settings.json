@@ -215,7 +215,7 @@
     "dotfiles": {
       "source": {
         "source": "directory",
-        "path": "~/Developer/dotfiles/software/claude-code/plugins"
+        "path": "~/.claude/dotfiles-plugins"
       }
     }
   },

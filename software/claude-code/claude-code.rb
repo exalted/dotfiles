@@ -63,7 +63,21 @@ end
 end
 
 # Plugins live in plugins/<group>/ and reach Claude Code through the marketplace file in
-# plugins/.claude-plugin/, which settings.json registers; an install is needed once per machine.
+# plugins/.claude-plugin/. settings.json is shared by every machine but the clone path is not,
+# so settings.json declares the marketplace at this link instead of at the clone.
+marketplace_link = "#{ENV["HOME"]}/.claude/dotfiles-plugins"
+link_directory "#{__dir__}/plugins", marketplace_link
+
+# The CLI does not register a marketplace that settings.json only declares, so `plugin install`
+# fails until `marketplace add` runs once per machine. That command also rewrites the declared
+# path in settings.json to an absolute, per-user one; this repo is public, so it is put back.
+unless `claude plugin marketplace list --json 2>/dev/null`.include? '"name": "dotfiles"'
+  settings = "#{__dir__}/settings.json"
+  declared = File.read settings
+  system "claude plugin marketplace add #{marketplace_link}"
+  File.write settings, declared
+end
+
 if _resolve_profile == 'work'
   system "claude plugin install lsp-servers@dotfiles --scope user" unless Kernel.system "claude plugin list 2>/dev/null | grep -q lsp-servers@dotfiles"
 
