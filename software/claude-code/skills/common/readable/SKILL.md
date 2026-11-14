@@ -31,7 +31,7 @@ Arguments: `$ARGUMENTS`
    write the correct reply to a file in the scratchpad and add `--original-file <path>`
    to both commands.
 
-2. Write a draft. Apply each concern below.
+2. Write a draft. Apply the rules under "Concerns" below.
 
 3. Check the draft:
 
@@ -50,47 +50,26 @@ Arguments: `$ARGUMENTS`
 
 ## Concerns
 
-Each concern is one preference of the reader. The script has a check for a concern when a
+The reader's preferences are in the user's CLAUDE.md (`~/.claude/CLAUDE.md`), section
+"Writing style for answers to me". It is already in your context. Apply all of it, and
+especially these rules from "Content and structure":
+
+- the importance order;
+- the noise list;
+- the rule for parallel items (a lead-in line, then one item on each line);
+- the rule for examples (keep them, and shorten the explanation instead).
+
+Do not copy those rules into this skill: one copy cannot drift from another. The rules
+below are only for editing a reply that exists. The script has a check for a rule when a
 script can check it.
 
-### Keep what matters
-
-Do not shorten each sentence a little. Decide what matters, keep that, and delete the rest.
-
-- Find what the reader must know or must do. In order of importance:
-  1. a question or a decision that waits for the reader;
-  2. a result or an answer;
-  3. a failure, a risk or a warning;
-  4. an action that the reader must take;
-  5. a fact that changes what the reader does next (a number, a path, a command, a name).
-- Keep those. Put the most important one first.
+- Select by importance; do not shorten each sentence a little.
 - Keep each part that the user's request asked the reply to contain.
-- Delete the noise: how the work was done, a restatement of the request that the user did
-  not ask for, hedges, repeated points, courtesies, background that the reader has,
-  options that were rejected, and details that change nothing for the reader.
 - Write the result as a short, complete message. Merge points that belong together.
 - The word limit from the script is a hard limit. Fewer words is better when nothing
   important is lost.
-
-### Lists, not series
-
-When a sentence holds two or more parallel items or steps (parts joined by commas,
-semicolons, "and", "then"), write a short lead-in line and put each item on its own line.
-
-- Use a numbered list when the order matters (steps, a sequence, a ranking), and bullets
-  when it does not.
-- Put one idea in each sentence and in each list item.
-
-### Keep examples
-
-An example is never noise. The reader often understands an example faster than the
-explanation beside it.
-
-- Keep each example that the reply gives: a sample value, an input and its result, a
-  before and after, a concrete case.
-- Keep an example that comes from the user's own words in those words.
-- When the word limit is tight, shorten or delete the explanation, not the example.
-- Delete an example only when a second example shows the same point.
+- Keep an example that comes from the user's own words in those words. Delete an example
+  only when a second example shows the same point.
 
 ## Rules for every edit
 
@@ -98,4 +77,4 @@ explanation beside it.
 - Keep every question to the reader.
 - Keep each number, path, command and identifier exact.
 - Keep each code block and table that you keep verbatim. They are not in the word count.
-- If no concern changes the reply, say that in one line and do not repeat the reply.
+- If no rule changes the reply, say that in one line and do not repeat the reply.

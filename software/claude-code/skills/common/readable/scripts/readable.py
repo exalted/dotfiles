@@ -5,7 +5,7 @@ The `readable` skill tells Claude how to edit a reply. A model counts words only
 approximately, so this script does the parts that must be exact: it reads the reply from
 the session transcript, calculates the limit, and checks the draft.
 
-Each check belongs to one concern of the skill. To add a check, add a function to CHECKS.
+Each check belongs to one rule of the skill. To add a check, add a function to CHECKS.
 
 Code blocks and tables are not in the word count.
 """
