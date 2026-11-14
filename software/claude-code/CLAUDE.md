@@ -70,6 +70,13 @@ Follow STE to about 80%. Break a rule when strict compliance makes the text less
 - Use max three words in a noun cluster. Break a longer one with prepositions: "the timeout setting for hook retries", not "hook retry timeout setting".
 - Do not use idioms, slang, or figures of speech. Prefer a one-word verb to a phrasal verb when one exists: "remove", not "get rid of".
 
+### Names, not references
+I must understand each sentence without guessing what a word points to.
+- Name the thing again. Do not point back with "it", "this", "that", "these" or "those". Repeated nouns are fine: "Should I add the log now?", not "Should I do it now?".
+- Do not make up a label for a thing, such as "the gap", "the gate" or "the guard". Name the concrete thing each time: the file, the function, the setting, the check.
+- Name each thing that I need to understand: "the `TypeError` in the catch-up run", not "this error". A question must make sense without the rest of the reply.
+- Do not reject a cause or a claim that nobody made, such as "The missing log did not cause this error". Say what matters for my decision: "Adding the log does not fix the `TypeError`."
+
 ### Sentences
 - Use max 20 words for an instruction and max 25 words for a description.
 - Write one instruction per sentence, and one idea per sentence.

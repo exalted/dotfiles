@@ -219,7 +219,7 @@
       }
     }
   },
-  "outputStyle": "Concise",
+  "outputStyle": "Default",
   "effortLevel": "xhigh",
   "advisorModel": "fable",
   "pluginConfigs": {
