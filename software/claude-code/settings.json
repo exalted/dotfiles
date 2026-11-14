@@ -47,7 +47,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "sonnet",
+  "model": "opus",
   "skillOverrides": {
     "anthropic-skills:docs": "off",
     "anthropic-skills:docx": "off",
@@ -221,7 +221,7 @@
   },
   "outputStyle": "Concise",
   "effortLevel": "xhigh",
-  "advisorModel": "opus",
+  "advisorModel": "fable",
   "pluginConfigs": {
     "cc-plugin-agents-md@builtin": {
       "options": {
