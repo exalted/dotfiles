@@ -433,7 +433,7 @@ def pre_push_hook(path: Path) -> Path | None:
 
 
 def hook_scripts(hook: Path, path: Path) -> list[str]:
-    """The repository files a hook names, such as `${GIT_ROOT}/setup/check-ci.sh`: read from its text, so a guess."""
+    """The repository files a hook names, such as `${GIT_ROOT}/scripts/ci/check-ci.sh`: read from its text, so a guess."""
     code = "\n".join(line for line in hook.read_text(errors="replace").splitlines() if not line.lstrip().startswith("#"))
     named = re.findall(r"(?:\$\{?GIT_ROOT\}?/|\./)?((?:[\w.-]+/)+[\w.-]+)", code)
     return sorted({name for name in named if (path / name).is_file()})
