@@ -2,6 +2,7 @@
 paths:
   - software/claude-code/plugins/**/hooks/**
   - software/claude-code/plugins/**/themes/**
+  - software/claude-code/plugins/**/.claude-plugin/plugin.json
 ---
 
 # Mods draw on every surface, not only the terminal
