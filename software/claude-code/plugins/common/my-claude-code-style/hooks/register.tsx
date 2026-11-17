@@ -16,7 +16,12 @@ import {
 const feedback = atom({ plugin: 'my-claude-code-style', key: 'feedback' } as const, null)
 
 export const register: Register = on => {
-  on('ui.render', { component: 'AssistantMessage' }, async ($, e) => {
+  // The bubble frames are terminal block glyphs; other surfaces draw them as solid bars.
+  on('ui.render', { component: 'AssistantMessage' }, async ($, e, next) => {
+    if (e.surface !== 'terminal') {
+      return next(e)
+    }
+
     const { Box, Text, Button, Markdown } = $.ui.resolve(e)
     const columns = e.viewport?.columns ?? FALLBACK_COLUMNS
     const width = hasTable(e.props.text)
@@ -65,7 +70,7 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'UserMessage' }, ($, e, next) => {
-    if (e.props.origin.kind !== 'composer') {
+    if (e.surface !== 'terminal' || e.props.origin.kind !== 'composer') {
       return next(e)
     }
 
