@@ -6,6 +6,8 @@
 # Candidates: the cards in this board's to-do column, in rank order. A team-managed board keeps a separate
 # backlog list in the same status; those items are never candidates. Without a board, a JQL over every
 # unassigned to-do issue in the project is used instead.
+# jira_board_column_status is the workflow status the column shows, not the column's label: the two can
+# differ (a "To do" column that shows the status "Backlog"), and renaming the column does not rename the status.
 jira_board_id = 0
 jira_board_column_status = "<status of the board's to-do column>"
 
