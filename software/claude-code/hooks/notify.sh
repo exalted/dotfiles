@@ -19,6 +19,8 @@ case "$kind" in
     sound="Glass"
     ;;
   attention)
+    # idle_prompt repeats the Stop banner of the same turn about 60 s later.
+    [[ "$(command jq -r '.notification_type // empty' <<<"$input")" == idle_prompt ]] && exit 0
     message="$(command jq -r '.message // "Needs your attention"' <<<"$input")"
     sound="Sosumi"
     ;;
