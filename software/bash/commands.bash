@@ -24,16 +24,20 @@ brew() {
   esac
 }
 
-# Upgrades a Homebrew cask at most once per 24 hours; meant to wrap a CLI that
-# the cask installs, e.g. `foo() { upgrade-cask-daily foo; command foo "$@"; }`.
-# The stamp is written before the upgrade, so a failed attempt (offline) still
-# counts and the next calls do not retry it, and a second terminal opened during
-# the upgrade does not start another one. A failure never blocks the wrapped CLI.
+# Offers to upgrade a Homebrew cask at most once per 24 hours; meant to wrap a CLI
+# that the cask installs, e.g.
+# `foo() { _foo_starts_session "$@" && upgrade-cask-daily foo; command foo "$@"; }`.
+# The caller decides which invocations start an interactive session; without a
+# terminal to ask on, this does nothing and leaves the stamp alone, so the next
+# interactive start asks. The stamp is written before the question, so a "no"
+# or a failed upgrade (offline) counts for the day, and a second terminal opened
+# meanwhile does not ask again. A failure never blocks the wrapped CLI.
 upgrade-cask-daily() {
   local cask="$1"
   local stamp="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/upgrade-cask-daily/$cask"
-  local now last=0
+  local now last=0 answer
 
+  [[ -t 0 && -t 1 ]] || return 0
   [ -d "${HOMEBREW_PREFIX:-/opt/homebrew}/Caskroom/$cask" ] || return 0
 
   printf -v now '%(%s)T' -1
@@ -41,7 +45,18 @@ upgrade-cask-daily() {
   (( now - last >= 24 * 60 * 60 )) || return 0
 
   command mkdir -p "${stamp%/*}" && printf '%s\n' "$now" > "$stamp"
-  >&2 echo "upgrade-cask-daily: upgrading $cask (at most once per 24 hours)…"
+  # One key, so Esc skips at once; Esc sequences (arrow keys) are drained so
+  # their tail does not reach the wrapped CLI.
+  printf 'upgrade-cask-daily: upgrade %s now? [Y/n, Esc skips] ' "$cask"
+  IFS= read -rsn1 answer || answer=n
+  [[ $answer == $'\e' ]] && while IFS= read -rsn1 -t 0.05 _; do :; done
+  if [[ -z $answer || $answer == [Yy] ]]; then
+    echo yes
+  else
+    echo no
+    >&2 echo "upgrade-cask-daily: skipped; next question in 24 hours"
+    return 0
+  fi
   command brew upgrade --cask "$cask" \
     || >&2 echo "upgrade-cask-daily: could not upgrade $cask; running the installed version, next attempt in 24 hours"
   return 0

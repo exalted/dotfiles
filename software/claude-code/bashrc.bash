@@ -1,4 +1,4 @@
-_claude_asks_for_name() {
+_claude_starts_session() {
   [[ $- == *i* && -t 0 && -t 1 ]] || return 1
 
   case "${1:-}" in
@@ -8,7 +8,18 @@ _claude_asks_for_name() {
   local arg
   for arg in "$@"; do
     case "$arg" in
-      -p|--print|-n|--name|-r|--resume|-c|--continue|--session-id|--from-pr|-h|--help|-v|--version) return 1 ;;
+      -p|--print|-h|--help|-v|--version) return 1 ;;
+    esac
+  done
+}
+
+_claude_asks_for_name() {
+  _claude_starts_session "$@" || return 1
+
+  local arg
+  for arg in "$@"; do
+    case "$arg" in
+      -n|--name|-r|--resume|-c|--continue|--session-id|--from-pr) return 1 ;;
     esac
   done
 }
@@ -315,8 +326,6 @@ _claude_choose_name() {
 }
 
 claude() {
-  upgrade-cask-daily claude-code@latest
-
   local -a args=()
   local arg skip_name=0
   for arg in "$@"; do
@@ -326,6 +335,8 @@ claude() {
       args+=("$arg")
     fi
   done
+
+  _claude_starts_session "${args[@]}" && upgrade-cask-daily claude-code@latest
 
   if (( skip_name )) || ! _claude_asks_for_name "${args[@]}"; then
     command claude "${args[@]}"
