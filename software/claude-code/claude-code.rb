@@ -101,3 +101,8 @@ link_to_home_relative 'hooks/guard-git-history.py',      '.claude/hooks/guard-gi
 link_to_home_relative 'hooks/story-not-ticket.py',       '.claude/hooks/story-not-ticket.py'
 link_to_home_relative 'hooks/shell_commands.py',         '.claude/hooks/shell_commands.py'
 link_to_home_relative 'hooks/notify.sh',                 '.claude/hooks/notify.sh'
+# software/herdr writes this hook script and skill on profiles that also have herdr.
+unless software_manifest.include?('herdr')
+  trash "#{ENV["HOME"]}/.claude/hooks/herdr-agent-state.sh"
+  trash "#{ENV["HOME"]}/.claude/skills/herdr"
+end
