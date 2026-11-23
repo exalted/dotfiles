@@ -1,0 +1,8 @@
+onboarding = false
+
+[ui]
+# The socket path is the only session hint the command gets: the default session
+# uses ~/.config/herdr/herdr.sock, a named one ~/.config/herdr/sessions/<name>/herdr.sock.
+tab_bar_right = [
+  { type = "command", command = 'd=${HERDR_SOCKET_PATH%/*}; case $d in */sessions/*) echo "${d##*/}" ;; *) echo default ;; esac', interval_seconds = 3600 },
+]

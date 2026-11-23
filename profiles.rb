@@ -39,6 +39,7 @@ PROFILES['personal'] = %w[
   firefox
   gnupg
   google-chrome
+  herdr
   insomnia
   jq
   keka
