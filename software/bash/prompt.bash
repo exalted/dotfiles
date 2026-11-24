@@ -81,9 +81,10 @@ __prompt_command_append __venv_ps1_update
 # branch on. The actual cause was software/iterm2/'s shell integration being
 # loaded in IntelliJ's terminal by a guard that excluded only Zed; it `export`s a
 # PS1 wrapped in OSC 133 markers, and that came back byte-corrupted (`❯`, E2 9D
-# AF, read as Latin-1 and re-encoded). Fixed where it belongs — see
-# software/iterm2/bashrc.bash — after which `❯` renders correctly in all three
-# terminals with this plain assignment.
+# AF, read as Latin-1 and re-encoded). Fixed where it belongs: iTerm2 now loads
+# its own shell integration (see software/iterm2/iterm2.rb), so no other
+# terminal gets it, and `❯` renders correctly in all three terminals with this
+# plain assignment.
 #
 # So: do not reintroduce a rebuild here. It costs a prompt hook and silently
 # reverts anything else that decorates PS1 (`conda activate`, an ad-hoc `PS1=`)

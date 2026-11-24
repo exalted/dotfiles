@@ -36,7 +36,9 @@ comment above the code before "fixing" one:
   `TERMINAL_EMULATOR` check; both were wrong. The cause was `software/iterm2/`'s
   shell integration being loaded in IntelliJ's terminal by a guard that excluded
   only Zed — it `export`s an OSC-133-wrapped `PS1` that comes back mojibaked.
-  Fixed at the source. Do not reintroduce a per-prompt rebuild: it costs a
+  Fixed at the source: iTerm2 now loads the integration itself (its profile
+  setting "Load shell integration automatically"), so no other terminal gets
+  it. Do not source it from `~/.bashrc` again. Do not reintroduce a per-prompt rebuild: it costs a
   prompt hook and silently reverts `conda activate` or any ad-hoc `PS1=`.
 - **`shellenv.sh` skips `brew shellenv` only when `HOMEBREW_PREFIX` *and* PATH
   agree.** Each single-proxy guard broke something real: PATH-only re-prepended
