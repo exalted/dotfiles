@@ -1,7 +1,7 @@
 export GIT_EDITOR='edit --new-window --wait'
 
 # load git's prompt helper (`__git_ps1`)
-source "$(brew --prefix)/opt/git/etc/bash_completion.d/git-prompt.sh"
+source "$HOMEBREW_PREFIX/opt/git/etc/bash_completion.d/git-prompt.sh"
 
 # For the settings below, read the docs for `git-prompt.sh`
 

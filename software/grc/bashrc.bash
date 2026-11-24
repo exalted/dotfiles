@@ -1,9 +1,6 @@
 export GRC_ALIASES=true
-# `brew --prefix`, not an inherited $HOMEBREW_PREFIX (see software/node/bashrc.bash),
-# and not `brew --prefix grc`: Homebrew keeps etc/ in the shared prefix.
-__grc_sh="$(brew --prefix 2>/dev/null)/etc/grc.sh"
-[[ -f "$__grc_sh" ]] && \. "$__grc_sh"
-unset __grc_sh
+# Not under opt/grc: Homebrew keeps a formula's etc/ files in the shared prefix.
+[[ -f "${HOMEBREW_PREFIX:-}/etc/grc.sh" ]] && \. "$HOMEBREW_PREFIX/etc/grc.sh"
 
 # grc's alias would hide the diff() function from software/diff/bashrc.bash.
 unalias diff 2>/dev/null

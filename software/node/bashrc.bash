@@ -1,15 +1,3 @@
-# `brew --prefix` is the authority, not an inherited $HOMEBREW_PREFIX: that can
-# name a Homebrew other than the one on PATH (a terminal that kept the env of an
-# older session, a second prefix under /usr/local). Resolved once here — one
-# fork, ~10ms — and reused by everything below, including nvm-loader.sh.
-#
-# Assigned, not `: "${HOMEBREW_PREFIX:=$(brew --prefix)}"`: that leaves the
-# variable set to the empty string when there is no brew, and empty-but-set
-# silently defeats every `${HOMEBREW_PREFIX:-…}` fallback downstream. Unset is
-# the honest answer, so those fallbacks still fire.
-HOMEBREW_PREFIX="$(brew --prefix 2>/dev/null)"
-[ -n "$HOMEBREW_PREFIX" ] || unset HOMEBREW_PREFIX
-
 [ -n "${HOMEBREW_PREFIX:-}" ] && export PATH="$PATH:$HOMEBREW_PREFIX/opt/node/bin"
 
 # make sure these comes after all the others, so that local binaries win

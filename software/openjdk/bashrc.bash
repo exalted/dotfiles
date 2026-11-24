@@ -1,1 +1,1 @@
-export PATH="$(brew --prefix openjdk)/bin:$PATH"
+export PATH="$HOMEBREW_PREFIX/opt/openjdk/bin:$PATH"

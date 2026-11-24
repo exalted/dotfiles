@@ -2,7 +2,7 @@
 require_relative '../../src/helpers'
 
 brew 'bash'
-system "sudo chsh -s $(brew --prefix)/bin/bash #{ENV["USER"]}"
+system "sudo chsh -s #{brew_prefix}/bin/bash #{ENV["USER"]}"
 
 brew 'bash-completion@2'
 bash_source "#{brew_prefix}/etc/profile.d/bash_completion.sh"
