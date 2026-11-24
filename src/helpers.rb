@@ -18,9 +18,14 @@ def debounce(period: '1h')
   FileUtils.touch(marker)
 end
 
-# Memoized because every call is a `brew` process start, which is not cheap.
+# bin/dotfiles sets HOMEBREW_PREFIX from the real brew before it puts the pty
+# wrapper on PATH (see _shadow_brew_with_pty); the fallback serves an entry
+# script run on its own. Memoized because every call is a `brew` process start.
 def brew_prefix
-  @brew_prefix ||= `brew --prefix`.strip
+  @brew_prefix ||= begin
+    inherited = ENV["HOMEBREW_PREFIX"].to_s
+    inherited.empty? ? `brew --prefix`.strip : inherited
+  end
 end
 
 def brew(formula)

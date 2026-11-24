@@ -106,6 +106,13 @@ end
 # * The wrapper is the tracked script software/homebrew/bin/brew. Only this
 #   process and the entry scripts it starts get it on PATH; shells never do.
 def _shadow_brew_with_pty
+  # Asked of the real brew, before the shadow: `brew --prefix` exits before
+  # brew.sh reaches its sudo reset, so it gains nothing from the pty, and the
+  # wrapper would merge any brew warning on stderr into the answer. Entry
+  # scripts inherit the value; brew_prefix and node.rb read it.
+  prefix = `brew --prefix 2>/dev/null`.strip
+  ENV["HOMEBREW_PREFIX"] = prefix unless prefix.empty?
+
   wrapper_dir = "#{__dir__}/../software/homebrew/bin"
   # Keeps a copy that lost its exec bit (a ZIP download, core.fileMode=false) working.
   File.chmod(0755, "#{wrapper_dir}/brew")
