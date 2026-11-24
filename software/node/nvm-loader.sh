@@ -10,9 +10,9 @@ if ! command -v nvm >/dev/null 2>&1; then
   export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
   # Homebrew's copy is the one dotfiles installs (software/node); a
-  # self-installed nvm under $NVM_DIR is the fallback. In Bash, HOMEBREW_PREFIX
-  # comes from software/homebrew/bashrc.bash; another shell falls back to asking
-  # brew. Either way, no prefix is baked in here.
+  # self-installed nvm under $NVM_DIR is the fallback. HOMEBREW_PREFIX comes from
+  # software/homebrew/shellenv.sh; a shell that did not source it falls back to
+  # asking brew. Either way, no prefix is baked in here.
   for __nvm_sh in \
     "${HOMEBREW_PREFIX:-$(brew --prefix 2>/dev/null)}/opt/nvm/nvm.sh" \
     "$NVM_DIR/nvm.sh"
