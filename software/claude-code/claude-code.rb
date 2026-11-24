@@ -88,6 +88,13 @@ if _resolve_profile == 'work'
   covered_lsp_plugins = %w[gopls-lsp pyright-lsp ruby-lsp swift-lsp typescript-lsp]
   ensure_json_array_entries "#{ENV["HOME"]}/.claude.json", 'lspRecommendationNeverPlugins',
                             covered_lsp_plugins.map { |name| "#{name}@claude-plugins-official" }
+
+  # settings.json enables this plugin on every machine, but only a machine that registers the
+  # marketplace and installs the plugin loads it, and that happens here.
+  unless Kernel.system "claude plugin list 2>/dev/null | grep -q modern-web-guidance@googlechrome"
+    system "claude plugin marketplace add GoogleChrome/modern-web-guidance" unless `claude plugin marketplace list --json 2>/dev/null`.include? '"name": "googlechrome"'
+    system "claude plugin install modern-web-guidance@googlechrome --scope user"
+  end
 end
 
 # The style plugin redraws the chat and ships the color theme, so it installs on every profile.

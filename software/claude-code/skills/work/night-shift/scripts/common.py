@@ -149,6 +149,7 @@ class Config:
     people: list[Json]
     slack_channels: list[str] = field(default_factory=list)
     # The board whose to-do column is "the backlog" for the night shift, and the status that column shows.
+    # The status name, not the column's label: JQL cannot filter on a column, and a column rename keeps the status.
     jira_board_id: int | None = None
     jira_board_column_status: str = ""
     env_allowed_hosts: list[str] = field(default_factory=list)
