@@ -7,3 +7,4 @@ cask 'zed@preview', confirm_before_quit: true
 
 link_to_home_relative 'settings.json', '.config/zed/settings.json'
 link_to_home_relative 'keymap.json', '.config/zed/keymap.json'
+link_to_home_relative 'tasks.json', '.config/zed/tasks.json'

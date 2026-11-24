@@ -32,7 +32,8 @@
   {
     "context":"Workspace",
     "bindings":{
-      "ctrl-`":"workspace::NewCenterTerminal"
+      "ctrl-`":"workspace::NewCenterTerminal",
+      "ctrl-~":["task::Spawn", { "task_name": "herdr", "reveal_target": "center" }]
     }
   }
 ]
