@@ -11,8 +11,8 @@ for p in $(type -ap brew); do
       # Interactive: let \r through so brew's progress bars render properly.
       exec script -q /dev/null "$p" "$@"
     else
-      # Captured (pipe / `$(...)` / backticks): strip \r so paths like
-      # `$(brew --prefix)` don't end up as `/opt/homebrew\r`.
+      # Captured (pipe / `$(...)` / backticks): strip \r so captured values,
+      # such as a version from `brew list --versions`, don't end in `\r`.
       script -q /dev/null "$p" "$@" | tr -d '\r'
       exit "${PIPESTATUS[0]}"
     fi
