@@ -76,6 +76,7 @@ PROFILES['work'] = %w[
   codex
   direnv
   finicky
+  herdr
   jira
   jq
   keka
