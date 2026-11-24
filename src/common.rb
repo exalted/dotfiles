@@ -89,6 +89,26 @@ def _keep_sudo_alive
   end
 end
 
+# Homebrew's prefix and PATH as software/homebrew/shellenv.sh leaves them: the
+# one place that knows where Homebrew lives, which every shell and launchd job
+# sources too. Returns [prefix, path]; prefix is nil without Homebrew.
+def _homebrew_env
+  shellenv = File.expand_path("#{__dir__}/../software/homebrew/shellenv.sh")
+  out = `/bin/sh -c '. "$1" >/dev/null 2>&1; printf "%s\\n%s" "${HOMEBREW_PREFIX:-}" "$PATH"' sh "#{shellenv}"`
+  prefix, path = out.split("\n", 2)
+  [prefix.to_s.empty? ? nil : prefix, path]
+end
+
+# Puts Homebrew on this process's PATH and sets HOMEBREW_PREFIX, which entry
+# scripts inherit. A first run on a new Mac starts from a shell without either,
+# and Homebrew's installer cannot change the PATH of the process that ran it.
+def _load_homebrew_env
+  prefix, path = _homebrew_env
+  return unless prefix
+  ENV["HOMEBREW_PREFIX"] = prefix
+  ENV["PATH"] = path
+end
+
 # Shadow `brew` on PATH with a wrapper that runs the real brew inside its own
 # pseudo-TTY (via `script`).
 #
@@ -105,14 +125,10 @@ end
 #   — both streams come back on stdout.
 # * The wrapper is the tracked script software/homebrew/bin/brew. Only this
 #   process and the entry scripts it starts get it on PATH; shells never do.
+# * Read the prefix from HOMEBREW_PREFIX (brew_prefix), never from the wrapper:
+#   `brew --prefix` exits before brew.sh reaches its sudo reset, so it gains
+#   nothing from the pty, and the wrapper would merge any brew warning into it.
 def _shadow_brew_with_pty
-  # Asked of the real brew, before the shadow: `brew --prefix` exits before
-  # brew.sh reaches its sudo reset, so it gains nothing from the pty, and the
-  # wrapper would merge any brew warning on stderr into the answer. Entry
-  # scripts inherit the value; brew_prefix and node.rb read it.
-  prefix = `brew --prefix 2>/dev/null`.strip
-  ENV["HOMEBREW_PREFIX"] = prefix unless prefix.empty?
-
   wrapper_dir = "#{__dir__}/../software/homebrew/bin"
   # Keeps a copy that lost its exec bit (a ZIP download, core.fileMode=false) working.
   File.chmod(0755, "#{wrapper_dir}/brew")

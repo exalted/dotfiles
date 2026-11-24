@@ -11,10 +11,10 @@ if ! command -v nvm >/dev/null 2>&1; then
 
   # Homebrew's copy is the one dotfiles installs (software/node); a
   # self-installed nvm under $NVM_DIR is the fallback. HOMEBREW_PREFIX comes from
-  # software/homebrew/shellenv.sh; a shell that did not source it falls back to
-  # asking brew. Either way, no prefix is baked in here.
+  # software/homebrew/shellenv.sh, which ~/.bashrc sources before this file; if
+  # it is unset, there is no Homebrew, and the empty path fails the -s test.
   for __nvm_sh in \
-    "${HOMEBREW_PREFIX:-$(brew --prefix 2>/dev/null)}/opt/nvm/nvm.sh" \
+    "${HOMEBREW_PREFIX:-}/opt/nvm/nvm.sh" \
     "$NVM_DIR/nvm.sh"
   do
     if [ -s "$__nvm_sh" ]; then

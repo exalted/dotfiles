@@ -18,14 +18,15 @@ def debounce(period: '1h')
   FileUtils.touch(marker)
 end
 
-# bin/dotfiles sets HOMEBREW_PREFIX from the real brew before it puts the pty
-# wrapper on PATH (see _shadow_brew_with_pty); the fallback serves an entry
-# script run on its own. Memoized because every call is a `brew` process start.
+# bin/dotfiles and every shell set HOMEBREW_PREFIX (see _load_homebrew_env). An
+# entry script started some other way asks shellenv.sh for the prefix only; it
+# keeps its PATH, so the pty wrapper stays first when bin/dotfiles started it.
 def brew_prefix
-  @brew_prefix ||= begin
-    inherited = ENV["HOMEBREW_PREFIX"].to_s
-    inherited.empty? ? `brew --prefix`.strip : inherited
+  if ENV["HOMEBREW_PREFIX"].to_s.empty?
+    prefix = _homebrew_env.first or abort "Homebrew not found: run bin/dotfiles first"
+    ENV["HOMEBREW_PREFIX"] = prefix
   end
+  ENV["HOMEBREW_PREFIX"]
 end
 
 def brew(formula)
