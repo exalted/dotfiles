@@ -103,34 +103,11 @@ end
 # * `script` collapses brew's stdout and stderr into a single channel (a pty
 #   has only one), so `brew foo 2>err.log` won't capture anything in err.log
 #   — both streams come back on stdout.
-# * The wrapper is rewritten on every run, so its contents always match this
-#   function; don't edit software/homebrew/bin/brew directly.
+# * The wrapper is the tracked script software/homebrew/bin/brew. Only this
+#   process and the entry scripts it starts get it on PATH; shells never do.
 def _shadow_brew_with_pty
   wrapper_dir = "#{__dir__}/../software/homebrew/bin"
-  FileUtils.mkdir_p(wrapper_dir)
-  File.write("#{wrapper_dir}/brew", <<~SH)
-    #!/bin/bash
-    # Auto-generated each run by src/common.rb::_shadow_brew_with_pty.
-    # Runs the real brew in its own pseudo-TTY so brew's `sudo --reset-timestamp`
-    # only kills the timestamp inside that pty, sparing our terminal's sudo cache.
-    # Ref: https://github.com/Homebrew/brew/issues/17912
-    set -o pipefail
-    for p in $(type -ap brew); do
-      if [ "$p" != "$0" ] && [ -x "$p" ]; then
-        if [ -t 1 ]; then
-          # Interactive: let \\r through so brew's progress bars render properly.
-          exec script -q /dev/null "$p" "$@"
-        else
-          # Captured (pipe / `$(...)` / backticks): strip \\r so paths like
-          # `$(brew --prefix)` don't end up as `/opt/homebrew\\r`.
-          script -q /dev/null "$p" "$@" | tr -d '\\r'
-          exit "${PIPESTATUS[0]}"
-        fi
-      fi
-    done
-    echo "brew-pty-wrapper: real brew not found on PATH" >&2
-    exit 127
-  SH
+  # Keeps a copy that lost its exec bit (a ZIP download, core.fileMode=false) working.
   File.chmod(0755, "#{wrapper_dir}/brew")
   ENV["PATH"] = "#{wrapper_dir}:#{ENV["PATH"]}"
 end
