@@ -1,8 +1,8 @@
 #!/bin/bash
-# src/common.rb::_shadow_brew_with_pty puts this directory first on PATH for a
-# dotfiles run (see the reasons there).
 # Runs the real brew in its own pseudo-TTY so brew's `sudo --reset-timestamp`
 # only kills the timestamp inside that pty, sparing our terminal's sudo cache.
+# Only a dotfiles run uses it: src/common.rb::_shadow_brew_with_pty puts this
+# directory first on PATH there, and holds the full reasoning and caveats.
 # Ref: https://github.com/Homebrew/brew/issues/17912
 set -o pipefail
 for p in $(type -ap brew); do

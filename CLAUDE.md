@@ -38,8 +38,9 @@ comment above the code before "fixing" one:
   only Zed — it `export`s an OSC-133-wrapped `PS1` that comes back mojibaked.
   Fixed at the source: iTerm2 now loads the integration itself (its profile
   setting "Load shell integration automatically"), so no other terminal gets
-  it. Do not source it from `~/.bashrc` again. Do not reintroduce a per-prompt rebuild: it costs a
-  prompt hook and silently reverts `conda activate` or any ad-hoc `PS1=`.
+  it. Do not source it from `~/.bashrc` again, and do not reintroduce a
+  per-prompt rebuild: it costs a prompt hook and silently reverts
+  `conda activate` or any ad-hoc `PS1=`.
 - **`shellenv.sh` skips `brew shellenv` only when `HOMEBREW_PREFIX` *and* PATH
   agree.** Each single-proxy guard broke something real: PATH-only re-prepended
   Homebrew ahead of an nvm-selected Node; `HOMEBREW_PREFIX`-only lost Homebrew
@@ -57,8 +58,12 @@ needs the committed copy. Do not untrack or ignore them:
   only the `work` profile's weekly refresh job writes it; every other machine
   gets the map from Git, and the skill has nothing to read without it.
 
-Prefer that `bin/dotfiles` writes nothing into the repo: make a tracked file
-the source, or read what is already installed, instead of copying it here.
+Do not make `bin/dotfiles` generate or download files into the repo: a run
+then leaves diffs nobody wrote. Make a tracked file the source (the brew pty
+wrapper), or read what is already installed (grc's `etc/grc.sh`, iTerm2's own
+shell integration). The accepted exception is settings you change in an app's
+UI and want synced: iTerm2 writes its plist into `software/iterm2/` on quit,
+and `vlc.rb` copies `vlcrc` back.
 
 ## Writing tests and hooks in this repo
 

@@ -4,12 +4,12 @@ require_relative '../../src/helpers'
 cask 'iterm2'
 
 # Shell integration is loaded by iTerm2 itself, through the profile setting
-# "Load shell integration automatically" in the synced plist below. Sourcing the
-# script from ~/.bashrc instead also loaded it in Zed's and IntelliJ's terminals,
-# where it corrupted the prompt; iTerm2 injects it only into its own sessions.
-# Nested non-login shells (`bash`, `sudo -s`) go without it.
+# "Load shell integration automatically" (plist key `Load Shell Integration
+# Automatically`) in the synced plist below. Sourcing the script from ~/.bashrc
+# instead also loaded it in Zed's and IntelliJ's terminals, where it corrupted
+# the prompt; iTerm2 injects it only into its own sessions. Nested non-login
+# shells (`bash`, `sudo -s`) go without it.
 
-#
 # Sync settings across machines via iTerm2's native "custom folder" feature
 # (https://iterm2.com/documentation-preferences-general.html): iTerm2 loads its
 # settings from the folder on launch and (per the save-mode below) writes them
