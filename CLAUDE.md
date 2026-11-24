@@ -46,6 +46,20 @@ comment above the code before "fixing" one:
   entirely when a GUI app exported a stale prefix, silently falling back to
   macOS bash 3.2 (the `git hist` / `emojify` failure).
 
+## Machine-written files that must stay tracked
+
+These look generated, but `bin/dotfiles` does not create them, so a fresh clone
+needs the committed copy. Do not untrack or ignore them:
+
+- `software/claude-code/plugins/work/lsp-servers/package-lock.json`: the
+  plugin's `install-node-modules.sh` hook runs `npm ci`, which fails without it.
+- `software/claude-code/skills/common/claude-code-levers/references/levers.md`:
+  only the `work` profile's weekly refresh job writes it; every other machine
+  gets the map from Git, and the skill has nothing to read without it.
+
+Prefer that `bin/dotfiles` writes nothing into the repo: make a tracked file
+the source, or read what is already installed, instead of copying it here.
+
 ## Writing tests and hooks in this repo
 
 Interactive shells here alias some standard commands (`env` is `env | sort`), and
