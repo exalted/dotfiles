@@ -6,6 +6,13 @@ brew 'herdr'
 
 link_to_home_relative 'config.toml', '.config/herdr/config.toml', backup: true
 
+# Herdr keeps linked plugins in its own registry, outside this repo, so each
+# machine links them. Linking an already linked plugin changes nothing.
+Dir["#{__dir__}/plugins/*/herdr-plugin.toml"].sort.each do |manifest|
+  Kernel.system("#{brew_prefix}/bin/herdr", 'plugin', 'link', File.dirname(manifest),
+                out: File::NULL, exception: true)
+end
+
 exit unless software_manifest.include?('claude-code')
 
 def write_if_changed(path, content, mode: nil)

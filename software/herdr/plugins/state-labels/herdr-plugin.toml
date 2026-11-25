@@ -1,0 +1,13 @@
+id = "dotfiles.state-labels"
+name = "State labels"
+version = "0.1.0"
+min_herdr_version = "0.9.5"
+description = "Show each agent state in the sidebar as an emoji and plain words"
+platforms = ["macos", "linux"]
+
+[[startup]]
+command = ["/bin/sh", "apply-state-labels.sh"]
+
+[[events]]
+on = "pane.agent_detected"
+command = ["/bin/sh", "apply-state-labels.sh"]

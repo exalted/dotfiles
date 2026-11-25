@@ -6,3 +6,18 @@ onboarding = false
 tab_bar_right = [
   { type = "command", command = 'd=${HERDR_SOCKET_PATH%/*}; case $d in */sessions/*) echo "${d##*/}" ;; *) echo default ;; esac', interval_seconds = 3600 },
 ]
+# The workspace rows and the collapsed sidebar cannot show the emoji labels below.
+# Symbols give them one shape per state; dots share one shape among three states.
+status_indicators = "symbols"
+
+# The state-labels plugin makes state_text an emoji and plain words, which
+# replace the state_icon dot. A pane the plugin has not reached shows Herdr's
+# own word (idle, working, ...).
+[ui.sidebar.agents]
+row_gap = 1
+# A resting agent is dim so that the states that need attention stand out. The
+# first rule must equal the idle label in plugins/state-labels/apply-state-labels.sh.
+rows = [
+  ["machine", "workspace", "tab"],
+  [{ token = "state_text", rules = [{ equals = "✅ Read", dim = true }, { equals = "idle", dim = true }] }, "agent"],
+]
